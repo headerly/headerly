@@ -1,0 +1,66 @@
+{
+  "name": "headerly",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "description": "A browser extension for managing HTTP request headers",
+  "homepage": "https://headerly.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/headerly/headerly.git"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "postinstall": "wxt prepare",
+    "typecheck": "vue-tsc --noEmit",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@vueuse/core": "^13.9.0",
+    "clsx": "^2.1.1",
+    "es-toolkit": "^1.39.10",
+    "motion-v": "^1.7.1",
+    "picomatch": "^4.0.3",
+    "pinia": "^3.0.3",
+    "reka-ui": "^2.5.0",
+    "tailwind-merge": "^3.3.1",
+    "vee-validate": "^4.15.1",
+    "vue": "^3.5.21",
+    "vue-i18n": "^11.1.12",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.2.2",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/types": "^19.8.1",
+    "@egoist/tailwindcss-icons": "^1.9.0",
+    "@fontsource-variable/montserrat": "^5.2.7",
+    "@iconify-json/lucide": "^1.2.66",
+    "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "^24.3.1",
+    "@types/picomatch": "^4.0.2",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@wxt-dev/auto-icons": "^1.1.0",
+    "daisyui": "^5.1.7",
+    "eslint": "^9.35.0",
+    "eslint-plugin-better-tailwindcss": "^3.7.6",
+    "husky": "^9.1.7",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite-plugin-vue-devtools": "^8.0.1",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.0.6",
+    "wxt": "^0.20.11"
+  }
+}

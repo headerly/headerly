@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@plugin '@egoist/tailwindcss-icons';
+@plugin "daisyui" {
+    themes: winter --default, sunset --prefersdark;
+}
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+}
