@@ -30,6 +30,7 @@ export default antfu(
     },
     rules: {
       ...tailwind.configs.recommended!.rules,
+      "better-tailwindcss/no-unregistered-classes": "off",
     },
   },
 )

@@ -1,22 +1,26 @@
 <script lang="ts" setup>
-function openInFullscreen() {
-  browser.tabs.create({ url: "popup.html" });
-}
+import { cn } from "@/lib/utils";
+import Header from "./components/Header.vue";
+import Profile from "./components/Profile.vue";
+import Sidebar from "./components/Sidebar.vue";
 </script>
 
 <template>
   <div class="flex items-center justify-center">
     <div
-      class="relative flex h-120 w-150 flex-col rounded-sm outline-2"
+      :class="cn(
+        `
+          grid grid-cols-[min-content_minmax(0,1fr)]
+          grid-rows-[min-content_minmax(0,1fr)]
+        `,
+        'h-120 w-150 rounded-sm outline-2 outline-offset-2',
+      )"
     >
-      <header class="flex items-center justify-end border-b border-primary p-1">
-        <button
-          class="btn btn-square btn-sm" @click="openInFullscreen"
-        >
-          <span class="sr-only">Open in fullscreen</span>
-          <i class="i-lucide-fullscreen size-4" />
-        </button>
-      </header>
+      <Sidebar class="col-start-1 row-span-2" />
+      <Header class="col-start-2 row-start-1" />
+      <main class="col-start-2 row-start-2 overflow-y-auto p-2">
+        <Profile />
+      </main>
     </div>
   </div>
 </template>
