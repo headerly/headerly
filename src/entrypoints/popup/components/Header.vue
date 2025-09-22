@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { ref } from "vue";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../useProfilesStore";
 
@@ -12,6 +13,15 @@ const store = useProfilesStore();
 function openInFullscreen() {
   browser.tabs.create({ url: "popup.html" });
 }
+
+const profileNameEditing = ref(false);
+const profileNameInput = ref<string>();
+function handleEditProfileName() {
+  if (profileNameInput.value?.length && store.selectedProfile) {
+    store.selectedProfile.name = profileNameInput.value;
+  }
+  profileNameEditing.value = false;
+}
 </script>
 
 <template>
@@ -20,8 +30,40 @@ function openInFullscreen() {
       flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2
     `, className)"
   >
-    <div class="font-bold">
-      {{ store.selectedProfile?.name }}
+    <button
+      v-if="!profileNameEditing"
+      class="
+        btn flex items-center gap-1.5 text-base font-semibold btn-ghost btn-sm
+      "
+      @click="() => {
+        profileNameInput = store.selectedProfile?.name
+        profileNameEditing = true
+      }"
+    >
+      <span class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap">{{ store.selectedProfile?.name }}</span>
+      <i class="i-lucide-pencil-line size-4" />
+    </button>
+    <div v-else class="flex gap-1.5">
+      <input
+        v-model="profileNameInput"
+        type="text"
+        required
+        class="
+          input input-sm max-w-xs text-base
+          user-invalid:input-error
+        "
+        @keyup.enter="handleEditProfileName"
+        @keyup.esc="profileNameEditing = false"
+      >
+      <button
+        class="
+          btn flex btn-square items-center gap-2 text-base font-semibold
+          btn-soft btn-sm btn-primary
+        "
+        @click="handleEditProfileName"
+      >
+        <i class="i-lucide-check-check size-4" />
+      </button>
     </div>
     <div
       v-if="store.selectedProfile"
