@@ -11,12 +11,12 @@ const store = useProfilesStore();
 </script>
 
 <template>
-  <div :class="cn('', className)">
+  <div :class="cn(store.selectedProfile?.enabled ? 'opacity-100' : 'opacity-50', className)">
     <fieldset
       v-if="store.selectedProfile?.requestHeaderMods?.length"
       class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-4"
     >
-      <legend class="fieldset-legend">
+      <legend class="fieldset-legend text-base">
         <label>
           <input
             type="checkbox" class="checkbox checkbox-sm"
@@ -45,24 +45,29 @@ const store = useProfilesStore();
         class="label"
       >
         <input
-          v-model="mod.enabled" type="checkbox" class="checkbox checkbox-sm"
+          v-model="mod.enabled" type="checkbox"
+          class="checkbox checkbox-sm"
         >
-        <label class="flex-1">
+        <label
+          class="flex-1"
+          :data-tip="`Operation: ${mod.operation}`"
+        >
           <input
             v-model="mod.name" type="text" placeholder="Name" class="
-              input input-sm
+              peer input input-sm text-base
             "
           >
         </label>
         <label class="flex-1">
           <input
             v-model="mod.value" type="text" placeholder="Value" class="
-              input input-sm
+              input input-sm text-base
             "
           >
         </label>
+
         <button
-          class="btn btn-square btn-ghost btn-sm"
+          class="btn btn-square btn-ghost btn-xs btn-error"
           @click="store.deleteRequestHeaderMod(mod.id)"
         >
           <i class="i-lucide-x size-4" />

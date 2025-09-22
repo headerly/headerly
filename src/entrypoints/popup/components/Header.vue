@@ -27,11 +27,25 @@ function openInFullscreen() {
       v-if="store.selectedProfile"
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
-      <input
-        v-model="store.selectedProfile.enabled"
-        type="checkbox"
-        class="btn tooltip-left btn-square btn-ghost btn-sm"
-      >
+      <div class="tooltip tooltip-left font-semibold" :data-tip="store.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile'">
+        <input
+          v-model="store.selectedProfile.enabled"
+          type="checkbox"
+          :class="cn(
+            `
+              btn btn-square btn-ghost btn-sm btn-primary
+              before:size-4
+              after:hidden
+            `,
+            store.selectedProfile.enabled
+              ? 'before:i-lucide-pause'
+              : `
+                btn-active
+                before:i-lucide-play
+              `,
+          )"
+        >
+      </div>
       <button
         class="tooltip btn tooltip-left btn-square btn-ghost btn-sm btn-primary"
         data-tip="Add new request header mod"

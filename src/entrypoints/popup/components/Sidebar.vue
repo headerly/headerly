@@ -39,17 +39,24 @@ const store = useProfilesStore();
       <li
         v-for="profile in store.profiles" :key="profile.id"
       >
-        <button
-          :class="cn(
-            'tooltip btn tooltip-right btn-square btn-soft btn-sm',
-            { 'btn-active btn-primary': store.selectedProfileId === profile.id },
-          )"
-          :data-tip="profile.name"
-          @click="store.selectedProfileId = profile.id"
-        >
-          <span class="sr-only">{{ profile.name }}</span>
-          <i class="i-lucide-file size-4" />
-        </button>
+        <div class="indicator">
+          <button
+            :class="cn(
+              'tooltip btn tooltip-right btn-square btn-soft btn-sm',
+              { 'btn-active btn-primary': store.selectedProfileId === profile.id },
+            )"
+            :data-tip="profile.name"
+            @click="store.selectedProfileId = profile.id"
+          >
+            <span class="sr-only">{{ profile.name }}</span>
+            <i class="i-lucide-file size-4" />
+          </button>
+          <span
+            :class="cn('indicator-item status', profile.enabled ? `
+              status-success
+            ` : `status`)"
+          />
+        </div>
       </li>
     </ul>
   </div>
