@@ -58,7 +58,7 @@ function handleEditProfileName() {
       <button
         class="
           btn flex btn-square items-center gap-2 text-base font-semibold
-          btn-soft btn-sm btn-primary
+          btn-soft btn-sm
         "
         @click="handleEditProfileName"
       >

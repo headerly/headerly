@@ -39,40 +39,50 @@ const store = useProfilesStore();
           <i class="i-lucide-plus size-4" />
         </button>
       </legend>
-      <label
+      <div
         v-for="mod of store.selectedProfile.requestHeaderMods"
         :key="mod.id"
-        class="label"
+        class="flex flex-col gap-1.5"
       >
-        <input
-          v-model="mod.enabled" type="checkbox"
-          class="checkbox checkbox-sm"
-        >
         <label
-          class="flex-1"
-          :data-tip="`Operation: ${mod.operation}`"
+          class="label flex"
         >
           <input
-            v-model="mod.name" type="text" placeholder="Name" class="
-              peer input input-sm text-base
-            "
+            v-model="mod.enabled" type="checkbox"
+            class="checkbox checkbox-sm"
           >
-        </label>
-        <label class="flex-1">
-          <input
-            v-model="mod.value" type="text" placeholder="Value" class="
-              input input-sm text-base
-            "
+          <label
+            class="flex-1"
+            :data-tip="`Operation: ${mod.operation}`"
           >
+            <input
+              v-model="mod.name" type="text" placeholder="Name" class="
+                peer input input-sm w-full text-base
+              "
+            >
+          </label>
+          <label v-if="mod.operation !== 'remove'" class="flex-1">
+            <input
+              v-model="mod.value" type="text" placeholder="Value" class="
+                input input-sm text-base
+              "
+            >
+          </label>
+          <button
+            class="btn btn-square btn-ghost btn-xs btn-error"
+            @click="store.deleteRequestHeaderMod(mod.id)"
+          >
+            <i class="i-lucide-x size-4" />
+          </button>
         </label>
-
         <button
-          class="btn btn-square btn-ghost btn-xs btn-error"
-          @click="store.deleteRequestHeaderMod(mod.id)"
+          class="btn ml-6.5 w-min whitespace-nowrap btn-soft btn-xs"
+          @click="store.switchRequestHeaderModOperation(mod.id)"
         >
-          <i class="i-lucide-x size-4" />
+          Operation: <span class="capitalize">{{ mod.operation }}</span>
+          <i class="i-lucide-refresh-cw size-3" />
         </button>
-      </label>
+      </div>
     </fieldset>
   </div>
 </template>

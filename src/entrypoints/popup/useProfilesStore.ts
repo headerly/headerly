@@ -4,22 +4,29 @@ import { head } from "es-toolkit";
 import { defineStore } from "pinia";
 
 type UUID = ReturnType<typeof crypto.randomUUID>;
-interface BaseMod {
+interface BaseHeaderMod {
   id: UUID;
   enabled: boolean;
-}
-
-type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
-
-interface HeaderMod extends BaseMod {
   name: string;
   value: string;
   operation: HeaderModOperation;
 }
 
+type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
+
+interface RequestHeaderMod extends BaseHeaderMod {
+  // Adds a new entry for the specified header. The `append` operation is not supported for request headers.
+  // https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#enum_1
+  operation: Exclude<HeaderModOperation, "append">;
+}
+
+interface ResponseHeaderMod extends BaseHeaderMod {
+  operation: HeaderModOperation;
+}
+
 interface Profile {
-  requestHeaderMods?: HeaderMod[];
-  responseHeaderMods?: HeaderMod[];
+  requestHeaderMods?: RequestHeaderMod[];
+  responseHeaderMods?: ResponseHeaderMod[];
   id: UUID;
   name: string;
   enabled: boolean;
@@ -109,7 +116,7 @@ export const useProfilesStore = defineStore("profiles", {
         this.profileOrder.splice(toIndex, 0, removed);
       }
     },
-    addRequestHeaderMod(operation: HeaderModOperation) {
+    addRequestHeaderMod(operation: "set" | "remove") {
       if (!this.selectedProfile) {
         return;
       }
@@ -123,6 +130,14 @@ export const useProfilesStore = defineStore("profiles", {
         value: "",
         operation,
       });
+    },
+    switchRequestHeaderModOperation(modId: UUID) {
+      const mod = this.selectedProfile?.requestHeaderMods?.find(m => m.id === modId);
+      const supportedOperations = ["set", "remove"] as const satisfies HeaderModOperation[];
+      if (!mod) {
+        return;
+      }
+      mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
     },
     deleteRequestHeaderMod(modId: UUID) {
       if (this.selectedProfile?.requestHeaderMods) {
