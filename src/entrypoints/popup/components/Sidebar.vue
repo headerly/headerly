@@ -72,7 +72,8 @@ const settingsStore = useSettingsStore();
           :data-tip="settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension'"
           @click="settingsStore.togglePower"
         >
-          <i class="i-lucide-power size-4" />
+          <i v-if="settingsStore.powerOn" class="i-lucide-power size-4" />
+          <i v-else class="i-lucide-power-off size-4" />
         </button>
       </div>
     </div>

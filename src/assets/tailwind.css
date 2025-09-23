@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @plugin '@egoist/tailwindcss-icons';
 @plugin "daisyui" {
-    themes: winter --default, dark --prefersdark;
+    themes: all;
 }
 
 @theme {

@@ -3,12 +3,13 @@ import type { HTMLAttributes } from "vue";
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import ThemeController from "./ThemeController.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-const store = useProfilesStore();
+const profilesStore = useProfilesStore();
 
 function openInFullscreen() {
   browser.tabs.create({ url: "popup.html" });
@@ -17,8 +18,8 @@ function openInFullscreen() {
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>();
 function handleEditProfileName() {
-  if (profileNameInput.value?.length && store.selectedProfile) {
-    store.selectedProfile.name = profileNameInput.value;
+  if (profileNameInput.value?.length && profilesStore.selectedProfile) {
+    profilesStore.selectedProfile.name = profileNameInput.value;
   }
   profileNameEditing.value = false;
 }
@@ -36,11 +37,11 @@ function handleEditProfileName() {
         btn flex items-center gap-1.5 text-base font-semibold btn-ghost btn-sm
       "
       @click="() => {
-        profileNameInput = store.selectedProfile?.name
+        profileNameInput = profilesStore.selectedProfile?.name
         profileNameEditing = true
       }"
     >
-      <span class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap">{{ store.selectedProfile?.name }}</span>
+      <span class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap">{{ profilesStore.selectedProfile?.name }}</span>
       <i class="i-lucide-pencil-line size-4" />
     </button>
     <div v-else class="flex gap-1.5">
@@ -66,12 +67,18 @@ function handleEditProfileName() {
       </button>
     </div>
     <div
-      v-if="store.selectedProfile"
+      v-if="profilesStore.selectedProfile"
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
-      <div class="tooltip tooltip-left font-semibold" :data-tip="store.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile'">
+      <ThemeController
+        class="
+          tooltip tooltip-left
+          before:font-semibold
+        " data-tip="Change Theme"
+      />
+      <div class="tooltip tooltip-left font-semibold" :data-tip="profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile'">
         <input
-          v-model="store.selectedProfile.enabled"
+          v-model="profilesStore.selectedProfile.enabled"
           type="checkbox"
           :class="cn(
             `
@@ -79,7 +86,7 @@ function handleEditProfileName() {
               before:size-4
               after:hidden
             `,
-            store.selectedProfile.enabled
+            profilesStore.selectedProfile.enabled
               ? 'before:i-lucide-pause'
               : `
                 btn-active
@@ -91,14 +98,14 @@ function handleEditProfileName() {
       <button
         class="tooltip btn tooltip-left btn-square btn-ghost btn-sm btn-primary"
         data-tip="Add new request header mod"
-        @click="store.addRequestHeaderMod('set')"
+        @click="profilesStore.addRequestHeaderMod('set')"
       >
         <i class="i-lucide-plus size-4" />
       </button>
       <button
         class="tooltip btn tooltip-left btn-square btn-ghost btn-sm btn-error"
         data-tip="Delete current profile"
-        @click="store.deleteProfile"
+        @click="profilesStore.deleteProfile"
       >
         <i class="i-lucide-trash size-4" />
       </button>
