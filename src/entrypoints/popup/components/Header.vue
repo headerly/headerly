@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "vue";
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../useProfilesStore";
+import { useProfilesStore } from "../stores/useProfilesStore";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];

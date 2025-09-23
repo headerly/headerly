@@ -1,7 +1,6 @@
-import type { StorageLikeAsync } from "@vueuse/core";
-import { useStorageAsync } from "@vueuse/core";
 import { head } from "es-toolkit";
 import { defineStore } from "pinia";
+import { useBrowserStorage } from "../hooks/useBrowserStorage";
 
 type UUID = ReturnType<typeof crypto.randomUUID>;
 interface BaseHeaderMod {
@@ -32,24 +31,17 @@ interface Profile {
   enabled: boolean;
 }
 
-interface UserSettings {
+interface UserProfiles {
   profiles: Profile[];
   profileOrder: UUID[];
   selectedProfileId?: UUID;
 }
 
-/**
- * The purpose is just to use `as` to resolve type errors.
- */
-function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
-  return useStorageAsync<T>(key, initialValue, storage as StorageLikeAsync, { mergeDefaults: true });
-}
-
 export const useProfilesStore = defineStore("profiles", {
   state: () => {
-    const profiles = useBrowserStorage<UserSettings["profiles"]>("local:profiles", []);
-    const profileOrder = useBrowserStorage<UserSettings["profileOrder"]>("local:profileOrder", []);
-    const selectedProfileId = useBrowserStorage<UserSettings["selectedProfileId"]>("local:selectedProfileId", undefined);
+    const profiles = useBrowserStorage<UserProfiles["profiles"]>("local:profiles", []);
+    const profileOrder = useBrowserStorage<UserProfiles["profileOrder"]>("local:profileOrder", []);
+    const selectedProfileId = useBrowserStorage<UserProfiles["selectedProfileId"]>("local:selectedProfileId", undefined);
     return {
       profiles,
       profileOrder,

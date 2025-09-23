@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../useProfilesStore";
+import { useProfilesStore } from "../stores/useProfilesStore";
+import { useSettingsStore } from "../stores/useSettingsStore";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-const store = useProfilesStore();
+const profilesStore = useProfilesStore();
+const settingsStore = useSettingsStore();
 </script>
 
 <template>
   <div
-    :class="cn('bg-base-200 p-1', className)"
+    :class="cn('flex flex-col justify-between bg-base-200 p-1', className)"
   >
     <ul class="flex flex-col gap-1 rounded-box bg-base-200">
       <li>
@@ -21,7 +23,7 @@ const store = useProfilesStore();
           class="
             tooltip btn tooltip-right btn-square btn-soft btn-sm btn-primary
           "
-          @click="store.addProfile"
+          @click="profilesStore.addProfile"
         >
           <i class="i-lucide-file-plus size-4" />
         </button>
@@ -37,16 +39,16 @@ const store = useProfilesStore();
         </button>
       </li>
       <li
-        v-for="profile in store.profiles" :key="profile.id"
+        v-for="profile in profilesStore.profiles" :key="profile.id"
       >
         <div class="indicator">
           <button
             :class="cn(
               'tooltip btn tooltip-right btn-square btn-soft btn-sm',
-              { 'btn-active btn-primary': store.selectedProfileId === profile.id },
+              { 'btn-active btn-primary': profilesStore.selectedProfileId === profile.id },
             )"
             :data-tip="profile.name"
-            @click="store.selectedProfileId = profile.id"
+            @click="profilesStore.selectedProfileId = profile.id"
           >
             <span class="sr-only">{{ profile.name }}</span>
             <i class="i-lucide-file size-4" />
@@ -59,5 +61,20 @@ const store = useProfilesStore();
         </div>
       </li>
     </ul>
+    <div>
+      <div class="divider" />
+      <div>
+        <button
+          :class="cn(
+            'tooltip btn tooltip-right btn-square w-full btn-soft btn-sm',
+            settingsStore.powerOn ? 'btn-error' : 'btn-primary',
+          )"
+          :data-tip="settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension'"
+          @click="settingsStore.togglePower"
+        >
+          <i class="i-lucide-power size-4" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
