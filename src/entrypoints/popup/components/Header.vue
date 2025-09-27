@@ -87,16 +87,7 @@ function handleEditProfileName() {
       v-if="profilesStore.selectedProfile"
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
-      <TooltipProvider :delay-duration="200">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <ThemeController />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>Change theme</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <ThemeController />
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>

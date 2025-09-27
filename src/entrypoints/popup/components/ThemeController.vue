@@ -20,7 +20,7 @@ watch(
 
 <template>
   <div
-    :class="cn('dropdown dropdown-end block', className)"
+    :class="cn('dropdown dropdown-center dropdown-bottom block', className)"
   >
     <div
       tabindex="0"
@@ -45,7 +45,7 @@ watch(
     <div
       tabindex="0"
       class="
-        dropdown-content top-px h-[30.5rem] max-h-[calc(100vh-8.6rem)]
+        dropdown-content top-px !z-10 h-[30.5rem] max-h-[calc(100vh-8.6rem)]
         overflow-y-auto rounded-box
         border-[length:var(--border)]
         border-white/5 bg-base-200 text-base-content shadow-2xl

@@ -16,7 +16,7 @@ const profilesStore = useProfilesStore();
           grid grid-cols-[min-content_minmax(0,1fr)]
           grid-rows-[min-content_minmax(0,1fr)]
         `,
-        'h-120 w-150 overflow-clip rounded-sm outline-2 outline-offset-2',
+        'h-120 w-150 rounded-sm outline-2 outline-offset-2',
       )"
     >
       <Sidebar class="col-start-1 row-span-2" />
