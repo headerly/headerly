@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import type { Profile } from "../stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
+  profile: Profile;
 }>();
 
 const profilesStore = useProfilesStore();
@@ -12,24 +14,22 @@ const profilesStore = useProfilesStore();
 
 <template>
   <div
-    :class="cn(profilesStore.selectedProfile?.enabled ? 'opacity-100' : `
-      opacity-50
-    `, className)"
+    :class="cn(profile.enabled ? 'opacity-100' : `opacity-50`, className)"
   >
     <fieldset
-      v-if="profilesStore.selectedProfile?.requestHeaderMods?.length"
+      v-if="profile.requestHeaderMods?.length"
       class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-4"
     >
       <legend class="fieldset-legend text-base">
         <label>
           <input
             type="checkbox" class="checkbox checkbox-sm"
-            :checked="profilesStore.selectedProfile.requestHeaderMods.every(mod => mod.enabled)"
-            :indeterminate="profilesStore.selectedProfile.requestHeaderMods.some(mod => mod.enabled)
-              && !profilesStore.selectedProfile.requestHeaderMods.every(mod => mod.enabled)"
+            :checked="profile.requestHeaderMods.every(mod => mod.enabled)"
+            :indeterminate="profile.requestHeaderMods.some(mod => mod.enabled)
+              && !profile.requestHeaderMods.every(mod => mod.enabled)"
             @change="(e) => {
               const checked = (e.target as HTMLInputElement).checked;
-              profilesStore.selectedProfile?.requestHeaderMods?.forEach(mod => {
+              profile.requestHeaderMods?.forEach(mod => {
                 mod.enabled = checked;
               });
             }"
@@ -44,7 +44,7 @@ const profilesStore = useProfilesStore();
         </button>
       </legend>
       <div
-        v-for="mod in profilesStore.selectedProfile.requestHeaderMods"
+        v-for="mod in profile.requestHeaderMods"
         :key="mod.id"
         class="flex flex-col gap-1.5"
       >

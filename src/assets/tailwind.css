@@ -1,7 +1,10 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
 @plugin '@egoist/tailwindcss-icons';
 @plugin "daisyui" {
-    themes: all;
+  themes: all;
+  logs: false;
 }
 
 @theme {

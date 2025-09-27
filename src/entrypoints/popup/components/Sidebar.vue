@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
+import ProfileSelect from "./ProfileSelect.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -14,66 +21,76 @@ const settingsStore = useSettingsStore();
 
 <template>
   <div
-    :class="cn('flex flex-col justify-between bg-base-200 p-1', className)"
+    :class="cn('flex h-full flex-col justify-between bg-base-200 py-2', className)"
   >
-    <ul class="flex flex-col gap-1 rounded-box bg-base-200">
+    <ul
+      class="flex flex-col items-center gap-1 rounded-box bg-base-200"
+    >
       <li>
-        <button
-          data-tip="Create new profile"
-          class="
-            tooltip btn tooltip-right btn-square btn-soft btn-sm btn-primary
-          "
-          @click="profilesStore.addProfile"
-        >
-          <i class="i-lucide-file-plus size-4" />
-        </button>
+        <TooltipProvider :delay-duration="200">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <button
+                class="btn btn-square btn-soft btn-sm"
+                @click="profilesStore.addProfile"
+              >
+                <i class="i-lucide-plus size-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Create new profile</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </li>
       <li>
-        <button
-          data-tip="Search profile"
-          class="
-            tooltip btn tooltip-right btn-square btn-soft btn-sm btn-primary
-          "
-        >
-          <i class="i-lucide-search size-4" />
-        </button>
-      </li>
-      <li
-        v-for="profile in profilesStore.profiles" :key="profile.id"
-      >
-        <div class="indicator">
-          <button
-            :class="cn(
-              'tooltip btn tooltip-right btn-square text-xl btn-soft btn-sm',
-              { 'btn-active btn-primary': profilesStore.selectedProfileId === profile.id },
-            )"
-            :data-tip="profile.name"
-            @click="profilesStore.selectedProfileId = profile.id"
-          >
-            {{ profile.emoji }}
-          </button>
-          <span
-            :class="cn('indicator-item status', profile.enabled ? `
-              status-success
-            ` : `status`)"
-          />
-        </div>
+        <TooltipProvider :delay-duration="200">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <button
+                data-tip="Search profile"
+                class="btn btn-square btn-soft btn-sm"
+              >
+                <i class="i-lucide-search size-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Search profile</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </li>
     </ul>
-    <div>
-      <div class="divider" />
-      <div>
-        <button
-          :class="cn(
-            'tooltip btn tooltip-right btn-square w-full btn-soft btn-sm',
-            settingsStore.powerOn ? 'btn-error' : 'btn-primary',
-          )"
-          :data-tip="settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension'"
-          @click="settingsStore.togglePower"
-        >
-          <i class="i-lucide-power size-4" />
-        </button>
-      </div>
+
+    <div class="divider m-0" />
+
+    <div
+      class="flex flex-1 flex-col gap-1 overflow-y-hidden"
+    >
+      <ProfileSelect v-if="profilesStore.orderedProfiles.length && profilesStore.selectedProfileId" />
+    </div>
+
+    <div class="divider m-0" />
+
+    <div class="flex flex-col items-center">
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              :class="cn(
+                'btn btn-square btn-soft btn-sm',
+                settingsStore.powerOn ? 'btn-error' : 'btn-primary',
+              )"
+              @click="settingsStore.togglePower"
+            >
+              <i class="i-lucide-power size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{{ settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension' }}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   </div>
 </template>

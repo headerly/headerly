@@ -23,7 +23,7 @@ interface ResponseHeaderMod extends BaseHeaderMod {
   operation: HeaderModOperation;
 }
 
-interface Profile {
+export interface Profile {
   requestHeaderMods?: RequestHeaderMod[];
   responseHeaderMods?: ResponseHeaderMod[];
   id: UUID;

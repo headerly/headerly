@@ -2,6 +2,12 @@
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, ref } from "vue";
 import emojisData from "@/assets/emojis.json" with { type: "json" };
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
@@ -88,14 +94,21 @@ function scrollToCategory(categoryLabel: string) {
         <nav class="sticky top-0 z-10 rounded-box glass">
           <ul class="flex flex-nowrap justify-between gap-1 p-1">
             <li v-for="item in emojisWithCategory" :key="item.label">
-              <button
-                class="tooltip btn tooltip-bottom btn-square btn-ghost btn-xs"
-                :data-tip="item.label"
-                @click="scrollToCategory(item.label)"
-              >
-                <i :class="cn(item.icon, 'size-4')" />
-                <span class="sr-only">{{ item.label }}</span>
-              </button>
+              <TooltipProvider :delay-duration="200">
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <button
+                      class="btn btn-square btn-ghost btn-xs"
+                      @click="scrollToCategory(item.label)"
+                    >
+                      <i :class="cn(item.icon, 'size-4')" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>{{ item.label }}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </li>
           </ul>
         </nav>
@@ -105,9 +118,10 @@ function scrollToCategory(categoryLabel: string) {
         class="flex-1 overflow-y-auto px-2"
       >
         <div
+          class="relative pb-2"
           :style="{
             height: `${rowVirtualizer.getTotalSize()}px`,
-            position: 'relative',
+
           }"
         >
           <div

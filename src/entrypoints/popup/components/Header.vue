@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { ref } from "vue";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 import EmojiPicker from "./EmojiPicker.vue";
@@ -81,52 +87,92 @@ function handleEditProfileName() {
       v-if="profilesStore.selectedProfile"
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
-      <ThemeController
-        class="
-          tooltip tooltip-left
-          before:font-semibold
-        " data-tip="Change Theme"
-      />
-      <div class="tooltip tooltip-left font-semibold" :data-tip="profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile'">
-        <input
-          v-model="profilesStore.selectedProfile.enabled"
-          type="checkbox"
-          :class="cn(
-            `
-              btn btn-square btn-ghost btn-sm btn-primary
-              before:size-4
-              after:hidden
-            `,
-            profilesStore.selectedProfile.enabled
-              ? 'before:i-lucide-pause'
-              : `
-                btn-active
-                before:i-lucide-play
-              `,
-          )"
-        >
-      </div>
-      <button
-        class="tooltip btn tooltip-left btn-square btn-ghost btn-sm btn-primary"
-        data-tip="Add new request header mod"
-        @click="profilesStore.addRequestHeaderMod('set')"
-      >
-        <i class="i-lucide-plus size-4" />
-      </button>
-      <button
-        class="tooltip btn tooltip-left btn-square btn-ghost btn-sm btn-error"
-        data-tip="Delete current profile"
-        @click="profilesStore.deleteProfile"
-      >
-        <i class="i-lucide-trash size-4" />
-      </button>
-      <button
-        class="tooltip btn tooltip-left btn-square btn-soft btn-sm"
-        data-tip="Open in fullscreen"
-        @click="openInFullscreen"
-      >
-        <i class="i-lucide-maximize-2 size-4" />
-      </button>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <ThemeController />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Change theme</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <input
+              v-model="profilesStore.selectedProfile.enabled"
+              type="checkbox"
+              :class="cn(
+                `
+                  btn btn-square btn-ghost btn-sm btn-primary
+                  before:size-4
+                  after:hidden
+                `,
+                profilesStore.selectedProfile.enabled
+                  ? 'before:i-lucide-pause'
+                  : `
+                    btn-active
+                    before:i-lucide-play
+                  `,
+              )"
+            >
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>
+              {{
+                profilesStore.selectedProfile.enabled
+                  ? 'Pause current profile' : 'Resume current profile'
+              }}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-ghost btn-sm btn-primary"
+              @click="profilesStore.addRequestHeaderMod('set')"
+            >
+              <i class="i-lucide-plus size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Add new request header mod</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-ghost btn-sm btn-error"
+              @click="profilesStore.deleteProfile"
+            >
+              <i class="i-lucide-trash size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Delete current profile</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-soft btn-sm"
+              @click="openInFullscreen"
+            >
+              <i class="i-lucide-maximize-2 size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Open in fullscreen</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   </header>
 </template>
