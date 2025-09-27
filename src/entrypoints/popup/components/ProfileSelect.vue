@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
@@ -13,9 +13,12 @@ const profilesStore = useProfilesStore();
 
 const profileRefs = ref<HTMLElement[]>([]);
 
-onMounted(() => {
-  scrollToEnabledProfile();
-});
+watch(
+  () => profilesStore.selectedProfileId,
+  () => {
+    scrollToEnabledProfile();
+  },
+);
 
 function scrollToEnabledProfile() {
   const enabledIndex = profilesStore.orderedProfiles.findIndex(profile => profile.id === profilesStore.selectedProfileId);

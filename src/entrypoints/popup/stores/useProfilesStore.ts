@@ -86,8 +86,8 @@ export const useProfilesStore = defineStore("profiles", {
         responseHeaderMods: [],
         emoji: "📃",
       } satisfies Profile;
-      this.profiles.push(newProfile);
-      this.profileOrder.push(newProfile.id);
+      this.profiles.unshift(newProfile);
+      this.profileOrder.unshift(newProfile.id);
       this.selectedProfileId = newProfile.id;
     },
     deleteProfile() {
