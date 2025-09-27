@@ -1,5 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
+import turboConsole from "unplugin-turbo-console/vite";
 import vueDevtools from "vite-plugin-vue-devtools";
 
 import { defineConfig } from "wxt";
@@ -26,14 +27,6 @@ export default defineConfig({
   zip: {
     name: "headerly",
   },
-  hooks: {
-    // https://github.com/wxt-dev/wxt/issues/533
-    "vite:devServer:extendConfig": (config) => {
-      config.plugins?.push(vueDevtools({
-        appendTo: "src/entrypoints/options/main.ts",
-      }));
-    },
-  },
   vite: () => ({
     plugins: [
       vueDevtools({
@@ -41,6 +34,7 @@ export default defineConfig({
       }),
       vue(),
       tailwindcss(),
+      turboConsole(),
     ],
     build: {
       target: "esnext",

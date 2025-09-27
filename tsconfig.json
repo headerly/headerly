@@ -1,6 +1,9 @@
 {
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
+    "types": [
+      "unplugin-turbo-console/client"
+    ],
     "rewriteRelativeImportExtensions": true,
     /* Linting */
     "allowUnreachableCode": false,
