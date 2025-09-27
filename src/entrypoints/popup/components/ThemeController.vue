@@ -58,11 +58,10 @@ watch(
           Themes
         </li>
 
-        <li v-for="theme of themes" :key="theme">
+        <li v-for="theme in themes" :key="theme">
           <button
             class="gap-3 px-2"
             :data-set-theme="theme"
-            data-act-class="[&_svg]:visible"
             @click="settingsStore.setTheme(theme)"
           >
             <div

@@ -44,14 +44,13 @@ const settingsStore = useSettingsStore();
         <div class="indicator">
           <button
             :class="cn(
-              'tooltip btn tooltip-right btn-square btn-soft btn-sm',
+              'tooltip btn tooltip-right btn-square text-xl btn-soft btn-sm',
               { 'btn-active btn-primary': profilesStore.selectedProfileId === profile.id },
             )"
             :data-tip="profile.name"
             @click="profilesStore.selectedProfileId = profile.id"
           >
-            <span class="sr-only">{{ profile.name }}</span>
-            <i class="i-lucide-file size-4" />
+            {{ profile.emoji }}
           </button>
           <span
             :class="cn('indicator-item status', profile.enabled ? `
@@ -72,8 +71,7 @@ const settingsStore = useSettingsStore();
           :data-tip="settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension'"
           @click="settingsStore.togglePower"
         >
-          <i v-if="settingsStore.powerOn" class="i-lucide-power size-4" />
-          <i v-else class="i-lucide-power-off size-4" />
+          <i class="i-lucide-power size-4" />
         </button>
       </div>
     </div>

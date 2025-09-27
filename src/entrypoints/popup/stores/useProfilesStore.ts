@@ -2,7 +2,7 @@ import { head } from "es-toolkit";
 import { defineStore } from "pinia";
 import { useBrowserStorage } from "../hooks/useBrowserStorage";
 
-type UUID = ReturnType<typeof crypto.randomUUID>;
+export type UUID = ReturnType<typeof crypto.randomUUID>;
 interface BaseHeaderMod {
   id: UUID;
   enabled: boolean;
@@ -29,6 +29,7 @@ interface Profile {
   id: UUID;
   name: string;
   enabled: boolean;
+  emoji: string;
 }
 
 interface UserProfiles {
@@ -71,7 +72,7 @@ export const useProfilesStore = defineStore("profiles", {
   },
   actions: {
     addProfile() {
-      const newProfile: Profile = {
+      const newProfile = {
         id: crypto.randomUUID(),
         name: `New Profile ${this.profiles.length + 1}`,
         enabled: true,
@@ -83,7 +84,8 @@ export const useProfilesStore = defineStore("profiles", {
           operation: "set",
         }],
         responseHeaderMods: [],
-      };
+        emoji: "📃",
+      } satisfies Profile;
       this.profiles.push(newProfile);
       this.profileOrder.push(newProfile.id);
       this.selectedProfileId = newProfile.id;

@@ -44,7 +44,7 @@ const profilesStore = useProfilesStore();
         </button>
       </legend>
       <div
-        v-for="mod of profilesStore.selectedProfile.requestHeaderMods"
+        v-for="mod in profilesStore.selectedProfile.requestHeaderMods"
         :key="mod.id"
         class="flex flex-col gap-1.5"
       >

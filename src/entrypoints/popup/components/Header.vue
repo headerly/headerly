@@ -3,6 +3,7 @@ import type { HTMLAttributes } from "vue";
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import EmojiPicker from "./EmojiPicker.vue";
 import ThemeController from "./ThemeController.vue";
 
 const { class: className } = defineProps<{
@@ -31,40 +32,50 @@ function handleEditProfileName() {
       flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2
     `, className)"
   >
-    <button
-      v-if="!profileNameEditing"
-      class="
-        btn flex items-center gap-1.5 text-base font-semibold btn-ghost btn-sm
+    <div
+      v-if="profilesStore.selectedProfile?.emoji" class="
+        flex items-center gap-1
       "
-      @click="() => {
-        profileNameInput = profilesStore.selectedProfile?.name
-        profileNameEditing = true
-      }"
     >
-      <span class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap">{{ profilesStore.selectedProfile?.name }}</span>
-      <i class="i-lucide-pencil-line size-4" />
-    </button>
-    <div v-else class="flex gap-1.5">
-      <input
-        v-model="profileNameInput"
-        type="text"
-        required
-        class="
-          input input-sm max-w-xs text-base
-          user-invalid:input-error
-        "
-        @keyup.enter="handleEditProfileName"
-        @keyup.esc="profileNameEditing = false"
-      >
+      <EmojiPicker v-model="profilesStore.selectedProfile.emoji" />
       <button
+        v-if="!profileNameEditing"
         class="
-          btn flex btn-square items-center gap-2 text-base font-semibold
-          btn-soft btn-sm
+          btn flex items-center gap-1 text-base font-semibold btn-ghost btn-sm
         "
-        @click="handleEditProfileName"
+        @click="() => {
+          profileNameInput = profilesStore.selectedProfile?.name
+          profileNameEditing = true
+        }"
       >
-        <i class="i-lucide-check-check size-4" />
+        <span
+          class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap"
+        >
+          {{ profilesStore.selectedProfile?.name }}</span>
+        <i class="i-lucide-pencil-line size-4" />
       </button>
+      <div v-else class="flex gap-1.5">
+        <input
+          v-model="profileNameInput"
+          type="text"
+          required
+          class="
+            input input-sm max-w-xs text-base
+            user-invalid:input-error
+          "
+          @keyup.enter="handleEditProfileName"
+          @keyup.esc="profileNameEditing = false"
+        >
+        <button
+          class="
+            btn flex btn-square items-center gap-2 text-base font-semibold
+            btn-soft btn-sm
+          "
+          @click="handleEditProfileName"
+        >
+          <i class="i-lucide-check-check size-4" />
+        </button>
+      </div>
     </div>
     <div
       v-if="profilesStore.selectedProfile"
