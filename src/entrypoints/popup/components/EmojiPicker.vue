@@ -87,10 +87,10 @@ function scrollToCategory(categoryLabel: string) {
       tabindex="0"
       class="
         dropdown-content z-10 flex h-82 w-67 flex-col rounded-box bg-base-300
-        shadow-sm
+        pt-2 shadow-sm
       "
     >
-      <div class="px-2 pt-2">
+      <div class="px-2">
         <nav class="sticky top-0 z-10 rounded-box glass">
           <ul class="flex flex-nowrap justify-between gap-1 p-1">
             <li v-for="item in emojisWithCategory" :key="item.label">
@@ -115,7 +115,7 @@ function scrollToCategory(categoryLabel: string) {
       </div>
       <div
         ref="parentRef"
-        class="flex-1 overflow-y-auto px-2"
+        class="flex-1 overflow-y-auto px-2 pb-2"
       >
         <div
           class="relative pb-2"
