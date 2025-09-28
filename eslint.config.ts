@@ -33,6 +33,9 @@ export default antfu(
       "better-tailwindcss/no-unregistered-classes": "off",
     },
   },
+  {
+    ignores: ["**/*.md"],
+  },
 )
   .append(...vueI18n.configs["flat/recommended"], {
     settings: {
