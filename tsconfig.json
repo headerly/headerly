@@ -4,7 +4,6 @@
     "types": [
       "unplugin-turbo-console/client"
     ],
-    "rewriteRelativeImportExtensions": true,
     /* Linting */
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
