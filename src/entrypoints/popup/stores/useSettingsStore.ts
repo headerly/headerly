@@ -1,16 +1,11 @@
 import type { Theme } from "../constants/themes";
 import { defineStore } from "pinia";
-import { useBrowserStorage } from "../hooks/useBrowserStorage";
-
-interface UserSettings {
-  powerOn: boolean;
-  theme: Theme;
-}
+import { usePowerOnStorage, useThemeStorage } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", {
   state: () => {
-    const powerOn = useBrowserStorage<UserSettings["powerOn"]>("local:powerOn", true);
-    const theme = useBrowserStorage<UserSettings["theme"]>("local:theme", "light");
+    const { ref: powerOn } = usePowerOnStorage();
+    const { ref: theme } = useThemeStorage();
     return {
       powerOn,
       theme,

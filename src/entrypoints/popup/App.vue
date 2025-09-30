@@ -3,9 +3,6 @@ import { cn } from "@/lib/utils";
 import Header from "./components/Header.vue";
 import SelectedProfile from "./components/SelectedProfile.vue";
 import Sidebar from "./components/Sidebar.vue";
-import { useProfilesStore } from "./stores/useProfilesStore";
-
-const profilesStore = useProfilesStore();
 </script>
 
 <template>
@@ -22,7 +19,7 @@ const profilesStore = useProfilesStore();
       <Sidebar class="col-start-1 row-span-2" />
       <Header class="col-start-2 row-start-1" />
       <main class="col-start-2 row-start-2 overflow-y-auto p-2">
-        <SelectedProfile v-if="profilesStore.selectedProfile" :profile="profilesStore.selectedProfile" />
+        <SelectedProfile />
       </main>
     </div>
   </div>

@@ -67,7 +67,7 @@ const settingsStore = useSettingsStore();
     <div
       class="flex flex-1 flex-col gap-1 overflow-y-hidden"
     >
-      <ProfileSelect v-if="profilesStore.orderedProfiles.length && profilesStore.selectedProfileId" />
+      <ProfileSelect />
     </div>
 
     <div class="divider m-0" />

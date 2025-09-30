@@ -39,4 +39,4 @@ test-results
 playwright-report
 build
 
-.react-router/
+stats.html

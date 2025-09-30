@@ -14,14 +14,14 @@ const profilesStore = useProfilesStore();
 const profileRefs = ref<HTMLElement[]>([]);
 
 watch(
-  () => profilesStore.selectedProfileId,
+  () => profilesStore.manager.selectedProfileId,
   () => {
     scrollToEnabledProfile();
   },
 );
 
 function scrollToEnabledProfile() {
-  const enabledIndex = profilesStore.orderedProfiles.findIndex(profile => profile.id === profilesStore.selectedProfileId);
+  const enabledIndex = profilesStore.orderedProfiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
   if (enabledIndex !== -1 && profileRefs.value[enabledIndex]) {
     profileRefs.value[enabledIndex].scrollIntoView({
       behavior: "smooth",
@@ -40,7 +40,7 @@ function scrollToEnabledProfile() {
     "
   >
     <div
-      v-for="(profile, index) in profilesStore.profiles" :key="profile.id"
+      v-for="(profile, index) in profilesStore.manager.profiles" :key="profile.id"
       :ref="el => profileRefs[index] = el as HTMLElement"
     >
       <TooltipProvider :delay-duration="200">
@@ -50,9 +50,9 @@ function scrollToEnabledProfile() {
               <button
                 :class="cn(
                   'btn btn-square text-xl btn-soft btn-sm',
-                  { 'btn-active btn-primary': profilesStore.selectedProfileId === profile.id },
+                  { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
                 )"
-                @click="profilesStore.selectedProfileId = profile.id"
+                @click="profilesStore.manager.selectedProfileId = profile.id"
               >
                 {{ profile.emoji }}
               </button>

@@ -1,7 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import turboConsole from "unplugin-turbo-console/vite";
-import { analyzer } from "vite-bundle-analyzer";
 import vueDevtools from "vite-plugin-vue-devtools";
 
 import { defineConfig } from "wxt";
@@ -36,9 +35,6 @@ export default defineConfig({
       vue(),
       tailwindcss(),
       turboConsole(),
-      analyzer({
-        enabled: false,
-      }),
     ],
     build: {
       target: "esnext",

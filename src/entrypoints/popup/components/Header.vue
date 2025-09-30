@@ -23,9 +23,9 @@ function openInFullscreen() {
 }
 
 const profileNameEditing = ref(false);
-const profileNameInput = ref<string>();
+const profileNameInput = ref<string>("");
 function handleEditProfileName() {
-  if (profileNameInput.value?.length && profilesStore.selectedProfile) {
+  if (profileNameInput.value.length && profilesStore.selectedProfile) {
     profilesStore.selectedProfile.name = profileNameInput.value;
   }
   profileNameEditing.value = false;
@@ -39,9 +39,7 @@ function handleEditProfileName() {
     `, className)"
   >
     <div
-      v-if="profilesStore.selectedProfile?.emoji" class="
-        flex items-center gap-1
-      "
+      class="flex items-center gap-1"
     >
       <EmojiPicker v-model="profilesStore.selectedProfile.emoji" />
       <button
@@ -50,14 +48,14 @@ function handleEditProfileName() {
           btn flex items-center gap-1 text-base font-semibold btn-ghost btn-sm
         "
         @click="() => {
-          profileNameInput = profilesStore.selectedProfile?.name
+          profileNameInput = profilesStore.selectedProfile.name
           profileNameEditing = true
         }"
       >
         <span
           class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap"
         >
-          {{ profilesStore.selectedProfile?.name }}</span>
+          {{ profilesStore.selectedProfile.name }}</span>
         <i class="i-lucide-pencil-line size-4" />
       </button>
       <div v-else class="flex gap-1.5">
@@ -84,7 +82,6 @@ function handleEditProfileName() {
       </div>
     </div>
     <div
-      v-if="profilesStore.selectedProfile"
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
       <ThemeController />
