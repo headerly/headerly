@@ -138,11 +138,17 @@ function handleEditProfileName() {
               class="btn btn-square btn-ghost btn-sm btn-error"
               @click="profilesStore.deleteProfile"
             >
-              <i class="i-lucide-trash size-4" />
+              <i
+                :class="cn(
+                  'size-4',
+                  profilesStore.manager.profiles.length === 1
+                    ? `i-lucide-refresh-ccw` : `i-lucide-trash`,
+                )"
+              />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Delete current profile</p>
+            <p>{{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

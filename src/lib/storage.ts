@@ -4,10 +4,7 @@ import type { Theme } from "@/entrypoints/popup/constants/themes";
 import { useStorageAsync } from "@vueuse/core";
 import { toRaw } from "vue";
 
-/**
- * The purpose is just to use `as` to resolve type errors.
- */
-export function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
+function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
   const item = storage.defineItem<T>(key, {
     init() {
       return initialValue;
@@ -32,9 +29,10 @@ export function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
     } as StorageLikeAsync,
     {
       mergeDefaults: true,
+      // @ts-expect-error VueUse types are wrong
       serializer: {
-        read: v => v as unknown as T,
-        write: v => v as unknown as string,
+        read: v => v,
+        write: v => v,
       } as SerializerAsync<T>,
     },
   );
