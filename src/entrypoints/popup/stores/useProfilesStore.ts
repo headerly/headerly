@@ -38,6 +38,7 @@ export const useProfilesStore = defineStore("profiles", {
       this.manager.profileOrder.unshift(newProfile.id);
       this.manager.selectedProfileId = newProfile.id;
     },
+
     deleteProfile() {
       // IMPORTANT: Ensure that there is at least one profile in the storage.
       if (this.manager.profiles.length === 1) {
@@ -51,7 +52,7 @@ export const useProfilesStore = defineStore("profiles", {
       const current = this.manager.profiles.findIndex(p => p.id === this.manager.selectedProfileId);
       const prevNearestProfileId = this.manager.profileOrder[current - 1];
       const nextNearestProfileId = this.manager.profileOrder[current + 1];
-      this.manager.profiles = this.manager.profiles.filter(p => p.id !== this.manager.selectedProfileId);
+      this.manager.profiles.splice(current, 1);
       this.manager.profileOrder = this.manager.profileOrder.filter(id => id !== this.manager.selectedProfileId);
       this.manager.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
     },
