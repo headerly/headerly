@@ -30,7 +30,12 @@ export default antfu(
     },
     rules: {
       ...tailwind.configs.recommended!.rules,
-      "better-tailwindcss/no-unregistered-classes": "off",
+      "better-tailwindcss/no-unregistered-classes": [
+        "error",
+        {
+          ignore: ["dropdown-content", "indicator-item"],
+        },
+      ],
     },
   },
   {

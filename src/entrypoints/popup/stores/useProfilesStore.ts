@@ -78,7 +78,7 @@ export const useProfilesStore = defineStore("profiles", {
     },
     switchRequestHeaderModOperation(modId: number) {
       const mod = this.selectedProfile.requestHeaderMods.find(m => m.id === modId);
-      const supportedOperations = ["set", "remove"] as const satisfies HeaderModOperation[];
+      const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
       if (!mod) {
         return;
       }

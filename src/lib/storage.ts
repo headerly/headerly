@@ -48,7 +48,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
   };
 }
 
-export interface BaseHeaderMod {
+export interface HeaderMod {
   /**
    * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
    * Must be a number(>=1); UUID cannot be used.
@@ -62,19 +62,9 @@ export interface BaseHeaderMod {
 
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
 
-export interface RequestHeaderMod extends BaseHeaderMod {
-  // Adds a new entry for the specified header. The `append` operation is not supported for request headers.
-  // https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#enum_1
-  operation: Exclude<HeaderModOperation, "append">;
-}
-
-export interface ResponseHeaderMod extends BaseHeaderMod {
-  operation: HeaderModOperation;
-}
-
 export interface Profile {
-  requestHeaderMods: RequestHeaderMod[];
-  responseHeaderMods: ResponseHeaderMod[];
+  requestHeaderMods: HeaderMod[];
+  responseHeaderMods: HeaderMod[];
   id: UUID;
   name: string;
   enabled: boolean;

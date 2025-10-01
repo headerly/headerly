@@ -14,6 +14,9 @@ export default defineConfig({
       "declarativeNetRequest",
       "declarativeNetRequestFeedback",
     ],
+    host_permissions: [
+      "<all_urls>",
+    ],
     homepage_url: "https://headerly.dev",
   },
   webExt: {

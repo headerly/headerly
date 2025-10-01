@@ -36,7 +36,6 @@ function scrollToEnabledProfile() {
     class="
       flex flex-col gap-1 overflow-y-auto px-2 py-1
       [scrollbar-width:none]
-      [&::-webkit-scrollbar]:hidden
     "
   >
     <div

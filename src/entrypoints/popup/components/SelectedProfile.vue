@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import {
+  AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
+  AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
+} from "@/entrypoints/popup/constants/header";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 
@@ -8,6 +12,16 @@ const { class: className } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+
+const APPEND_REQUEST_LIST_ID = "AUTOCOMPLETE_APPEND_REQUEST_FIELDS";
+const SET_AND_REMOVE_REQUEST_LIST_ID = "AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS";
+
+function getAutocompleteList(list: string[], input: string) {
+  if (!input) {
+    return [];
+  }
+  return list.filter(field => field.includes(input) && field !== input);
+}
 </script>
 
 <template>
@@ -55,21 +69,41 @@ const profilesStore = useProfilesStore();
             v-model="mod.enabled" type="checkbox"
             class="checkbox checkbox-sm"
           >
-          <label
-            class="flex-1"
-            :data-tip="`Operation: ${mod.operation}`"
-          >
+          <label class="flex-1">
+            <datalist v-if="mod.operation === 'append'" :id="APPEND_REQUEST_LIST_ID">
+              <option
+                v-for="field in getAutocompleteList(AUTOCOMPLETE_APPEND_REQUEST_FIELDS, mod.name)"
+                :key="field"
+                :value="field"
+              />
+            </datalist>
+            <datalist v-else :id="SET_AND_REMOVE_REQUEST_LIST_ID">
+              <option
+                v-for="field in getAutocompleteList(AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS, mod.name)"
+                :key="field"
+                :value="field"
+              />
+            </datalist>
             <input
-              v-model="mod.name" type="text" placeholder="Name" class="
-                peer input input-sm w-full text-base
-              "
+              v-model="mod.name"
+              type="text"
+              placeholder="Name"
+              class="input input-sm w-full text-base text-base-content"
+              :list="mod.operation === 'append' ? APPEND_REQUEST_LIST_ID : SET_AND_REMOVE_REQUEST_LIST_ID"
+              @input="(e) => {
+                // Although the HTTP standard considers header names to be case-insensitive,
+                // `chrome.declarativeNetRequest` will report an error
+                // when receiving a header name with uppercase characters.
+                mod.name = (e.target as HTMLInputElement).value.toLowerCase();
+              }"
             >
           </label>
           <label v-if="mod.operation !== 'remove'" class="flex-1">
             <input
-              v-model="mod.value" type="text" placeholder="Value" class="
-                input input-sm text-base
-              "
+              v-model="mod.value"
+              type="text"
+              placeholder="Value"
+              class="input input-sm text-base text-base-content"
             >
           </label>
           <button
