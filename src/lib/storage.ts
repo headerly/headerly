@@ -49,7 +49,11 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
 }
 
 export interface BaseHeaderMod {
-  id: UUID;
+  /**
+   * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
+   * Must be a number(>=1); UUID cannot be used.
+   */
+  id: number;
   enabled: boolean;
   name: string;
   value: string;
@@ -81,16 +85,20 @@ export interface ProfileManager {
   profiles: Profile[];
   profileOrder: UUID[];
   selectedProfileId: UUID;
+  /**
+   * Remember to increment wherever it is used.
+   */
+  modIdCounter: number;
 }
 
-export function createProfile(id: UUID, profilesLength = 0) {
+export function createProfile(modId: number, profilesLength = 0) {
   return {
-    id,
+    id: crypto.randomUUID(),
     name: `New Profile ${profilesLength + 1}`,
     enabled: true,
     emoji: "📃",
     requestHeaderMods: [{
-      id: crypto.randomUUID(),
+      id: modId,
       enabled: true,
       name: "",
       value: "",
@@ -101,11 +109,13 @@ export function createProfile(id: UUID, profilesLength = 0) {
 }
 
 export function createDefaultProfileManager() {
-  const profileId = crypto.randomUUID();
+  const modIdCounter = 1;
+  const profile = createProfile(modIdCounter);
   return {
-    profiles: [createProfile(profileId)],
-    profileOrder: [profileId],
-    selectedProfileId: profileId,
+    profiles: [profile],
+    profileOrder: [profile.id],
+    selectedProfileId: profile.id,
+    modIdCounter,
   } as const satisfies ProfileManager;
 }
 

@@ -1,4 +1,3 @@
-import type { UUID } from "node:crypto";
 import type { HeaderModOperation } from "@/lib/storage";
 import { head } from "es-toolkit";
 import { defineStore } from "pinia";
@@ -34,7 +33,7 @@ export const useProfilesStore = defineStore("profiles", {
   },
   actions: {
     addProfile() {
-      const newProfile = createProfile(crypto.randomUUID(), this.manager.profiles.length);
+      const newProfile = createProfile(++this.manager.modIdCounter, this.manager.profiles.length);
       this.manager.profiles.unshift(newProfile);
       this.manager.profileOrder.unshift(newProfile.id);
       this.manager.selectedProfileId = newProfile.id;
@@ -43,7 +42,10 @@ export const useProfilesStore = defineStore("profiles", {
       // IMPORTANT: Ensure that there is at least one profile in the storage.
       if (this.manager.profiles.length === 1) {
         const selectedProfileIndex = this.manager.profiles.findIndex(p => p.id === this.manager.selectedProfileId);
-        this.manager.profiles[selectedProfileIndex] = createProfile(this.manager.selectedProfileId);
+        this.manager.profiles[selectedProfileIndex] = {
+          ...createProfile(++this.manager.modIdCounter),
+          id: this.manager.profiles[selectedProfileIndex]!.id,
+        };
         return;
       }
       const current = this.manager.profiles.findIndex(p => p.id === this.manager.selectedProfileId);
@@ -67,14 +69,14 @@ export const useProfilesStore = defineStore("profiles", {
         this.selectedProfile.requestHeaderMods = [];
       }
       this.selectedProfile.requestHeaderMods.push({
-        id: crypto.randomUUID(),
+        id: ++this.manager.modIdCounter,
         enabled: true,
         name: "",
         value: "",
         operation,
       });
     },
-    switchRequestHeaderModOperation(modId: UUID) {
+    switchRequestHeaderModOperation(modId: number) {
       const mod = this.selectedProfile.requestHeaderMods.find(m => m.id === modId);
       const supportedOperations = ["set", "remove"] as const satisfies HeaderModOperation[];
       if (!mod) {
@@ -82,7 +84,7 @@ export const useProfilesStore = defineStore("profiles", {
       }
       mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
     },
-    deleteRequestHeaderMod(modId: UUID) {
+    deleteRequestHeaderMod(modId: number) {
       if (this.selectedProfile.requestHeaderMods) {
         this.selectedProfile.requestHeaderMods = this.selectedProfile.requestHeaderMods.filter(mod => mod.id !== modId);
       }
