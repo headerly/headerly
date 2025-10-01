@@ -33,7 +33,11 @@ export default antfu(
       "better-tailwindcss/no-unregistered-classes": [
         "error",
         {
-          ignore: ["dropdown-content", "indicator-item"],
+          ignore: [
+            "dropdown-content",
+            "dropdown-hover",
+            "indicator-item",
+          ],
         },
       ],
     },

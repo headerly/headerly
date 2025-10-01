@@ -18,10 +18,6 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 
-function openInFullscreen() {
-  browser.tabs.create({ url: "popup.html" });
-}
-
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
 function handleEditProfileName() {
@@ -123,7 +119,7 @@ function handleEditProfileName() {
               class="btn btn-square btn-ghost btn-sm btn-primary"
               @click="profilesStore.addRequestHeaderMod('set')"
             >
-              <i class="i-lucide-plus size-4" />
+              <i class="i-lucide-cross size-4" />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
@@ -149,21 +145,6 @@ function handleEditProfileName() {
           </TooltipTrigger>
           <TooltipContent side="bottom">
             <p>{{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-soft btn-sm"
-              @click="openInFullscreen"
-            >
-              <i class="i-lucide-maximize-2 size-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>Open in fullscreen</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

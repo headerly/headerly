@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getBrowserApiService } from "@/entrypoints/background/BrowserApiService";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 import { useSettingsStore } from "../stores/useSettingsStore";
@@ -17,50 +18,45 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
+
+const { openPopupInNewtab } = getBrowserApiService();
 </script>
 
 <template>
   <div
     :class="cn('flex h-full flex-col justify-between bg-base-200 py-2', className)"
   >
-    <ul
-      class="flex flex-col items-center gap-1 rounded-box bg-base-200"
-    >
-      <li>
-        <TooltipProvider :delay-duration="200">
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <button
-                class="btn btn-square btn-soft btn-sm"
-                @click="profilesStore.addProfile"
-              >
-                <i class="i-lucide-plus size-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Create new profile</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </li>
-      <li>
-        <TooltipProvider :delay-duration="200">
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <button
-                data-tip="Search profile"
-                class="btn btn-square btn-soft btn-sm"
-              >
-                <i class="i-lucide-search size-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Search profile</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </li>
-    </ul>
+    <div class="dropdown-hover dropdown px-2">
+      <div
+        tabindex="0"
+        role="button"
+        class="btn btn-square btn-soft btn-sm"
+        @click="profilesStore.addProfile"
+      >
+        <i class="i-lucide-menu size-4" />
+      </div>
+
+      <ul
+        tabindex="0" class="
+          dropdown-content menu z-1 w-52 rounded-box bg-base-100 p-2 shadow-sm
+        "
+      >
+        <li class="gap-1 font-semibold">
+          <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
+            <i class="i-lucide-cross size-4" />
+            <span>Add new profile</span>
+          </button>
+          <button class="flex flex-row items-center gap-2" @click="openPopupInNewtab">
+            <i class="i-lucide-maximize size-4" />
+            <span>Expand to full tab</span>
+          </button>
+          <button class="flex flex-row items-center gap-2">
+            <i class="i-lucide-settings size-4" />
+            <span>Open settings</span>
+          </button>
+        </li>
+      </ul>
+    </div>
 
     <div class="divider m-0" />
 

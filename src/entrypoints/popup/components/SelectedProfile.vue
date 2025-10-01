@@ -54,7 +54,7 @@ function getAutocompleteList(list: string[], input: string) {
           class="btn btn-square btn-ghost btn-xs btn-primary"
           @click="profilesStore.addRequestHeaderMod('set')"
         >
-          <i class="i-lucide-plus size-4" />
+          <i class="i-lucide-cross size-4" />
         </button>
       </legend>
       <div
