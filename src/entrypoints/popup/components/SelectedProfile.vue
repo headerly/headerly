@@ -84,7 +84,7 @@ const empty = computed(() =>
           Reuqest Headers
           <button
             class="btn btn-square btn-ghost btn-xs btn-primary"
-            @click="profilesStore.addRequestHeaderMod('set')"
+            @click="profilesStore.addRequestHeaderMod()"
           >
             <i class="i-lucide-cross size-4" />
           </button>
