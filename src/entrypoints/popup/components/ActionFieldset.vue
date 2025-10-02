@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ActionType } from "../stores/useProfilesStore";
 import type { HeaderModOperation } from "@/lib/storage";
 import { computed } from "vue";
 import {
@@ -9,7 +10,7 @@ import {
 import { useProfilesStore } from "../stores/useProfilesStore";
 
 const { type } = defineProps<{
-  type: "request" | "response";
+  type: ActionType;
 }>();
 
 const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID";
@@ -60,12 +61,20 @@ const currentMods = computed(() => (
         >
       </label>
       {{ type === "request" ? "Request Headers" : "Response Headers" }}
-      <button
-        class="btn btn-square btn-ghost btn-xs btn-primary"
-        @click="profilesStore.addHeaderAction(type)"
-      >
-        <i class="i-lucide-cross size-4" />
-      </button>
+      <div class="flex gap-1">
+        <button
+          class="btn btn-square btn-ghost btn-xs btn-primary"
+          @click="profilesStore.addHeaderAction(type)"
+        >
+          <i class="i-lucide-cross size-4" />
+        </button>
+        <button
+          class="btn btn-square btn-ghost btn-xs btn-error"
+          @click="profilesStore.deleteHeaderAction(type)"
+        >
+          <i class="i-lucide-trash size-4" />
+        </button>
+      </div>
     </legend>
     <div
       v-for="mod in currentMods"

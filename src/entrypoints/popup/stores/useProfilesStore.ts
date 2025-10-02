@@ -83,6 +83,14 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
+  function deleteHeaderAction(type: ActionType) {
+    if (type === "request") {
+      selectedProfile.value.requestHeaderMods = [];
+    } else {
+      selectedProfile.value.responseHeaderMods = [];
+    }
+  }
+
   function switchHeaderActionOperation(type: ActionType, modId: number) {
     const mod = type === "request"
       ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
@@ -116,6 +124,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     deleteProfile,
     reorderProfiles,
     addHeaderAction,
+    deleteHeaderAction,
     switchHeaderActionOperation,
     deleteHeaderMod,
     undo,
