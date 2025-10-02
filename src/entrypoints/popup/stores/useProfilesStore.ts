@@ -5,6 +5,8 @@ import { defineStore } from "pinia";
 import { computed, watch } from "vue";
 import { createProfile, useProfileManagerStorage } from "@/lib/storage";
 
+export type ActionType = "request" | "response";
+
 export const useProfilesStore = defineStore("profiles", () => {
   const { ref: manager } = useProfileManagerStorage();
 
@@ -66,7 +68,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function addHeaderAction(type: "request" | "response") {
+  function addHeaderAction(type: ActionType) {
     const mod = {
       id: ++manager.value.modIdCounter,
       enabled: true,
@@ -81,8 +83,10 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function switchRequestHeaderModOperation(modId: number) {
-    const mod = selectedProfile.value.requestHeaderMods.find(m => m.id === modId);
+  function switchHeaderActionOperation(type: ActionType, modId: number) {
+    const mod = type === "request"
+      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
+      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
     const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
     if (!mod) {
       return;
@@ -90,7 +94,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
   }
 
-  function deleteHeaderMod(type: "request" | "response", modId: number) {
+  function deleteHeaderMod(type: ActionType, modId: number) {
     if (type === "request") {
       selectedProfile.value.requestHeaderMods = selectedProfile.value.requestHeaderMods.filter(mod => mod.id !== modId);
     } else {
@@ -112,7 +116,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     deleteProfile,
     reorderProfiles,
     addHeaderAction,
-    switchRequestHeaderModOperation,
+    switchHeaderActionOperation,
     deleteHeaderMod,
     undo,
     redo,

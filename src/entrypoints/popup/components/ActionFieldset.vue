@@ -12,7 +12,7 @@ const { type } = defineProps<{
   type: "request" | "response";
 }>();
 
-const AUTOCOMPLETE_LIST_ID = "AUTOCOMPLETE_LIST_ID";
+const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID";
 
 function getAutocompleteList(operation: HeaderModOperation) {
   if (type === "response") {
@@ -80,7 +80,7 @@ const currentMods = computed(() => (
           class="checkbox checkbox-sm"
         >
         <label class="flex-1">
-          <datalist v-if="mod.operation === 'append'" :id="AUTOCOMPLETE_LIST_ID">
+          <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`">
             <option
               v-for="field in autocomplete(mod.name, mod.operation)"
               :key="field"
@@ -92,7 +92,7 @@ const currentMods = computed(() => (
             type="text"
             placeholder="Name"
             class="input input-sm w-full text-base text-base-content"
-            :list="AUTOCOMPLETE_LIST_ID"
+            :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`"
             @input="(e) => {
               // Although the HTTP standard considers header names to be case-insensitive,
               // `chrome.declarativeNetRequest` will report an error
@@ -118,7 +118,7 @@ const currentMods = computed(() => (
       </label>
       <button
         class="btn ml-6.5 w-min whitespace-nowrap btn-soft btn-xs"
-        @click="profilesStore.switchRequestHeaderModOperation(mod.id)"
+        @click="profilesStore.switchHeaderActionOperation(type, mod.id)"
       >
         Operation: <span class="capitalize">{{ mod.operation }}</span>
         <i class="i-lucide-refresh-cw size-3" />
