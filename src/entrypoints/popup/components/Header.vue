@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import AddModModal from "./AddModModal.vue";
 import EmojiPicker from "./EmojiPicker.vue";
 
 const { class: className } = defineProps<{
@@ -142,21 +143,7 @@ function handleEditProfileName() {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-sm btn-primary"
-              @click="profilesStore.addRequestHeaderMod('set')"
-            >
-              <i class="i-lucide-cross size-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>Add new request header mod</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <AddModModal />
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>

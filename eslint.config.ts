@@ -37,6 +37,7 @@ export default antfu(
             "dropdown-content",
             "dropdown-hover",
             "indicator-item",
+            "list-row",
           ],
         },
       ],

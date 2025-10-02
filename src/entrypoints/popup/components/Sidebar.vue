@@ -44,15 +44,15 @@ const { openPopupInNewtab } = getBrowserApiService();
         <li class="gap-1 font-semibold">
           <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
             <i class="i-lucide-cross size-4" />
-            <span>Add new profile</span>
+            <span>Add New Profile</span>
           </button>
           <button class="flex flex-row items-center gap-2" @click="openPopupInNewtab">
             <i class="i-lucide-maximize size-4" />
-            <span>Expand to full tab</span>
+            <span>Expand to Full Tab</span>
           </button>
           <button class="flex flex-row items-center gap-2">
             <i class="i-lucide-settings size-4" />
-            <span>Open settings</span>
+            <span>Open Settings</span>
           </button>
         </li>
       </ul>

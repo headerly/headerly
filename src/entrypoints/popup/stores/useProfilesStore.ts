@@ -6,14 +6,12 @@ import { computed, watch } from "vue";
 import { createProfile, useProfileManagerStorage } from "@/lib/storage";
 
 export const useProfilesStore = defineStore("profiles", () => {
-  // State
   const { ref: manager } = useProfileManagerStorage();
 
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   // Does not provide cross-profile undo/redo capabilities.
   watch(() => manager.value.selectedProfileId, clear);
 
-  // Getters (computed)
   const orderedProfiles = computed(() => {
     const profileMap = new Map(manager.value.profiles.map(p => [p.id, p]));
     return manager.value.profileOrder
@@ -25,7 +23,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
 
-  // Actions
   function addProfile() {
     const newProfile = createProfile(++manager.value.modIdCounter, manager.value.profiles.length);
     manager.value.profiles.unshift(newProfile);
@@ -60,16 +57,24 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function addRequestHeaderMod(operation: "set" | "remove") {
+  function addRequestHeaderMod() {
     selectedProfile.value.requestHeaderMods.push({
       id: ++manager.value.modIdCounter,
       enabled: true,
       name: "",
       value: "",
-      operation,
+      operation: "set",
     });
   }
-
+  function addResponseHeaderMod() {
+    selectedProfile.value.responseHeaderMods.push({
+      id: ++manager.value.modIdCounter,
+      enabled: true,
+      name: "",
+      value: "",
+      operation: "set",
+    });
+  }
   function switchRequestHeaderModOperation(modId: number) {
     const mod = selectedProfile.value.requestHeaderMods.find(m => m.id === modId);
     const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
@@ -98,6 +103,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     deleteProfile,
     reorderProfiles,
     addRequestHeaderMod,
+    addResponseHeaderMod,
     switchRequestHeaderModOperation,
     deleteRequestHeaderMod,
     undo,
