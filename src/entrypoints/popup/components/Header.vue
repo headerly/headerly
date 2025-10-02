@@ -92,7 +92,7 @@ function handleEditProfileName() {
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Undo</p>
+            Undo
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -108,7 +108,7 @@ function handleEditProfileName() {
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Redo</p>
+            Redo
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -134,12 +134,22 @@ function handleEditProfileName() {
             >
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>
-              {{
-                profilesStore.selectedProfile.enabled
-                  ? 'Pause current profile' : 'Resume current profile'
-              }}
-            </p>
+            {{ profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile' }}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-ghost btn-sm btn-primary"
+              @click="profilesStore.duplicateProfile()"
+            >
+              <i class="i-lucide-copy size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            Duplicate current profile
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -161,7 +171,7 @@ function handleEditProfileName() {
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>{{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}</p>
+            {{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

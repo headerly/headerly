@@ -7,26 +7,39 @@ const dialogRef = ref<HTMLDialogElement | null>(null);
 
 const profilesStore = useProfilesStore();
 
+interface Tab {
+  label: string;
+  value: string;
+  icon: string;
+  items: {
+    title: string;
+    description: string;
+    icon: string;
+    action: () => void;
+    excluded?: boolean;
+  }[];
+}
+
 const tabs = [
   {
-    name: "Action",
+    label: "Action",
     value: "action",
     icon: "i-lucide-package-plus",
     items: [
       {
-        name: "Modify HTTP Request Header",
+        title: "Modify HTTP Request Header",
         description: "Set, remove, or append HTTP request headers.",
         icon: "i-lucide-arrow-big-right-dash",
-        action: profilesStore.addRequestHeaderMod,
+        action: () => profilesStore.addHeaderAction("request"),
       },
       {
-        name: "Modify HTTP Response Header",
+        title: "Modify HTTP Response Header",
         description: "Set, remove, or append HTTP response headers.",
         icon: "i-lucide-arrow-big-left-dash",
-        action: profilesStore.addResponseHeaderMod,
+        action: () => profilesStore.addHeaderAction("response"),
       },
       {
-        name: "Append Cookie in Request Header",
+        title: "Append Cookie in Request Header",
         description: "Append individual cookie in HTTP request header.",
         icon: "i-lucide-cookie",
         action: () => {},
@@ -34,108 +47,108 @@ const tabs = [
     ],
   },
   {
-    name: "Condition",
+    label: "Condition",
     value: "condition",
     icon: "i-lucide-list-filter-plus",
     items: [
       {
-        name: "URL Filter",
+        title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-link",
         action: () => {},
       },
       {
-        name: "Regex Filter",
+        title: "Regex Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-asterisk",
         action: () => {},
       },
       {
-        name: "Specified Tabs",
+        title: "Specified Tabs",
         description: "List of tab IDs which the rule should match. An ID of TAB_ID_NONE includes requests which don't originate from a tab. An empty list is not allowed. Only supported for session-scoped rules.",
         icon: "i-lucide-rectangle-horizontal",
         action: () => {},
       },
       {
-        name: "Excluded Specified Tabs",
+        title: "Excluded Specified Tabs",
         description: "List of tab IDs which the rule should not match. An ID of TAB_ID_NONE excludes requests which don't originate from a tab. Only supported for session-scoped rules.",
         icon: "i-lucide-rectangle-horizontal",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Domain Type",
+        title: "Domain Type",
         description: "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
         icon: "i-lucide-wifi",
         action: () => {},
       },
       {
-        name: "Excluded Domain Type",
+        title: "Excluded Domain Type",
         description: "Excludes requests based on whether the network request is first-party or third-party to the domain from which it originated. If omitted, all requests are accepted.",
         icon: "i-lucide-wifi",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Initiator Domains",
+        title: "Initiator Domains",
         description: "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         icon: "i-lucide-globe",
         action: () => {},
       },
       {
-        name: "Excluded Initiator Domains",
+        title: "Excluded Initiator Domains",
         description: "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
         icon: "i-lucide-globe",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Request Domains",
+        title: "Request Domains",
         description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         icon: "i-lucide-server",
         action: () => {},
       },
       {
-        name: "Excluded Request Domains",
+        title: "Excluded Request Domains",
         description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         icon: "i-lucide-server",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Request Methods",
+        title: "Request Methods",
         description: "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
         icon: "i-lucide-zap",
         action: () => {},
       },
       {
-        name: "Excluded Request Methods",
+        title: "Excluded Request Methods",
         description: "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
         icon: "i-lucide-zap",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Resource Types",
+        title: "Resource Types",
         description: "List of resource types which the rule can match. An empty list is not allowed.",
         icon: "i-lucide-file",
         action: () => {},
       },
       {
-        name: "Excluded Resource Types",
+        title: "Excluded Resource Types",
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         icon: "i-lucide-file",
         action: () => {},
         excluded: true,
       },
       {
-        name: "Response Headers",
+        title: "Response Headers",
         description: "Rule matches if the request matches any response header condition in this list (if specified).",
         icon: "i-lucide-list",
         action: () => {},
       },
       {
-        name: "Excluded Response Headers",
+        title: "Excluded Response Headers",
         description: "Rule does not match if the request matches any response header condition in this list (if specified). If both excludedResponseHeaders and responseHeaders are specified, then excludedResponseHeaders takes precedence.",
         icon: "i-lucide-list",
         action: () => {},
@@ -143,7 +156,7 @@ const tabs = [
       },
     ],
   },
-];
+] satisfies Tab[];
 
 const selectedTab = ref("action");
 </script>
@@ -165,11 +178,11 @@ const selectedTab = ref("action");
       </form>
 
       <div class="tabs-box mt-5 tabs">
-        <template v-for="tab in tabs" :key="tab.name">
+        <template v-for="tab in tabs" :key="tab.label">
           <label class="tab w-1/2">
             <input v-model="selectedTab" type="radio" name="add-action-or-condition" :value="tab.value">
             <i :class="tab.icon" class="me-2 size-4" />
-            {{ tab.name }}
+            {{ tab.label }}
           </label>
           <div
             class="
@@ -178,8 +191,8 @@ const selectedTab = ref("action");
           >
             <div class="list rounded-box">
               <button
-                v-for="{ name, description, icon, action, excluded } in tab.items"
-                :key="name"
+                v-for="{ title, description, icon, action, excluded } in tab.items"
+                :key="title"
                 class="list-row btn h-min text-start btn-ghost"
                 @click="() => {
                   action()
@@ -188,15 +201,15 @@ const selectedTab = ref("action");
               >
                 <i :class="icon" class="size-6" />
                 <div>
-                  <div>{{ name }}</div>
+                  <div>{{ title }}</div>
                   <div class="text-xs font-normal opacity-60">
                     {{ description }}
                   </div>
                 </div>
                 <i
-                  :class="cn('size-5', { 'bg-primary': !excluded }, excluded ? `
-                    i-lucide-ban
-                  ` : `i-lucide-plus`)"
+                  :class="cn('size-5 bg-primary', excluded ? `i-lucide-ban` : `
+                    i-lucide-plus
+                  `)"
                 />
               </button>
             </div>

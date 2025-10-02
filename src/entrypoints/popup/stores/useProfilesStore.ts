@@ -1,4 +1,4 @@
-import type { HeaderModOperation } from "@/lib/storage";
+import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { head } from "es-toolkit";
 import { defineStore } from "pinia";
@@ -25,6 +25,15 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function addProfile() {
     const newProfile = createProfile(++manager.value.modIdCounter, manager.value.profiles.length);
+    manager.value.profiles.unshift(newProfile);
+    manager.value.profileOrder.unshift(newProfile.id);
+    manager.value.selectedProfileId = newProfile.id;
+  }
+
+  function duplicateProfile() {
+    const newProfile = { ...selectedProfile.value, id: crypto.randomUUID(), name: `[Duplicated] ${selectedProfile.value.name}` };
+    newProfile.requestHeaderMods = newProfile.requestHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
+    newProfile.responseHeaderMods = newProfile.responseHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
     manager.value.profiles.unshift(newProfile);
     manager.value.profileOrder.unshift(newProfile.id);
     manager.value.selectedProfileId = newProfile.id;
@@ -57,24 +66,21 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function addRequestHeaderMod() {
-    selectedProfile.value.requestHeaderMods.push({
+  function addHeaderAction(type: "request" | "response") {
+    const mod = {
       id: ++manager.value.modIdCounter,
       enabled: true,
       name: "",
       value: "",
       operation: "set",
-    });
+    } as const satisfies HeaderMod;
+    if (type === "request") {
+      selectedProfile.value.requestHeaderMods.push(mod);
+    } else {
+      selectedProfile.value.responseHeaderMods.push(mod);
+    }
   }
-  function addResponseHeaderMod() {
-    selectedProfile.value.responseHeaderMods.push({
-      id: ++manager.value.modIdCounter,
-      enabled: true,
-      name: "",
-      value: "",
-      operation: "set",
-    });
-  }
+
   function switchRequestHeaderModOperation(modId: number) {
     const mod = selectedProfile.value.requestHeaderMods.find(m => m.id === modId);
     const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
@@ -100,10 +106,10 @@ export const useProfilesStore = defineStore("profiles", () => {
     selectedProfile,
     // Actions
     addProfile,
+    duplicateProfile,
     deleteProfile,
     reorderProfiles,
-    addRequestHeaderMod,
-    addResponseHeaderMod,
+    addHeaderAction,
     switchRequestHeaderModOperation,
     deleteRequestHeaderMod,
     undo,
