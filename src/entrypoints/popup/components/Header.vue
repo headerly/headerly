@@ -10,7 +10,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
 import EmojiPicker from "./EmojiPicker.vue";
-import ThemeController from "./ThemeController.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -80,7 +79,38 @@ function handleEditProfileName() {
     <div
       class="flex items-center justify-between gap-1 bg-base-200 p-1"
     >
-      <ThemeController />
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-ghost btn-sm btn-primary"
+              :disabled="!profilesStore.canUndo"
+              @click="profilesStore.undo"
+            >
+              <i class="i-lucide-undo-2 size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Undo</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square btn-ghost btn-sm btn-primary"
+              :disabled="!profilesStore.canRedo"
+              @click="profilesStore.redo"
+            >
+              <i class="i-lucide-redo-2 size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>Redo</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>

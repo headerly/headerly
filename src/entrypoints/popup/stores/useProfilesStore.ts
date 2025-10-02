@@ -1,94 +1,106 @@
 import type { HeaderModOperation } from "@/lib/storage";
+import { useDebouncedRefHistory } from "@vueuse/core";
 import { head } from "es-toolkit";
 import { defineStore } from "pinia";
+import { computed, watch } from "vue";
 import { createProfile, useProfileManagerStorage } from "@/lib/storage";
 
-export const useProfilesStore = defineStore("profiles", {
-  state: () => {
-    const { ref: manager } = useProfileManagerStorage();
-    return {
-      manager,
-    };
-  },
-  getters: {
-    orderedProfiles(state) {
-      const profileMap = new Map(state.manager.profiles.map(p => [p.id, p]));
-      return state.manager.profileOrder
-        .map(id => profileMap.get(id))
-        .filter(Boolean);
-    },
-    selectedProfile(state) {
-      return state.manager.profiles.find(p => p.id === state.manager.selectedProfileId)!;
-    },
-    matchedProfilesByKeyword(state) {
-      return (query: string) => {
-        const lowerQuery = query.toLocaleLowerCase();
-        return state.manager.profiles.filter(p =>
-          p.name.toLocaleLowerCase().includes(lowerQuery)
-          || p.requestHeaderMods.some(mod => mod.name.toLocaleLowerCase().includes(lowerQuery) || mod.value.toLocaleLowerCase().includes(lowerQuery))
-          || p.responseHeaderMods.some(mod => mod.name.toLocaleLowerCase().includes(lowerQuery) || mod.value.toLocaleLowerCase().includes(lowerQuery)),
-        );
-      };
-    },
-  },
-  actions: {
-    addProfile() {
-      const newProfile = createProfile(++this.manager.modIdCounter, this.manager.profiles.length);
-      this.manager.profiles.unshift(newProfile);
-      this.manager.profileOrder.unshift(newProfile.id);
-      this.manager.selectedProfileId = newProfile.id;
-    },
+export const useProfilesStore = defineStore("profiles", () => {
+  // State
+  const { ref: manager } = useProfileManagerStorage();
 
-    deleteProfile() {
-      // IMPORTANT: Ensure that there is at least one profile in the storage.
-      if (this.manager.profiles.length === 1) {
-        const selectedProfileIndex = this.manager.profiles.findIndex(p => p.id === this.manager.selectedProfileId);
-        this.manager.profiles[selectedProfileIndex] = {
-          ...createProfile(++this.manager.modIdCounter),
-          id: this.manager.profiles[selectedProfileIndex]!.id,
-        };
-        return;
-      }
-      const current = this.manager.profiles.findIndex(p => p.id === this.manager.selectedProfileId);
-      const prevNearestProfileId = this.manager.profileOrder[current - 1];
-      const nextNearestProfileId = this.manager.profileOrder[current + 1];
-      this.manager.profiles.splice(current, 1);
-      this.manager.profileOrder = this.manager.profileOrder.filter(id => id !== this.manager.selectedProfileId);
-      this.manager.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
-    },
-    reorderProfiles(fromIndex: number, toIndex: number) {
-      const removed = head(this.manager.profileOrder.splice(fromIndex, 1));
-      if (removed) {
-        this.manager.profileOrder.splice(toIndex, 0, removed);
-      }
-    },
-    addRequestHeaderMod(operation: "set" | "remove") {
-      if (!this.selectedProfile) {
-        return;
-      }
-      if (!this.selectedProfile.requestHeaderMods) {
-        this.selectedProfile.requestHeaderMods = [];
-      }
-      this.selectedProfile.requestHeaderMods.push({
-        id: ++this.manager.modIdCounter,
-        enabled: true,
-        name: "",
-        value: "",
-        operation,
-      });
-    },
-    switchRequestHeaderModOperation(modId: number) {
-      const mod = this.selectedProfile.requestHeaderMods.find(m => m.id === modId);
-      const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
-      if (!mod) {
-        return;
-      }
-      mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
-    },
-    deleteRequestHeaderMod(modId: number) {
-      if (this.selectedProfile.requestHeaderMods) {
-        this.selectedProfile.requestHeaderMods = this.selectedProfile.requestHeaderMods.filter(mod => mod.id !== modId);
-      }
-    },
-  },
+  const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
+  // Does not provide cross-profile undo/redo capabilities.
+  watch(() => manager.value.selectedProfileId, clear);
+
+  // Getters (computed)
+  const orderedProfiles = computed(() => {
+    const profileMap = new Map(manager.value.profiles.map(p => [p.id, p]));
+    return manager.value.profileOrder
+      .map(id => profileMap.get(id))
+      .filter(Boolean);
+  });
+
+  const selectedProfile = computed(() => {
+    return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
+  });
+
+  // Actions
+  function addProfile() {
+    const newProfile = createProfile(++manager.value.modIdCounter, manager.value.profiles.length);
+    manager.value.profiles.unshift(newProfile);
+    manager.value.profileOrder.unshift(newProfile.id);
+    manager.value.selectedProfileId = newProfile.id;
+  }
+
+  function deleteProfile() {
+    // IMPORTANT: Ensure that there is at least one profile in the storage.
+    if (manager.value.profiles.length === 1) {
+      const selectedProfileIndex = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
+      // Don't using `Object.assign` to ensure reactivity.
+      manager.value.profiles[selectedProfileIndex] = {
+        ...createProfile(++manager.value.modIdCounter),
+        id: manager.value.profiles[selectedProfileIndex]!.id,
+      };
+      return;
+    }
+    const current = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
+    const prevNearestProfileId = manager.value.profileOrder[current - 1];
+    const nextNearestProfileId = manager.value.profileOrder[current + 1];
+    // Don't using `Array.filter` to ensure reactivity.
+    manager.value.profiles.splice(current, 1);
+    manager.value.profileOrder = manager.value.profileOrder.filter(id => id !== manager.value.selectedProfileId);
+    manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
+  }
+
+  function reorderProfiles(fromIndex: number, toIndex: number) {
+    const removed = head(manager.value.profileOrder.splice(fromIndex, 1));
+    if (removed) {
+      manager.value.profileOrder.splice(toIndex, 0, removed);
+    }
+  }
+
+  function addRequestHeaderMod(operation: "set" | "remove") {
+    selectedProfile.value.requestHeaderMods.push({
+      id: ++manager.value.modIdCounter,
+      enabled: true,
+      name: "",
+      value: "",
+      operation,
+    });
+  }
+
+  function switchRequestHeaderModOperation(modId: number) {
+    const mod = selectedProfile.value.requestHeaderMods.find(m => m.id === modId);
+    const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
+    if (!mod) {
+      return;
+    }
+    mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
+  }
+
+  function deleteRequestHeaderMod(modId: number) {
+    if (selectedProfile.value.requestHeaderMods) {
+      selectedProfile.value.requestHeaderMods = selectedProfile.value.requestHeaderMods.filter(mod => mod.id !== modId);
+    }
+  }
+
+  return {
+    // State
+    manager,
+    canUndo,
+    canRedo,
+    // Getters
+    orderedProfiles,
+    selectedProfile,
+    // Actions
+    addProfile,
+    deleteProfile,
+    reorderProfiles,
+    addRequestHeaderMod,
+    switchRequestHeaderModOperation,
+    deleteRequestHeaderMod,
+    undo,
+    redo,
+  };
 });

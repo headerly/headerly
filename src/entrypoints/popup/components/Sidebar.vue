@@ -26,7 +26,7 @@ const { openPopupInNewtab } = getBrowserApiService();
   <div
     :class="cn('flex h-full flex-col justify-between bg-base-200 py-2', className)"
   >
-    <div class="dropdown-hover dropdown px-2">
+    <div class="dropdown-hover dropdown dropdown-right px-2">
       <div
         tabindex="0"
         role="button"
