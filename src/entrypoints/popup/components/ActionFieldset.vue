@@ -111,7 +111,7 @@ const currentMods = computed(() => (
         </label>
         <button
           class="btn btn-square btn-ghost btn-xs btn-error"
-          @click="profilesStore.deleteRequestHeaderMod(mod.id)"
+          @click="profilesStore.deleteHeaderMod(type, mod.id)"
         >
           <i class="i-lucide-x size-4" />
         </button>

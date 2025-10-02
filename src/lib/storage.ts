@@ -128,3 +128,7 @@ export function usePowerOnStorage() {
 export function useThemeStorage() {
   return useBrowserStorage<Theme>("local:theme", "light");
 }
+
+export function useRandomEmojiStorage() {
+  return useBrowserStorage<boolean>("local:randomEmoji", false);
+}

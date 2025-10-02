@@ -90,9 +90,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
   }
 
-  function deleteRequestHeaderMod(modId: number) {
-    if (selectedProfile.value.requestHeaderMods) {
+  function deleteHeaderMod(type: "request" | "response", modId: number) {
+    if (type === "request") {
       selectedProfile.value.requestHeaderMods = selectedProfile.value.requestHeaderMods.filter(mod => mod.id !== modId);
+    } else {
+      selectedProfile.value.responseHeaderMods = selectedProfile.value.responseHeaderMods.filter(mod => mod.id !== modId);
     }
   }
 
@@ -111,7 +113,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     reorderProfiles,
     addHeaderAction,
     switchRequestHeaderModOperation,
-    deleteRequestHeaderMod,
+    deleteHeaderMod,
     undo,
     redo,
   };

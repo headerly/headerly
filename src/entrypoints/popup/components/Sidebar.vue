@@ -52,7 +52,7 @@ const { openPopupInNewtab } = getBrowserApiService();
           </button>
           <button class="flex flex-row items-center gap-2">
             <i class="i-lucide-settings size-4" />
-            <span>Open Settings</span>
+            <span>Preferences</span>
           </button>
         </li>
       </ul>
