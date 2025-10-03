@@ -45,6 +45,7 @@ const currentMods = computed(() => (
 
 <template>
   <fieldset
+    v-auto-animate
     class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-4"
   >
     <legend class="fieldset-legend text-base">

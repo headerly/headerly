@@ -46,6 +46,7 @@
     "@commitlint/types": "^20.0.0",
     "@egoist/tailwindcss-icons": "^1.9.0",
     "@fontsource-variable/montserrat": "^5.2.8",
+    "@formkit/auto-animate": "^0.9.0",
     "@iconify-json/lucide": "^1.2.68",
     "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
     "@tailwindcss/vite": "^4.1.13",

@@ -20,6 +20,7 @@ const empty = computed(() =>
 
 <template>
   <div
+    v-auto-animate
     :class="cn(profilesStore.selectedProfile.enabled ? 'opacity-100' : `
       opacity-50
     `, 'h-full', className)"
@@ -46,7 +47,7 @@ const empty = computed(() =>
         "
       />
     </div>
-    <div v-else class="w-full">
+    <div v-else v-auto-animate class="w-full">
       <ActionFieldset v-if="profilesStore.selectedProfile.requestHeaderMods.length" type="request" />
       <ActionFieldset v-if="profilesStore.selectedProfile.responseHeaderMods.length" type="response" />
     </div>

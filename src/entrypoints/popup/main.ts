@@ -1,3 +1,4 @@
+import { autoAnimatePlugin } from "@formkit/auto-animate/vue";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 
@@ -9,6 +10,7 @@ import "@fontsource-variable/montserrat/wght-italic.css";
 const pinia = createPinia();
 const app = createApp(App);
 app.use(pinia);
+app.use(autoAnimatePlugin);
 const profileManagerStorage = useProfilesStore();
 // Preventing FOUC
 await profileManagerStorage.ready;

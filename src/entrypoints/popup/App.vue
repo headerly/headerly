@@ -3,6 +3,9 @@ import { cn } from "@/lib/utils";
 import Header from "./components/Header.vue";
 import SelectedProfile from "./components/SelectedProfile.vue";
 import Sidebar from "./components/Sidebar.vue";
+import { useProfilesStore } from "./stores/useProfilesStore";
+
+const profilesStore = useProfilesStore();
 </script>
 
 <template>
@@ -21,7 +24,9 @@ import Sidebar from "./components/Sidebar.vue";
       <main
         class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto p-2"
       >
-        <SelectedProfile />
+        <!-- Use `key` to force refresh components to prevent `auto-animate`
+         from applying animations across profiles -->
+        <SelectedProfile :key="profilesStore.manager.selectedProfileId" />
       </main>
     </div>
   </div>
