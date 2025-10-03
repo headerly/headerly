@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ActionType } from "../stores/useProfilesStore";
-import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
+import type { HeaderModOperation } from "@/lib/storage";
 import { computed } from "vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
@@ -8,6 +8,7 @@ import {
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
 } from "@/entrypoints/popup/constants/header";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import ModActions from "./ModActions.vue";
 
 const { type } = defineProps<{
   type: ActionType;
@@ -40,40 +41,6 @@ const currentMods = computed(() => (
     ? profilesStore.selectedProfile.requestHeaderMods
     : profilesStore.selectedProfile.responseHeaderMods
 ));
-
-function getMoreActions(mod: HeaderMod, index: number, modsLen: number) {
-  return [
-    {
-      key: "duplicate",
-      label: "Duplicate",
-      icon: "i-lucide-copy size-4",
-      disabled: !mod.name && !mod.value,
-      onClick: () => profilesStore.duplicateHeaderMod(type, mod.id),
-    },
-    {
-      key: "comments",
-      label: "Comments",
-      icon: "i-lucide-square-pen size-4",
-      disabled: false,
-      onClick: null,
-    },
-    { divider: true, key: "divider" },
-    {
-      key: "moveUp",
-      label: "Move Up",
-      icon: "i-lucide-arrow-big-up size-4",
-      disabled: index === 0,
-      onClick: () => profilesStore.moveUpHeaderMod(type, mod.id),
-    },
-    {
-      key: "moveDown",
-      label: "Move Down",
-      icon: "i-lucide-arrow-big-down size-4",
-      disabled: index === modsLen - 1,
-      onClick: () => profilesStore.moveDownHeaderMod(type, mod.id),
-    },
-  ];
-}
 </script>
 
 <template>
@@ -162,44 +129,12 @@ function getMoreActions(mod: HeaderMod, index: number, modsLen: number) {
           <span class="sr-only">Delete this header mod</span>
           <i class="i-lucide-x size-4" />
         </button>
-        <button
-          :popovertarget="`popover-mod-more-action-${mod.id}`"
-          :style="`anchor-name:--anchor-mod-more-action-${mod.id}`"
-          class="btn btn-square btn-ghost btn-xs btn-primary"
-        >
-          <i class="i-lucide-ellipsis-vertical size-4" />
-          <span class="sr-only">More options about this header mod</span>
-        </button>
-        <ul
-          :id="`popover-mod-more-action-${mod.id}`"
-          :style="`position-anchor:--anchor-mod-more-action-${mod.id}`"
-          popover
-          class="
-            menu dropdown w-52 rounded-box bg-base-100 p-2 text-base-content
-            shadow-sm
-            [position-area:end_span-start]
-            [position-try-fallbacks:flip-block]
-          "
-        >
-          <template v-for="action in getMoreActions(mod, index, currentMods.length)" :key="action.key">
-            <div v-if="action.divider" class="divider my-0" />
-            <li v-else>
-              <button
-                class="
-                  gap-2
-                  disabled:pointer-events-none disabled:opacity-50
-                "
-                :disabled="action.disabled"
-                @click="() => {
-                  action.onClick?.()
-                }"
-              >
-                <i :class="action.icon" />
-                <span>{{ action.label }}</span>
-              </button>
-            </li>
-          </template>
-        </ul>
+        <ModActions
+          :mod="mod"
+          :index="index"
+          :type="type"
+          :current-mods-length="currentMods.length"
+        />
       </div>
       <button
         class="btn ml-6.5 w-min whitespace-nowrap btn-soft btn-xs"

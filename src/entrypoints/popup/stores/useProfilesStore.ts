@@ -147,6 +147,16 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
+  function editModComments(type: ActionType, modId: number, comments: string) {
+    const mod = type === "request"
+      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
+      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
+    if (!mod) {
+      return;
+    }
+    mod.comments = comments;
+  }
+
   return {
     // State
     manager,
@@ -167,6 +177,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     duplicateHeaderMod,
     moveUpHeaderMod,
     moveDownHeaderMod,
+    editModComments,
     undo,
     redo,
   };
