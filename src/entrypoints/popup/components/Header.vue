@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import { useSettingsStore } from "../stores/useSettingsStore";
 import AddModModal from "./AddModModal.vue";
 import EmojiPicker from "./EmojiPicker.vue";
 
@@ -26,13 +27,17 @@ function handleEditProfileName() {
   }
   profileNameEditing.value = false;
 }
+
+const settingsStore = useSettingsStore();
 </script>
 
 <template>
   <header
-    :class="cn(`
-      flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2
-    `, className)"
+    :class="cn(
+      `flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2`,
+      settingsStore.powerOn || 'opacity-60',
+      className,
+    )"
   >
     <div
       class="flex items-center gap-1"

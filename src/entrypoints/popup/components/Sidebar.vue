@@ -30,7 +30,10 @@ const { openPopupInNewtab } = getBrowserApiService();
       <div
         tabindex="0"
         role="button"
-        class="btn btn-square btn-soft btn-sm"
+        :class="cn(
+          'btn btn-square btn-soft btn-sm',
+          settingsStore.powerOn || `opacity-60`,
+        )"
         @click="profilesStore.addProfile"
       >
         <i class="i-lucide-menu size-4" />
@@ -61,7 +64,10 @@ const { openPopupInNewtab } = getBrowserApiService();
     <div class="divider m-0" />
 
     <div
-      class="flex flex-1 flex-col gap-1 overflow-y-hidden"
+      :class="cn(
+        'flex flex-1 flex-col gap-1 overflow-y-hidden',
+        settingsStore.powerOn || `opacity-60`,
+      )"
     >
       <ProfileSelect />
     </div>
@@ -75,7 +81,9 @@ const { openPopupInNewtab } = getBrowserApiService();
             <button
               :class="cn(
                 'btn btn-square btn-soft btn-sm',
-                settingsStore.powerOn ? 'btn-error' : 'btn-primary',
+                settingsStore.powerOn ? 'btn-error' : `
+                  animate-pulse btn-success
+                `,
               )"
               @click="settingsStore.togglePower"
             >

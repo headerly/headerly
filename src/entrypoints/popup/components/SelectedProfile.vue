@@ -3,6 +3,7 @@ import type { HTMLAttributes } from "vue";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import { useProfilesStore } from "../stores/useProfilesStore";
+import { useSettingsStore } from "../stores/useSettingsStore";
 import ActionFieldset from "./ActionFieldset.vue";
 import InteractiveGridPattern from "./InteractiveGridPattern.vue";
 
@@ -16,14 +17,15 @@ const empty = computed(() =>
   profilesStore.selectedProfile.requestHeaderMods.length === 0
   && profilesStore.selectedProfile.responseHeaderMods.length === 0,
 );
+
+const settingsStore = useSettingsStore();
+const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
 </script>
 
 <template>
   <div
     v-auto-animate
-    :class="cn(profilesStore.selectedProfile.enabled ? 'opacity-100' : `
-      opacity-50
-    `, 'h-full', className)"
+    :class="cn(disabled && 'opacity-60', 'h-full', className)"
   >
     <div
       v-if="empty" class="

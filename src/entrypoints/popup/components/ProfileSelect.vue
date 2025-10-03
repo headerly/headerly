@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Profile } from "@/lib/storage";
+import { UUID } from "node:crypto";
 import { onMounted, ref } from "vue";
 import {
   Tooltip,
@@ -27,6 +29,20 @@ function scrollToEnabledProfile() {
     });
   }
 }
+
+function getProfileStatus(profile: Profile) {
+  const hasNameAndValueMod = profile.requestHeaderMods.some(mod => mod.enabled && mod.name && mod.value)
+    || profile.responseHeaderMods.some(mod => mod.enabled && mod.name && mod.value);
+  if (!hasNameAndValueMod) {
+    return "empty";
+  }
+
+  if (!profile.enabled) {
+    return "disabled";
+  }
+
+  return "working";
+}
 </script>
 
 <template>
@@ -54,9 +70,11 @@ function scrollToEnabledProfile() {
                 {{ profile.emoji }}
               </button>
               <span
-                :class="cn('indicator-item status', profile.enabled ? `
-                  status-success
-                ` : `status`)"
+                :class="cn(
+                  'indicator-item status',
+                  getProfileStatus(profile) === 'working' && `status-success`,
+                  getProfileStatus(profile) === 'disabled' && `status-warning`,
+                )"
               />
             </div>
           </TooltipTrigger>

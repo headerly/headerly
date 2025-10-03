@@ -74,7 +74,7 @@ const comments = ref(mod.comments || "");
         <button
           class="
             gap-2
-            disabled:pointer-events-none disabled:opacity-50
+            disabled:pointer-events-none disabled:opacity-60
           "
           :disabled="action.disabled"
           @click="action.onClick"
