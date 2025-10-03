@@ -110,6 +110,43 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
+  function duplicateHeaderMod(type: ActionType, modId: number) {
+    const targetMod = type === "request"
+      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
+      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
+    if (!targetMod) {
+      return;
+    }
+    const newMod = { ...targetMod, id: ++manager.value.modIdCounter };
+    if (type === "request") {
+      selectedProfile.value.requestHeaderMods.push(newMod);
+    } else {
+      selectedProfile.value.responseHeaderMods.push(newMod);
+    }
+  }
+
+  function moveUpHeaderMod(type: ActionType, modId: number) {
+    const mods = type === "request"
+      ? selectedProfile.value.requestHeaderMods
+      : selectedProfile.value.responseHeaderMods;
+    const index = mods.findIndex(m => m.id === modId);
+    if (index > 0) {
+      const [mod] = mods.splice(index, 1);
+      mods.splice(index - 1, 0, mod!);
+    }
+  }
+
+  function moveDownHeaderMod(type: ActionType, modId: number) {
+    const mods = type === "request"
+      ? selectedProfile.value.requestHeaderMods
+      : selectedProfile.value.responseHeaderMods;
+    const index = mods.findIndex(m => m.id === modId);
+    if (index >= 0 && index < mods.length - 1) {
+      const [mod] = mods.splice(index, 1);
+      mods.splice(index + 1, 0, mod!);
+    }
+  }
+
   return {
     // State
     manager,
@@ -127,6 +164,9 @@ export const useProfilesStore = defineStore("profiles", () => {
     deleteHeaderAction,
     switchHeaderActionOperation,
     deleteHeaderMod,
+    duplicateHeaderMod,
+    moveUpHeaderMod,
+    moveDownHeaderMod,
     undo,
     redo,
   };

@@ -18,7 +18,9 @@ import Sidebar from "./components/Sidebar.vue";
     >
       <Sidebar class="col-start-1 row-span-2" />
       <Header class="col-start-2 row-start-1" />
-      <main class="col-start-2 row-start-2 overflow-y-auto p-2">
+      <main
+        class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto p-2"
+      >
         <SelectedProfile />
       </main>
     </div>

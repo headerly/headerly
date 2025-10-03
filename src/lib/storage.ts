@@ -58,6 +58,7 @@ export interface HeaderMod {
   name: string;
   value: string;
   operation: HeaderModOperation;
+  comment?: string;
 }
 
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
