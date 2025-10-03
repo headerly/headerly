@@ -8,8 +8,8 @@ import { createProfile, useProfileManagerStorage } from "@/lib/storage";
 export type ActionType = "request" | "response";
 
 export const useProfilesStore = defineStore("profiles", () => {
-  const { ref: manager } = useProfileManagerStorage();
-
+  const { promise, resolve } = Promise.withResolvers();
+  const { ref: manager } = useProfileManagerStorage(resolve);
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   // Does not provide cross-profile undo/redo capabilities.
   watch(() => manager.value.selectedProfileId, clear);
@@ -162,6 +162,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager,
     canUndo,
     canRedo,
+    ready: promise,
     // Getters
     orderedProfiles,
     selectedProfile,

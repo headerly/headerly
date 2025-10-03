@@ -4,7 +4,7 @@ import type { Theme } from "@/entrypoints/popup/constants/themes";
 import { useStorageAsync } from "@vueuse/core";
 import { toRaw } from "vue";
 
-function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
+function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (value: T) => void) {
   const item = storage.defineItem<T>(key, {
     init() {
       return initialValue;
@@ -34,6 +34,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T) {
         read: v => v,
         write: v => v,
       } as SerializerAsync<T>,
+      onReady,
     },
   );
   return {
@@ -118,8 +119,8 @@ export interface ProfileManager {
   selectedProfileId: UUID;
 }
 
-export function useProfileManagerStorage() {
-  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager);
+export function useProfileManagerStorage(onReady: (value: ProfileManager) => void) {
+  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, onReady);
 }
 
 export function usePowerOnStorage() {
