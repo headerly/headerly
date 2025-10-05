@@ -1,8 +1,8 @@
 import { defineProxyService } from "@webext-core/proxy-service";
 
 class BrowserApiService {
-  openPopupInNewtab() {
-    browser.tabs.create({ url: "popup.html" });
+  openInFullscreen() {
+    browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
   }
 }
 export const [registerBrowserApiService, getBrowserApiService] = defineProxyService(

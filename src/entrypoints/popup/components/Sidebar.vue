@@ -19,7 +19,7 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 
-const { openPopupInNewtab } = getBrowserApiService();
+const { openInFullscreen } = getBrowserApiService();
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const { openPopupInNewtab } = getBrowserApiService();
         role="button"
         :class="cn(
           'btn btn-square btn-soft btn-sm',
-          settingsStore.powerOn || `opacity-60`,
+          settingsStore.powerOn || 'opacity-60',
         )"
         @click="profilesStore.addProfile"
       >
@@ -44,18 +44,18 @@ const { openPopupInNewtab } = getBrowserApiService();
           dropdown-content menu z-1 w-52 rounded-box bg-base-100 p-2 shadow-sm
         "
       >
-        <li class="gap-1 font-semibold">
+        <li class="gap-1 font-medium">
           <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
             <i class="i-lucide-cross size-4" />
             <span>Add New Profile</span>
           </button>
-          <button class="flex flex-row items-center gap-2" @click="openPopupInNewtab">
+          <button class="flex flex-row items-center gap-2" @click="openInFullscreen">
             <i class="i-lucide-maximize size-4" />
             <span>Expand to Full Tab</span>
           </button>
-          <button class="flex flex-row items-center gap-2">
+          <button class="flex flex-row items-center gap-2" @click="() => {}">
             <i class="i-lucide-settings size-4" />
-            <span>Preferences</span>
+            <span>Open Settings</span>
           </button>
         </li>
       </ul>
