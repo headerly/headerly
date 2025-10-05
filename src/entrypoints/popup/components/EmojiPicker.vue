@@ -137,7 +137,7 @@ function scrollToCategory(categoryLabel: string) {
               v-if="virtualItems[virtualRow.index]?.type === 'header'"
               class="flex h-full items-center"
             >
-              <h2 class="px-1 pt-1 text-sm font-semibold">
+              <h2 class="px-1 pt-1 text-sm font-medium">
                 {{ virtualItems[virtualRow.index]?.categoryLabel }}
               </h2>
             </div>

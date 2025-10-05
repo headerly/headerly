@@ -48,7 +48,7 @@ const currentMods = computed(() => (
     v-auto-animate
     class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-4"
   >
-    <legend class="fieldset-legend text-base">
+    <legend class="fieldset-legend text-base font-medium">
       <label>
         <input
           type="checkbox" class="checkbox checkbox-sm"
@@ -104,7 +104,10 @@ const currentMods = computed(() => (
               v-model="mod.name"
               type="text"
               placeholder="Name"
-              class="input input-sm w-full text-base text-base-content"
+              class="
+                input input-sm w-full text-base text-base-content
+                placeholder:italic
+              "
               :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`"
               @input="(e) => {
                 // Although the HTTP standard considers header names to be case-insensitive,
@@ -119,7 +122,10 @@ const currentMods = computed(() => (
               v-model="mod.value"
               type="text"
               placeholder="Value"
-              class="input input-sm text-base text-base-content"
+              class="
+                input input-sm text-base text-base-content
+                placeholder:italic
+              "
             >
           </label>
         </label>
@@ -138,7 +144,7 @@ const currentMods = computed(() => (
         />
       </div>
       <button
-        class="btn ml-6.5 w-min whitespace-nowrap btn-soft btn-xs"
+        class="btn ml-6.5 w-min font-medium whitespace-nowrap btn-soft btn-xs"
         @click="profilesStore.switchHeaderActionOperation(type, mod.id)"
       >
         Operation: <span class="capitalize">{{ mod.operation }}</span>

@@ -46,7 +46,8 @@ const settingsStore = useSettingsStore();
       <button
         v-if="!profileNameEditing"
         class="
-          btn flex items-center gap-1 text-base font-semibold btn-ghost btn-sm
+          btn flex items-center gap-1 px-1.5 text-base font-semibold btn-ghost
+          btn-sm
         "
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
@@ -73,8 +74,7 @@ const settingsStore = useSettingsStore();
         >
         <button
           class="
-            btn flex btn-square items-center gap-2 text-base font-semibold
-            btn-soft btn-sm
+            btn flex btn-square items-center gap-2 text-base btn-soft btn-sm
           "
           @click="handleEditProfileName"
         >

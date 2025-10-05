@@ -63,7 +63,8 @@ const comments = ref(mod.comments || "");
     :style="`position-anchor:--anchor-mod-more-action-${mod.id}`"
     popover
     class="
-      menu dropdown w-52 rounded-box bg-base-100 p-2 text-base-content shadow-sm
+      menu dropdown w-52 rounded-box bg-base-100 p-2 font-medium
+      text-base-content shadow-sm
       [position-area:end_span-start]
       [position-try-fallbacks:flip-block]
     "

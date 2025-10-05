@@ -8,6 +8,9 @@
 }
 
 @theme {
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+  --font-sans: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+  --font-brand: "Belanosima", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+  --font-mono: "Intel One Mono Variable", ui-monospace, monospace;
 }

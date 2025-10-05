@@ -4,8 +4,11 @@ import { createApp } from "vue";
 
 import App from "./App.vue";
 import { useProfilesStore } from "./stores/useProfilesStore";
-import "@/assets/tailwind.css";
+import "@fontsource-variable/montserrat/wght.css";
 import "@fontsource-variable/montserrat/wght-italic.css";
+import "@fontsource-variable/intel-one-mono";
+import "@fontsource/belanosima/400.css";
+import "@/assets/tailwind.css";
 
 const pinia = createPinia();
 const app = createApp(App);
