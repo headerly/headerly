@@ -20,6 +20,8 @@ const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 
 const { openInFullscreen } = getBrowserApiService();
+
+const isDEV = import.meta.env.DEV;
 </script>
 
 <template>
@@ -49,7 +51,11 @@ const { openInFullscreen } = getBrowserApiService();
             <i class="i-lucide-cross size-4" />
             <span>Add New Profile</span>
           </button>
-          <button class="flex flex-row items-center gap-2" @click="openInFullscreen">
+          <button
+            v-if="isDEV"
+            class="flex flex-row items-center gap-2"
+            @click="openInFullscreen"
+          >
             <i class="i-lucide-maximize size-4" />
             <span>Expand to Full Tab</span>
           </button>
