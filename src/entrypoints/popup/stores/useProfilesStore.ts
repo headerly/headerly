@@ -1,11 +1,20 @@
 import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
+import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
-import { head } from "es-toolkit";
+import { head, random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { computed, watch } from "vue";
 import { createProfile, useProfileManagerStorage } from "@/lib/storage";
+import { useSettingsStore } from "./useSettingsStore";
 
 export type ActionType = "request" | "response";
+
+function getProfileIcon() {
+  const settingsStore = useSettingsStore();
+  return settingsStore.randomEmojiCategory === "all"
+    ? allEmojis[round(random(allEmojis.length))]
+    : emoji[settingsStore.randomEmojiCategory][round(random(emoji[settingsStore.randomEmojiCategory].length))];
+}
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise, resolve } = Promise.withResolvers();
@@ -26,7 +35,11 @@ export const useProfilesStore = defineStore("profiles", () => {
   });
 
   function addProfile() {
-    const newProfile = createProfile(++manager.value.modIdCounter, manager.value.profiles.length);
+    const newProfile = createProfile({
+      modId: ++manager.value.modIdCounter,
+      profilesLength: manager.value.profiles.length,
+      emoji: getProfileIcon(),
+    });
     manager.value.profiles.unshift(newProfile);
     manager.value.profileOrder.unshift(newProfile.id);
     manager.value.selectedProfileId = newProfile.id;
@@ -46,10 +59,10 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (manager.value.profiles.length === 1) {
       const selectedProfileIndex = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
       // Don't using `Object.assign` to ensure reactivity.
-      manager.value.profiles[selectedProfileIndex] = {
-        ...createProfile(++manager.value.modIdCounter),
+      manager.value.profiles[selectedProfileIndex] = createProfile({
+        modId: ++manager.value.modIdCounter,
         id: manager.value.profiles[selectedProfileIndex]!.id,
-      };
+      });
       return;
     }
     const current = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);

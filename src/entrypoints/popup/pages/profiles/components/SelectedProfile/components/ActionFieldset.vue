@@ -92,7 +92,8 @@ const currentMods = computed(() => (
             v-model="mod.enabled" type="checkbox"
             class="checkbox checkbox-sm"
           >
-          <label class="flex-1">
+          <label class="floating-label flex-1">
+            <span>Name</span>
             <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`">
               <option
                 v-for="field in autocomplete(mod.name, mod.operation)"
@@ -117,7 +118,8 @@ const currentMods = computed(() => (
               }"
             >
           </label>
-          <label v-if="mod.operation !== 'remove'" class="flex-1">
+          <label v-if="mod.operation !== 'remove'" class="floating-label flex-1">
+            <span>Value</span>
             <input
               v-model="mod.value"
               type="text"

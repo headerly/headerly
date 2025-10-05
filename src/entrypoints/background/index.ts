@@ -12,7 +12,7 @@ export default defineBackground({
       powerOnItem.getValue(),
       profileManagerItem.getValue(),
       // @ts-expect-error Remove after PR merge
-      // https://github.com/wxt-dev/wxt/pull/1914
+      // TODO: https://github.com/wxt-dev/wxt/pull/1909
     ]).then(([powerOn, { profiles }]) => {
       if (powerOn) {
         registerExistingMods(profiles);

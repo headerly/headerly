@@ -1,22 +1,25 @@
-import type { Theme } from "../constants/themes";
 import { defineStore } from "pinia";
-import { usePowerOnStorage, useThemeStorage } from "@/lib/storage";
+import {
+  useAutoAssignEmojiStorage,
+  useLanguageStorage,
+  usePowerOnStorage,
+  useRandomEmojiCategoryStorage,
+  useThemeStorage,
+} from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", {
   state: () => {
     const { ref: powerOn } = usePowerOnStorage();
+    const { ref: language } = useLanguageStorage();
     const { ref: theme } = useThemeStorage();
+    const { ref: autoAssignEmoji } = useAutoAssignEmojiStorage();
+    const { ref: randomEmojiCategory } = useRandomEmojiCategoryStorage();
     return {
       powerOn,
+      language,
       theme,
+      autoAssignEmoji,
+      randomEmojiCategory,
     };
-  },
-  actions: {
-    togglePower() {
-      this.powerOn = !this.powerOn;
-    },
-    setTheme(theme: Theme) {
-      this.theme = theme;
-    },
   },
 });

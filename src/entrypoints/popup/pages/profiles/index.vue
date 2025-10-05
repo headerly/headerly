@@ -12,7 +12,7 @@ const profilesStore = useProfilesStore();
   <div
     :class="cn(
       `grid grid-cols-[3rem_minmax(0,1fr)] grid-rows-[3rem_minmax(0,1fr)]`,
-      'size-full rounded-sm outline-2 outline-offset-2',
+      'size-full rounded-sm',
     )"
   >
     <Sidebar class="col-start-1 row-span-2" />

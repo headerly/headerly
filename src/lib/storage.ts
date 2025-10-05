@@ -1,6 +1,6 @@
+import type { EmojiCategoryKey } from "#/constants/emoji";
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
 import type { UUID } from "node:crypto";
-import type { Theme } from "@/entrypoints/popup/constants/themes";
 import { useStorageAsync } from "@vueuse/core";
 import { toRaw } from "vue";
 
@@ -21,7 +21,9 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
         return item.setValue(toRaw(value));
       },
       getItem(_) {
-        return item.getValue();
+        // TODO: Remove after PR merge
+        // https://github.com/wxt-dev/wxt/pull/1909
+        return item.getValue()!;
       },
       removeItem(_) {
         return item.removeValue();
@@ -83,12 +85,25 @@ export interface ProfileManager {
   modIdCounter: number;
 }
 
-export function createProfile(modId: number, profilesLength = 0) {
+interface CreateProfileOptions {
+  modId: number;
+  profilesLength?: number;
+  emoji?: string;
+  name?: string;
+  id?: UUID;
+}
+export function createProfile({
+  modId,
+  profilesLength = 0,
+  emoji = "📃",
+  name = `New Profile ${profilesLength + 1}`,
+  id,
+}: CreateProfileOptions) {
   return {
-    id: crypto.randomUUID(),
-    name: `New Profile ${profilesLength + 1}`,
+    id: id ?? crypto.randomUUID(),
+    name,
     enabled: true,
-    emoji: "📃",
+    emoji,
     requestHeaderMods: [{
       id: modId,
       enabled: true,
@@ -102,7 +117,9 @@ export function createProfile(modId: number, profilesLength = 0) {
 
 export function createDefaultProfileManager() {
   const modIdCounter = 1;
-  const profile = createProfile(modIdCounter);
+  const profile = createProfile({
+    modId: modIdCounter,
+  });
   return {
     profiles: [profile],
     profileOrder: [profile.id],
@@ -127,10 +144,19 @@ export function usePowerOnStorage() {
   return useBrowserStorage<boolean>("local:powerOn", true);
 }
 
+export type Theme = "light" | "dark" | "auto";
 export function useThemeStorage() {
-  return useBrowserStorage<Theme>("local:theme", "light");
+  return useBrowserStorage<Theme>("local:theme", "auto");
 }
 
-export function useRandomEmojiStorage() {
-  return useBrowserStorage<boolean>("local:randomEmoji", false);
+export function useAutoAssignEmojiStorage() {
+  return useBrowserStorage<boolean>("local:autoAssignEmoji", false);
+}
+
+export function useRandomEmojiCategoryStorage() {
+  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "all");
+}
+
+export function useLanguageStorage() {
+  return useBrowserStorage<string>("local:language", "en-US");
 }

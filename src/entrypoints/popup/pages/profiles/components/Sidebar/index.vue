@@ -53,10 +53,10 @@ const { openInFullscreen } = getBrowserApiService();
             <i class="i-lucide-maximize size-4" />
             <span>Expand to Full Tab</span>
           </button>
-          <button class="flex flex-row items-center gap-2" @click="() => {}">
+          <RouterLink to="/settings" class="flex flex-row items-center gap-2">
             <i class="i-lucide-settings size-4" />
             <span>Open Settings</span>
-          </button>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -78,17 +78,21 @@ const { openInFullscreen } = getBrowserApiService();
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
+            <label
               :class="cn(
                 'btn btn-square btn-soft btn-sm',
                 settingsStore.powerOn ? 'btn-error' : `
                   animate-pulse btn-success
                 `,
               )"
-              @click="settingsStore.togglePower"
             >
               <i class="i-lucide-power size-4" />
-            </button>
+              <input
+                v-model="settingsStore.powerOn"
+                type="checkbox"
+                class="sr-only"
+              >
+            </label>
           </TooltipTrigger>
           <TooltipContent side="right">
             <p>{{ settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension' }}</p>

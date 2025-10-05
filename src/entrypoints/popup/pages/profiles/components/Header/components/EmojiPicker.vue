@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { emojis } from "#/constants/emojis";
+import { emojisWithCategory } from "#/constants/emoji";
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, ref } from "vue";
 import {
@@ -12,17 +12,6 @@ import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
 const parentRef = ref<HTMLElement | null>(null);
-
-const emojisWithCategory = [
-  { label: "Smileys & People", icon: "i-lucide-smile", emojis: emojis.smileysPeople },
-  { label: "Animals & Nature", icon: "i-lucide-bird", emojis: emojis.animalsNature },
-  { label: "Food & Drink", icon: "i-lucide-apple", emojis: emojis.foodDrink },
-  { label: "Travel & Places", icon: "i-lucide-map-pin", emojis: emojis.travelPlaces },
-  { label: "Activities", icon: "i-lucide-car-front", emojis: emojis.activities },
-  { label: "Objects", icon: "i-lucide-lightbulb", emojis: emojis.objects },
-  { label: "Symbols", icon: "i-lucide-heart", emojis: emojis.symbols },
-  { label: "Flags", icon: "i-lucide-flag", emojis: emojis.flags },
-] as const;
 
 interface VirtualItem {
   type: "header" | "emoji";
