@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/storage";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 import { onMounted, ref, watch } from "vue";
 import {
   Tooltip,
@@ -8,7 +9,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../stores/useProfilesStore";
 
 const profilesStore = useProfilesStore();
 

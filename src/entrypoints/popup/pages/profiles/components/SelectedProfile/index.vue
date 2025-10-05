@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../stores/useProfilesStore";
-import { useSettingsStore } from "../stores/useSettingsStore";
-import ActionFieldset from "./ActionFieldset.vue";
-import InteractiveGridPattern from "./InteractiveGridPattern.vue";
+import ActionFieldset from "./components/ActionFieldset.vue";
+import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { emojis } from "#/constants/emojis";
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, ref } from "vue";
 import {
@@ -7,7 +8,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { emojis } from "@/entrypoints/popup/constants/emojis";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });

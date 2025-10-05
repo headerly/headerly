@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { ref } from "vue";
 import {
   Tooltip,
@@ -8,10 +10,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../stores/useProfilesStore";
-import { useSettingsStore } from "../stores/useSettingsStore";
-import AddModModal from "./AddModModal.vue";
-import EmojiPicker from "./EmojiPicker.vue";
+import AddModModal from "./components/AddModModal.vue";
+import EmojiPicker from "./components/EmojiPicker.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];

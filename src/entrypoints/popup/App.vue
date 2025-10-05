@@ -1,33 +1,5 @@
-<script lang="ts" setup>
-import { cn } from "@/lib/utils";
-import Header from "./components/Header.vue";
-import SelectedProfile from "./components/SelectedProfile.vue";
-import Sidebar from "./components/Sidebar.vue";
-import { useProfilesStore } from "./stores/useProfilesStore";
-
-const profilesStore = useProfilesStore();
-</script>
-
 <template>
-  <div class="flex items-center justify-center">
-    <div
-      :class="cn(
-        `
-          grid grid-cols-[min-content_minmax(0,1fr)]
-          grid-rows-[min-content_minmax(0,1fr)]
-        `,
-        'h-120 w-150 rounded-sm outline-2 outline-offset-2',
-      )"
-    >
-      <Sidebar class="col-start-1 row-span-2" />
-      <Header class="col-start-2 row-start-1" />
-      <main
-        class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto p-2"
-      >
-        <!-- Use `key` to force refresh components to prevent `auto-animate`
-         from applying animations across profiles -->
-        <SelectedProfile :key="profilesStore.manager.selectedProfileId" />
-      </main>
-    </div>
+  <div class="flex h-120 w-150 items-center justify-center">
+    <RouterView />
   </div>
 </template>

@@ -2,7 +2,8 @@
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
     "types": [
-      "unplugin-turbo-console/client"
+      "unplugin-turbo-console/client",
+      "unplugin-vue-router/client"
     ],
     /* Linting */
     "allowUnreachableCode": false,

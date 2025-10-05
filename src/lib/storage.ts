@@ -119,7 +119,7 @@ export interface ProfileManager {
   selectedProfileId: UUID;
 }
 
-export function useProfileManagerStorage(onReady: (value: ProfileManager) => void) {
+export function useProfileManagerStorage(onReady?: (value: ProfileManager) => void) {
   return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, onReady);
 }
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { themes } from "#/constants/themes";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { watch } from "vue";
 import { cn } from "@/lib/utils";
-import { themes } from "../constants/themes";
-import { useSettingsStore } from "../stores/useSettingsStore";
 
 const { class: className } = defineProps<{
   class?: string;

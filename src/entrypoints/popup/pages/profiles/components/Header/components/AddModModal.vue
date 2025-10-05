@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useProfilesStore } from "#/stores/useProfilesStore";
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../stores/useProfilesStore";
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
 

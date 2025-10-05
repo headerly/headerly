@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ActionType } from "../stores/useProfilesStore";
+import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderMod } from "@/lib/storage";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 import { ref } from "vue";
-import { useProfilesStore } from "../stores/useProfilesStore";
 
 const { mod, index, type, currentModsLength } = defineProps<{
   mod: HeaderMod;

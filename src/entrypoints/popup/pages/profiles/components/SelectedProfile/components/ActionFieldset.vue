@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ActionType } from "../stores/useProfilesStore";
+import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderModOperation } from "@/lib/storage";
-import { computed } from "vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
-} from "@/entrypoints/popup/constants/header";
-import { useProfilesStore } from "../stores/useProfilesStore";
+} from "#/constants/header";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { computed } from "vue";
 import ModActions from "./ModActions.vue";
 
 const { type } = defineProps<{

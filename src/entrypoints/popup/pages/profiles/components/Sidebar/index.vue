@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import {
   Tooltip,
   TooltipContent,
@@ -8,9 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { getBrowserApiService } from "@/entrypoints/background/BrowserApiService";
 import { cn } from "@/lib/utils";
-import { useProfilesStore } from "../stores/useProfilesStore";
-import { useSettingsStore } from "../stores/useSettingsStore";
-import ProfileSelect from "./ProfileSelect.vue";
+import ProfileSelect from "./components/ProfileSelect.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
