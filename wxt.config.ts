@@ -8,6 +8,7 @@ import { defineConfig } from "wxt";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
+    name: "Headerly",
     permissions: [
       "storage",
       "unlimitedStorage",
@@ -23,12 +24,12 @@ export default defineConfig({
     disabled: true,
   },
   srcDir: "src",
-  // modules: ["@wxt-dev/auto-icons"],
-  // autoIcons: {
-  //   baseIconPath: "assets/Logo.svg",
-  // },
   zip: {
     name: "headerly",
+  },
+  modules: ["@wxt-dev/auto-icons"],
+  autoIcons: {
+    baseIconPath: "assets/logo.svg",
   },
   vite: () => ({
     plugins: [
