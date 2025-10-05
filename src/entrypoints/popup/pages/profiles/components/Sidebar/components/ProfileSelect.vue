@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
+import { useEventListener } from "@vueuse/core";
 import { onMounted, ref, watch } from "vue";
 import {
   Tooltip,
@@ -47,6 +49,27 @@ function getProfileStatus(profile: Profile) {
 
   return "working";
 }
+
+const settingsStore = useSettingsStore();
+function handleKeydown(event: KeyboardEvent) {
+  if (!settingsStore.enableProfileShortcut) {
+    return;
+  }
+  event.preventDefault();
+  if (event.ctrlKey) {
+    const key = event.key;
+    if (key >= "1" && key <= "9") {
+      const index = Number(key) - 1;
+      const profiles = profilesStore.orderedProfiles;
+      if (index < profiles.length) {
+        const profile = profiles[index]!;
+        profilesStore.manager.selectedProfileId = profile.id;
+      }
+    }
+  }
+}
+
+useEventListener(window, "keydown", handleKeydown);
 </script>
 
 <template>

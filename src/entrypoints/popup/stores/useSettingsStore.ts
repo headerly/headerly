@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
+  enableProfileShortcutStorage,
   useAutoAssignEmojiStorage,
   useLanguageStorage,
   usePowerOnStorage,
@@ -9,34 +10,36 @@ import {
 } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", () => {
-  const powerOn = usePowerOnStorage();
-  const language = useLanguageStorage();
-  const theme = useThemeStorage();
-  const autoAssignEmoji = useAutoAssignEmojiStorage();
-  const randomEmojiCategory = useRandomEmojiCategoryStorage();
+  const storageConfigs = {
+    powerOn: usePowerOnStorage(),
+    language: useLanguageStorage(),
+    theme: useThemeStorage(),
+    autoAssignEmoji: useAutoAssignEmojiStorage(),
+    randomEmojiCategory: useRandomEmojiCategoryStorage(),
+    enableProfileShortcut: enableProfileShortcutStorage(),
+  } as const;
 
   const isModified = computed(() => {
-    return (
-      powerOn.ref.value !== powerOn.initialValue
-      || language.ref.value !== language.initialValue
-      || theme.ref.value !== theme.initialValue
-      || autoAssignEmoji.ref.value !== autoAssignEmoji.initialValue
-      || randomEmojiCategory.ref.value !== randomEmojiCategory.initialValue
+    return Object.values(storageConfigs).some(
+      config => config.ref.value !== config.initialValue,
     );
   });
+
+  const resetToDefault = () => {
+    Object.values(storageConfigs).forEach((config) => {
+      config.ref.value = config.initialValue;
+    });
+  };
+
+  const settings = Object.fromEntries(
+    Object.entries(storageConfigs).map(([key, config]) => [key, config.ref]),
+  ) as {
+    [K in keyof typeof storageConfigs]: (typeof storageConfigs)[K]["ref"]
+  };
+
   return {
-    powerOn: powerOn.ref,
-    language: language.ref,
-    theme: theme.ref,
-    autoAssignEmoji: autoAssignEmoji.ref,
-    randomEmojiCategory: randomEmojiCategory.ref,
+    ...settings,
     isModified,
-    resetToDefault: () => {
-      powerOn.ref.value = powerOn.initialValue;
-      language.ref.value = language.initialValue;
-      theme.ref.value = theme.initialValue;
-      autoAssignEmoji.ref.value = autoAssignEmoji.initialValue;
-      randomEmojiCategory.ref.value = randomEmojiCategory.initialValue;
-    },
+    resetToDefault,
   };
 });

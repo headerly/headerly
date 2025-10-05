@@ -161,3 +161,7 @@ export function useRandomEmojiCategoryStorage() {
 export function useLanguageStorage() {
   return useBrowserStorage<string>("local:language", "en-US");
 }
+
+export function enableProfileShortcutStorage() {
+  return useBrowserStorage<boolean>("local:enableProfileShortcut", false);
+}

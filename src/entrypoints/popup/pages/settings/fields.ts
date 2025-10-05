@@ -62,6 +62,18 @@ export const settings: SettingGroup[] = [
       },
       {
         type: "checkbox",
+        label: "Enable Ctrl + 1-9 shortcut to switch profiles",
+        key: "enableProfileShortcut",
+      },
+    ],
+  },
+  {
+    fieldsetTitle: "Emoji",
+    anchor: "emoji",
+    anchorIcon: "i-lucide-smile",
+    fields: [
+      {
+        type: "checkbox",
         label: "Automatically assign emoji to new profiles",
         key: "autoAssignEmoji",
       },
