@@ -30,7 +30,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     <div
       v-if="empty" class="
         relative grid size-full place-content-center place-items-center gap-2
-        overflow-hidden p-2
+        overflow-hidden
       "
     >
       <i class="i-lucide-cross size-8 text-base-content" />
@@ -49,7 +49,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full">
+    <div v-else v-auto-animate class="w-full p-2">
       <ActionFieldset v-if="profilesStore.selectedProfile.requestHeaderMods.length" type="request" />
       <ActionFieldset v-if="profilesStore.selectedProfile.responseHeaderMods.length" type="response" />
     </div>

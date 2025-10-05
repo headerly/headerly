@@ -11,6 +11,9 @@ export type ActionType = "request" | "response";
 
 function getProfileIcon() {
   const settingsStore = useSettingsStore();
+  if (settingsStore.autoAssignEmoji === false) {
+    return;
+  }
   return settingsStore.randomEmojiCategory === "all"
     ? allEmojis[round(random(allEmojis.length))]
     : emoji[settingsStore.randomEmojiCategory][round(random(emoji[settingsStore.randomEmojiCategory].length))];

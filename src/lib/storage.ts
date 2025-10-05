@@ -48,6 +48,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
      * The return value of WXT storage.defineItem can be used anywhere.
      */
     item,
+    initialValue,
   };
 }
 

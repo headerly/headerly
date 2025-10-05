@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { computed } from "vue";
 import {
   useAutoAssignEmojiStorage,
   useLanguageStorage,
@@ -7,19 +8,35 @@ import {
   useThemeStorage,
 } from "@/lib/storage";
 
-export const useSettingsStore = defineStore("settings", {
-  state: () => {
-    const { ref: powerOn } = usePowerOnStorage();
-    const { ref: language } = useLanguageStorage();
-    const { ref: theme } = useThemeStorage();
-    const { ref: autoAssignEmoji } = useAutoAssignEmojiStorage();
-    const { ref: randomEmojiCategory } = useRandomEmojiCategoryStorage();
-    return {
-      powerOn,
-      language,
-      theme,
-      autoAssignEmoji,
-      randomEmojiCategory,
-    };
-  },
+export const useSettingsStore = defineStore("settings", () => {
+  const powerOn = usePowerOnStorage();
+  const language = useLanguageStorage();
+  const theme = useThemeStorage();
+  const autoAssignEmoji = useAutoAssignEmojiStorage();
+  const randomEmojiCategory = useRandomEmojiCategoryStorage();
+
+  const isModified = computed(() => {
+    return (
+      powerOn.ref.value !== powerOn.initialValue
+      || language.ref.value !== language.initialValue
+      || theme.ref.value !== theme.initialValue
+      || autoAssignEmoji.ref.value !== autoAssignEmoji.initialValue
+      || randomEmojiCategory.ref.value !== randomEmojiCategory.initialValue
+    );
+  });
+  return {
+    powerOn: powerOn.ref,
+    language: language.ref,
+    theme: theme.ref,
+    autoAssignEmoji: autoAssignEmoji.ref,
+    randomEmojiCategory: randomEmojiCategory.ref,
+    isModified,
+    resetToDefault: () => {
+      powerOn.ref.value = powerOn.initialValue;
+      language.ref.value = language.initialValue;
+      theme.ref.value = theme.initialValue;
+      autoAssignEmoji.ref.value = autoAssignEmoji.initialValue;
+      randomEmojiCategory.ref.value = randomEmojiCategory.initialValue;
+    },
+  };
 });

@@ -1,8 +1,6 @@
 <template>
   <div
-    class="
-      flex h-120 w-150 items-center justify-center outline-2 outline-offset-2
-    "
+    class="flex h-120 w-150 items-center justify-center outline-2"
   >
     <RouterView v-slot="{ Component, route }">
       <Transition

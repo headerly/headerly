@@ -12,13 +12,13 @@ const profilesStore = useProfilesStore();
   <div
     :class="cn(
       `grid grid-cols-[3rem_minmax(0,1fr)] grid-rows-[3rem_minmax(0,1fr)]`,
-      'size-full rounded-sm',
+      'size-full',
     )"
   >
     <Sidebar class="col-start-1 row-span-2" />
     <Header class="col-start-2 row-start-1" />
     <main
-      class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto p-2"
+      class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto"
     >
       <!-- Use `key` to force refresh components to prevent `auto-animate`
          from applying animations across profiles -->

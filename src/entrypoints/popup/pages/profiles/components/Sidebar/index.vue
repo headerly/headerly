@@ -23,7 +23,7 @@ const { openInFullscreen } = getBrowserApiService();
 </script>
 
 <template>
-  <div
+  <aside
     :class="cn('flex h-full flex-col justify-between bg-base-200 py-2', className)"
   >
     <div class="dropdown-hover dropdown dropdown-right px-2">
@@ -100,5 +100,5 @@ const { openInFullscreen } = getBrowserApiService();
         </Tooltip>
       </TooltipProvider>
     </div>
-  </div>
+  </aside>
 </template>
