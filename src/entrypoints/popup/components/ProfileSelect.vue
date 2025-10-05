@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/storage";
-import { UUID } from "node:crypto";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
@@ -19,6 +18,11 @@ const profileRefs = ref<HTMLElement[]>([]);
 onMounted(() => {
   scrollToEnabledProfile();
 });
+
+watch(
+  () => profilesStore.manager.selectedProfileId,
+  scrollToEnabledProfile,
+);
 
 function scrollToEnabledProfile() {
   const enabledIndex = profilesStore.orderedProfiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
@@ -62,7 +66,10 @@ function getProfileStatus(profile: Profile) {
             <div class="indicator">
               <button
                 :class="cn(
-                  'btn btn-square text-xl btn-soft btn-sm',
+                  `
+                    btn btn-square text-xl btn-soft btn-sm
+                    hover:btn-primary
+                  `,
                   { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
                 )"
                 @click="profilesStore.manager.selectedProfileId = profile.id"
