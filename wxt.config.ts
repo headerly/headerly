@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 import turboConsole from "unplugin-turbo-console/vite";
 import vueRouter from "unplugin-vue-router/vite";
 import vueDevtools from "vite-plugin-vue-devtools";
@@ -50,6 +51,7 @@ export default defineConfig({
         appendTo: "src/entrypoints/popup/main.ts",
       }),
       vue(),
+      vueJsx(),
       tailwindcss(),
       turboConsole(),
       vueRouter({

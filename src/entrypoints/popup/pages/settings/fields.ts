@@ -1,5 +1,6 @@
 import type { useSettingsStore } from "#/stores/useSettingsStore";
 import { categories } from "#/constants/emoji";
+import { getModKey } from "@/lib/utils";
 
 interface BaseSettingField {
   label: string;
@@ -62,7 +63,7 @@ export const settings: SettingGroup[] = [
       },
       {
         type: "checkbox",
-        label: "Enable Ctrl + 1-9 shortcut to switch profiles",
+        label: `Enable ${getModKey()} + 1-9 shortcut to switch profiles`,
         key: "enableProfileShortcut",
       },
     ],

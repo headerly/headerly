@@ -83,7 +83,7 @@ const settingsStore = useSettingsStore();
       </div>
     </div>
     <div
-      class="flex items-center justify-between gap-1 bg-base-200 p-1"
+      class="flex items-center justify-between gap-1 p-1"
     >
       <TooltipProvider :delay-duration="200">
         <Tooltip>

@@ -2,16 +2,17 @@
 @import "tw-animate-css";
 
 @plugin '@egoist/tailwindcss-icons';
+@plugin "@tailwindcss/typography";
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
   logs: false;
-}
+};
 
 @theme {
   --font-sans: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
   --font-mono: "Intel One Mono Variable", ui-monospace, monospace;
-}
+};
 
 @theme inline {
   --animate-meteor-effect: meteor 5s linear infinite;
@@ -28,4 +29,4 @@
       opacity: 0;
     }
   }
-}
+};

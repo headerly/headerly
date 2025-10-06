@@ -51,7 +51,8 @@ const currentMods = computed(() => (
     <legend class="fieldset-legend text-base font-medium">
       <label>
         <input
-          type="checkbox" class="checkbox checkbox-sm"
+          type="checkbox"
+          class="checkbox checkbox-sm"
           :checked="currentMods.every(mod => mod.enabled)"
           :indeterminate="currentMods.some(mod => mod.enabled)
             && !currentMods.every(mod => mod.enabled)"

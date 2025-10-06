@@ -67,9 +67,17 @@ export interface HeaderMod {
 
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
 
+type Filter = {
+  [K in keyof Browser.declarativeNetRequest.RuleCondition]?: {
+    value: Exclude<Browser.declarativeNetRequest.RuleCondition[K], undefined>;
+    enabled: boolean;
+  }
+};
+
 export interface Profile {
   requestHeaderMods: HeaderMod[];
   responseHeaderMods: HeaderMod[];
+  filters: Filter;
   id: UUID;
   name: string;
   enabled: boolean;
@@ -112,6 +120,7 @@ export function createProfile({
       operation: "set",
     }],
     responseHeaderMods: [],
+    filters: {},
   } as const satisfies Profile;
 }
 

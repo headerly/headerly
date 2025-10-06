@@ -55,13 +55,23 @@ const tabs = [
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-link",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.urlFilter = {
+            enabled: true,
+            value: "",
+          };
+        },
       },
       {
         title: "Regex Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-asterisk",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.regexFilter = {
+            enabled: true,
+            value: "",
+          };
+        },
       },
       {
         title: "Specified Tabs",

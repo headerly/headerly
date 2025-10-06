@@ -34,7 +34,7 @@ const isDEV = import.meta.env.DEV;
         tabindex="0"
         role="button"
         :class="cn(
-          'btn btn-square btn-soft btn-sm',
+          'btn btn-square btn-soft btn-sm btn-primary',
           settingsStore.powerOn || 'opacity-60',
         )"
         @click="profilesStore.addProfile"

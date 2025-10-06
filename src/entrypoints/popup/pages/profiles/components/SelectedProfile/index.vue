@@ -5,6 +5,7 @@ import { useSettingsStore } from "#/stores/useSettingsStore";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import ActionFieldset from "./components/ActionFieldset.vue";
+import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 
 const { class: className } = defineProps<{
@@ -15,7 +16,8 @@ const profilesStore = useProfilesStore();
 
 const empty = computed(() =>
   profilesStore.selectedProfile.requestHeaderMods.length === 0
-  && profilesStore.selectedProfile.responseHeaderMods.length === 0,
+  && profilesStore.selectedProfile.responseHeaderMods.length === 0
+  && Object.keys(profilesStore.selectedProfile.filters).length === 0,
 );
 
 const settingsStore = useSettingsStore();
@@ -28,7 +30,8 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     :class="cn(disabled && 'opacity-60', 'h-full', className)"
   >
     <div
-      v-if="empty" class="
+      v-if="empty"
+      class="
         relative grid size-full place-content-center place-items-center gap-2
         overflow-hidden
       "
@@ -52,6 +55,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     <div v-else v-auto-animate class="w-full p-2">
       <ActionFieldset v-if="profilesStore.selectedProfile.requestHeaderMods.length" type="request" />
       <ActionFieldset v-if="profilesStore.selectedProfile.responseHeaderMods.length" type="response" />
+      <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
     </div>
   </div>
 </template>

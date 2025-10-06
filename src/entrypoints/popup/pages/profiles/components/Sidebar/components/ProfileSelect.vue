@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type { Profile } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
-import { h, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
@@ -72,15 +72,18 @@ function renderShortcutHint(index: number) {
   if (!settingsStore.enableProfileShortcut || index >= 9) {
     return null;
   }
-  return h("span", [
-    h("kbd", { class: "kbd kbd-sm font-mono mr-1" }, getModKey()),
-    h("kbd", { class: "kbd kbd-sm font-mono" }, String(index + 1)),
-  ]);
+  return (
+    <span>
+      <kbd class="kbd kbd-sm font-mono mr-1">{getModKey()}</kbd>
+      <kbd class="kbd kbd-sm font-mono">{String(index + 1)}</kbd>
+    </span>
+  );
 }
 </script>
 
 <template>
   <div
+    v-auto-animate
     class="
       flex flex-col gap-1 overflow-y-auto px-2 py-1.25
       [scrollbar-width:none]
@@ -110,7 +113,7 @@ function renderShortcutHint(index: number) {
                 :class="cn(
                   'indicator-item status',
                   getProfileStatus(profile) === 'working' && `status-success`,
-                  getProfileStatus(profile) === 'disabled' && `status-warning`,
+                  getProfileStatus(profile) === 'disabled' && `status-error`,
                 )"
               />
             </div>
