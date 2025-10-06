@@ -1,5 +1,6 @@
 import type { useSettingsStore } from "#/stores/useSettingsStore";
 import { categories } from "#/constants/emoji";
+import { setTheme } from "#/theme";
 import { getModKey } from "@/lib/utils";
 
 interface BaseSettingField {
@@ -42,14 +43,7 @@ export const settings: SettingGroup[] = [
           { label: "Dark", value: "dark" },
         ],
         key: "theme",
-        onChange(e) {
-          const value = (e.target as HTMLSelectElement).value;
-          if (value === "auto") {
-            document.documentElement.removeAttribute("data-theme");
-            return;
-          }
-          document.documentElement.setAttribute("data-theme", value);
-        },
+        onChange: setTheme,
       },
       {
         type: "select",
