@@ -62,6 +62,8 @@ const name = browser.runtime.getManifest().name;
           <div class="flex gap-2">
             <a
               href="https://github.com/headerly/headerly"
+              target="_blank"
+              rel="noopener noreferrer"
               class="
                 btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
               "
@@ -70,7 +72,9 @@ const name = browser.runtime.getManifest().name;
               GitHub & MIT
             </a>
             <a
+              rel="noopener noreferrer"
               href="https://headerly.dev/docs"
+              target="_blank"
               class="
                 btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
               "

@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, getModKey } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 
@@ -51,33 +51,29 @@ function getProfileStatus(profile: Profile) {
 }
 
 const settingsStore = useSettingsStore();
-function handleKeydown(event: KeyboardEvent) {
+function handleSwitchProfileShortcut(event: KeyboardEvent) {
   if (!settingsStore.enableProfileShortcut) {
     return;
   }
-  if (event.ctrlKey) {
-    const key = event.key;
-    if (key >= "1" && key <= "9") {
-      event.preventDefault();
-      const index = Number(key) - 1;
-      const profiles = profilesStore.orderedProfiles;
-      if (index < profiles.length) {
-        const profile = profiles[index]!;
-        profilesStore.manager.selectedProfileId = profile.id;
-      }
+  if ((event.ctrlKey || event.metaKey) && event.key >= "1" && event.key <= "9") {
+    event.preventDefault();
+    const index = Number(event.key) - 1;
+    const profiles = profilesStore.orderedProfiles;
+    if (index < profiles.length) {
+      const profile = profiles[index]!;
+      profilesStore.manager.selectedProfileId = profile.id;
     }
   }
 }
 
-useEventListener(window, "keydown", handleKeydown);
+useEventListener(window, "keydown", handleSwitchProfileShortcut);
 
 function renderShortcutHint(index: number) {
   if (!settingsStore.enableProfileShortcut || index >= 9) {
     return null;
   }
   return h("span", [
-    h("kbd", { class: "kbd kbd-sm font-mono" }, "ctrl"),
-    " + ",
+    h("kbd", { class: "kbd kbd-sm font-mono mr-1" }, getModKey()),
     h("kbd", { class: "kbd kbd-sm font-mono" }, String(index + 1)),
   ]);
 }

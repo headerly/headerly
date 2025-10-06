@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { getBrowserApiService } from "@/entrypoints/background/BrowserApiService";
 import { cn } from "@/lib/utils";
+import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSelect from "./components/ProfileSelect.vue";
 
 const { class: className } = defineProps<{
@@ -51,14 +52,7 @@ const isDEV = import.meta.env.DEV;
             <i class="i-lucide-cross size-4" />
             <span>Add New Profile</span>
           </button>
-          <button
-            v-if="isDEV"
-            class="flex flex-row items-center gap-2"
-            @click="openInFullscreen"
-          >
-            <i class="i-lucide-maximize size-4" />
-            <span>Expand to Full Tab</span>
-          </button>
+          <ProfileManage />
           <RouterLink to="/settings" class="flex flex-row items-center gap-2">
             <i class="i-lucide-settings size-4" />
             <span>Settings</span>
@@ -67,6 +61,14 @@ const isDEV = import.meta.env.DEV;
             <i class="i-lucide-badge-info size-4" />
             <span>About</span>
           </RouterLink>
+          <button
+            v-if="isDEV"
+            class="flex flex-row items-center gap-2"
+            @click="openInFullscreen"
+          >
+            <i class="i-lucide-maximize size-4" />
+            <span>Expand to Full Tab</span>
+          </button>
         </li>
       </ul>
     </div>
