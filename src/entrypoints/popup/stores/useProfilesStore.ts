@@ -1,7 +1,7 @@
 import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
-import { head, random, round } from "es-toolkit";
+import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { computed, watch } from "vue";
 import { createProfile, useProfileManagerStorage } from "@/lib/storage";
@@ -26,13 +26,6 @@ export const useProfilesStore = defineStore("profiles", () => {
   // Does not provide cross-profile undo/redo capabilities.
   watch(() => manager.value.selectedProfileId, clear);
 
-  const orderedProfiles = computed(() => {
-    const profileMap = new Map(manager.value.profiles.map(p => [p.id, p]));
-    return manager.value.profileOrder
-      .map(id => profileMap.get(id))
-      .filter(Boolean);
-  });
-
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
@@ -44,7 +37,6 @@ export const useProfilesStore = defineStore("profiles", () => {
       emoji: getProfileIcon(),
     });
     manager.value.profiles.unshift(newProfile);
-    manager.value.profileOrder.unshift(newProfile.id);
     manager.value.selectedProfileId = newProfile.id;
   }
 
@@ -53,7 +45,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     newProfile.requestHeaderMods = newProfile.requestHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
     newProfile.responseHeaderMods = newProfile.responseHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
     manager.value.profiles.unshift(newProfile);
-    manager.value.profileOrder.unshift(newProfile.id);
     manager.value.selectedProfileId = newProfile.id;
   }
 
@@ -69,19 +60,11 @@ export const useProfilesStore = defineStore("profiles", () => {
       return;
     }
     const current = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
-    const prevNearestProfileId = manager.value.profileOrder[current - 1];
-    const nextNearestProfileId = manager.value.profileOrder[current + 1];
+    const prevNearestProfileId = manager.value.profiles[current - 1]?.id;
+    const nextNearestProfileId = manager.value.profiles[current + 1]?.id;
     // Don't using `Array.filter` to ensure reactivity.
     manager.value.profiles.splice(current, 1);
-    manager.value.profileOrder = manager.value.profileOrder.filter(id => id !== manager.value.selectedProfileId);
     manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
-  }
-
-  function reorderProfiles(fromIndex: number, toIndex: number) {
-    const removed = head(manager.value.profileOrder.splice(fromIndex, 1));
-    if (removed) {
-      manager.value.profileOrder.splice(toIndex, 0, removed);
-    }
   }
 
   function addHeaderAction(type: ActionType) {
@@ -180,13 +163,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     canRedo,
     ready: promise,
     // Getters
-    orderedProfiles,
     selectedProfile,
     // Actions
     addProfile,
     duplicateProfile,
     deleteProfile,
-    reorderProfiles,
     addHeaderAction,
     deleteHeaderAction,
     switchHeaderActionOperation,

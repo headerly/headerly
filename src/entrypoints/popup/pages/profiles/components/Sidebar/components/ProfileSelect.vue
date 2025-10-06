@@ -27,7 +27,7 @@ watch(
 );
 
 function scrollToEnabledProfile() {
-  const enabledIndex = profilesStore.orderedProfiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
+  const enabledIndex = profilesStore.manager.profiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
   if (enabledIndex !== -1 && profileRefs.value[enabledIndex]) {
     profileRefs.value[enabledIndex].scrollIntoView({
       behavior: "smooth",
@@ -58,7 +58,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
   if ((event.ctrlKey || event.metaKey) && event.key >= "1" && event.key <= "9") {
     event.preventDefault();
     const index = Number(event.key) - 1;
-    const profiles = profilesStore.orderedProfiles;
+    const profiles = profilesStore.manager.profiles;
     if (index < profiles.length) {
       const profile = profiles[index]!;
       profilesStore.manager.selectedProfileId = profile.id;

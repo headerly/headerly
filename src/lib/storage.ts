@@ -78,7 +78,6 @@ export interface Profile {
 
 export interface ProfileManager {
   profiles: Profile[];
-  profileOrder: UUID[];
   selectedProfileId: UUID;
   /**
    * Remember to increment wherever it is used.
@@ -123,7 +122,6 @@ export function createDefaultProfileManager() {
   });
   return {
     profiles: [profile],
-    profileOrder: [profile.id],
     selectedProfileId: profile.id,
     modIdCounter,
   } as const satisfies ProfileManager;
@@ -133,7 +131,6 @@ const defaultProfileManager = createDefaultProfileManager();
 
 export interface ProfileManager {
   profiles: Profile[];
-  profileOrder: UUID[];
   selectedProfileId: UUID;
 }
 
