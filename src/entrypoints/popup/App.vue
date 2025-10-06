@@ -12,7 +12,7 @@
         leave-to-class="opacity-0 -translate-x-4"
         mode="out-in"
       >
-        <component :is="Component" :key="route.path" />
+        <Component :is="Component" :key="route.path" />
       </Transition>
     </RouterView>
   </div>

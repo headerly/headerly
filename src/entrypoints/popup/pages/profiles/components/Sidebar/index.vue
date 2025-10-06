@@ -61,7 +61,11 @@ const isDEV = import.meta.env.DEV;
           </button>
           <RouterLink to="/settings" class="flex flex-row items-center gap-2">
             <i class="i-lucide-settings size-4" />
-            <span>Open Settings</span>
+            <span>Settings</span>
+          </RouterLink>
+          <RouterLink to="/about" class="flex flex-row items-center gap-2">
+            <i class="i-lucide-badge-info size-4" />
+            <span>About</span>
           </RouterLink>
         </li>
       </ul>

@@ -3,7 +3,7 @@ import type { Profile } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
-import { onMounted, ref, watch } from "vue";
+import { h, onMounted, ref, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
@@ -55,10 +55,10 @@ function handleKeydown(event: KeyboardEvent) {
   if (!settingsStore.enableProfileShortcut) {
     return;
   }
-  event.preventDefault();
   if (event.ctrlKey) {
     const key = event.key;
     if (key >= "1" && key <= "9") {
+      event.preventDefault();
       const index = Number(key) - 1;
       const profiles = profilesStore.orderedProfiles;
       if (index < profiles.length) {
@@ -70,6 +70,17 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 useEventListener(window, "keydown", handleKeydown);
+
+function renderShortcutHint(index: number) {
+  if (!settingsStore.enableProfileShortcut || index >= 9) {
+    return null;
+  }
+  return h("span", [
+    h("kbd", { class: "kbd kbd-sm font-mono" }, "ctrl"),
+    " + ",
+    h("kbd", { class: "kbd kbd-sm font-mono" }, String(index + 1)),
+  ]);
+}
 </script>
 
 <template>
@@ -109,7 +120,7 @@ useEventListener(window, "keydown", handleKeydown);
             </div>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>{{ profile.name }}</p>
+            <p>{{ profile.name }} <Component :is="renderShortcutHint(index)" /></p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
