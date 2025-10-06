@@ -7,7 +7,6 @@ import { router } from "./router";
 import "@fontsource-variable/montserrat/wght.css";
 import "@fontsource-variable/montserrat/wght-italic.css";
 import "@fontsource-variable/intel-one-mono";
-import "@fontsource/belanosima/400.css";
 import "@/assets/tailwind.css";
 
 const pinia = createPinia();

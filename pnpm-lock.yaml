@@ -75,9 +75,6 @@ importers:
       '@fontsource-variable/montserrat':
         specifier: ^5.2.8
         version: 5.2.8
-      '@fontsource/belanosima':
-        specifier: ^5.2.7
-        version: 5.2.7
       '@iconify-json/lucide':
         specifier: ^1.2.68
         version: 1.2.68
@@ -714,9 +711,6 @@ packages:
 
   '@fontsource-variable/montserrat@5.2.8':
     resolution: {integrity: sha512-d8wykq7GCKhEOlLwEuQIOK3w3qsXNxwDlH0meru4AZZzQ4/+rZyvHWKL6BBtHdmbovSHEEQDkwkD8qYUKlcFtQ==}
-
-  '@fontsource/belanosima@5.2.7':
-    resolution: {integrity: sha512-wum+SOlPhcVElg10UV3e7WpYSAApxOpWTy3K8Z3BN7p8/3a2m0ip01Y8X0pqisDryKTG30stzA2urzTg98uXyA==}
 
   '@formkit/auto-animate@0.9.0':
     resolution: {integrity: sha512-VhP4zEAacXS3dfTpJpJ88QdLqMTcabMg0jwpOSxZ/VzfQVfl3GkZSCZThhGC5uhq/TxPHPzW0dzr4H9Bb1OgKA==}
@@ -5170,8 +5164,6 @@ snapshots:
   '@fontsource-variable/intel-one-mono@5.2.2': {}
 
   '@fontsource-variable/montserrat@5.2.8': {}
-
-  '@fontsource/belanosima@5.2.7': {}
 
   '@formkit/auto-animate@0.9.0': {}
 

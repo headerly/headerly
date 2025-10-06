@@ -25,7 +25,7 @@ const resetToDefaultModal = ref<HTMLDialogElement | null>(null);
     )"
   >
     <div class="flex items-center">
-      <h1 class="flex items-center gap-2 font-brand text-lg">
+      <h1 class="flex items-center gap-2 font-sans font-semibold">
         <i class="i-lucide-settings size-5" />
         Settings
       </h1>
