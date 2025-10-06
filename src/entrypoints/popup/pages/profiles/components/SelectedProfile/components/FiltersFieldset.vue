@@ -108,6 +108,7 @@ const filterFields = [
                   </button>
                 </TooltipTrigger>
                 <TooltipContent
+                  :collision-padding="20"
                   side="top"
                   class="prose prose-sm max-h-40 max-w-lg overflow-y-auto"
                 >

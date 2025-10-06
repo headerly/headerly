@@ -153,7 +153,7 @@ const settingsStore = useSettingsStore();
               <i class="i-lucide-copy size-4" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
+          <TooltipContent side="bottom" :collision-padding="5">
             Duplicate current profile
           </TooltipContent>
         </Tooltip>
@@ -175,7 +175,7 @@ const settingsStore = useSettingsStore();
               />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
+          <TooltipContent side="bottom" :collision-padding="20">
             {{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}
           </TooltipContent>
         </Tooltip>
