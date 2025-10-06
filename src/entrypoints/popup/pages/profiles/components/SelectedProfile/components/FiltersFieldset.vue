@@ -118,6 +118,9 @@ const filterFields = [
             </TooltipProvider>
             <button
               class="btn btn-square btn-ghost btn-xs btn-error"
+              @click="() => {
+                profilesStore.selectedProfile.filters[filter.key] = undefined
+              }"
             >
               <i class="i-lucide-trash size-4" />
             </button>
