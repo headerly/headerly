@@ -90,7 +90,8 @@ const currentMods = computed(() => (
           class="label flex flex-1"
         >
           <input
-            v-model="mod.enabled" type="checkbox"
+            v-model="mod.enabled"
+            type="checkbox"
             class="checkbox checkbox-sm"
           >
           <label class="floating-label flex-1">
@@ -103,7 +104,7 @@ const currentMods = computed(() => (
               />
             </datalist>
             <input
-              v-model="mod.name"
+              v-model.lazy="mod.name"
               type="text"
               placeholder="Name"
               class="
@@ -111,7 +112,7 @@ const currentMods = computed(() => (
                 placeholder:italic
               "
               :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`"
-              @input="(e) => {
+              @change="(e) => {
                 // Although the HTTP standard considers header names to be case-insensitive,
                 // `chrome.declarativeNetRequest` will report an error
                 // when receiving a header name with uppercase characters.
@@ -122,7 +123,7 @@ const currentMods = computed(() => (
           <label v-if="mod.operation !== 'remove'" class="floating-label flex-1">
             <span>Value</span>
             <input
-              v-model="mod.value"
+              v-model.lazy="mod.value"
               type="text"
               placeholder="Value"
               class="
