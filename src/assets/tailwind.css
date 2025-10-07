@@ -9,9 +9,8 @@
 };
 
 @theme {
-  --font-sans: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
-  --font-mono: "Intel One Mono Variable", ui-monospace, monospace;
+  --font-sans: "Inter Variable", sans-serif;
+  --font-mono: "Intel One Mono Variable", monospace;
 };
 
 @theme inline {

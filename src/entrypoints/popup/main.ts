@@ -4,8 +4,8 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import { router } from "./router";
 import { setTheme } from "./theme";
-import "@fontsource-variable/montserrat/wght.css";
-import "@fontsource-variable/montserrat/wght-italic.css";
+import "@fontsource-variable/inter/wght-italic.css";
+import "@fontsource-variable/inter";
 import "@fontsource-variable/intel-one-mono";
 import "@/assets/tailwind.css";
 

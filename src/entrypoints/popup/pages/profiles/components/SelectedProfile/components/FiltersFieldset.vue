@@ -137,7 +137,7 @@ const filterFields = [
                 :placeholder="filter.placeholder"
                 class="
                   input input-sm w-full text-base text-base-content
-                  placeholder:font-mono
+                  placeholder:italic
                 "
               >
             </label>

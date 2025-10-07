@@ -72,7 +72,7 @@ importers:
       '@fontsource-variable/intel-one-mono':
         specifier: ^5.2.2
         version: 5.2.2
-      '@fontsource-variable/montserrat':
+      '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
       '@iconify-json/lucide':
@@ -715,8 +715,8 @@ packages:
   '@fontsource-variable/intel-one-mono@5.2.2':
     resolution: {integrity: sha512-dXmY1M3SJhQ3mtCdI4L3zMik8YabWMO912BjI2LG3uQQVBZJubH9+sEt/YHHPz5e3II0h+LhORd2JIGNTynldw==}
 
-  '@fontsource-variable/montserrat@5.2.8':
-    resolution: {integrity: sha512-d8wykq7GCKhEOlLwEuQIOK3w3qsXNxwDlH0meru4AZZzQ4/+rZyvHWKL6BBtHdmbovSHEEQDkwkD8qYUKlcFtQ==}
+  '@fontsource-variable/inter@5.2.8':
+    resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
   '@formkit/auto-animate@0.9.0':
     resolution: {integrity: sha512-VhP4zEAacXS3dfTpJpJ88QdLqMTcabMg0jwpOSxZ/VzfQVfl3GkZSCZThhGC5uhq/TxPHPzW0dzr4H9Bb1OgKA==}
@@ -5188,7 +5188,7 @@ snapshots:
 
   '@fontsource-variable/intel-one-mono@5.2.2': {}
 
-  '@fontsource-variable/montserrat@5.2.8': {}
+  '@fontsource-variable/inter@5.2.8': {}
 
   '@formkit/auto-animate@0.9.0': {}
 
