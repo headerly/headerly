@@ -18,19 +18,19 @@ const profileRefs = ref<HTMLElement[]>([]);
 
 // This functionality relies on top-level await in main.ts to work properly.
 onMounted(() => {
-  scrollToEnabledProfile();
+  scrollToEnabledProfile("instant");
 });
 
 watch(
   () => profilesStore.manager.selectedProfileId,
-  scrollToEnabledProfile,
+  () => scrollToEnabledProfile("smooth"),
 );
 
-function scrollToEnabledProfile() {
+function scrollToEnabledProfile(behavior: ScrollBehavior) {
   const enabledIndex = profilesStore.manager.profiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
   if (enabledIndex !== -1 && profileRefs.value[enabledIndex]) {
     profileRefs.value[enabledIndex].scrollIntoView({
-      behavior: "smooth",
+      behavior,
       block: "center",
     });
   }
