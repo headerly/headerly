@@ -52,18 +52,28 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
   };
 }
 
-export interface HeaderMod {
+interface BaseMod {
   /**
    * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
    * Must be a number(>=1); UUID cannot be used.
    */
-  id: number;
+  id: UUID;
   enabled: boolean;
   name: string;
-  value: string;
   operation: HeaderModOperation;
   comments?: string;
 }
+
+interface AppendOrSetMod extends BaseMod {
+  operation: "append" | "set";
+  value: string;
+}
+
+interface RemoveMod extends BaseMod {
+  operation: "remove";
+}
+
+export type HeaderMod = AppendOrSetMod | RemoveMod;
 
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
 
@@ -87,14 +97,10 @@ export interface Profile {
 export interface ProfileManager {
   profiles: Profile[];
   selectedProfileId: UUID;
-  /**
-   * Remember to increment wherever it is used.
-   */
-  modIdCounter: number;
 }
 
 interface CreateProfileOptions {
-  modId: number;
+  modId?: UUID;
   profilesLength?: number;
   emoji?: string;
   name?: string;
@@ -113,7 +119,7 @@ export function createProfile({
     enabled: true,
     emoji,
     requestHeaderMods: [{
-      id: modId,
+      id: modId ?? crypto.randomUUID(),
       enabled: true,
       name: "",
       value: "",
@@ -125,23 +131,17 @@ export function createProfile({
 }
 
 export function createDefaultProfileManager() {
-  const modIdCounter = 1;
+  const modId = crypto.randomUUID();
   const profile = createProfile({
-    modId: modIdCounter,
+    modId,
   });
   return {
     profiles: [profile],
     selectedProfileId: profile.id,
-    modIdCounter,
   } as const satisfies ProfileManager;
 }
 
 const defaultProfileManager = createDefaultProfileManager();
-
-export interface ProfileManager {
-  profiles: Profile[];
-  selectedProfileId: UUID;
-}
 
 export function useProfileManagerStorage(onReady?: (value: ProfileManager) => void) {
   return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, onReady);

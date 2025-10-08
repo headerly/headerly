@@ -132,7 +132,7 @@ const filterFields = [
           <div class="flex items-center justify-between gap-1">
             <label class="label flex-1">
               <input
-                v-model.lazy="profilesStore.selectedProfile.filters[filter.key]!.value"
+                v-model.lazy.trim="profilesStore.selectedProfile.filters[filter.key]!.value"
                 type="text"
                 :placeholder="filter.placeholder"
                 class="

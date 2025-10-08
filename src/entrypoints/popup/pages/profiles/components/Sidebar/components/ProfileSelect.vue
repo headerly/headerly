@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { Profile } from "@/lib/storage";
+import type { HeaderMod, Profile } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
@@ -37,8 +37,14 @@ function scrollToEnabledProfile(behavior: ScrollBehavior) {
 }
 
 function getProfileStatus(profile: Profile) {
-  const hasNameAndValueMod = profile.requestHeaderMods.some(mod => mod.enabled && mod.name && mod.value)
-    || profile.responseHeaderMods.some(mod => mod.enabled && mod.name && mod.value);
+  function modNameAndValueIsExist(mod: HeaderMod) {
+    if (mod.operation === "remove") {
+      return mod.enabled && mod.name;
+    }
+    return mod.enabled && mod.name && mod.value;
+  }
+  const hasNameAndValueMod = profile.requestHeaderMods.some(mod => mod.enabled && modNameAndValueIsExist(mod))
+    || profile.responseHeaderMods.some(mod => mod.enabled && modNameAndValueIsExist(mod));
   if (!hasNameAndValueMod) {
     return "empty";
   }

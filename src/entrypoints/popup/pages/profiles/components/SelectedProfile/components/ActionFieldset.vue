@@ -104,7 +104,7 @@ const currentMods = computed(() => (
               />
             </datalist>
             <input
-              v-model.lazy="mod.name"
+              v-model.lazy.trim="mod.name"
               type="text"
               placeholder="Name"
               class="
@@ -123,7 +123,7 @@ const currentMods = computed(() => (
           <label v-if="mod.operation !== 'remove'" class="floating-label flex-1">
             <span>Value</span>
             <input
-              v-model.lazy="mod.value"
+              v-model.lazy.trim="mod.value"
               type="text"
               placeholder="Value"
               class="

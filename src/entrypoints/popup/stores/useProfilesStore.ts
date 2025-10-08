@@ -1,3 +1,4 @@
+import type { UUID } from "node:crypto";
 import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
@@ -32,7 +33,6 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function addProfile() {
     const newProfile = createProfile({
-      modId: ++manager.value.modIdCounter,
       profilesLength: manager.value.profiles.length,
       emoji: getProfileIcon(),
     });
@@ -42,8 +42,8 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function duplicateProfile() {
     const newProfile = { ...selectedProfile.value, id: crypto.randomUUID(), name: `[Duplicated] ${selectedProfile.value.name}` };
-    newProfile.requestHeaderMods = newProfile.requestHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
-    newProfile.responseHeaderMods = newProfile.responseHeaderMods.map(mod => ({ ...mod, id: ++manager.value.modIdCounter }));
+    newProfile.requestHeaderMods = newProfile.requestHeaderMods.map(mod => ({ ...mod, id: crypto.randomUUID() }));
+    newProfile.responseHeaderMods = newProfile.responseHeaderMods.map(mod => ({ ...mod, id: crypto.randomUUID() }));
     manager.value.profiles.unshift(newProfile);
     manager.value.selectedProfileId = newProfile.id;
   }
@@ -54,7 +54,6 @@ export const useProfilesStore = defineStore("profiles", () => {
       const selectedProfileIndex = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
       // Don't using `Object.assign` to ensure reactivity.
       manager.value.profiles[selectedProfileIndex] = createProfile({
-        modId: ++manager.value.modIdCounter,
         id: manager.value.profiles[selectedProfileIndex]!.id,
       });
       return;
@@ -69,7 +68,7 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function addHeaderAction(type: ActionType) {
     const mod = {
-      id: ++manager.value.modIdCounter,
+      id: crypto.randomUUID(),
       enabled: true,
       name: "",
       value: "",
@@ -90,7 +89,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function switchHeaderActionOperation(type: ActionType, modId: number) {
+  function switchHeaderActionOperation(type: ActionType, modId: UUID) {
     const mod = type === "request"
       ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
       : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
@@ -101,7 +100,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
   }
 
-  function deleteHeaderMod(type: ActionType, modId: number) {
+  function deleteHeaderMod(type: ActionType, modId: UUID) {
     if (type === "request") {
       selectedProfile.value.requestHeaderMods = selectedProfile.value.requestHeaderMods.filter(mod => mod.id !== modId);
     } else {
@@ -109,14 +108,14 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function duplicateHeaderMod(type: ActionType, modId: number) {
+  function duplicateHeaderMod(type: ActionType, modId: UUID) {
     const targetMod = type === "request"
       ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
       : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
     if (!targetMod) {
       return;
     }
-    const newMod = { ...targetMod, id: ++manager.value.modIdCounter };
+    const newMod = { ...targetMod, id: crypto.randomUUID() };
     if (type === "request") {
       selectedProfile.value.requestHeaderMods.push(newMod);
     } else {
@@ -124,7 +123,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function moveUpHeaderMod(type: ActionType, modId: number) {
+  function moveUpHeaderMod(type: ActionType, modId: UUID) {
     const mods = type === "request"
       ? selectedProfile.value.requestHeaderMods
       : selectedProfile.value.responseHeaderMods;
@@ -135,7 +134,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function moveDownHeaderMod(type: ActionType, modId: number) {
+  function moveDownHeaderMod(type: ActionType, modId: UUID) {
     const mods = type === "request"
       ? selectedProfile.value.requestHeaderMods
       : selectedProfile.value.responseHeaderMods;
@@ -146,7 +145,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function editModComments(type: ActionType, modId: number, comments: string) {
+  function editModComments(type: ActionType, modId: UUID, comments: string) {
     const mod = type === "request"
       ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
       : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
