@@ -2,8 +2,8 @@
 import type { HeaderMod, Profile } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { useEventListener } from "@vueuse/core";
-import { onMounted, ref, watch } from "vue";
+import { useEventListener, useTemplateRefsList } from "@vueuse/core";
+import { nextTick, onMounted, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
@@ -14,10 +14,12 @@ import { cn, getModKey } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 
-const profileRefs = ref<HTMLElement[]>([]);
+const profileRefs = useTemplateRefsList<HTMLDivElement>();
 
-// This functionality relies on top-level await in main.ts to work properly.
-onMounted(() => {
+onMounted(async () => {
+  // Without this line of code, the transition effect will appear
+  // when the form is first opened, even if the value has not changed at all.
+  await nextTick();
   scrollToEnabledProfile("instant");
 });
 
@@ -89,15 +91,15 @@ function renderShortcutHint(index: number) {
 
 <template>
   <div
-    v-auto-animate
     class="
       flex flex-col gap-1 overflow-y-auto px-2 py-1.25
       [scrollbar-width:none]
     "
   >
     <div
-      v-for="(profile, index) in profilesStore.manager.profiles" :key="profile.id"
-      :ref="el => profileRefs[index] = el as HTMLElement"
+      v-for="(profile, index) in profilesStore.manager.profiles"
+      :key="profile.id"
+      :ref="profileRefs.set"
     >
       <TooltipProvider :delay-duration="200">
         <Tooltip>
