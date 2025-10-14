@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { HeaderMod } from "@/lib/storage";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useEventListener } from "@vueuse/core";
 import { computed, ref } from "vue";
+
 import {
   Sheet,
   SheetContent,
@@ -10,7 +12,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
 import { cn, getModKey } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
@@ -27,6 +28,11 @@ useEventListener(window, "keydown", handleSearchShortcut);
 
 const searchKeyword = ref("");
 
+function matchHeaderMod(mod: HeaderMod) {
+  return mod.name?.toLowerCase().includes(searchKeyword.value.toLowerCase())
+    || (mod.operation !== "remove" && mod.value.toLowerCase().includes(searchKeyword.value.toLowerCase()));
+}
+
 const searchResults = computed(() => {
   if (!searchKeyword.value) {
     return profilesStore.manager.profiles;
@@ -34,8 +40,8 @@ const searchResults = computed(() => {
   return profilesStore.manager.profiles.filter(profile =>
     profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     || profile.emoji.includes(searchKeyword.value)
-    || profile.requestHeaderMods.some(mod => mod.name?.toLowerCase().includes(searchKeyword.value.toLowerCase()) || mod.value?.toLowerCase().includes(searchKeyword.value.toLowerCase()))
-    || profile.responseHeaderMods.some(mod => mod.name?.toLowerCase().includes(searchKeyword.value.toLowerCase()) || mod.value?.toLowerCase().includes(searchKeyword.value.toLowerCase())),
+    || profile.requestHeaderMods.some(mod => matchHeaderMod(mod))
+    || profile.responseHeaderMods.some(mod => matchHeaderMod(mod)),
   );
 });
 </script>

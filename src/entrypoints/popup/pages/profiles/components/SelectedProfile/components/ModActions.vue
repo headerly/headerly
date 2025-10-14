@@ -19,7 +19,7 @@ const moreActions = [
     key: "duplicate",
     label: "Duplicate",
     icon: "i-lucide-copy size-4",
-    disabled: !mod.name && !mod.value,
+    disabled: !mod.name && (mod.operation === "remove" || !mod.value),
     onClick: () => profilesStore.duplicateHeaderMod(type, mod.id),
   },
   {
