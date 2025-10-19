@@ -4,6 +4,8 @@
 
 [WIP] Still a long way from phase 1. Unavailable, this will not be released until the first phase of development is complete.
 
+WARNING: This repository will force push arbitrarily before reaching 1.0.0
+
 Headerly is a browser extension for managing HTTP request headers. It aims to be a full replacement for ModHeader and is open source and reliable — it won’t insert ads into your pages.
 
 ## Plan
