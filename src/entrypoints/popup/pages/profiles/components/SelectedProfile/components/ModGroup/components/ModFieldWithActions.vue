@@ -6,6 +6,14 @@ import {
   AUTOCOMPLETE_RESPONSE_FIELDS,
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
 } from "#/constants/header";
+import { computed } from "vue";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import ModActionsDropdown from "./ModActionsDropdown.vue";
 
 const { actionType, mod, index } = defineProps<{
@@ -45,16 +53,23 @@ function autocomplete(actionType: ActionType, operation: HeaderModOperation, inp
   const list = getAutocompleteList(actionType, operation);
   return list.filter(field => field.includes(input) && field !== input);
 }
+
+const nextOperation = computed(() => {
+  const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
+  const currentIndex = supportedOperations.indexOf(mod.operation);
+  const nextIndex = (currentIndex + 1) % supportedOperations.length;
+  return {
+    value: supportedOperations[nextIndex]!,
+    label: supportedOperations[nextIndex]!.charAt(0).toUpperCase() + supportedOperations[nextIndex]!.slice(1),
+  };
+});
 </script>
 
 <template>
-  <div class="flex flex-col justify-between gap-1">
-    <div class="flex items-center justify-between gap-1">
-      <label
-        class="label flex flex-1"
-      >
-        <slot name="field-before" />
-
+  <div class="flex flex-1 items-center justify-between gap-1">
+    <label class="label flex flex-1">
+      <slot name="field-before" />
+      <div class="flex flex-1 gap-1">
         <label class="floating-label flex-1">
           <span>Name</span>
           <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`">
@@ -94,8 +109,39 @@ function autocomplete(actionType: ActionType, operation: HeaderModOperation, inp
             @change="(e) => emit('update:value', (e.target as HTMLInputElement).value.trim())"
           >
         </label>
-
-      </label>
+      </div>
+    </label>
+    <div class="flex gap-0.5">
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              :class="cn(`
+                btn btn-square font-medium whitespace-nowrap btn-soft btn-xs
+              `, {
+                'btn-accent': mod.operation === 'set',
+                'btn-info': mod.operation === 'append',
+                'btn-secondary': mod.operation === 'remove',
+              })"
+              @click="() => {
+                emit('update:operation', nextOperation.value);
+              }"
+            >
+              <i
+                :class="cn('size-3', {
+                  'i-lucide-equal': mod.operation === 'set',
+                  'i-lucide-plus': mod.operation === 'append',
+                  'i-lucide-minus': mod.operation === 'remove',
+                })"
+              />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" :collision-padding="20">
+            <p>Current operation: {{ mod.operation }}</p>
+            <p>Switch to {{ nextOperation.label }}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <button
         class="btn btn-square btn-ghost btn-xs btn-error"
         @click="emit('delete')"
@@ -114,17 +160,5 @@ function autocomplete(actionType: ActionType, operation: HeaderModOperation, inp
         @move-down="emit('moveDown')"
       />
     </div>
-    <button
-      class="btn ml-6.5 w-min font-medium whitespace-nowrap btn-soft btn-xs"
-      @click="() => {
-        const supportedOperations = ['set', 'append', 'remove'] as const satisfies HeaderModOperation[];
-        const currentIndex = supportedOperations.indexOf(mod.operation);
-        const nextIndex = (currentIndex + 1) % supportedOperations.length;
-        emit('update:operation', supportedOperations[nextIndex]!);
-      }"
-    >
-      Operation: <span class="capitalize">{{ mod.operation }}</span>
-      <i class="i-lucide-refresh-cw size-3" />
-    </button>
   </div>
 </template>
