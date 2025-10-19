@@ -128,7 +128,7 @@ const nextOperation = computed(() => {
               }"
             >
               <i
-                :class="cn('size-3', {
+                :class="cn('size-4', {
                   'i-lucide-equal': mod.operation === 'set',
                   'i-lucide-plus': mod.operation === 'append',
                   'i-lucide-minus': mod.operation === 'remove',
