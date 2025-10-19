@@ -1,11 +1,11 @@
 import type { UUID } from "node:crypto";
-import type { HeaderModGroup, Profile } from "@/lib/storage";
+import type { HeaderModGroup, ModGroupType, Profile } from "@/lib/storage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { computed, watch } from "vue";
-import { createProfile, useProfileManagerStorage } from "@/lib/storage";
+import { createMod, createProfile, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
 export type ActionType = "request" | "response";
@@ -92,6 +92,17 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
   }
 
+  function addModGroup(type: ActionType, groupType: ModGroupType) {
+    const groups = findHeaderModGroups(selectedProfile.value, type);
+    const mod = createMod();
+    const newGroup = {
+      id: crypto.randomUUID(),
+      type: groupType,
+      mods: [mod],
+    } as const satisfies HeaderModGroup;
+    groups.push(newGroup);
+  }
+
   return {
     // State
     manager,
@@ -104,6 +115,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     addProfile,
     duplicateProfile,
     deleteProfile,
+    addModGroup,
     undo,
     redo,
   };

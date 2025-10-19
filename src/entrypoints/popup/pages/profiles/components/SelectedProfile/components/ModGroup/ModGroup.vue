@@ -5,6 +5,7 @@ import type { HeaderMod, ModGroupType } from "@/lib/storage";
 import { findHeaderModGroup, findHeaderModGroups, useProfilesStore } from "#/stores/useProfilesStore";
 import { head } from "es-toolkit";
 import { computed } from "vue";
+import { createMod } from "@/lib/storage";
 import ModField from "./components/ModFieldWithActions.vue";
 
 const { actionType, groupId, mods, groupType } = defineProps<{
@@ -58,21 +59,17 @@ function moveDownHeaderMod(modId: UUID) {
   }
 }
 
-function addHeaderAction() {
-  const mod = {
-    id: crypto.randomUUID(),
+function addModToGroup() {
+  const mod = createMod({
     enabled: groupType === "checkbox",
-    name: "",
-    value: "",
-    operation: "set",
-  } as const satisfies HeaderMod;
+  });
   const group = findHeaderModGroup(profilesStore.selectedProfile, actionType, groupId);
   if (group) {
     group.mods.push(mod);
   }
 }
 
-function deleteHeaderAction() {
+function deleteMod() {
   const groups = findHeaderModGroups(profilesStore.selectedProfile, actionType);
   const index = groups.findIndex(group => group.id === groupId);
   if (index !== -1) {
@@ -130,13 +127,13 @@ const checked = computed(() => {
       <div class="flex gap-1">
         <button
           class="btn btn-square btn-ghost btn-xs btn-primary"
-          @click="addHeaderAction"
+          @click="addModToGroup"
         >
           <i class="i-lucide-cross size-4" />
         </button>
         <button
           class="btn btn-square btn-ghost btn-xs btn-error"
-          @click="deleteHeaderAction"
+          @click="deleteMod"
         >
           <i class="i-lucide-trash size-4" />
         </button>

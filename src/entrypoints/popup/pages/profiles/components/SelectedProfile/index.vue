@@ -65,6 +65,14 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         :mods
         action-type="request"
       />
+      <ModGroup
+        v-for="{ id: groupId, mods, type: groupType } in profilesStore.selectedProfile.responseHeaderModGroups"
+        :key="groupId"
+        :group-id
+        :group-type
+        :mods
+        action-type="response"
+      />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
     </div>
   </div>

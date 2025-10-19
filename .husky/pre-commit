@@ -1,1 +1,2 @@
 pnpm run lint:fix
+pnpm run typecheck

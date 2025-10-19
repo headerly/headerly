@@ -107,6 +107,17 @@ export interface ProfileManager {
   selectedProfileId: UUID;
 }
 
+export function createMod(overrides?: Partial<HeaderMod>) {
+  return {
+    id: crypto.randomUUID(),
+    enabled: true,
+    name: "",
+    operation: "set" as const,
+    value: "",
+    ...(overrides ?? {}),
+  } as const satisfies HeaderMod;
+}
+
 export function createProfile(overrides?: Partial<Profile>) {
   return {
     id: crypto.randomUUID(),
@@ -116,13 +127,7 @@ export function createProfile(overrides?: Partial<Profile>) {
     requestHeaderModGroups: [{
       id: crypto.randomUUID(),
       type: "checkbox",
-      mods: [{
-        id: crypto.randomUUID(),
-        enabled: true,
-        name: "",
-        value: "",
-        operation: "set",
-      }],
+      mods: [createMod()],
     }],
     responseHeaderModGroups: [],
     filters: {},
