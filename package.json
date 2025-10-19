@@ -29,6 +29,7 @@
     "@tanstack/vue-virtual": "^3.13.12",
     "@vueuse/core": "^13.9.0",
     "@webext-core/proxy-service": "^1.2.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.40.0",
     "motion-v": "^1.7.2",
@@ -58,7 +59,6 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^5.1.1",
     "@wxt-dev/auto-icons": "^1.1.0",
-    "class-variance-authority": "^0.7.1",
     "daisyui": "^5.3.7",
     "eslint": "^9.38.0",
     "eslint-plugin-better-tailwindcss": "^3.7.10",
@@ -75,7 +75,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@wxt-dev/storage": "1.2.0"
+      "@wxt-dev/storage": "1.2.0",
+      "vite": "npm:rolldown-vite@latest"
     }
   }
 }
