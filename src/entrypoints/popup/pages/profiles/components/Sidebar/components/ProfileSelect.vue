@@ -37,17 +37,22 @@ function scrollToEnabledProfile(behavior: ScrollBehavior) {
     });
   }
 }
-
-function getProfileStatus(profile: Profile) {
-  function modNameAndValueIsExist(mod: HeaderMod) {
-    if (mod.operation === "remove") {
-      return mod.enabled && mod.name;
-    }
-    return mod.enabled && mod.name && mod.value;
+function modNameAndValueIsExist(mod: HeaderMod) {
+  if (mod.operation === "remove") {
+    return mod.enabled && mod.name;
   }
-  const hasNameAndValueMod = profile.requestHeaderMods.some(mod => mod.enabled && modNameAndValueIsExist(mod))
-    || profile.responseHeaderMods.some(mod => mod.enabled && modNameAndValueIsExist(mod));
-  if (!hasNameAndValueMod) {
+  return mod.enabled && mod.name && mod.value;
+}
+
+function hasNameAndValueMod(profile: Profile) {
+  return profile.requestHeaderModGroups.some(
+    group => group.mods.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
+  ) || profile.responseHeaderModGroups.some(
+    group => group.mods.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
+  );
+}
+function getProfileStatus(profile: Profile) {
+  if (!hasNameAndValueMod(profile)) {
     return "empty";
   }
 

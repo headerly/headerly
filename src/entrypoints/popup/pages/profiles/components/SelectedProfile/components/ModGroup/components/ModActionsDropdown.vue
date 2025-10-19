@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderMod } from "@/lib/storage";
-import { useProfilesStore } from "#/stores/useProfilesStore";
 import { ref } from "vue";
 
-const { mod, index, type, currentModsLength } = defineProps<{
+const { mod, index, currentModsLength } = defineProps<{
   mod: HeaderMod;
   index: number;
   type: ActionType;
   currentModsLength: number;
 }>();
 
-const profilesStore = useProfilesStore();
+const emit = defineEmits<{
+  (e: "update:comments", value: string): void;
+  (e: "duplicate"): void;
+  (e: "moveUp"): void;
+  (e: "moveDown"): void;
+}>();
+
 const commentsDialogRef = ref<HTMLDialogElement | null>(null);
 
 const moreActions = [
@@ -20,7 +25,7 @@ const moreActions = [
     label: "Duplicate",
     icon: "i-lucide-copy size-4",
     disabled: !mod.name && (mod.operation === "remove" || !mod.value),
-    onClick: () => profilesStore.duplicateHeaderMod(type, mod.id),
+    onClick: () => emit("duplicate"),
   },
   {
     key: "comments",
@@ -35,14 +40,14 @@ const moreActions = [
     label: "Move Up",
     icon: "i-lucide-arrow-big-up size-4",
     disabled: index === 0,
-    onClick: () => profilesStore.moveUpHeaderMod(type, mod.id),
+    onClick: () => emit("moveUp"),
   },
   {
     key: "moveDown",
     label: "Move Down",
     icon: "i-lucide-arrow-big-down size-4",
     disabled: index === currentModsLength - 1,
-    onClick: () => profilesStore.moveDownHeaderMod(type, mod.id),
+    onClick: () => emit("moveDown"),
   },
 ];
 
@@ -94,9 +99,10 @@ const comments = ref(mod.comments || "");
       <textarea v-model="comments" class="textarea mt-4 h-24 w-full text-base" placeholder="Comments" />
       <div class="modal-action">
         <button
-          class="btn btn-sm btn-primary" @click="() => {
+          class="btn btn-sm btn-primary"
+          @click="() => {
             commentsDialogRef?.close()
-            profilesStore.editModComments(type, mod.id, comments)
+            emit('update:comments', comments)
           }"
         >
           Save

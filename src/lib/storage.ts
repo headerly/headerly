@@ -84,9 +84,17 @@ type Filter = {
   }
 };
 
+export type ModGroupType = "radio" | "checkbox";
+
+export interface HeaderModGroup {
+  id: UUID;
+  type: ModGroupType;
+  mods: HeaderMod[];
+}
+
 export interface Profile {
-  requestHeaderMods: HeaderMod[];
-  responseHeaderMods: HeaderMod[];
+  requestHeaderModGroups: HeaderModGroup[];
+  responseHeaderModGroups: HeaderModGroup[];
   filters: Filter;
   id: UUID;
   name: string;
@@ -99,42 +107,31 @@ export interface ProfileManager {
   selectedProfileId: UUID;
 }
 
-interface CreateProfileOptions {
-  modId?: UUID;
-  profilesLength?: number;
-  emoji?: string;
-  name?: string;
-  id?: UUID;
-}
-export function createProfile({
-  modId,
-  profilesLength = 0,
-  emoji = "📃",
-  name = `New Profile ${profilesLength + 1}`,
-  id,
-}: CreateProfileOptions) {
+export function createProfile(overrides?: Partial<Profile>) {
   return {
-    id: id ?? crypto.randomUUID(),
-    name,
+    id: crypto.randomUUID(),
+    name: "New Profile 1",
     enabled: true,
-    emoji,
-    requestHeaderMods: [{
-      id: modId ?? crypto.randomUUID(),
-      enabled: true,
-      name: "",
-      value: "",
-      operation: "set",
+    emoji: "📃",
+    requestHeaderModGroups: [{
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      mods: [{
+        id: crypto.randomUUID(),
+        enabled: true,
+        name: "",
+        value: "",
+        operation: "set",
+      }],
     }],
-    responseHeaderMods: [],
+    responseHeaderModGroups: [],
     filters: {},
+    ...(overrides ?? {}),
   } as const satisfies Profile;
 }
 
 export function createDefaultProfileManager() {
-  const modId = crypto.randomUUID();
-  const profile = createProfile({
-    modId,
-  });
+  const profile = createProfile();
   return {
     profiles: [profile],
     selectedProfileId: profile.id,

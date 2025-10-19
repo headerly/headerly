@@ -34,8 +34,6 @@ export default antfu(
         "error",
         {
           ignore: [
-            "dropdown-content",
-            "dropdown-hover",
             "indicator-item",
             "list-row",
           ],

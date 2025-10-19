@@ -27,16 +27,28 @@ const tabs = [
     icon: "i-lucide-package-plus",
     items: [
       {
-        title: "Modify HTTP Request Header",
+        title: "Modify HTTP Request Header (Checkbox)",
         description: "Set, remove, or append HTTP request headers.",
         icon: "i-lucide-arrow-big-right-dash",
-        action: () => profilesStore.addHeaderAction("request"),
+        action: () => profilesStore.addHeaderAction("request", "checkbox"),
       },
       {
-        title: "Modify HTTP Response Header",
+        title: "Modify HTTP Request Header (Radio)",
+        description: "Set, remove, or append HTTP request headers.",
+        icon: "i-lucide-arrow-big-right-dash",
+        action: () => profilesStore.addHeaderAction("request", "radio"),
+      },
+      {
+        title: "Modify HTTP Response Header (Checkbox)",
         description: "Set, remove, or append HTTP response headers.",
         icon: "i-lucide-arrow-big-left-dash",
-        action: () => profilesStore.addHeaderAction("response"),
+        action: () => profilesStore.addHeaderAction("response", "checkbox"),
+      },
+      {
+        title: "Modify HTTP Response Header (Radio)",
+        description: "Set, remove, or append HTTP response headers.",
+        icon: "i-lucide-arrow-big-left-dash",
+        action: () => profilesStore.addHeaderAction("response", "radio"),
       },
       {
         title: "Append Cookie in Request Header",

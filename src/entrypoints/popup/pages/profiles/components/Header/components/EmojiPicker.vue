@@ -59,28 +59,32 @@ function scrollToCategory(categoryLabel: string) {
     });
   }
 }
+
+const popovertarget = "emoji-picker-popover";
 </script>
 
 <template>
-  <div class="dropdown dropdown-start">
-    <div
-      tabindex="0" role="button"
-      class="
-        btn btn-square items-center justify-center text-xl btn-ghost btn-sm
-        btn-primary
-      "
-    >
-      {{ selectedEmoji }}
-    </div>
-    <div
-      tabindex="0"
-      class="
-        dropdown-content z-10 flex h-82 w-67 flex-col rounded-box bg-base-300
-        pt-2 shadow-sm
-      "
-    >
-      <div class="px-2">
-        <nav class="sticky top-0 z-10 rounded-box glass">
+  <button
+    :popovertarget
+    class="
+      btn btn-square items-center justify-center text-xl btn-ghost btn-sm
+      btn-primary
+      [anchor-name:--anchor-emoji-picker]
+    "
+  >
+    {{ selectedEmoji }}
+  </button>
+  <div
+    :id="popovertarget"
+    popover
+    class="
+      dropdown h-82 w-67 rounded-box bg-base-300 pt-2 shadow-sm
+      [position-anchor:--anchor-emoji-picker]
+    "
+  >
+    <div class="relative flex size-full flex-col">
+      <div class="sticky top-0 z-10 flex flex-col px-2">
+        <nav class="rounded-box glass">
           <ul class="flex flex-nowrap justify-between gap-1 p-1">
             <li v-for="item in emojisWithCategory" :key="item.label">
               <TooltipProvider :delay-duration="200">
@@ -110,7 +114,6 @@ function scrollToCategory(categoryLabel: string) {
           class="relative pb-2"
           :style="{
             height: `${rowVirtualizer.getTotalSize()}px`,
-
           }"
         >
           <div

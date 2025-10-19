@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn, getModKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 
@@ -40,8 +40,8 @@ const searchResults = computed(() => {
   return profilesStore.manager.profiles.filter(profile =>
     profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     || profile.emoji.includes(searchKeyword.value)
-    || profile.requestHeaderMods.some(mod => matchHeaderMod(mod))
-    || profile.responseHeaderMods.some(mod => matchHeaderMod(mod)),
+    || profile.requestHeaderModGroups.some(({ mods }) => mods.some(matchHeaderMod))
+    || profile.responseHeaderModGroups.some(({ mods }) => mods.some(matchHeaderMod)),
   );
 });
 </script>
@@ -49,14 +49,7 @@ const searchResults = computed(() => {
 <template>
   <Sheet v-model:open="open">
     <SheetTrigger as-child>
-      <button
-        class="flex flex-row items-center gap-2"
-      >
-        <i class="i-lucide-search size-4" />
-        <span>Search
-          <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-          <kbd class="kbd font-mono kbd-sm">K</kbd></span>
-      </button>
+      <slot />
     </SheetTrigger>
     <SheetContent side="left" class="w-2/5 text-base">
       <SheetHeader>

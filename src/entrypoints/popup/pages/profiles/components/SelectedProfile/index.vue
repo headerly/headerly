@@ -4,9 +4,9 @@ import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
-import ActionFieldset from "./components/ActionFieldset.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
+import ModGroup from "./components/ModGroup";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -15,8 +15,12 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 
 const empty = computed(() =>
-  profilesStore.selectedProfile.requestHeaderMods.length === 0
-  && profilesStore.selectedProfile.responseHeaderMods.length === 0
+  profilesStore.selectedProfile.requestHeaderModGroups.every(
+    group => group.mods.length === 0,
+  )
+  && profilesStore.selectedProfile.responseHeaderModGroups.every(
+    group => group.mods.length === 0,
+  )
   && Object.keys(profilesStore.selectedProfile.filters).length === 0,
 );
 
@@ -53,8 +57,14 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
       />
     </div>
     <div v-else v-auto-animate class="w-full p-2">
-      <ActionFieldset v-if="profilesStore.selectedProfile.requestHeaderMods.length" type="request" />
-      <ActionFieldset v-if="profilesStore.selectedProfile.responseHeaderMods.length" type="response" />
+      <ModGroup
+        v-for="{ id: groupId, mods, type: groupType } in profilesStore.selectedProfile.requestHeaderModGroups"
+        :key="groupId"
+        :group-id
+        :group-type
+        :mods
+        action-type="request"
+      />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
     </div>
   </div>

@@ -1,5 +1,5 @@
 import type { UUID } from "node:crypto";
-import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
+import type { HeaderModGroup, Profile } from "@/lib/storage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -13,11 +13,33 @@ export type ActionType = "request" | "response";
 function getProfileIcon() {
   const settingsStore = useSettingsStore();
   if (settingsStore.autoAssignEmoji === false) {
-    return;
+    return "📃";
   }
   return settingsStore.randomEmojiCategory === "all"
     ? allEmojis[round(random(allEmojis.length))]
     : emoji[settingsStore.randomEmojiCategory][round(random(emoji[settingsStore.randomEmojiCategory].length))];
+}
+
+function cloneHeaderModGroupsWithNewId(groups: HeaderModGroup[]): HeaderModGroup[] {
+  return groups.map(group => ({
+    ...group,
+    id: crypto.randomUUID(),
+    mods: group.mods.map(mod => ({
+      ...mod,
+      id: crypto.randomUUID(),
+    })),
+  }));
+}
+
+export function findHeaderModGroups(profile: Profile, type: ActionType): HeaderModGroup[] {
+  return type === "request"
+    ? profile.requestHeaderModGroups
+    : profile.responseHeaderModGroups;
+}
+
+export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: UUID): HeaderModGroup | undefined {
+  const groups = findHeaderModGroups(profile, type);
+  return groups.find(g => g.id === groupId);
 }
 
 export const useProfilesStore = defineStore("profiles", () => {
@@ -33,7 +55,7 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function addProfile() {
     const newProfile = createProfile({
-      profilesLength: manager.value.profiles.length,
+      name: `New Profile ${manager.value.profiles.length + 1}`,
       emoji: getProfileIcon(),
     });
     manager.value.profiles.unshift(newProfile);
@@ -41,9 +63,13 @@ export const useProfilesStore = defineStore("profiles", () => {
   }
 
   function duplicateProfile() {
-    const newProfile = { ...selectedProfile.value, id: crypto.randomUUID(), name: `[Duplicated] ${selectedProfile.value.name}` };
-    newProfile.requestHeaderMods = newProfile.requestHeaderMods.map(mod => ({ ...mod, id: crypto.randomUUID() }));
-    newProfile.responseHeaderMods = newProfile.responseHeaderMods.map(mod => ({ ...mod, id: crypto.randomUUID() }));
+    const newProfile = {
+      ...selectedProfile.value,
+      id: crypto.randomUUID(),
+      name: `[Duplicated] ${selectedProfile.value.name}`,
+      requestHeaderModGroups: cloneHeaderModGroupsWithNewId(selectedProfile.value.requestHeaderModGroups),
+      responseHeaderModGroups: cloneHeaderModGroupsWithNewId(selectedProfile.value.responseHeaderModGroups),
+    };
     manager.value.profiles.unshift(newProfile);
     manager.value.selectedProfileId = newProfile.id;
   }
@@ -66,95 +92,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
   }
 
-  function addHeaderAction(type: ActionType) {
-    const mod = {
-      id: crypto.randomUUID(),
-      enabled: true,
-      name: "",
-      value: "",
-      operation: "set",
-    } as const satisfies HeaderMod;
-    if (type === "request") {
-      selectedProfile.value.requestHeaderMods.push(mod);
-    } else {
-      selectedProfile.value.responseHeaderMods.push(mod);
-    }
-  }
-
-  function deleteHeaderAction(type: ActionType) {
-    if (type === "request") {
-      selectedProfile.value.requestHeaderMods = [];
-    } else {
-      selectedProfile.value.responseHeaderMods = [];
-    }
-  }
-
-  function switchHeaderActionOperation(type: ActionType, modId: UUID) {
-    const mod = type === "request"
-      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
-      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
-    const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
-    if (!mod) {
-      return;
-    }
-    mod.operation = supportedOperations.at((supportedOperations.indexOf(mod.operation) - 1))!;
-  }
-
-  function deleteHeaderMod(type: ActionType, modId: UUID) {
-    if (type === "request") {
-      selectedProfile.value.requestHeaderMods = selectedProfile.value.requestHeaderMods.filter(mod => mod.id !== modId);
-    } else {
-      selectedProfile.value.responseHeaderMods = selectedProfile.value.responseHeaderMods.filter(mod => mod.id !== modId);
-    }
-  }
-
-  function duplicateHeaderMod(type: ActionType, modId: UUID) {
-    const targetMod = type === "request"
-      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
-      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
-    if (!targetMod) {
-      return;
-    }
-    const newMod = { ...targetMod, id: crypto.randomUUID() };
-    if (type === "request") {
-      selectedProfile.value.requestHeaderMods.push(newMod);
-    } else {
-      selectedProfile.value.responseHeaderMods.push(newMod);
-    }
-  }
-
-  function moveUpHeaderMod(type: ActionType, modId: UUID) {
-    const mods = type === "request"
-      ? selectedProfile.value.requestHeaderMods
-      : selectedProfile.value.responseHeaderMods;
-    const index = mods.findIndex(m => m.id === modId);
-    if (index > 0) {
-      const [mod] = mods.splice(index, 1);
-      mods.splice(index - 1, 0, mod!);
-    }
-  }
-
-  function moveDownHeaderMod(type: ActionType, modId: UUID) {
-    const mods = type === "request"
-      ? selectedProfile.value.requestHeaderMods
-      : selectedProfile.value.responseHeaderMods;
-    const index = mods.findIndex(m => m.id === modId);
-    if (index >= 0 && index < mods.length - 1) {
-      const [mod] = mods.splice(index, 1);
-      mods.splice(index + 1, 0, mod!);
-    }
-  }
-
-  function editModComments(type: ActionType, modId: UUID, comments: string) {
-    const mod = type === "request"
-      ? selectedProfile.value.requestHeaderMods.find(m => m.id === modId)
-      : selectedProfile.value.responseHeaderMods.find(m => m.id === modId);
-    if (!mod) {
-      return;
-    }
-    mod.comments = comments;
-  }
-
   return {
     // State
     manager,
@@ -167,14 +104,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     addProfile,
     duplicateProfile,
     deleteProfile,
-    addHeaderAction,
-    deleteHeaderAction,
-    switchHeaderActionOperation,
-    deleteHeaderMod,
-    duplicateHeaderMod,
-    moveUpHeaderMod,
-    moveDownHeaderMod,
-    editModComments,
     undo,
     redo,
   };
