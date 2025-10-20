@@ -6,6 +6,7 @@ import { findHeaderModGroup, findHeaderModGroups, useProfilesStore } from "#/sto
 import { head } from "es-toolkit";
 import { computed } from "vue";
 import { createMod } from "@/lib/storage";
+import { cn } from "@/lib/utils";
 import ModField from "./components/ModFieldWithActions.vue";
 
 const { actionType, groupId, mods, groupType } = defineProps<{
@@ -77,6 +78,23 @@ function deleteMod() {
   }
 }
 
+function transferGroupType() {
+  const profile = profilesStore.selectedProfile;
+  const group = findHeaderModGroup(profile, actionType, groupId);
+  if (!group)
+    return;
+
+  if (group.type === "checkbox") {
+    group.type = "radio";
+    const firstEnabledMod = group.mods.find(mod => mod.enabled);
+    group.mods.forEach((mod) => {
+      mod.enabled = mod === firstEnabledMod;
+    });
+  } else {
+    group.type = "checkbox";
+  }
+}
+
 const indeterminate = computed(() => {
   if (groupType === "checkbox") {
     return mods.some(mod => mod.enabled) && !mods.every(mod => mod.enabled);
@@ -125,6 +143,18 @@ const checked = computed(() => {
       </label>
       {{ actionType === "request" ? "Request Headers" : "Response Headers" }}
       <div class="flex gap-1">
+        <button
+          :class="cn('btn btn-square btn-ghost btn-xs', {
+            'btn-info': groupType === 'checkbox',
+            'btn-accent': groupType === 'radio',
+          })"
+          @click="transferGroupType"
+        >
+          <i
+            :class="cn('size-4', groupType === 'checkbox'
+              ? `i-lucide-square-check-big` : `i-lucide-circle-dot`)"
+          />
+        </button>
         <button
           class="btn btn-square btn-ghost btn-xs btn-primary"
           @click="addModToGroup"
