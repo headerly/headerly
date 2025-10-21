@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useSettingsStore } from "#/stores/useSettingsStore";
-import { ref } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
+import { ref } from "vue";
 import { cn } from "@/lib/utils";
 import AddModModal from "./components/AddModModal.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";

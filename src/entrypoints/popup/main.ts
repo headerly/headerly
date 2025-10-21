@@ -7,7 +7,7 @@ import { setTheme } from "./theme";
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/intel-one-mono";
-import "@/assets/tailwind.css";
+import "./index.css";
 
 setTheme();
 const pinia = createPinia();

@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { settings } from "../fields";
 

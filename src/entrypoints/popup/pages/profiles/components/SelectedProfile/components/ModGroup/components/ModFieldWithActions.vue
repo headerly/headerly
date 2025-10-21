@@ -2,17 +2,17 @@
 import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/components/ui/tooltip";
+import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
 } from "#/constants/header";
 import { computed } from "vue";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import ModActionsDropdown from "./ModActionsDropdown.vue";
 

@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import type { HeaderMod } from "@/lib/storage";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useEventListener } from "@vueuse/core";
-import { computed, ref } from "vue";
-
 import {
   Sheet,
   SheetContent,
@@ -11,7 +7,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "#/components/ui/sheet";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useEventListener } from "@vueuse/core";
+
+import { computed, ref } from "vue";
 import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();

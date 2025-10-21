@@ -1,15 +1,15 @@
 <script setup lang="tsx">
 import type { HeaderMod, Profile } from "@/lib/storage";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useSettingsStore } from "#/stores/useSettingsStore";
-import { useEventListener, useTemplateRefsList } from "@vueuse/core";
-import { nextTick, onMounted, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
+import { useEventListener, useTemplateRefsList } from "@vueuse/core";
+import { nextTick, onMounted, watch } from "vue";
 import { cn, getModKey } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();

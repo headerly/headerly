@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useSettingsStore } from "#/stores/useSettingsStore";
-import { ref } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { useSettingsStore } from "#/stores/useSettingsStore";
+import { ref } from "vue";
 import { cn } from "@/lib/utils";
 
 const { class: className } = defineProps<{

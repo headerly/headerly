@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { emojisWithCategory } from "#/constants/emoji";
-import { useVirtualizer } from "@tanstack/vue-virtual";
-import { computed, ref } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { emojisWithCategory } from "#/constants/emoji";
+import { useVirtualizer } from "@tanstack/vue-virtual";
+import { computed, ref } from "vue";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });

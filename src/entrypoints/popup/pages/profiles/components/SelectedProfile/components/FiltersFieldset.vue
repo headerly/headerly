@@ -1,11 +1,11 @@
 <script setup lang="tsx">
-import { useProfilesStore } from "#/stores/useProfilesStore";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 
 const profilesStore = useProfilesStore();
 

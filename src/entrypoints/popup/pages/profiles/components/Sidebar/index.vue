@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useSettingsStore } from "#/stores/useSettingsStore";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "#/components/ui/tooltip";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { getBrowserApiService } from "@/entrypoints/background/BrowserApiService";
 import { cn, getModKey } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
