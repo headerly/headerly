@@ -31,7 +31,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
 <template>
   <div
     v-auto-animate
-    :class="cn(disabled && 'opacity-60', 'h-full', className)"
+    :class="cn(disabled && 'opacity-60', 'px-2 pb-2', className)"
   >
     <div
       v-if="empty"
@@ -56,21 +56,19 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full p-2">
+    <div v-else v-auto-animate class="w-full">
       <ModGroup
-        v-for="{ id: groupId, mods, type: groupType } in profilesStore.selectedProfile.requestHeaderModGroups"
+        v-for="{ id: groupId, type: groupType } in profilesStore.selectedProfile.requestHeaderModGroups"
         :key="groupId"
         :group-id
         :group-type
-        :mods
         action-type="request"
       />
       <ModGroup
-        v-for="{ id: groupId, mods, type: groupType } in profilesStore.selectedProfile.responseHeaderModGroups"
+        v-for="{ id: groupId, type: groupType } in profilesStore.selectedProfile.responseHeaderModGroups"
         :key="groupId"
         :group-id
         :group-type
-        :mods
         action-type="response"
       />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />

@@ -2,22 +2,26 @@
 import type { ActionType } from "#/stores/useProfilesStore";
 import type { UUID } from "node:crypto";
 import type { HeaderMod, ModGroupType } from "@/lib/storage";
+import Group from "#/components/group/Group.vue";
 import { findHeaderModGroup, findHeaderModGroups, useProfilesStore } from "#/stores/useProfilesStore";
-import { head } from "es-toolkit";
 import { computed } from "vue";
 import { createMod } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 import ModField from "./components/ModFieldWithActions.vue";
 
-const { actionType, groupId, mods, groupType } = defineProps<{
+const { actionType, groupId, groupType } = defineProps<{
   actionType: ActionType;
-  mods: HeaderMod[];
   groupId: UUID;
   groupType: ModGroupType;
 }
 >();
 
 const profilesStore = useProfilesStore();
+
+const mods = computed<HeaderMod[]>(() => {
+  const group = findHeaderModGroup(profilesStore.selectedProfile, actionType, groupId);
+  return group ? group.mods : [];
+});
 
 function deleteHeaderMod(modId: UUID) {
   const group = findHeaderModGroup(profilesStore.selectedProfile, actionType, groupId);
@@ -95,53 +99,20 @@ function transferGroupType() {
   }
 }
 
-const indeterminate = computed(() => {
-  if (groupType === "checkbox") {
-    return mods.some(mod => mod.enabled) && !mods.every(mod => mod.enabled);
-  }
-  return false;
-});
-
-const checked = computed(() => {
-  if (groupType === "checkbox") {
-    return mods.every(mod => mod.enabled);
-  }
-  return mods.some(mod => mod.enabled);
+const idToModMap = computed(() => {
+  return new Map<UUID, HeaderMod>(
+    mods.value.map(mod => [mod.id, mod]),
+  );
 });
 </script>
 
 <template>
-  <fieldset
-    v-auto-animate
-    class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-4"
+  <Group
+    v-model="mods"
+    :name="actionType === 'request' ? 'Request Headers' : 'Response Headers'"
+    :type="groupType"
   >
-    <legend class="fieldset-legend text-base font-medium">
-      <label>
-        <input
-          type="checkbox"
-          class="checkbox checkbox-sm"
-          :checked
-          :indeterminate
-          @change="(e) => {
-            const checked = (e.target as HTMLInputElement).checked;
-            if (groupType === 'checkbox'){
-              mods.forEach(mod => {
-                mod.enabled = checked;
-              });
-            }
-            else if (checked){
-              const firstMod = head(mods);
-              if (firstMod) firstMod.enabled = checked;
-            }
-            else {
-              mods.forEach(mod => {
-                mod.enabled = false;
-              });
-            }
-          }"
-        >
-      </label>
-      {{ actionType === "request" ? "Request Headers" : "Response Headers" }}
+    <template #name-after>
       <div class="flex gap-1">
         <button
           :class="cn('btn btn-square btn-ghost btn-xs', {
@@ -168,56 +139,27 @@ const checked = computed(() => {
           <i class="i-lucide-trash size-4" />
         </button>
       </div>
-    </legend>
-    <div
-      v-for="mod, index in mods"
-      :key="mod.id"
-      class="flex flex-col gap-1.5"
-    >
-      <div class="flex items-center justify-between gap-1">
-        <ModField
-          :index
-          :mod
-          :action-type
-          :current-mods-length="mods.length"
-          @update:name="(value) => mod.name = value"
-          @update:value="(value) => {
-            if (mod.operation !== 'remove') {
-              mod.value = value
-            }
-          }"
-          @update:operation="(value) => mod.operation = value"
-          @update:comments="(value) => mod.comments = value"
-          @duplicate="duplicateHeaderMod(mod.id)"
-          @move-up="moveUpHeaderMod(mod.id)"
-          @move-down="moveDownHeaderMod(mod.id)"
-          @delete="deleteHeaderMod(mod.id)"
-        >
-          <template #field-before>
-            <input
-              v-if="groupType === 'checkbox'"
-              v-model="mod.enabled"
-              type="checkbox"
-              class="checkbox checkbox-sm"
-            >
-            <input
-              v-else
-              v-model="mod.enabled"
-              type="checkbox"
-              class="radio size-5"
-              @click="() => {
-                mods.forEach(m => {
-                  if (m.id === mod.id) {
-                    m.enabled = true;
-                    return;
-                  }
-                  m.enabled = false;
-                });
-              }"
-            >
-          </template>
-        </ModField>
-      </div>
-    </div>
-  </fieldset>
+    </template>
+    <template #item="{ id, index }">
+      <ModField
+        :mod="idToModMap.get(id)!"
+        :action-type="actionType"
+        :index="index"
+        :current-mods-length="mods.length"
+        @delete="deleteHeaderMod(id)"
+        @duplicate="duplicateHeaderMod(id)"
+        @move-up="moveUpHeaderMod(id)"
+        @move-down="moveDownHeaderMod(id)"
+        @update:value="(newValue: string) => {
+          const mod = idToModMap.get(id)!;
+          if (mod.operation !== 'remove') {
+            mod.value = newValue;
+          }
+        }"
+        @update:operation="(newOperation) => {
+          idToModMap.get(id)!.operation = newOperation;
+        }"
+      />
+    </template>
+  </Group>
 </template>

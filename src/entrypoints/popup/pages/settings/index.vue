@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Fieldset from "#/components/group/Fieldset.vue";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
@@ -18,58 +19,57 @@ const settingsStore = useSettingsStore();
     <Sidebar class="col-start-1 row-span-2" />
     <main
       class="
-        col-start-2 row-start-2 overflow-x-hidden overflow-y-auto p-2
+        col-start-2 row-start-2 overflow-x-hidden overflow-y-auto px-2 pb-2
         text-base-content
       "
     >
-      <fieldset
+      <Fieldset
         v-for="setting in settings"
         :id="setting.anchor"
         :key="setting.fieldsetTitle"
+        :name="setting.fieldsetTitle"
         class="
           fieldset gap-y-4 rounded-box border border-base-300 bg-base-200 p-4
           text-base
         "
       >
-        <legend class="fieldset-legend text-base font-medium">
-          {{ setting.fieldsetTitle }}
-        </legend>
-
-        <template v-for="field in setting.fields" :key="field.label">
-          <label
-            v-if="field.type === 'select'"
-            class="label flex flex-col items-start text-base-content"
-          >
-            {{ field.label }}:
-            <select
-              v-model="settingsStore[field.key]"
-              class="select cursor-pointer"
-              @change="field.onChange"
+        <template #main>
+          <template v-for="field in setting.fields" :key="field.label">
+            <label
+              v-if="field.type === 'select'"
+              class="label flex flex-col items-start text-base-content"
             >
-              <option
-                v-for="option in field.options"
-                :key="option.value"
-                :value="option.value"
+              {{ field.label }}:
+              <select
+                v-model="settingsStore[field.key]"
+                class="select cursor-pointer"
+                @change="field.onChange"
               >
-                {{ option.label }}
-              </option>
-            </select>
-          </label>
+                <option
+                  v-for="option in field.options"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+            </label>
 
-          <label
-            v-else-if="field.type === 'checkbox'"
-            class="label text-base-content"
-          >
-            <input
-              v-model="settingsStore[field.key]"
-              type="checkbox"
-              class="checkbox"
-              @change="field.onChange"
+            <label
+              v-else-if="field.type === 'checkbox'"
+              class="label text-base-content"
             >
-            {{ field.label }}
-          </label>
+              <input
+                v-model="settingsStore[field.key]"
+                type="checkbox"
+                class="checkbox"
+                @change="field.onChange"
+              >
+              {{ field.label }}
+            </label>
+          </template>
         </template>
-      </fieldset>
+      </Fieldset>
     </main>
   </div>
 </template>
