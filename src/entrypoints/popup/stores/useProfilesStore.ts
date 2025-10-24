@@ -1,5 +1,5 @@
 import type { UUID } from "node:crypto";
-import type { HeaderModGroup, ModGroupType, Profile } from "@/lib/storage";
+import type { GroupType, HeaderModGroup, Profile } from "@/lib/storage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -92,7 +92,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
   }
 
-  function addModGroup(type: ActionType, groupType: ModGroupType) {
+  function addModGroup(type: ActionType, groupType: GroupType) {
     const groups = findHeaderModGroups(selectedProfile.value, type);
     const mod = createMod();
     const newGroup = {
@@ -101,6 +101,20 @@ export const useProfilesStore = defineStore("profiles", () => {
       mods: [mod],
     } as const satisfies HeaderModGroup;
     groups.push(newGroup);
+  }
+
+  function addSyncCookieGroup() {
+    const cookie = {
+      id: crypto.randomUUID(),
+      enabled: true,
+      domain: "",
+      key: "",
+    } as const;
+    selectedProfile.value.syncCookieGroups.push({
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      cookies: [cookie],
+    });
   }
 
   return {
@@ -116,6 +130,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     duplicateProfile,
     deleteProfile,
     addModGroup,
+    addSyncCookieGroup,
     undo,
     redo,
   };

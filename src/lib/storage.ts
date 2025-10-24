@@ -52,16 +52,13 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
   };
 }
 
-interface BaseMod {
+interface BaseMod extends GroupItem {
   /**
    * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
    * Must be a number(>=1); UUID cannot be used.
    */
-  id: UUID;
-  enabled: boolean;
   name: string;
   operation: HeaderModOperation;
-  comments?: string;
 }
 
 interface AppendOrSetMod extends BaseMod {
@@ -84,17 +81,35 @@ type Filter = {
   }
 };
 
-export type ModGroupType = "radio" | "checkbox";
+export type GroupType = "radio" | "checkbox";
+
+export interface GroupItem {
+  id: UUID;
+  enabled: boolean;
+  comments?: string;
+}
 
 export interface HeaderModGroup {
   id: UUID;
-  type: ModGroupType;
+  type: GroupType;
   mods: HeaderMod[];
+}
+
+export interface SyncCookie extends GroupItem {
+  domain: string;
+  key: string;
+}
+
+export interface SyncCookieGroup {
+  id: UUID;
+  type: GroupType;
+  cookies: SyncCookie[];
 }
 
 export interface Profile {
   requestHeaderModGroups: HeaderModGroup[];
   responseHeaderModGroups: HeaderModGroup[];
+  syncCookieGroups: SyncCookieGroup[];
   filters: Filter;
   id: UUID;
   name: string;
@@ -130,6 +145,7 @@ export function createProfile(overrides?: Partial<Profile>) {
       mods: [createMod()],
     }],
     responseHeaderModGroups: [],
+    syncCookieGroups: [],
     filters: {},
     ...(overrides ?? {}),
   } as const satisfies Profile;

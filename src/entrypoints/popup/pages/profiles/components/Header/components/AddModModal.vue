@@ -51,10 +51,22 @@ const tabs = [
         action: () => profilesStore.addModGroup("response", "radio"),
       },
       {
-        title: "Append Cookie in Request Header",
-        description: "Append individual cookie in HTTP request header.",
+        title: "Cookie Sync to Request Header",
+        description: "Sync cookies for a specific website to the request header (New permissions need to be granted).",
         icon: "i-lucide-cookie",
-        action: () => {},
+        action: async () => {
+          const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
+          if (hasCookiesPermission) {
+            // profilesStore.addAppendRequestCookie();
+            // console.log("has permission");
+          } else {
+            const granted = await browser.permissions.request({ permissions: ["cookies"] });
+            // console.log("Permission granted:", granted);
+            if (granted) {
+              // profilesStore.addAppendRequestCookie();
+            }
+          }
+        },
       },
     ],
   },

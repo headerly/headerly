@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import type { UUID } from "node:crypto";
-import type { ModGroupType } from "@/lib/storage";
+import type { GroupItem, GroupType } from "@/lib/storage";
 import { head } from "es-toolkit";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
 
-const { name, type } = defineProps<{
+const { name } = defineProps<{
   name: string;
-  type?: ModGroupType;
 }>();
 
-const list = defineModel<{
-  id: UUID;
-  enabled: boolean;
-}[]>({
+const list = defineModel<GroupItem[]>("list", {
+  required: true,
+});
+
+const type = defineModel<GroupType>("type", {
   required: true,
 });
 
 const indeterminate = computed(() => {
-  if (type === "checkbox") {
+  if (type.value === "checkbox") {
     return list.value.some(item => item.enabled) && !list.value.every(item => item.enabled);
   }
   return false;
 });
 
 const checked = computed(() => {
-  if (type === "checkbox") {
+  if (type.value === "checkbox") {
     return list.value.every(item => item.enabled);
   }
   return list.value.some(item => item.enabled);
@@ -69,33 +68,39 @@ const checked = computed(() => {
     </template>
     <template #main>
       <div
-        v-for="item, index in list"
-        :key="item.id"
+        v-auto-animate
         class="flex flex-col gap-1.5"
       >
-        <div class="flex flex-1 items-center justify-between gap-1">
-          <input
-            v-if="type === 'checkbox'"
-            v-model="item.enabled"
-            type="checkbox"
-            class="checkbox mr-1 checkbox-sm"
-          >
-          <input
-            v-else
-            v-model="item.enabled"
-            type="checkbox"
-            class="radio mr-1 size-5"
-            @click="() => {
-              list.forEach(m => {
-                if (m.id === item.id) {
-                  m.enabled = true;
-                  return;
-                }
-                m.enabled = false;
-              });
-            }"
-          >
-          <slot :id="item.id" name="item" :index="index" />
+        <div
+          v-for="item, index in list"
+          :key="item.id"
+        >
+          <div class="flex flex-1 items-center justify-between gap-1">
+            <input
+              v-if="type === 'checkbox'"
+              v-model="item.enabled"
+              type="checkbox"
+              class="checkbox mr-1 checkbox-sm"
+            >
+            <input
+              v-else
+              v-model="item.enabled"
+              type="checkbox"
+              class="radio mr-1 size-5"
+              @click="() => {
+                list.forEach(m => {
+                  if (m.id === item.id) {
+                    m.enabled = true;
+                    return;
+                  }
+                  m.enabled = false;
+                });
+              }"
+            >
+            <div class="flex flex-1 items-center">
+              <slot :index="index" name="item" />
+            </div>
+          </div>
         </div>
       </div>
     </template>

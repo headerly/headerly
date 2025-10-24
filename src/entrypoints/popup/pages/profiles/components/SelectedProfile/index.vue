@@ -6,7 +6,7 @@ import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
-import ModGroup from "./components/ModGroup";
+import ModGroup from "./components/ModGroup/index.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -31,7 +31,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
 <template>
   <div
     v-auto-animate
-    :class="cn(disabled && 'opacity-60', 'px-2 pb-2', className)"
+    :class="cn(disabled && 'opacity-60', 'size-full px-2 pb-2', className)"
   >
     <div
       v-if="empty"
@@ -58,17 +58,19 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     </div>
     <div v-else v-auto-animate class="w-full">
       <ModGroup
-        v-for="{ id: groupId, type: groupType } in profilesStore.selectedProfile.requestHeaderModGroups"
-        :key="groupId"
-        :group-id
-        :group-type
+        v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
+        :key="id"
+        v-model:list="profilesStore.selectedProfile.requestHeaderModGroups[index]!.mods"
+        v-model:type="profilesStore.selectedProfile.requestHeaderModGroups[index]!.type"
+        :group-id="id"
         action-type="request"
       />
       <ModGroup
-        v-for="{ id: groupId, type: groupType } in profilesStore.selectedProfile.responseHeaderModGroups"
-        :key="groupId"
-        :group-id
-        :group-type
+        v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
+        :key="id"
+        v-model:list="profilesStore.selectedProfile.responseHeaderModGroups[index]!.mods"
+        v-model:type="profilesStore.selectedProfile.responseHeaderModGroups[index]!.type"
+        :group-id="id"
         action-type="response"
       />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />

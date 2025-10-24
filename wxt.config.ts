@@ -21,6 +21,9 @@ export default defineConfig({
     host_permissions: [
       "<all_urls>",
     ],
+    optional_permissions: [
+      "cookies",
+    ],
     homepage_url: "https://headerly.dev",
   },
   webExt: {

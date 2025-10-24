@@ -40,3 +40,4 @@ playwright-report
 build
 
 stats.html
+.husky/

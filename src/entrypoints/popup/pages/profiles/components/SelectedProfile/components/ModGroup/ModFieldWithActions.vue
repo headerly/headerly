@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderMod, HeaderModOperation } from "@/lib/storage";
+import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import {
   Tooltip,
   TooltipContent,
@@ -14,25 +15,20 @@ import {
 } from "#/constants/header";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
-import ModActionsDropdown from "./ModActionsDropdown.vue";
 
-const { actionType, mod, index } = defineProps<{
+const { actionType, length, index } = defineProps<{
   actionType: ActionType;
-  mod: HeaderMod;
   index: number;
-  currentModsLength: number;
+  length: number;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:name", value: string): void;
-  (e: "update:value", value: string): void;
-  (e: "update:comments", value: string): void;
-  (e: "update:operation", value: HeaderModOperation): void;
-  (e: "delete"): void;
-  (e: "duplicate"): void;
-  (e: "moveUp"): void;
-  (e: "moveDown"): void;
-}>();
+const list = defineModel<HeaderMod[]>("list", {
+  required: true,
+});
+
+const field = defineModel<HeaderMod>("field", {
+  required: true,
+});
 
 const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID";
 
@@ -56,7 +52,7 @@ function autocomplete(actionType: ActionType, operation: HeaderModOperation, inp
 
 const nextOperation = computed(() => {
   const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
-  const currentIndex = supportedOperations.indexOf(mod.operation);
+  const currentIndex = supportedOperations.indexOf(field.value.operation);
   const nextIndex = (currentIndex + 1) % supportedOperations.length;
   return {
     value: supportedOperations[nextIndex]!,
@@ -72,41 +68,40 @@ const nextOperation = computed(() => {
       <div class="flex flex-1 gap-1">
         <label class="floating-label flex-1">
           <span>Name</span>
-          <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`">
+          <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`">
             <option
-              v-for="field in autocomplete(actionType, mod.operation, mod.name)"
+              v-for="field in autocomplete(actionType, field.operation, field.name)"
               :key="field"
               :value="field"
             />
           </datalist>
           <input
-            :value="mod.name"
+            :value="field.name"
             type="text"
             placeholder="Name"
             class="
               input input-sm w-full text-base text-base-content
               placeholder:italic
             "
-            :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${mod.id}`"
+            :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
             @change="(e) => {
               // Although the HTTP standard considers header names to be case-insensitive,
               // `chrome.declarativeNetRequest` will report an error
               // when receiving a header name with uppercase characters.
-              emit('update:name', (e.target as HTMLInputElement).value.toLowerCase().trim());
+              field.name = (e.target as HTMLInputElement).value.toLowerCase().trim()
             }"
           >
         </label>
-        <label v-if="mod.operation !== 'remove'" class="floating-label flex-1">
+        <label v-if="field.operation !== 'remove'" class="floating-label flex-1">
           <span>Value</span>
           <input
-            :value="mod.value"
+            v-model.trim.lazy="field.value"
             type="text"
             placeholder="Value"
             class="
               input input-sm text-base text-base-content
               placeholder:italic
             "
-            @change="(e) => emit('update:value', (e.target as HTMLInputElement).value.trim())"
           >
         </label>
       </div>
@@ -119,45 +114,43 @@ const nextOperation = computed(() => {
               :class="cn(`
                 btn btn-square font-medium whitespace-nowrap btn-soft btn-xs
               `, {
-                'btn-accent': mod.operation === 'set',
-                'btn-info': mod.operation === 'append',
-                'btn-secondary': mod.operation === 'remove',
+                'btn-accent': field.operation === 'set',
+                'btn-info': field.operation === 'append',
+                'btn-secondary': field.operation === 'remove',
               })"
               @click="() => {
-                emit('update:operation', nextOperation.value);
+                field.operation = nextOperation.value;
               }"
             >
               <i
                 :class="cn('size-4', {
-                  'i-lucide-equal': mod.operation === 'set',
-                  'i-lucide-plus': mod.operation === 'append',
-                  'i-lucide-minus': mod.operation === 'remove',
+                  'i-lucide-equal': field.operation === 'set',
+                  'i-lucide-plus': field.operation === 'append',
+                  'i-lucide-minus': field.operation === 'remove',
                 })"
               />
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
-            <p>Current operation: {{ mod.operation }}</p>
+            <p>Current operation: {{ field.operation }}</p>
             <p>Switch to {{ nextOperation.label }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <button
         class="btn btn-square btn-ghost btn-xs btn-error"
-        @click="emit('delete')"
+        @click="() => {
+          list.splice(index, 1);
+        }"
       >
         <span class="sr-only">Delete this header mod</span>
         <i class="i-lucide-x size-4" />
       </button>
-      <ModActionsDropdown
-        :mod
+      <ActionsDropdown
+        v-model:list="list"
+        v-model:field="field"
         :index
-        :type="actionType"
-        :current-mods-length
-        @update:comments="emit('update:comments', $event)"
-        @duplicate="emit('duplicate')"
-        @move-up="emit('moveUp')"
-        @move-down="emit('moveDown')"
+        :length
       />
     </div>
   </div>

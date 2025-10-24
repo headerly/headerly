@@ -1,0 +1,13 @@
+# lefthook.yml
+
+pre-commit:
+  commands:
+    lint:
+      glob: "*.{ts,vue}"
+      run: "pnpm exec eslint --fix {staged_files}"
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      run: "pnpm exec commitlint --edit {1}"

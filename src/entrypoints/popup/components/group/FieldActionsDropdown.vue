@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import type { ActionType } from "#/stores/useProfilesStore";
 import type { HeaderMod } from "@/lib/storage";
+import { head } from "es-toolkit";
 import { ref } from "vue";
 
-const { mod, index, currentModsLength } = defineProps<{
-  mod: HeaderMod;
+const { index, length } = defineProps<{
   index: number;
-  type: ActionType;
-  currentModsLength: number;
+  length: number;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:comments", value: string): void;
-  (e: "duplicate"): void;
-  (e: "moveUp"): void;
-  (e: "moveDown"): void;
-}>();
+const list = defineModel<HeaderMod[]>("list", {
+  required: true,
+});
+
+const field = defineModel<HeaderMod>("field", {
+  required: true,
+});
 
 const commentsDialogRef = ref<HTMLDialogElement | null>(null);
 
@@ -24,14 +23,15 @@ const moreActions = [
     key: "duplicate",
     label: "Duplicate",
     icon: "i-lucide-copy size-4",
-    disabled: !mod.name && (mod.operation === "remove" || !mod.value),
-    onClick: () => emit("duplicate"),
+    onClick: () => {
+      const newField = { ...field.value, id: crypto.randomUUID() };
+      list.value.splice(index + 1, 0, newField);
+    },
   },
   {
     key: "comments",
     label: "Comments",
     icon: "i-lucide-square-pen size-4",
-    disabled: false,
     onClick: () => commentsDialogRef.value?.showModal(),
   },
   { divider: true, key: "divider" },
@@ -40,32 +40,41 @@ const moreActions = [
     label: "Move Up",
     icon: "i-lucide-arrow-big-up size-4",
     disabled: index === 0,
-    onClick: () => emit("moveUp"),
+    onClick: () => {
+      const fieldToMove = head(list.value.splice(index, 1));
+      list.value.splice(index - 1, 0, fieldToMove!);
+    },
   },
   {
     key: "moveDown",
     label: "Move Down",
     icon: "i-lucide-arrow-big-down size-4",
-    disabled: index === currentModsLength - 1,
-    onClick: () => emit("moveDown"),
+    disabled: index === length - 1,
+    onClick: () => {
+      const fieldToMove = head(list.value.splice(index, 1));
+      list.value.splice(index + 1, 0, fieldToMove!);
+    },
   },
 ];
 
-const comments = ref(mod.comments || "");
+const comments = ref(field.value.comments || "");
+
+const popovertarget = `popover-group-more-action-${field.value.id}`;
+const anchorname = `--anchor-group-more-action-${field.value.id}`;
 </script>
 
 <template>
   <button
-    :popovertarget="`popover-mod-more-action-${mod.id}`"
-    :style="`anchor-name:--anchor-mod-more-action-${mod.id}`"
+    :popovertarget
+    :style="`anchor-name:${anchorname}`"
     class="btn btn-square btn-ghost btn-xs btn-primary"
   >
     <i class="i-lucide-ellipsis-vertical size-4" />
-    <span class="sr-only">More options about this header mod</span>
+    <span class="sr-only">More options</span>
   </button>
   <ul
-    :id="`popover-mod-more-action-${mod.id}`"
-    :style="`position-anchor:--anchor-mod-more-action-${mod.id}`"
+    :id="popovertarget"
+    :style="`position-anchor:${anchorname}`"
     popover
     class="
       menu dropdown w-52 rounded-box bg-base-100 p-2 font-medium
@@ -102,7 +111,7 @@ const comments = ref(mod.comments || "");
           class="btn btn-sm btn-primary"
           @click="() => {
             commentsDialogRef?.close()
-            emit('update:comments', comments)
+            field.comments = comments.trim();
           }"
         >
           Save
