@@ -7,13 +7,19 @@ const { name } = defineProps<{
 <template>
   <fieldset
     v-auto-animate
+    data-testid="fieldset"
     class="fieldset w-full rounded-box border border-base-300 bg-base-200 p-3"
   >
-    <legend class="fieldset-legend text-base font-medium">
+    <legend
+      data-testid="fieldset-legend"
+      class="fieldset-legend text-base font-medium"
+    >
       <slot name="name-before" />
-      {{ name }}
+      <span data-testid="fieldset-name">{{ name }}</span>
       <slot name="name-after" />
     </legend>
-    <slot name="main" />
+    <div data-testid="fieldset-main">
+      <slot name="main" />
+    </div>
   </fieldset>
 </template>
