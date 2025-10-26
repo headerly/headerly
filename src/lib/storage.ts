@@ -130,6 +130,7 @@ export interface Profile {
   name: string;
   enabled: boolean;
   emoji: string;
+  ignoreGlobalWarning?: boolean;
 }
 
 export interface ProfileManager {

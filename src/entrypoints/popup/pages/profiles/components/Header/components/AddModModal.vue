@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { cn } from "@/lib/utils";
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
@@ -22,8 +23,8 @@ interface Tab {
 
 const tabs = [
   {
-    label: "Action",
-    value: "action",
+    label: "Actions",
+    value: "actions",
     icon: "i-lucide-package-plus",
     items: [
       {
@@ -69,8 +70,8 @@ const tabs = [
     ],
   },
   {
-    label: "Condition",
-    value: "condition",
+    label: "Conditions",
+    value: "conditions",
     icon: "i-lucide-list-filter-plus",
     items: [
       {
@@ -83,6 +84,19 @@ const tabs = [
             value: "",
           };
         },
+      },
+      {
+        title: "Request Domains",
+        description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
+        icon: "i-lucide-server",
+        action: () => {},
+      },
+      {
+        title: "Excluded Request Domains",
+        description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
+        icon: "i-lucide-server",
+        action: () => {},
+        excluded: true,
       },
       {
         title: "Regex Filter",
@@ -190,20 +204,32 @@ const tabs = [
   },
 ] satisfies Tab[];
 
-const selectedTab = ref("action");
+const addModModalStore = useAddModModalStore();
+
+watch(() => addModModalStore.isOpen, (newValue) => {
+  if (newValue) {
+    dialogRef.value?.showModal();
+  }
+});
 </script>
 
 <template>
   <button
     class="btn btn-square btn-ghost btn-sm btn-primary"
-    @click="dialogRef?.showModal()"
+    @click="() => {
+      addModModalStore.currentTab = 'actions';
+      addModModalStore.isOpen = true
+    }"
   >
     <i class="i-lucide-cross size-4" />
   </button>
   <dialog ref="dialogRef" class="modal">
     <div class="modal-box">
       <form method="dialog">
-        <button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">
+        <button
+          class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
+          @click="addModModalStore.isOpen = false"
+        >
           ✕
           <span class="sr-only">Close modal</span>
         </button>
@@ -212,7 +238,7 @@ const selectedTab = ref("action");
       <div class="tabs-box mt-5 tabs">
         <template v-for="tab in tabs" :key="tab.label">
           <label class="tab w-1/2">
-            <input v-model="selectedTab" type="radio" name="add-action-or-condition" :value="tab.value">
+            <input v-model="addModModalStore.currentTab" type="radio" name="add-action-or-condition" :value="tab.value">
             <i :class="tab.icon" class="me-2 size-4" />
             {{ tab.label }}
           </label>
@@ -228,7 +254,7 @@ const selectedTab = ref("action");
                 class="list-row btn h-min text-start btn-ghost"
                 @click="() => {
                   action()
-                  dialogRef?.close()
+                  addModModalStore.isOpen = false
                 }"
               >
                 <i :class="icon" class="size-6" />
