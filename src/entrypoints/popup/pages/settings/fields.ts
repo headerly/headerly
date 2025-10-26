@@ -38,7 +38,7 @@ export const settings: SettingGroup[] = [
         type: "select",
         label: "Theme",
         options: [
-          { label: "Auto", value: "auto" },
+          { label: "System", value: "system" },
           { label: "Light", value: "light" },
           { label: "Dark", value: "dark" },
         ],

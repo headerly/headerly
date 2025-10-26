@@ -97,13 +97,28 @@ export interface HeaderModGroup {
 
 export interface SyncCookie extends GroupItem {
   domain: string;
-  key: string;
+  name: string;
+  value: string;
+  // Only used to query new cookies after the first sync.
+  path: string;
 }
 
 export interface SyncCookieGroup {
   id: UUID;
   type: GroupType;
   cookies: SyncCookie[];
+}
+
+export function createSyncCookie(overrides?: Partial<SyncCookie>) {
+  return {
+    id: crypto.randomUUID(),
+    enabled: true,
+    domain: "",
+    name: "",
+    value: "",
+    path: "/",
+    ...(overrides ?? {}),
+  } as const satisfies SyncCookie;
 }
 
 export interface Profile {
@@ -169,9 +184,9 @@ export function usePowerOnStorage() {
   return useBrowserStorage<boolean>("local:powerOn", true);
 }
 
-export type Theme = "light" | "dark" | "auto";
+export type Theme = "light" | "dark" | "system";
 export function useThemeStorage() {
-  return useBrowserStorage<Theme>("local:theme", "auto");
+  return useBrowserStorage<Theme>("local:theme", "system");
 }
 
 export function useAutoAssignEmojiStorage() {

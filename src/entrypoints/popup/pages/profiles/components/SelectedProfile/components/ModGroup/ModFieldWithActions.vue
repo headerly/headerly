@@ -16,10 +16,9 @@ import {
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 
-const { actionType, length, index } = defineProps<{
+const { actionType, index } = defineProps<{
   actionType: ActionType;
   index: number;
-  length: number;
 }>();
 
 const list = defineModel<HeaderMod[]>("list", {
@@ -30,7 +29,7 @@ const field = defineModel<HeaderMod>("field", {
   required: true,
 });
 
-const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID";
+const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID_PREFIX";
 
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
@@ -150,7 +149,6 @@ const nextOperation = computed(() => {
         v-model:list="list"
         v-model:field="field"
         :index
-        :length
       />
     </div>
   </div>

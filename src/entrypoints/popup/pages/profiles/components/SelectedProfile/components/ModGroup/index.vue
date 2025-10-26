@@ -59,7 +59,6 @@ function deleteGroup() {
         v-model:field="list[index]!"
         :action-type="actionType"
         :index="index"
-        :length="list.length"
       />
     </template>
   </Group>

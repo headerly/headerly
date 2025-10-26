@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import type { HeaderMod } from "@/lib/storage";
+import type { GroupItem } from "@/lib/storage";
 import { head } from "es-toolkit";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-const { index, length } = defineProps<{
+const { index } = defineProps<{
   index: number;
-  length: number;
 }>();
 
-const list = defineModel<HeaderMod[]>("list", {
+const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
 
-const field = defineModel<HeaderMod>("field", {
+const field = defineModel<GroupItem>("field", {
   required: true,
 });
 
 const commentsDialogRef = ref<HTMLDialogElement | null>(null);
 
-const moreActions = [
+const moreActions = computed(() => [
   {
     key: "duplicate",
     label: "Duplicate",
@@ -33,6 +32,7 @@ const moreActions = [
     label: "Comments",
     icon: "i-lucide-square-pen size-4",
     onClick: () => commentsDialogRef.value?.showModal(),
+    indicator: Boolean(field.value.comments && field.value.comments.length > 0),
   },
   { divider: true, key: "divider" },
   {
@@ -49,13 +49,13 @@ const moreActions = [
     key: "moveDown",
     label: "Move Down",
     icon: "i-lucide-arrow-big-down size-4",
-    disabled: index === length - 1,
+    disabled: index === list.value.length - 1,
     onClick: () => {
       const fieldToMove = head(list.value.splice(index, 1));
       list.value.splice(index + 1, 0, fieldToMove!);
     },
   },
-];
+]);
 
 const comments = ref(field.value.comments || "");
 
@@ -83,22 +83,31 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
       [position-try-fallbacks:flip-block]
     "
   >
+    <slot name="buttons-before" />
+    <div v-if="$slots['buttons-before']" class="divider my-0" />
     <template v-for="action in moreActions" :key="action.key">
       <div v-if="action.divider" class="divider my-0" />
       <li v-else>
         <button
-          class="
-            gap-2
-            disabled:pointer-events-none disabled:opacity-60
-          "
+          class="disabled:pointer-events-none disabled:opacity-60"
           :disabled="action.disabled"
           @click="action.onClick"
         >
           <i :class="action.icon" />
-          <span>{{ action.label }}</span>
+
+          <div class="indicator pr-2">
+            <span>{{ action.label }}</span>
+            <span
+              v-if="action.indicator" class="
+                indicator-item status status-success indicator-middle
+              "
+            />
+          </div>
         </button>
       </li>
     </template>
+    <div v-if="$slots['buttons-after']" class="divider my-0" />
+    <slot name="buttons-after" />
   </ul>
   <dialog ref="commentsDialogRef" class="modal">
     <div class="modal-box">

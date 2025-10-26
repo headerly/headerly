@@ -49,12 +49,10 @@ const checked = computed(() => {
               list.forEach(item => {
                 item.enabled = checked;
               });
-            }
-            else if (checked){
+            } else if (checked){
               const firstItem = head(list);
               if (firstItem) firstItem.enabled = checked;
-            }
-            else {
+            } else {
               list.forEach(item => {
                 item.enabled = false;
               });

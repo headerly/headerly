@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GroupType, HeaderMod } from "@/lib/storage";
+import type { GroupItem, GroupType } from "@/lib/storage";
 import {
   Tooltip,
   TooltipContent,
@@ -13,7 +13,7 @@ const emit = defineEmits<{
   (e: "newField"): void;
 }>();
 
-const list = defineModel<HeaderMod[]>("list", {
+const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
 
@@ -36,6 +36,7 @@ function transferGroupType() {
 
 <template>
   <div class="flex gap-1">
+    <slot name="buttons-before" />
     <TooltipProvider :delay-duration="200">
       <Tooltip>
         <TooltipTrigger as-child>
@@ -73,7 +74,6 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-
     <TooltipProvider :delay-duration="200">
       <Tooltip>
         <TooltipTrigger as-child>
@@ -89,5 +89,6 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
+    <slot name="buttons-after" />
   </div>
 </template>

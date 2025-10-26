@@ -5,7 +5,7 @@ import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { computed, watch } from "vue";
-import { createMod, createProfile, useProfileManagerStorage } from "@/lib/storage";
+import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
 export type ActionType = "request" | "response";
@@ -104,12 +104,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   }
 
   function addSyncCookieGroup() {
-    const cookie = {
-      id: crypto.randomUUID(),
-      enabled: true,
-      domain: "",
-      key: "",
-    } as const;
+    const cookie = createSyncCookie();
     selectedProfile.value.syncCookieGroups.push({
       id: crypto.randomUUID(),
       type: "checkbox",

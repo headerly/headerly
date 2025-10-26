@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 import ModGroup from "./components/ModGroup/index.vue";
+import SyncCookieGroup from "./components/SyncCookieGroup/index.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -64,6 +65,13 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         v-model:type="profilesStore.selectedProfile.requestHeaderModGroups[index]!.type"
         :group-id="id"
         action-type="request"
+      />
+      <SyncCookieGroup
+        v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
+        :key="id"
+        v-model:list="profilesStore.selectedProfile.syncCookieGroups[index]!.cookies"
+        v-model:type="profilesStore.selectedProfile.syncCookieGroups[index]!.type"
+        :group-id="id"
       />
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"

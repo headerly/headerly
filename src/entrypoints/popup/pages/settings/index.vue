@@ -34,40 +34,42 @@ const settingsStore = useSettingsStore();
         "
       >
         <template #main>
-          <template v-for="field in setting.fields" :key="field.label">
-            <label
-              v-if="field.type === 'select'"
-              class="label flex flex-col items-start text-base-content"
-            >
-              {{ field.label }}:
-              <select
-                v-model="settingsStore[field.key]"
-                class="select cursor-pointer"
-                @change="field.onChange"
+          <div class="flex size-full flex-col gap-2">
+            <template v-for="field in setting.fields" :key="field.label">
+              <label
+                v-if="field.type === 'select'"
+                class="label flex flex-col items-start text-base-content"
               >
-                <option
-                  v-for="option in field.options"
-                  :key="option.value"
-                  :value="option.value"
+                {{ field.label }}:
+                <select
+                  v-model="settingsStore[field.key]"
+                  class="select cursor-pointer"
+                  @change="field.onChange"
                 >
-                  {{ option.label }}
-                </option>
-              </select>
-            </label>
+                  <option
+                    v-for="option in field.options"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </select>
+              </label>
 
-            <label
-              v-else-if="field.type === 'checkbox'"
-              class="label text-base-content"
-            >
-              <input
-                v-model="settingsStore[field.key]"
-                type="checkbox"
-                class="checkbox"
-                @change="field.onChange"
+              <label
+                v-else-if="field.type === 'checkbox'"
+                class="label text-base-content"
               >
-              {{ field.label }}
-            </label>
-          </template>
+                <input
+                  v-model="settingsStore[field.key]"
+                  type="checkbox"
+                  class="checkbox"
+                  @change="field.onChange"
+                >
+                {{ field.label }}
+              </label>
+            </template>
+          </div>
         </template>
       </Fieldset>
     </main>

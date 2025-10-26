@@ -32,7 +32,8 @@
 
 
 .input,
-.textarea {
+.textarea,
+.select {
   /* Eliminate the ugly daisyUI built-in input outline */
   outline-offset: -1px;
 }

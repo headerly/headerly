@@ -57,13 +57,11 @@ const tabs = [
         action: async () => {
           const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
           if (hasCookiesPermission) {
-            // profilesStore.addAppendRequestCookie();
-            // console.log("has permission");
+            profilesStore.addSyncCookieGroup();
           } else {
             const granted = await browser.permissions.request({ permissions: ["cookies"] });
-            // console.log("Permission granted:", granted);
             if (granted) {
-              // profilesStore.addAppendRequestCookie();
+              profilesStore.addSyncCookieGroup();
             }
           }
         },

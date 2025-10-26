@@ -1,4 +1,5 @@
 import { autoAnimatePlugin } from "@formkit/auto-animate/vue";
+import { VueQueryPlugin } from "@tanstack/vue-query";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 import App from "./App.vue";
@@ -15,4 +16,7 @@ const app = createApp(App);
 app.use(pinia);
 app.use(autoAnimatePlugin);
 app.use(router);
+app.use(VueQueryPlugin, {
+  enableDevtoolsV6Plugin: true,
+});
 app.mount("#app");

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { Toaster } from "vue-sonner";
+import { useSettingsStore } from "./stores/useSettingsStore";
+import "vue-sonner/style.css";
 
 /**
  * Prevents transitions when the page is first opened.
@@ -13,6 +16,8 @@ onMounted(async () => {
   await router.isReady();
   showTransition.value = true;
 });
+
+const settingsStore = useSettingsStore();
 </script>
 
 <template>
@@ -33,5 +38,6 @@ onMounted(async () => {
         <Component :is="Component" :key="route.path" />
       </Transition>
     </RouterView>
+    <Toaster :theme="settingsStore.theme" rich-colors />
   </div>
 </template>
