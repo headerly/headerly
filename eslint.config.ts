@@ -17,6 +17,7 @@ export default antfu(
     rules: {
       "antfu/no-top-level-await": "off",
       "style/brace-style": ["error", "1tbs"],
+      "vue/brace-style": ["error", "1tbs"],
     },
   },
   {

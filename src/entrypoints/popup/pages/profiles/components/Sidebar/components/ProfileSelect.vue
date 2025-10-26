@@ -1,4 +1,5 @@
 <script setup lang="tsx">
+import type { UUID } from "node:crypto";
 import type { HeaderMod, Profile } from "@/lib/storage";
 import {
   Tooltip,
@@ -8,30 +9,29 @@ import {
 } from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { useEventListener, useTemplateRefsList } from "@vueuse/core";
-import { nextTick, onMounted, watch } from "vue";
+import { useEventListener } from "@vueuse/core";
+import { onMounted, ref, watch } from "vue";
 import { cn, getModKey } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 
-const profileRefs = useTemplateRefsList<HTMLDivElement>();
+// Vue cannot guarantee the order of refs,
+// and must use id map management to ensure access to the correct element.
+const profileRefs = ref<Map<UUID, HTMLDivElement>>(new Map());
 
-onMounted(async () => {
-  // Without this line of code, the transition effect will appear
-  // when the form is first opened, even if the value has not changed at all.
-  await nextTick();
-  scrollToEnabledProfile("instant");
-});
+onMounted(() => scrollToEnabledProfile("instant"));
 
 watch(
   () => profilesStore.manager.selectedProfileId,
   () => scrollToEnabledProfile("smooth"),
+  // Wait for DOM to be updated, otherwise the latest DOM element cannot be accessed.
+  { flush: "post" },
 );
 
 function scrollToEnabledProfile(behavior: ScrollBehavior) {
-  const enabledIndex = profilesStore.manager.profiles.findIndex(profile => profile.id === profilesStore.manager.selectedProfileId);
-  if (enabledIndex !== -1 && profileRefs.value[enabledIndex]) {
-    profileRefs.value[enabledIndex].scrollIntoView({
+  const target = profileRefs.value.get(profilesStore.manager.selectedProfileId);
+  if (target) {
+    target.scrollIntoView({
       behavior,
       block: "center",
     });
@@ -104,7 +104,13 @@ function renderShortcutHint(index: number) {
     <div
       v-for="(profile, index) in profilesStore.manager.profiles"
       :key="profile.id"
-      :ref="profileRefs.set"
+      :ref="(el) => {
+        if (el === null) {
+          profileRefs.delete(profile.id);
+        } else {
+          profileRefs.set(profile.id, el as HTMLDivElement);
+        }
+      }"
     >
       <TooltipProvider :delay-duration="200">
         <Tooltip>
