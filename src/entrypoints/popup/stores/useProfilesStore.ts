@@ -4,7 +4,7 @@ import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -45,9 +45,7 @@ export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise, resolve } = Promise.withResolvers();
   const { ref: manager } = useProfileManagerStorage(resolve);
-  const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
-  // Does not provide cross-profile undo/redo capabilities.
-  watch(() => manager.value.selectedProfileId, clear);
+  const { undo, canUndo, redo, canRedo } = useDebouncedRefHistory(manager, { deep: true });
 
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;

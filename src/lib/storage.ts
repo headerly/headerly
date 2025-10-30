@@ -52,6 +52,12 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
   };
 }
 
+export interface GroupItem {
+  id: UUID;
+  enabled: boolean;
+  comments?: string;
+}
+
 interface BaseMod extends GroupItem {
   /**
    * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
@@ -74,20 +80,11 @@ export type HeaderMod = AppendOrSetMod | RemoveMod;
 
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
 
-type Filter = {
-  [K in keyof Browser.declarativeNetRequest.RuleCondition]?: {
-    value: Exclude<Browser.declarativeNetRequest.RuleCondition[K], undefined>;
-    enabled: boolean;
-  }
-};
+export interface Filter {
+  urlFilter?: ({ value: string } & GroupItem)[] | undefined;
+}
 
 export type GroupType = "radio" | "checkbox";
-
-export interface GroupItem {
-  id: UUID;
-  enabled: boolean;
-  comments?: string;
-}
 
 export interface HeaderModGroup {
   id: UUID;

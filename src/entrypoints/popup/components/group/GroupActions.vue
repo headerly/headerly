@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { VNode } from "vue";
 import type { GroupItem, GroupType } from "@/lib/storage";
 import {
   Tooltip,
@@ -7,6 +8,10 @@ import {
   TooltipTrigger,
 } from "#/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+
+const { description } = defineProps<{
+  description?: string | VNode;
+}>();
 
 const emit = defineEmits<{
   (e: "deleteGroup"): void;
@@ -17,9 +22,7 @@ const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
 
-const type = defineModel<GroupType>("type", {
-  required: true,
-});
+const type = defineModel<GroupType>("type");
 
 function transferGroupType() {
   if (type.value === "checkbox") {
@@ -37,7 +40,28 @@ function transferGroupType() {
 <template>
   <div class="flex gap-1">
     <slot name="buttons-before" />
-    <TooltipProvider :delay-duration="200">
+    <TooltipProvider v-if="description" :delay-duration="200">
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <button
+            class="btn btn-square btn-ghost btn-xs btn-primary"
+          >
+            <i class="i-lucide-circle-question-mark size-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent
+          :collision-padding="20"
+          side="top"
+          class="prose prose-sm max-h-40 max-w-lg overflow-y-auto"
+        >
+          <p v-if="typeof description === 'string'">
+            {{ description }}
+          </p>
+          <Component :is="description" v-else />
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+    <TooltipProvider v-if="type" :delay-duration="200">
       <Tooltip>
         <TooltipTrigger as-child>
           <button

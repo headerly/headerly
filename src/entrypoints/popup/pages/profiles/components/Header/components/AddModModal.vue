@@ -78,11 +78,16 @@ const tabs = [
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-link",
-        action: () => {
-          profilesStore.selectedProfile.filters.urlFilter = {
-            enabled: true,
-            value: "",
-          };
+        action: async () => {
+          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+          const url = new URL(currentTab?.url ?? "");
+          profilesStore.selectedProfile.filters.urlFilter = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              value: ["https", "http"].includes(url.protocol) ? `||${url.hostname}/` : "",
+            },
+          ];
         },
       },
       {
@@ -103,10 +108,10 @@ const tabs = [
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
         icon: "i-lucide-asterisk",
         action: () => {
-          profilesStore.selectedProfile.filters.regexFilter = {
-            enabled: true,
-            value: "",
-          };
+          // profilesStore.selectedProfile.filters.regexFilter = {
+          //   enabled: true,
+          //   value: "",
+          // };
         },
       },
       {
@@ -255,6 +260,7 @@ watch(() => addModModalStore.isOpen, (newValue) => {
                 @click="() => {
                   action()
                   addModModalStore.isOpen = false
+                  dialogRef?.close()
                 }"
               >
                 <i :class="icon" class="size-6" />

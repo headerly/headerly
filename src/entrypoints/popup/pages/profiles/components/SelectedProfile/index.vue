@@ -16,8 +16,8 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 
-const empty = computed(() =>
-  profilesStore.selectedProfile.requestHeaderModGroups.every(
+const empty = computed(() => {
+  const noMods = profilesStore.selectedProfile.requestHeaderModGroups.every(
     group => group.mods.length === 0,
   )
   && profilesStore.selectedProfile.responseHeaderModGroups.every(
@@ -25,8 +25,19 @@ const empty = computed(() =>
   )
   && profilesStore.selectedProfile.syncCookieGroups.every(
     group => group.cookies.length === 0,
-  )
-  && Object.keys(profilesStore.selectedProfile.filters).length === 0,
+  );
+
+  const noFilters = Object.values(profilesStore.selectedProfile.filters).every(
+    (filter) => {
+      if (Array.isArray(filter)) {
+        return filter.length === 0;
+      }
+      return false;
+    },
+  );
+
+  return noMods && noFilters;
+},
 );
 
 const settingsStore = useSettingsStore();

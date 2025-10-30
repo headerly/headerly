@@ -4,17 +4,18 @@ import { head } from "es-toolkit";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
 
-const { name } = defineProps<{
+const { name, type: propType } = defineProps<{
   name: string;
+  type?: GroupType;
 }>();
 
 const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
 
-const type = defineModel<GroupType>("type", {
-  required: true,
-});
+const modelType = defineModel<GroupType>("type");
+
+const type = computed(() => propType ?? modelType.value);
 
 const indeterminate = computed(() => {
   if (type.value === "checkbox") {
@@ -37,7 +38,7 @@ const checked = computed(() => {
     :name
   >
     <template #name-before>
-      <label v-if="type">
+      <label v-if="modelType">
         <input
           type="checkbox"
           class="checkbox checkbox-sm"
@@ -45,7 +46,7 @@ const checked = computed(() => {
           :indeterminate
           @change="(e) => {
             const checked = (e.target as HTMLInputElement).checked;
-            if (type === 'checkbox'){
+            if (modelType === 'checkbox'){
               list.forEach(item => {
                 item.enabled = checked;
               });
@@ -75,7 +76,7 @@ const checked = computed(() => {
         >
           <div class="flex flex-1 items-center justify-between gap-1">
             <input
-              v-if="type === 'checkbox'"
+              v-if="modelType === 'checkbox'"
               v-model="item.enabled"
               type="checkbox"
               class="checkbox mr-1 checkbox-sm"

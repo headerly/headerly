@@ -150,8 +150,15 @@ const cookieDialogRef = ref<HTMLDialogElement | null>(null);
         :index
       >
         <template #buttons-before>
-          <li v-if="field.value">
-            <button class="flex" @click="() => cookieDialogRef?.showModal()">
+          <li>
+            <button
+              class="
+                flex
+                disabled:pointer-events-none disabled:opacity-60
+              "
+              :disabled="!field.value"
+              @click="() => cookieDialogRef?.showModal()"
+            >
               <i class="i-lucide-eye-off size-4" />
               View Cookie
             </button>
