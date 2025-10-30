@@ -12,11 +12,12 @@ Headerly is a browser extension for managing HTTP request headers. It aims to be
 
 ### Phase 1 (v1.0.0)
 
-- [ ]  A popup interface similar to ModHeader
-- [ ]  Support for using radio or checkbox modes within a single profile, with configurable default mode
-- [x]  Support for splitting a single profile into sub-profiles, each with its own filter settings
-- [x]  Undo support when editing profiles
-- [ ]  Cookie sync feature (requires additional cookies permission request)
-- [ ] Share profiles via URL query, with a companion standalone webpage for sharing (since `chrome-extension://` cannot be used on the internet)
+- [x]  (UI) A popup interface similar to ModHeader
+- [x]  (UI) Support for using radio or checkbox modes within a single profile, with configurable default mode
+- [x]  (UI) Undo/redo support when editing profiles
+- [x]  (UI) Cookie sync feature (requires additional cookies permission request)
+- [ ]  (UI) Supports all types of filters in the DNR API
+- [ ]  (core) Connect to DNR API
+- [ ]  Share profiles via URL query, with a companion standalone webpage for sharing (since `chrome-extension://` cannot be used on the internet)
 - [ ]  [Optional] Supports Google Analytics for usage statistics
 - [ ]  [Optional] Supports Sentry for error tracking
