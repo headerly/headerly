@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
-import { ref, watch } from "vue";
+import { useTemplateRef, watch } from "vue";
 import { cn } from "@/lib/utils";
 
-const dialogRef = ref<HTMLDialogElement | null>(null);
+const dialogRef = useTemplateRef("dialogRef");
 
 const profilesStore = useProfilesStore();
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GroupItem } from "@/lib/storage";
 import { head } from "es-toolkit";
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 
 const { index } = defineProps<{
   index: number;
@@ -15,13 +15,13 @@ const field = defineModel<GroupItem>("field", {
   required: true,
 });
 
-const commentsDialogRef = ref<HTMLDialogElement | null>(null);
+const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
 const moreActions = computed(() => [
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: "i-lucide-copy size-4",
+    icon: "i-lucide-copy-plus size-4",
     onClick: () => {
       const newField = { ...field.value, id: crypto.randomUUID() };
       list.value.splice(index + 1, 0, newField);
@@ -77,7 +77,7 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
     :style="`position-anchor:${anchorname}`"
     popover
     class="
-      menu dropdown w-52 rounded-box bg-base-100 p-2 font-medium
+      menu dropdown w-52 rounded-box bg-base-300 p-2 font-medium
       text-base-content shadow-sm
       [position-area:end_span-start]
       [position-try-fallbacks:flip-block]

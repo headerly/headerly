@@ -12,6 +12,7 @@ import { ref } from "vue";
 import { cn } from "@/lib/utils";
 import AddModModal from "./components/AddModModal.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";
+import SecondaryOperations from "./components/SecondaryOperations.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -143,21 +144,6 @@ const settingsStore = useSettingsStore();
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-sm btn-primary"
-              @click="profilesStore.duplicateProfile()"
-            >
-              <i class="i-lucide-copy size-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" :collision-padding="5">
-            Duplicate current profile
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
       <AddModModal />
       <TooltipProvider :delay-duration="200">
         <Tooltip>
@@ -180,6 +166,18 @@ const settingsStore = useSettingsStore();
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+      <SecondaryOperations>
+        <template #trigger="{ popovertarget }">
+          <button
+            :popovertarget
+            :style="`anchor-name:--${popovertarget}`"
+            class="btn btn-square btn-ghost btn-sm btn-primary"
+          >
+            <i class="i-lucide-ellipsis-vertical size-4" />
+            <span class="sr-only">Open Secondary Operations Dropdown</span>
+          </button>
+        </template>
+      </SecondaryOperations>
     </div>
   </header>
 </template>

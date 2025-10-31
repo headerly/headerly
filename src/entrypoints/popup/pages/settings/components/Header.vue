@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "#/components/ui/tooltip";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { ref } from "vue";
+import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
 const { class: className } = defineProps<{
@@ -14,7 +14,7 @@ const { class: className } = defineProps<{
 }>();
 
 const settingsStore = useSettingsStore();
-const resetToDefaultModal = ref<HTMLDialogElement | null>(null);
+const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
 </script>
 
 <template>
@@ -40,7 +40,7 @@ const resetToDefaultModal = ref<HTMLDialogElement | null>(null);
                 'btn btn-soft btn-sm',
                 settingsStore.isModified && 'btn-error',
               )"
-              @click="resetToDefaultModal?.showModal()"
+              @click="resetToDefaultModalRef?.showModal()"
             >
               <i class="i-lucide-refresh-cw size-4" />
               Reset
@@ -51,7 +51,7 @@ const resetToDefaultModal = ref<HTMLDialogElement | null>(null);
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <dialog ref="resetToDefaultModal" class="modal">
+      <dialog ref="resetToDefaultModalRef" class="modal">
         <div class="modal-box">
           <h3 class="text-lg font-semibold">
             Reset application settings
@@ -63,7 +63,7 @@ const resetToDefaultModal = ref<HTMLDialogElement | null>(null);
             <button
               class="btn btn-soft btn-error" @click="() => {
                 settingsStore.resetToDefault();
-                resetToDefaultModal?.close();
+                resetToDefaultModalRef?.close();
               }"
             >
               Confirm

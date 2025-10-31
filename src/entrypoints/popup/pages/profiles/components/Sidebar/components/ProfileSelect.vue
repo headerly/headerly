@@ -12,6 +12,7 @@ import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
 import { onMounted, ref, watch } from "vue";
 import { cn, getModKey } from "@/lib/utils";
+import ContextMenu from "./ContextMenu.vue";
 
 const profilesStore = useProfilesStore();
 
@@ -117,18 +118,22 @@ function renderShortcutHint(index: number) {
         <Tooltip>
           <TooltipTrigger as-child>
             <div class="indicator">
-              <button
-                :class="cn(
-                  `
-                    btn btn-square text-xl btn-soft btn-sm
-                    hover:btn-primary
-                  `,
-                  { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
-                )"
-                @click="profilesStore.manager.selectedProfileId = profile.id"
-              >
-                {{ profile.emoji }}
-              </button>
+              <ContextMenu :id="profile.id">
+                <template #trigger>
+                  <button
+                    :class="cn(
+                      `
+                        btn btn-square text-xl btn-soft btn-sm
+                        hover:btn-primary
+                      `,
+                      { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
+                    )"
+                    @click="profilesStore.manager.selectedProfileId = profile.id"
+                  >
+                    {{ profile.emoji }}
+                  </button>
+                </template>
+              </ContextMenu>
               <span
                 :class="cn(
                   'indicator-item status',

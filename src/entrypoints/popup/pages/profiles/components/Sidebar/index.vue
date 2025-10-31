@@ -48,15 +48,17 @@ const popovertarget = "popover-sidebar-menu";
       :id="popovertarget"
       popover
       class="
-        menu dropdown z-1 w-52 rounded-box bg-base-100 p-2 shadow-sm
+        menu dropdown z-1 w-52 rounded-box bg-base-300 p-2 font-medium shadow-sm
         [position-anchor:--anchor-sidebar-menu]
       "
     >
-      <li class="gap-1 font-medium">
+      <li>
         <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
           <i class="i-lucide-cross size-4" />
           <span>Add New Profile</span>
         </button>
+      </li>
+      <li>
         <ProfileManage>
           <button
             class="flex flex-row items-center gap-2"
@@ -69,14 +71,20 @@ const popovertarget = "popover-sidebar-menu";
               <kbd class="kbd font-mono kbd-sm">K</kbd></span>
           </button>
         </ProfileManage>
+      </li>
+      <li>
         <RouterLink to="/settings" class="flex flex-row items-center gap-2">
           <i class="i-lucide-settings size-4" />
           <span>Settings</span>
         </RouterLink>
+      </li>
+      <li>
         <RouterLink to="/about" class="flex flex-row items-center gap-2">
           <i class="i-lucide-badge-info size-4" />
           <span>About</span>
         </RouterLink>
+      </li>
+      <li>
         <button
           v-if="isDEV"
           class="flex flex-row items-center gap-2"

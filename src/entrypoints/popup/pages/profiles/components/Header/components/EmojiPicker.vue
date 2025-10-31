@@ -7,11 +7,11 @@ import {
 } from "#/components/ui/tooltip";
 import { emojisWithCategory } from "#/constants/emoji";
 import { useVirtualizer } from "@tanstack/vue-virtual";
-import { computed, ref } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
-const parentRef = ref<HTMLElement | null>(null);
+const parentRef = useTemplateRef("parentRef");
 
 interface VirtualItem {
   type: "header" | "emoji";

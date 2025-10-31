@@ -10,7 +10,7 @@ import {
 } from "#/components/ui/tooltip";
 import { useQuery } from "@tanstack/vue-query";
 import { pick } from "es-toolkit";
-import { ref, toValue } from "vue";
+import { toValue, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
@@ -70,7 +70,7 @@ async function refreshCookie() {
   }
 }
 
-const cookieDialogRef = ref<HTMLDialogElement | null>(null);
+const cookieDialogRef = useTemplateRef("cookieDialogRef");
 </script>
 
 <template>
