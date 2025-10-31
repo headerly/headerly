@@ -129,6 +129,13 @@ function renderShortcutHint(index: number) {
                       { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
                     )"
                     @click="profilesStore.manager.selectedProfileId = profile.id"
+                    @auxclick="(e) => {
+                      e.preventDefault()
+                      const WheelButton = 1
+                      if (e.button === WheelButton){
+                        profilesStore.toggleProfileEnabled(profile.id)
+                      }
+                    }"
                   >
                     {{ profile.emoji }}
                   </button>
@@ -138,7 +145,7 @@ function renderShortcutHint(index: number) {
                 :class="cn(
                   'indicator-item status',
                   getProfileStatus(profile) === 'working' && `status-success`,
-                  getProfileStatus(profile) === 'disabled' && `status-error`,
+                  getProfileStatus(profile) === 'disabled' && `status-warning`,
                 )"
               />
             </div>

@@ -150,7 +150,7 @@ const settingsStore = useSettingsStore();
           <TooltipTrigger as-child>
             <button
               class="btn btn-square btn-ghost btn-sm btn-error"
-              @click="profilesStore.deleteProfile"
+              @click="profilesStore.deleteProfile(profilesStore.selectedProfile.id)"
             >
               <i
                 :class="cn(

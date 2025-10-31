@@ -60,34 +60,98 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = newProfile.id;
   }
 
-  function duplicateProfile() {
+  function duplicateProfile(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
+    if (!targetProfile)
+      return;
+
     const newProfile = {
-      ...selectedProfile.value,
+      ...targetProfile,
       id: crypto.randomUUID(),
-      name: `[Duplicated] ${selectedProfile.value.name}`,
-      requestHeaderModGroups: cloneHeaderModGroupsWithNewId(selectedProfile.value.requestHeaderModGroups),
-      responseHeaderModGroups: cloneHeaderModGroupsWithNewId(selectedProfile.value.responseHeaderModGroups),
+      name: `[Duplicated] ${targetProfile.name}`,
+      requestHeaderModGroups: cloneHeaderModGroupsWithNewId(targetProfile.requestHeaderModGroups),
+      responseHeaderModGroups: cloneHeaderModGroupsWithNewId(targetProfile.responseHeaderModGroups),
     };
-    manager.value.profiles.unshift(newProfile);
+
+    const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+    manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
     manager.value.selectedProfileId = newProfile.id;
   }
 
-  function deleteProfile() {
+  function deleteProfile(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+
     // IMPORTANT: Ensure that there is at least one profile in the storage.
     if (manager.value.profiles.length === 1) {
-      const selectedProfileIndex = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
+      const targetProfileIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
       // Don't using `Object.assign` to ensure reactivity.
-      manager.value.profiles[selectedProfileIndex] = createProfile({
-        id: manager.value.profiles[selectedProfileIndex]!.id,
+      manager.value.profiles[targetProfileIndex] = createProfile({
+        id: manager.value.profiles[targetProfileIndex]!.id,
       });
       return;
     }
-    const current = manager.value.profiles.findIndex(p => p.id === manager.value.selectedProfileId);
+
+    const current = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+    if (current === -1)
+      return;
+
     const prevNearestProfileId = manager.value.profiles[current - 1]?.id;
     const nextNearestProfileId = manager.value.profiles[current + 1]?.id;
+
     // Don't using `Array.filter` to ensure reactivity.
     manager.value.profiles.splice(current, 1);
-    manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
+
+    // Only update selectedProfileId if we're deleting the currently selected profile
+    if (targetProfileId === manager.value.selectedProfileId) {
+      manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
+    }
+  }
+
+  function toggleProfileEnabled(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
+    if (targetProfile) {
+      targetProfile.enabled = !targetProfile.enabled;
+    }
+  }
+
+  function moveProfileUp(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+
+    // Can't move up if it's already the first profile
+    if (currentIndex <= 0)
+      return;
+
+    const targetProfile = manager.value.profiles[currentIndex]!;
+    manager.value.profiles.splice(currentIndex, 1);
+    manager.value.profiles.splice(currentIndex - 1, 0, targetProfile);
+  }
+
+  function moveProfileDown(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+
+    // Can't move down if it's already the last profile
+    if (currentIndex === -1 || currentIndex >= manager.value.profiles.length - 1)
+      return;
+
+    const targetProfile = manager.value.profiles[currentIndex]!;
+    manager.value.profiles.splice(currentIndex, 1);
+    manager.value.profiles.splice(currentIndex + 1, 0, targetProfile);
+  }
+
+  function canMoveProfileUp(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+    return currentIndex > 0;
+  }
+
+  function canMoveProfileDown(profileId?: UUID) {
+    const targetProfileId = profileId ?? manager.value.selectedProfileId;
+    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+    return currentIndex !== -1 && currentIndex < manager.value.profiles.length - 1;
   }
 
   function addModGroup(type: ActionType, groupType: GroupType) {
@@ -122,6 +186,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     addProfile,
     duplicateProfile,
     deleteProfile,
+    toggleProfileEnabled,
+    moveProfileUp,
+    moveProfileDown,
+    canMoveProfileUp,
+    canMoveProfileDown,
     addModGroup,
     addSyncCookieGroup,
     undo,
