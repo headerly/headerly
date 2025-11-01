@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/components/ui/tooltip";
 import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useTemplateRef, watch } from "vue";
-import { cn } from "@/lib/utils";
 
 const dialogRef = useTemplateRef("dialogRef");
 
@@ -15,9 +20,7 @@ interface Tab {
   items: {
     title: string;
     description: string;
-    icon: string;
     action: () => void;
-    excluded?: boolean;
     disabled?: boolean;
   }[];
 }
@@ -26,36 +29,31 @@ const tabs = [
   {
     label: "Actions",
     value: "actions",
-    icon: "i-lucide-package-plus",
+    icon: "i-lucide-cross",
     items: [
       {
         title: "Modify HTTP Request Header (Checkbox)",
         description: "Set, remove, or append HTTP request headers.",
-        icon: "i-lucide-arrow-big-right-dash",
         action: () => profilesStore.addModGroup("request", "checkbox"),
       },
       {
         title: "Modify HTTP Request Header (Radio)",
         description: "Set, remove, or append HTTP request headers.",
-        icon: "i-lucide-arrow-big-right-dash",
         action: () => profilesStore.addModGroup("request", "radio"),
       },
       {
         title: "Modify HTTP Response Header (Checkbox)",
         description: "Set, remove, or append HTTP response headers.",
-        icon: "i-lucide-arrow-big-left-dash",
         action: () => profilesStore.addModGroup("response", "checkbox"),
       },
       {
         title: "Modify HTTP Response Header (Radio)",
         description: "Set, remove, or append HTTP response headers.",
-        icon: "i-lucide-arrow-big-left-dash",
         action: () => profilesStore.addModGroup("response", "radio"),
       },
       {
         title: "Cookie Sync to Request Header",
         description: "Sync cookies for a specific website to the request header (New permissions need to be granted).",
-        icon: "i-lucide-cookie",
         action: async () => {
           const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
           if (hasCookiesPermission) {
@@ -78,7 +76,6 @@ const tabs = [
       {
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
-        icon: "i-lucide-link",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
           const url = new URL(currentTab?.url ?? "");
@@ -99,7 +96,6 @@ const tabs = [
       {
         title: "Request Domains",
         description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
-        icon: "i-lucide-server",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
           const url = new URL(currentTab?.url ?? "");
@@ -122,7 +118,6 @@ const tabs = [
       {
         title: "Excluded Request Domains",
         description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
-        icon: "i-lucide-server",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
           const url = new URL(currentTab?.url ?? "");
@@ -137,7 +132,6 @@ const tabs = [
             ],
           };
         },
-        excluded: true,
         get disabled() {
           return profilesStore.selectedProfile.filters.excludedRequestDomains
             && profilesStore.selectedProfile.filters.excludedRequestDomains.items.length > 0;
@@ -146,7 +140,6 @@ const tabs = [
       {
         title: "Regex Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
-        icon: "i-lucide-asterisk",
         action: () => {
           profilesStore.selectedProfile.filters.regexFilter = [
             {
@@ -165,33 +158,26 @@ const tabs = [
       {
         title: "Specified Tabs",
         description: "List of tab IDs which the rule should match. An ID of TAB_ID_NONE includes requests which don't originate from a tab. An empty list is not allowed. Only supported for session-scoped rules.",
-        icon: "i-lucide-rectangle-horizontal",
         action: () => {},
       },
       {
         title: "Excluded Specified Tabs",
         description: "List of tab IDs which the rule should not match. An ID of TAB_ID_NONE excludes requests which don't originate from a tab. Only supported for session-scoped rules.",
-        icon: "i-lucide-rectangle-horizontal",
         action: () => {},
-        excluded: true,
       },
       {
         title: "Domain Type",
         description: "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
-        icon: "i-lucide-wifi",
         action: () => {},
       },
       {
         title: "Excluded Domain Type",
         description: "Excludes requests based on whether the network request is first-party or third-party to the domain from which it originated. If omitted, all requests are accepted.",
-        icon: "i-lucide-wifi",
         action: () => {},
-        excluded: true,
       },
       {
         title: "Initiator Domains",
         description: "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
-        icon: "i-lucide-globe",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
           const url = new URL(currentTab?.url ?? "");
@@ -214,7 +200,6 @@ const tabs = [
       {
         title: "Excluded Initiator Domains",
         description: "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
-        icon: "i-lucide-globe",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
           const url = new URL(currentTab?.url ?? "");
@@ -229,7 +214,6 @@ const tabs = [
             ],
           };
         },
-        excluded: true,
         get disabled() {
           return profilesStore.selectedProfile.filters.excludedInitiatorDomains
             && profilesStore.selectedProfile.filters.excludedInitiatorDomains.items.length > 0;
@@ -238,41 +222,32 @@ const tabs = [
       {
         title: "Request Methods",
         description: "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
-        icon: "i-lucide-zap",
         action: () => {},
       },
       {
         title: "Excluded Request Methods",
         description: "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
-        icon: "i-lucide-zap",
         action: () => {},
-        excluded: true,
       },
       {
         title: "Resource Types",
         description: "List of resource types which the rule can match. An empty list is not allowed.",
-        icon: "i-lucide-file",
         action: () => {},
       },
       {
         title: "Excluded Resource Types",
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
-        icon: "i-lucide-file",
         action: () => {},
-        excluded: true,
       },
       {
         title: "Response Headers",
         description: "Rule matches if the request matches any response header condition in this list (if specified).",
-        icon: "i-lucide-list",
         action: () => {},
       },
       {
         title: "Excluded Response Headers",
         description: "Rule does not match if the request matches any response header condition in this list (if specified). If both excludedResponseHeaders and responseHeaders are specified, then excludedResponseHeaders takes precedence.",
-        icon: "i-lucide-list",
         action: () => {},
-        excluded: true,
       },
     ],
   },
@@ -293,15 +268,42 @@ watch(() => addModModalStore.isOpen, (newValue) => {
 </script>
 
 <template>
-  <button
-    class="btn btn-square btn-ghost btn-sm btn-primary"
-    @click="() => {
-      addModModalStore.currentTab = 'actions';
-      addModModalStore.isOpen = true
-    }"
-  >
-    <i class="i-lucide-cross size-4" />
-  </button>
+  <TooltipProvider :delay-duration="200">
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <button
+          class="btn btn-square btn-ghost btn-sm btn-primary"
+          @click="() => {
+            addModModalStore.currentTab = 'actions';
+            addModModalStore.isOpen = true
+          }"
+        >
+          <i class="i-lucide-cross size-4" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        Add a new action
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+  <TooltipProvider :delay-duration="200">
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <button
+          class="btn btn-square btn-ghost btn-sm btn-primary"
+          @click="() => {
+            addModModalStore.currentTab = 'conditions';
+            addModModalStore.isOpen = true
+          }"
+        >
+          <i class="i-lucide-list-filter-plus size-4" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        Add a new condition
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
   <dialog ref="dialogRef" class="modal">
     <div class="modal-box">
       <form method="dialog">
@@ -328,7 +330,7 @@ watch(() => addModModalStore.isOpen, (newValue) => {
           >
             <div class="list rounded-box">
               <button
-                v-for="{ title, description, icon, action, excluded, disabled } in tab.items"
+                v-for="{ title, description, action, disabled } in tab.items"
                 :key="title"
                 :disabled="disabled"
                 class="list-row btn h-min text-start btn-ghost"
@@ -341,18 +343,12 @@ watch(() => addModModalStore.isOpen, (newValue) => {
                   }
                 }"
               >
-                <i :class="icon" class="size-6" />
                 <div>
                   <div>{{ title }}</div>
                   <div class="text-xs font-normal opacity-60">
                     {{ description }}
                   </div>
                 </div>
-                <i
-                  :class="cn('size-5 bg-primary', excluded ? `i-lucide-ban` : `
-                    i-lucide-plus
-                  `)"
-                />
               </button>
             </div>
           </div>

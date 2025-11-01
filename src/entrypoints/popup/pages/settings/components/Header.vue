@@ -46,8 +46,8 @@ const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
               Reset
             </button>
           </TooltipTrigger>
-          <TooltipContent v-if="settingsStore.isModified" side="bottom">
-            Modified settings exist
+          <TooltipContent side="bottom" :collision-padding="5">
+            Reset application settings
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

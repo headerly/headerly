@@ -71,7 +71,7 @@ const name = browser.runtime.getManifest().name;
               <i class="i-lucide-github size-4 text-base-content/66" />
               GitHub & MIT
             </a>
-            <a
+            <!-- <a
               rel="noopener noreferrer"
               href="https://headerly.dev/docs"
               target="_blank"
@@ -81,7 +81,7 @@ const name = browser.runtime.getManifest().name;
             >
               <i class="i-lucide-book-open size-4 text-base-content/66" />
               Documentation
-            </a>
+            </a> -->
           </div>
         </div>
       </div>

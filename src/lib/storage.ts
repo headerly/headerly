@@ -16,8 +16,9 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
     initialValue,
     {
       setItem(_, value: T) {
-        // chrome.storage stores the proxy array and converts it to a normal object. This breaks everything.
+        // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
         // We need to store the original array in the proxy.
+        // Note that this will still be broken if only some of the keys on the object are proxies!
         return item.setValue(toRaw(value));
       },
       getItem(_) {
@@ -117,17 +118,29 @@ export function useThemeStorage() {
 }
 
 export function useAutoAssignEmojiStorage() {
-  return useBrowserStorage<boolean>("local:autoAssignEmoji", false);
+  return useBrowserStorage<boolean>("local:autoAssignEmoji", true);
 }
 
 export function useRandomEmojiCategoryStorage() {
-  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "all");
+  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "smileysPeople");
 }
 
 export function useLanguageStorage() {
   return useBrowserStorage<string>("local:language", "en-US");
 }
 
-export function enableProfileShortcutStorage() {
-  return useBrowserStorage<boolean>("local:enableProfileShortcut", false);
+export function useEnableMetaNumberShortcutStorage() {
+  return useBrowserStorage<boolean>("local:enableCtrlNumberShortcut", true);
+}
+
+export function useEnableMetaKSearchStorage() {
+  return useBrowserStorage<boolean>("local:enableCtrlKSearch", true);
+}
+
+export function useEnableUndoAndRedoShortcutStorage() {
+  return useBrowserStorage<boolean>("local:enableUndoAndRedoShortcut", true);
+}
+
+export function useDisplayNumberBadgeStorage() {
+  return useBrowserStorage<boolean>("local:displayNumberBadge", false);
 }

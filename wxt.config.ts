@@ -14,7 +14,6 @@ export default defineConfig({
     name: "Headerly",
     permissions: [
       "storage",
-      "unlimitedStorage",
       "declarativeNetRequest",
       "declarativeNetRequestFeedback",
     ],
@@ -24,7 +23,6 @@ export default defineConfig({
     optional_permissions: [
       "cookies",
     ],
-    homepage_url: "https://headerly.dev",
   },
   webExt: {
     disabled: true,

@@ -8,8 +8,9 @@ import {
 } from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
+import { useEventListener } from "@vueuse/core";
 import { ref } from "vue";
-import { cn } from "@/lib/utils";
+import { cn, getModKey } from "@/lib/utils";
 import AddModModal from "./components/AddModModal.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";
 import SecondaryOperations from "./components/SecondaryOperations.vue";
@@ -30,6 +31,20 @@ function handleEditProfileName() {
 }
 
 const settingsStore = useSettingsStore();
+
+useEventListener(window, "keydown", (event: KeyboardEvent) => {
+  if (!settingsStore.enableUndoAndRedoShortcut) {
+    return;
+  }
+  const metaKey = event.ctrlKey || event.metaKey;
+  if (metaKey && !event.shiftKey && event.key.toLowerCase() === "z" && profilesStore.canUndo) {
+    event.preventDefault();
+    profilesStore.undo();
+  } else if (metaKey && event.shiftKey && event.key.toLowerCase() === "z" && profilesStore.canRedo) {
+    event.preventDefault();
+    profilesStore.redo();
+  }
+});
 </script>
 
 <template>
@@ -48,7 +63,7 @@ const settingsStore = useSettingsStore();
         v-if="!profileNameEditing"
         class="
           btn flex items-center gap-1 px-1.5 text-base font-semibold btn-ghost
-          btn-sm
+          btn-sm btn-primary
         "
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
@@ -59,7 +74,6 @@ const settingsStore = useSettingsStore();
           class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap"
         >
           {{ profilesStore.selectedProfile.name }}</span>
-        <i class="i-lucide-pencil-line size-4" />
       </button>
       <div v-else class="flex gap-1.5">
         <input
@@ -83,9 +97,7 @@ const settingsStore = useSettingsStore();
         </button>
       </div>
     </div>
-    <div
-      class="flex items-center justify-between gap-1 p-1"
-    >
+    <div class="flex items-center justify-between gap-1 p-1">
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>
@@ -99,6 +111,10 @@ const settingsStore = useSettingsStore();
           </TooltipTrigger>
           <TooltipContent side="bottom">
             Undo
+            <span v-if="settingsStore.enableUndoAndRedoShortcut">
+              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
+              <kbd class="kbd font-mono kbd-sm">Z</kbd>
+            </span>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -115,6 +131,11 @@ const settingsStore = useSettingsStore();
           </TooltipTrigger>
           <TooltipContent side="bottom">
             Redo
+            <span v-if="settingsStore.enableUndoAndRedoShortcut">
+              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
+              <kbd class="mr-1 kbd font-mono kbd-sm">Shift</kbd>
+              <kbd class="kbd font-mono kbd-sm">Z</kbd>
+            </span>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

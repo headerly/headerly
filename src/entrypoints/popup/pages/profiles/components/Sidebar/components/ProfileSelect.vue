@@ -66,7 +66,7 @@ function getProfileStatus(profile: Profile) {
 
 const settingsStore = useSettingsStore();
 function handleSwitchProfileShortcut(event: KeyboardEvent) {
-  if (!settingsStore.enableProfileShortcut) {
+  if (!settingsStore.enableMetaNumberShortcut) {
     return;
   }
   if ((event.ctrlKey || event.metaKey) && event.key >= "1" && event.key <= "9") {
@@ -83,7 +83,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 
 function renderShortcutHint(index: number) {
-  if (!settingsStore.enableProfileShortcut || index >= 9) {
+  if (!settingsStore.enableMetaNumberShortcut || index >= 9) {
     return null;
   }
   return (
@@ -117,38 +117,42 @@ function renderShortcutHint(index: number) {
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>
-            <div class="indicator">
-              <ContextMenu :id="profile.id" v-model="profilesStore.manager.profiles[index]!">
-                <template #trigger>
-                  <button
+            <ContextMenu :id="profile.id" v-model="profilesStore.manager.profiles[index]!">
+              <template #trigger>
+                <button
+                  :class="cn(
+                    `
+                      btn indicator btn-square text-xl btn-soft btn-sm
+                      hover:btn-primary
+                    `,
+                    { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
+                  )"
+                  @click="profilesStore.manager.selectedProfileId = profile.id"
+                >
+                  {{ profile.emoji }}
+                  <span
                     :class="cn(
-                      `
-                        btn btn-square text-xl btn-soft btn-sm
-                        hover:btn-primary
+                      'indicator-item status',
+                      getProfileStatus(profile) === 'working' && `
+                        status-success
                       `,
-                      { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
+                      getProfileStatus(profile) === 'disabled' && `
+                        status-warning
+                      `,
                     )"
-                    @click="profilesStore.manager.selectedProfileId = profile.id"
-                    @auxclick="(e) => {
-                      e.preventDefault()
-                      const WheelButton = 1
-                      if (e.button === WheelButton){
-                        profilesStore.toggleProfileEnabled(profile.id)
-                      }
-                    }"
+                  />
+                  <span
+                    v-if="settingsStore.displayNumberBadge && index < 9"
+                    class="
+                      indicator-item badge size-4 px-1 font-mono indicator-start
+                      indicator-middle
+                    "
                   >
-                    {{ profile.emoji }}
-                  </button>
-                </template>
-              </ContextMenu>
-              <span
-                :class="cn(
-                  'indicator-item status',
-                  getProfileStatus(profile) === 'working' && `status-success`,
-                  getProfileStatus(profile) === 'disabled' && `status-warning`,
-                )"
-              />
-            </div>
+                    {{ index + 1 }}
+                  </span>
+                </button>
+              </template>
+            </ContextMenu>
           </TooltipTrigger>
           <TooltipContent side="right">
             <p>{{ profile.name }} <Component :is="renderShortcutHint(index)" /></p>

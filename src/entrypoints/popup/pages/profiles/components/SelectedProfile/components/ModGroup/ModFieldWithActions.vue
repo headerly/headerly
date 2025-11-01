@@ -65,8 +65,7 @@ const nextOperation = computed(() => {
     <label class="label flex flex-1">
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
-        <label class="floating-label flex-1">
-          <span>Name</span>
+        <label class="flex-1">
           <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`">
             <option
               v-for="field in autocomplete(actionType, field.operation, field.name)"
@@ -91,8 +90,7 @@ const nextOperation = computed(() => {
             }"
           >
         </label>
-        <label v-if="field.operation !== 'remove'" class="floating-label flex-1">
-          <span>Value</span>
+        <label v-if="field.operation !== 'remove'" class="flex-1">
           <input
             v-model.trim.lazy="field.value"
             type="text"

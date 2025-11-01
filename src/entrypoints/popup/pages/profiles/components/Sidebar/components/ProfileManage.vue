@@ -9,15 +9,18 @@ import {
   SheetTrigger,
 } from "#/components/ui/sheet";
 import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
-
 import { computed, ref } from "vue";
 import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
-
+const settingsStore = useSettingsStore();
 const open = ref(false);
 function handleSearchShortcut(event: KeyboardEvent) {
+  if (!settingsStore.enableMetaKSearch) {
+    return;
+  }
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
     event.preventDefault();
     open.value = !open.value;
@@ -40,6 +43,7 @@ const searchResults = computed(() => {
   return profilesStore.manager.profiles.filter(profile =>
     profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     || profile.emoji.includes(searchKeyword.value)
+    || profile.id.includes(searchKeyword.value)
     || profile.requestHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod))
     || profile.responseHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod)),
   );
@@ -58,33 +62,35 @@ const searchResults = computed(() => {
           Search your profiles
         </SheetDescription>
       </SheetHeader>
-      <div v-auto-animate class="grid w-full gap-1 overflow-y-auto px-2 py-1">
+      <div class="grid w-full gap-1 overflow-y-auto px-2 py-1">
         <label class="input mb-2 w-full">
           <i class="i-lucide-search size-4 opacity-50" />
-          <input v-model="searchKeyword" type="search" class="w-full" placeholder="Search" autofocus>
+          <input v-model.lazy.trim="searchKeyword" type="search" class="w-full" placeholder="Search" autofocus>
         </label>
-        <div
-          v-for="profile in searchResults"
-          :key="profile.id"
-          class="w-full"
-        >
-          <button
-            :class="cn(
-              `
-                btn grid w-full grid-cols-[1rem_1fr] place-content-center
-                items-center justify-start gap-2 btn-ghost
-                hover:btn-primary
-              `,
-            )"
-            @click="profilesStore.manager.selectedProfileId = profile.id"
+        <div v-auto-animate class="flex flex-col gap-1">
+          <div
+            v-for="profile in searchResults"
+            :key="profile.id"
+            class="w-full"
           >
-            <span>{{ profile.emoji }} </span>
-            <span
-              class="
-                overflow-hidden text-start overflow-ellipsis whitespace-nowrap
-              "
-            >{{ profile.name }}</span>
-          </button>
+            <button
+              :class="cn(
+                `
+                  btn grid w-full grid-cols-[1rem_1fr] place-content-center
+                  items-center justify-start gap-2 btn-ghost
+                  hover:btn-primary
+                `,
+              )"
+              @click="profilesStore.manager.selectedProfileId = profile.id"
+            >
+              <span>{{ profile.emoji }} </span>
+              <span
+                class="
+                  overflow-hidden text-start overflow-ellipsis whitespace-nowrap
+                "
+              >{{ profile.name }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </SheetContent>

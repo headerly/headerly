@@ -28,7 +28,7 @@ interface SettingGroup {
   anchorIcon: string;
 }
 
-export const settings: SettingGroup[] = [
+export const settings = [
   {
     fieldsetTitle: "Appearance",
     anchor: "appearance",
@@ -55,13 +55,11 @@ export const settings: SettingGroup[] = [
         ],
         key: "language",
       },
-    ],
-  },
-  {
-    fieldsetTitle: "Emoji",
-    anchor: "emoji",
-    anchorIcon: "i-lucide-smile",
-    fields: [
+      {
+        type: "checkbox",
+        label: "Display the badges for numbers 1-9 in the sidebar",
+        key: "displayNumberBadge",
+      },
       {
         type: "checkbox",
         label: "Automatically assign emoji to new profiles",
@@ -82,9 +80,19 @@ export const settings: SettingGroup[] = [
     fields: [
       {
         type: "checkbox",
-        label: `Enable ${getModKey()} + 1-9 shortcut to switch profiles`,
-        key: "enableProfileShortcut",
+        label: `Enable ${getModKey()} + 1-9 to switch between profiles`,
+        key: "enableMetaNumberShortcut",
+      },
+      {
+        type: "checkbox",
+        label: `Enable ${getModKey()} + K to search for profiles`,
+        key: "enableMetaKSearch",
+      },
+      {
+        type: "checkbox",
+        label: `Enable ${getModKey()} + Z / ${getModKey()} + Shift + Z for undo/redo actions`,
+        key: "enableUndoAndRedoShortcut",
       },
     ],
   },
-];
+] as const satisfies SettingGroup[];

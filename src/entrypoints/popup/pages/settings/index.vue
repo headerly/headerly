@@ -38,13 +38,20 @@ const settingsStore = useSettingsStore();
             <template v-for="field in setting.fields" :key="field.label">
               <label
                 v-if="field.type === 'select'"
-                class="label flex flex-col items-start text-base-content"
+                class="
+                  label flex flex-col items-start whitespace-normal
+                  text-base-content
+                "
               >
                 {{ field.label }}:
                 <select
                   v-model="settingsStore[field.key]"
                   class="select cursor-pointer"
-                  @change="field.onChange"
+                  @change="() => {
+                    if ('onChange' in field) {
+                      field.onChange();
+                    }
+                  }"
                 >
                   <option
                     v-for="option in field.options"
@@ -58,13 +65,12 @@ const settingsStore = useSettingsStore();
 
               <label
                 v-else-if="field.type === 'checkbox'"
-                class="label text-base-content"
+                class="label items-start whitespace-normal text-base-content"
               >
                 <input
                   v-model="settingsStore[field.key]"
                   type="checkbox"
                   class="checkbox"
-                  @change="field.onChange"
                 >
                 {{ field.label }}
               </label>

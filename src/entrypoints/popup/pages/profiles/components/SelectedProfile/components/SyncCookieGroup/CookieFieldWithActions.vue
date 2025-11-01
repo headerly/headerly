@@ -78,8 +78,7 @@ const cookieDialogRef = useTemplateRef("cookieDialogRef");
     <label class="label flex flex-1">
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
-        <label class="floating-label flex-1">
-          <span>Domain</span>
+        <label class="flex-1">
           <input
             :value="field.domain"
             type="text"
@@ -91,8 +90,7 @@ const cookieDialogRef = useTemplateRef("cookieDialogRef");
             @change="handleDomainChange"
           >
         </label>
-        <label class="floating-label relative flex-1">
-          <span>Name</span>
+        <label class="relative flex-1">
           <select
             v-model="field.name"
             :disabled="cookies == null || cookies.length === 0 || isPending"

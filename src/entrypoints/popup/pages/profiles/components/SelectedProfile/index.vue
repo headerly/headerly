@@ -24,7 +24,7 @@ const empty = computed(() => {
     group => group.items.length === 0,
   )
   && profilesStore.selectedProfile.syncCookieGroups.every(
-    group => group.cookies.length === 0,
+    group => group.items.length === 0,
   );
 
   const noFilters = Object.values(profilesStore.selectedProfile.filters).every(

@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
-  enableProfileShortcutStorage,
   useAutoAssignEmojiStorage,
+  useDisplayNumberBadgeStorage,
+  useEnableMetaKSearchStorage,
+  useEnableMetaNumberShortcutStorage,
+  useEnableUndoAndRedoShortcutStorage,
   useLanguageStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
@@ -16,7 +19,10 @@ export const useSettingsStore = defineStore("settings", () => {
     theme: useThemeStorage(),
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),
-    enableProfileShortcut: enableProfileShortcutStorage(),
+    displayNumberBadge: useDisplayNumberBadgeStorage(),
+    enableMetaNumberShortcut: useEnableMetaNumberShortcutStorage(),
+    enableMetaKSearch: useEnableMetaKSearchStorage(),
+    enableUndoAndRedoShortcut: useEnableUndoAndRedoShortcutStorage(),
   } as const;
 
   const isModified = computed(() => {

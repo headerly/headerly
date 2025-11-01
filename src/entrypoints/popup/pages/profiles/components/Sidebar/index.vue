@@ -66,9 +66,11 @@ const popovertarget = "popover-sidebar-menu";
             popovertargetaction="hide"
           >
             <i class="i-lucide-search size-4" />
-            <span>Search
+            <span>Search</span>
+            <span v-if="settingsStore.enableMetaKSearch">
               <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="kbd font-mono kbd-sm">K</kbd></span>
+              <kbd class="kbd font-mono kbd-sm">K</kbd>
+            </span>
           </button>
         </ProfileManage>
       </li>

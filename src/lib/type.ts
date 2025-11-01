@@ -61,7 +61,7 @@ export interface SyncCookie extends GroupItem {
 export interface SyncCookieGroup {
   id: UUID;
   type: GroupType;
-  cookies: SyncCookie[];
+  items: SyncCookie[];
 }
 
 export interface Profile {

@@ -4,7 +4,7 @@ import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
-import { computed } from "vue";
+import { computed, toRaw } from "vue";
 import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -20,18 +20,7 @@ function getProfileIcon() {
     : emoji[settingsStore.randomEmojiCategory][round(random(emoji[settingsStore.randomEmojiCategory].length))];
 }
 
-function cloneHeaderModGroupsWithNewId(groups: HeaderModGroup[]): HeaderModGroup[] {
-  return groups.map(group => ({
-    ...group,
-    id: crypto.randomUUID(),
-    mods: group.items.map(mod => ({
-      ...mod,
-      id: crypto.randomUUID(),
-    })),
-  }));
-}
-
-export function findHeaderModGroups(profile: Profile, type: ActionType): HeaderModGroup[] {
+export function findHeaderModGroups(profile: Profile, type: ActionType) {
   return type === "request"
     ? profile.requestHeaderModGroups
     : profile.responseHeaderModGroups;
@@ -45,7 +34,10 @@ export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise, resolve } = Promise.withResolvers();
   const { ref: manager } = useProfileManagerStorage(resolve);
-  const { undo, canUndo, redo, canRedo } = useDebouncedRefHistory(manager, { deep: true });
+  const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
+
+  // Clear history when the storage is ready to avoid undoing to empty state.
+  promise.then(clear);
 
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
@@ -56,7 +48,7 @@ export const useProfilesStore = defineStore("profiles", () => {
       name: `New Profile ${manager.value.profiles.length + 1}`,
       emoji: getProfileIcon(),
     });
-    manager.value.profiles.unshift(newProfile);
+    manager.value.profiles.push(newProfile);
     manager.value.selectedProfileId = newProfile.id;
   }
 
@@ -67,13 +59,12 @@ export const useProfilesStore = defineStore("profiles", () => {
       return;
 
     const newProfile = {
-      ...targetProfile,
+      // If `toValue` is not used here, some keys in the object will be `proxy`.
+      // Putting `proxy` into chrome.storage will cause the array to become its object representation(For example: `[1]` => `{0: 1}`).
+      ...toRaw(targetProfile),
       id: crypto.randomUUID(),
-      name: `[Duplicated] ${targetProfile.name}`,
-      requestHeaderModGroups: cloneHeaderModGroupsWithNewId(targetProfile.requestHeaderModGroups),
-      responseHeaderModGroups: cloneHeaderModGroupsWithNewId(targetProfile.responseHeaderModGroups),
+      name: targetProfile.name.startsWith("[Duplicated]") ? targetProfile.name : `[Duplicated] ${targetProfile.name}`,
     };
-
     const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
     manager.value.selectedProfileId = newProfile.id;
@@ -170,7 +161,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     selectedProfile.value.syncCookieGroups.push({
       id: crypto.randomUUID(),
       type: "checkbox",
-      cookies: [cookie],
+      items: [cookie],
     });
   }
 

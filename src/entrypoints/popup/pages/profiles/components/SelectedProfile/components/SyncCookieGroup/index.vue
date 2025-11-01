@@ -16,7 +16,7 @@ function addNewField() {
   const newCookie = createSyncCookie({
     enabled: group.value.type === "checkbox",
   });
-  group.value.cookies.push(newCookie);
+  group.value.items.push(newCookie);
 }
 
 function deleteGroup() {
@@ -31,13 +31,13 @@ function deleteGroup() {
 
 <template>
   <Group
-    v-model:list="group.cookies"
+    v-model:list="group.items"
     :type="group.type"
     name="Sync Cookies"
   >
     <template #name-after>
       <GroupActions
-        v-model:list="group.cookies"
+        v-model:list="group.items"
         v-model:type="group.type"
         @delete-group="deleteGroup"
         @new-field="addNewField"
@@ -45,8 +45,8 @@ function deleteGroup() {
     </template>
     <template #item="{ index }">
       <CookieFieldWithActions
-        v-model:list="group.cookies"
-        v-model:field="group.cookies[index]!"
+        v-model:list="group.items"
+        v-model:field="group.items[index]!"
         :index
       />
     </template>
