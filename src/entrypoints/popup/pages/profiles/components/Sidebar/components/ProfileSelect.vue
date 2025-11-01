@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import type { UUID } from "node:crypto";
-import type { HeaderMod, Profile } from "@/lib/type";
 import {
   Tooltip,
   TooltipContent,
@@ -34,34 +33,9 @@ function scrollToEnabledProfile(behavior: ScrollBehavior) {
   if (target) {
     target.scrollIntoView({
       behavior,
-      block: "center",
+      block: "end",
     });
   }
-}
-function modNameAndValueIsExist(mod: HeaderMod) {
-  if (mod.operation === "remove") {
-    return mod.enabled && mod.name;
-  }
-  return mod.enabled && mod.name && mod.value;
-}
-
-function hasNameAndValueMod(profile: Profile) {
-  return profile.requestHeaderModGroups.some(
-    group => group.items.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
-  ) || profile.responseHeaderModGroups.some(
-    group => group.items.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
-  );
-}
-function getProfileStatus(profile: Profile) {
-  if (!hasNameAndValueMod(profile)) {
-    return "empty";
-  }
-
-  if (!profile.enabled) {
-    return "disabled";
-  }
-
-  return "working";
 }
 
 const settingsStore = useSettingsStore();
@@ -133,12 +107,8 @@ function renderShortcutHint(index: number) {
                   <span
                     :class="cn(
                       'indicator-item status',
-                      getProfileStatus(profile) === 'working' && `
-                        status-success
-                      `,
-                      getProfileStatus(profile) === 'disabled' && `
-                        status-warning
-                      `,
+                      profile.enabled && `status-success`,
+
                     )"
                   />
                   <span

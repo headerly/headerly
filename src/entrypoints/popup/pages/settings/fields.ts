@@ -1,5 +1,6 @@
-import type { useSettingsStore } from "#/stores/useSettingsStore";
 import { categories } from "#/constants/emoji";
+import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { setTheme } from "#/theme";
 import { getModKey } from "@/lib/utils";
 
@@ -28,6 +29,8 @@ interface SettingGroup {
   anchorIcon: string;
 }
 
+const profilesStore = useProfilesStore();
+const settingsStore = useSettingsStore();
 export const settings = [
   {
     fieldsetTitle: "Appearance",
@@ -92,6 +95,32 @@ export const settings = [
         type: "checkbox",
         label: `Enable ${getModKey()} + Z / ${getModKey()} + Shift + Z for undo/redo actions`,
         key: "enableUndoAndRedoShortcut",
+      },
+    ],
+  },
+  {
+    fieldsetTitle: "Profiles",
+    anchor: "profiles",
+    anchorIcon: "i-lucide-code-xml",
+    fields: [
+      {
+        type: "select",
+        label: "Switch mode",
+        options: [
+          { label: "Multiple", value: "multiple" },
+          { label: "Single", value: "single" },
+        ],
+        key: "switchMode",
+        onChange: () => {
+          if (settingsStore.switchMode === "single") {
+            profilesStore.selectedProfile.enabled = true;
+            profilesStore.manager.profiles.forEach((profile) => {
+              if (profile.id !== profilesStore.selectedProfile.id) {
+                profile.enabled = false;
+              }
+            });
+          }
+        },
       },
     ],
   },

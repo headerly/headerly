@@ -125,7 +125,7 @@ export function useAutoAssignEmojiStorage() {
 }
 
 export function useRandomEmojiCategoryStorage() {
-  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "smileysPeople");
+  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "foodDrink");
 }
 
 export function useLanguageStorage() {
@@ -146,4 +146,8 @@ export function useEnableUndoAndRedoShortcutStorage() {
 
 export function useDisplayNumberBadgeStorage() {
   return useBrowserStorage<boolean>("local:displayNumberBadge", false);
+}
+
+export function useSwitchModeStorage() {
+  return useBrowserStorage<"multiple" | "single">("local:switchMode", "multiple");
 }

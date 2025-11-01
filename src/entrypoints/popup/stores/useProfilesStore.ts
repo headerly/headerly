@@ -4,7 +4,7 @@ import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
-import { computed, toRaw } from "vue";
+import { computed, toRaw, watch } from "vue";
 import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -35,7 +35,14 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { promise, resolve } = Promise.withResolvers();
   const { ref: manager } = useProfileManagerStorage(resolve);
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
-
+  const settingsStore = useSettingsStore();
+  watch(() => manager.value.selectedProfileId, () => {
+    if (settingsStore.switchMode === "single") {
+      manager.value.profiles.forEach((profile) => {
+        profile.enabled = profile.id === manager.value.selectedProfileId;
+      });
+    }
+  });
   // Clear history when the storage is ready to avoid undoing to empty state.
   promise.then(clear);
 

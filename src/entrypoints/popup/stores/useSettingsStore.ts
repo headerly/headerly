@@ -9,6 +9,7 @@ import {
   useLanguageStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
+  useSwitchModeStorage,
   useThemeStorage,
 } from "@/lib/storage";
 
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore("settings", () => {
     enableMetaNumberShortcut: useEnableMetaNumberShortcutStorage(),
     enableMetaKSearch: useEnableMetaKSearchStorage(),
     enableUndoAndRedoShortcut: useEnableUndoAndRedoShortcutStorage(),
+    switchMode: useSwitchModeStorage(),
   } as const;
 
   const isModified = computed(() => {
