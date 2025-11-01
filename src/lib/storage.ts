@@ -61,6 +61,7 @@ export function createSyncCookie(overrides?: Partial<SyncCookie>) {
     name: "",
     value: "",
     path: "/",
+    comments: "",
     ...(overrides ?? {}),
   } as const satisfies SyncCookie;
 }
@@ -72,6 +73,7 @@ export function createMod(overrides?: Partial<HeaderMod>) {
     name: "",
     operation: "set" as const,
     value: "",
+    comments: "",
     ...(overrides ?? {}),
   } as const satisfies HeaderMod;
 }
@@ -90,6 +92,7 @@ export function createProfile(overrides?: Partial<Profile>) {
     responseHeaderModGroups: [],
     syncCookieGroups: [],
     filters: {},
+    comments: "",
     ...(overrides ?? {}),
   } as const satisfies Profile;
 }

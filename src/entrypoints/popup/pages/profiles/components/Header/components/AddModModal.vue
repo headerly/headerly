@@ -84,6 +84,7 @@ const tabs = [
               id: crypto.randomUUID(),
               enabled: true,
               value: ["https", "http"].includes(url.protocol) ? `||${url.hostname}/` : "",
+              comments: "",
             },
           ];
         },
@@ -106,6 +107,7 @@ const tabs = [
                 id: crypto.randomUUID(),
                 enabled: true,
                 value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                comments: "",
               },
             ],
           };
@@ -128,6 +130,7 @@ const tabs = [
                 id: crypto.randomUUID(),
                 enabled: true,
                 value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                comments: "",
               },
             ],
           };
@@ -146,6 +149,7 @@ const tabs = [
               id: crypto.randomUUID(),
               enabled: true,
               value: "",
+              comments: "",
             },
           ];
         },
@@ -188,6 +192,7 @@ const tabs = [
                 id: crypto.randomUUID(),
                 enabled: true,
                 value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                comments: "",
               },
             ],
           };
@@ -210,6 +215,7 @@ const tabs = [
                 id: crypto.randomUUID(),
                 enabled: true,
                 value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                comments: "",
               },
             ],
           };

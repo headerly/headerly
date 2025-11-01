@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { GroupItem } from "@/lib/type";
+import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
 import { head } from "es-toolkit";
-import { computed, ref, useTemplateRef } from "vue";
+import { ref, useTemplateRef } from "vue";
+import { cn } from "@/lib/utils";
 
 const { index } = defineProps<{
   index: number;
@@ -17,11 +19,11 @@ const field = defineModel<GroupItem>("field", {
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
-const moreActions = computed(() => [
+const moreActions = [
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: "i-lucide-copy-plus size-4",
+    icon: "i-lucide-copy-plus",
     onClick: () => {
       const newField = { ...field.value, id: crypto.randomUUID() };
       list.value.splice(index + 1, 0, newField);
@@ -30,16 +32,20 @@ const moreActions = computed(() => [
   {
     key: "comments",
     label: "Comments",
-    icon: "i-lucide-square-pen size-4",
-    onClick: () => commentsDialogRef.value?.showModal(),
-    indicator: Boolean(field.value.comments && field.value.comments.length > 0),
+    icon: "i-lucide-square-pen",
+    onClick: () => commentsDialogRef.value?.open(),
+    get indicator() {
+      return Boolean(field.value.comments.length);
+    },
   },
   { divider: true, key: "divider" },
   {
     key: "moveUp",
     label: "Move Up",
-    icon: "i-lucide-arrow-big-up size-4",
-    disabled: index === 0,
+    icon: "i-lucide-arrow-big-up",
+    get disabled() {
+      return index === 0;
+    },
     onClick: () => {
       const fieldToMove = head(list.value.splice(index, 1));
       list.value.splice(index - 1, 0, fieldToMove!);
@@ -48,14 +54,16 @@ const moreActions = computed(() => [
   {
     key: "moveDown",
     label: "Move Down",
-    icon: "i-lucide-arrow-big-down size-4",
-    disabled: index === list.value.length - 1,
+    icon: "i-lucide-arrow-big-down",
+    get disabled() {
+      return index === list.value.length - 1;
+    },
     onClick: () => {
       const fieldToMove = head(list.value.splice(index, 1));
       list.value.splice(index + 1, 0, fieldToMove!);
     },
   },
-]);
+];
 
 const comments = ref(field.value.comments || "");
 
@@ -93,14 +101,12 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
           :disabled="action.disabled"
           @click="action.onClick"
         >
-          <i :class="action.icon" />
-
+          <i :class="cn('size-4', action.icon)" />
           <div class="indicator pr-2">
             <span>{{ action.label }}</span>
             <span
-              v-if="action.indicator" class="
-                indicator-item status status-success indicator-middle
-              "
+              v-if="action.indicator"
+              class="indicator-item status status-success indicator-middle"
             />
           </div>
         </button>
@@ -109,28 +115,8 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
     <div v-if="$slots['buttons-after']" class="divider my-0" />
     <slot name="buttons-after" />
   </ul>
-  <dialog ref="commentsDialogRef" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">
-        Edit Comments
-      </h3>
-      <textarea v-model="comments" class="textarea mt-4 h-24 w-full text-base" placeholder="Comments" />
-      <div class="modal-action">
-        <button
-          class="btn btn-sm btn-primary"
-          @click="() => {
-            commentsDialogRef?.close()
-            field.comments = comments.trim();
-          }"
-        >
-          Save
-        </button>
-        <form method="dialog">
-          <button class="btn btn-sm">
-            Cancel
-          </button>
-        </form>
-      </div>
-    </div>
-  </dialog>
+  <CommentsDialog
+    ref="commentsDialogRef"
+    v-model="comments"
+  />
 </template>

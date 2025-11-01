@@ -36,6 +36,11 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
   if (!settingsStore.enableUndoAndRedoShortcut) {
     return;
   }
+
+  if (document.activeElement?.matches("input, textarea")) {
+    return;
+  }
+
   const metaKey = event.ctrlKey || event.metaKey;
   if (metaKey && !event.shiftKey && event.key.toLowerCase() === "z" && profilesStore.canUndo) {
     event.preventDefault();

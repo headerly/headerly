@@ -3,7 +3,7 @@ import type { UUID } from "node:crypto";
 export interface GroupItem {
   id: UUID;
   enabled: boolean;
-  comments?: string;
+  comments: string;
 }
 
 interface BaseMod extends GroupItem {
@@ -74,6 +74,7 @@ export interface Profile {
   enabled: boolean;
   emoji: string;
   ignoreGlobalWarning?: boolean;
+  comments: string;
 }
 
 export interface ProfileManager {

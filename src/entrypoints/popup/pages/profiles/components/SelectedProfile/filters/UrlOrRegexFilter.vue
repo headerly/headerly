@@ -93,6 +93,7 @@ function newField() {
     id: crypto.randomUUID(),
     enabled: false,
     value: "",
+    comments: "",
   });
 }
 

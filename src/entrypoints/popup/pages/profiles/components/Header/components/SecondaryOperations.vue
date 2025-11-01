@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
+import { useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 
 const profilesStore = useProfilesStore();
@@ -17,6 +19,8 @@ async function copyProfileId() {
   await navigator.clipboard.writeText(profilesStore.selectedProfile.id);
   toast.success("Profile ID copied to clipboard.");
 }
+
+const commentsDialogRef = useTemplateRef("commentsDialogRef");
 </script>
 
 <template>
@@ -49,6 +53,18 @@ async function copyProfileId() {
           <span>{{ UI_TEXT.duplicate }}</span>
         </button>
       </li>
+      <li>
+        <button @click="commentsDialogRef?.open()">
+          <i class="i-lucide-square-pen size-4" />
+          <div class="indicator pr-2">
+            <span>Comments</span>
+            <span
+              v-if="profilesStore.selectedProfile.comments.length"
+              class="indicator-item status status-success indicator-middle"
+            />
+          </div>
+        </button>
+      </li>
       <div class="divider my-0" />
       <li>
         <button
@@ -71,5 +87,9 @@ async function copyProfileId() {
         </button>
       </li>
     </ul>
+    <CommentsDialog
+      ref="commentsDialogRef"
+      v-model="profilesStore.selectedProfile.comments"
+    />
   </div>
 </template>

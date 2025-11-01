@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UUID } from "node:crypto";
 import type { Profile } from "@/lib/type";
+import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useTemplateRef, watch } from "vue";
 import { toast } from "vue-sonner";
@@ -39,6 +40,8 @@ async function copyProfileId() {
   await navigator.clipboard.writeText(profile.value.id);
   toast.success("Profile ID copied to clipboard.");
 }
+
+const commentsDialogRef = useTemplateRef("commentsDialogRef");
 </script>
 
 <template>
@@ -98,6 +101,18 @@ async function copyProfileId() {
         </button>
       </li>
       <li>
+        <button @click="commentsDialogRef?.open()">
+          <i class="i-lucide-square-pen size-4" />
+          <div class="indicator pr-2">
+            <span>Comments</span>
+            <span
+              v-if="profile.comments.length"
+              class="indicator-item status status-success indicator-middle"
+            />
+          </div>
+        </button>
+      </li>
+      <li>
         <button
           @click="copyProfileId"
         >
@@ -127,5 +142,9 @@ async function copyProfileId() {
         </button>
       </li>
     </ul>
+    <CommentsDialog
+      ref="commentsDialogRef"
+      v-model="profile.comments"
+    />
   </div>
 </template>
