@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { GroupItem, GroupType } from "@/lib/storage";
+import type { GroupItem, GroupType } from "@/lib/type";
 import { head } from "es-toolkit";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
 
-const { name, type: propType } = defineProps<{
+const { name, type } = defineProps<{
   name: string;
   type?: GroupType;
 }>();
@@ -13,19 +13,15 @@ const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
 
-const modelType = defineModel<GroupType>("type");
-
-const type = computed(() => propType ?? modelType.value);
-
 const indeterminate = computed(() => {
-  if (type.value === "checkbox") {
+  if (type === "checkbox") {
     return list.value.some(item => item.enabled) && !list.value.every(item => item.enabled);
   }
   return false;
 });
 
 const checked = computed(() => {
-  if (type.value === "checkbox") {
+  if (type === "checkbox") {
     return list.value.every(item => item.enabled);
   }
   return list.value.some(item => item.enabled);
@@ -38,7 +34,7 @@ const checked = computed(() => {
     :name
   >
     <template #name-before>
-      <label v-if="modelType">
+      <label v-if="type">
         <input
           type="checkbox"
           class="checkbox checkbox-sm"
@@ -46,7 +42,7 @@ const checked = computed(() => {
           :indeterminate
           @change="(e) => {
             const checked = (e.target as HTMLInputElement).checked;
-            if (modelType === 'checkbox'){
+            if (type === 'checkbox'){
               list.forEach(item => {
                 item.enabled = checked;
               });
@@ -76,7 +72,7 @@ const checked = computed(() => {
         >
           <div class="flex flex-1 items-center justify-between gap-1">
             <input
-              v-if="modelType === 'checkbox'"
+              v-if="type === 'checkbox'"
               v-model="item.enabled"
               type="checkbox"
               class="checkbox mr-1 checkbox-sm"

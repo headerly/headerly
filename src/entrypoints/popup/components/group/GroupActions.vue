@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VNode } from "vue";
-import type { GroupItem, GroupType } from "@/lib/storage";
+import type { GroupItem, GroupType } from "@/lib/type";
 import {
   Tooltip,
   TooltipContent,

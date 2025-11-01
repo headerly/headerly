@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import type { ActionType } from "#/stores/useProfilesStore";
-import type { UUID } from "node:crypto";
-import type { GroupType, HeaderMod } from "@/lib/storage";
+import type { HeaderModGroup } from "@/lib/type";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups, useProfilesStore } from "#/stores/useProfilesStore";
 import { createMod } from "@/lib/storage";
 import ModField from "./ModFieldWithActions.vue";
 
-const { actionType, groupId } = defineProps<{
+const { actionType } = defineProps<{
   actionType: ActionType;
-  groupId: UUID;
 }>();
 
-const list = defineModel<HeaderMod[]>("list", {
-  required: true,
-});
-
-const type = defineModel<GroupType>("type", {
+const group = defineModel<HeaderModGroup>({
   required: true,
 });
 
@@ -25,14 +19,14 @@ const profilesStore = useProfilesStore();
 
 function addNewField() {
   const mod = createMod({
-    enabled: type.value === "checkbox",
+    enabled: group.value.type === "checkbox",
   });
-  list.value.push(mod);
+  group.value.items.push(mod);
 }
 
 function deleteGroup() {
   const groups = findHeaderModGroups(profilesStore.selectedProfile, actionType);
-  const index = groups.findIndex(group => group.id === groupId);
+  const index = groups.findIndex(_group => _group.id === group.value.id);
   if (index !== -1) {
     groups.splice(index, 1);
   }
@@ -41,22 +35,22 @@ function deleteGroup() {
 
 <template>
   <Group
-    v-model:list="list"
-    v-model:type="type"
+    v-model:list="group.items"
+    :type="group.type"
     :name="actionType === 'request' ? 'Request Headers' : 'Response Headers'"
   >
     <template #name-after>
       <GroupActions
-        v-model:list="list"
-        v-model:type="type"
+        v-model:list="group.items"
+        v-model:type="group.type"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />
     </template>
     <template #item="{ index }">
       <ModField
-        v-model:list="list"
-        v-model:field="list[index]!"
+        v-model:list="group.items"
+        v-model:field="group.items[index]!"
         :action-type="actionType"
         :index="index"
       />

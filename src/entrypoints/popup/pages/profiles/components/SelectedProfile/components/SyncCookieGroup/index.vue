@@ -1,21 +1,12 @@
 <script setup lang="ts">
-import type { UUID } from "node:crypto";
-import type { GroupType, SyncCookie } from "@/lib/storage";
+import type { SyncCookieGroup } from "@/lib/type";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { createSyncCookie } from "@/lib/storage";
 import CookieFieldWithActions from "./CookieFieldWithActions.vue";
 
-const { groupId } = defineProps<{
-  groupId: UUID;
-}>();
-
-const list = defineModel<SyncCookie[]>("list", {
-  required: true,
-});
-
-const type = defineModel<GroupType>("type", {
+const group = defineModel<SyncCookieGroup>({
   required: true,
 });
 
@@ -23,14 +14,14 @@ const profilesStore = useProfilesStore();
 
 function addNewField() {
   const newCookie = createSyncCookie({
-    enabled: type.value === "checkbox",
+    enabled: group.value.type === "checkbox",
   });
-  list.value.push(newCookie);
+  group.value.cookies.push(newCookie);
 }
 
 function deleteGroup() {
   const index = profilesStore.selectedProfile.syncCookieGroups.findIndex(
-    group => group.id === groupId,
+    _group => _group.id === group.value.id,
   );
   if (index !== -1) {
     profilesStore.selectedProfile.syncCookieGroups.splice(index, 1);
@@ -40,22 +31,22 @@ function deleteGroup() {
 
 <template>
   <Group
-    v-model:list="list"
-    v-model:type="type"
+    v-model:list="group.cookies"
+    :type="group.type"
     name="Sync Cookies"
   >
     <template #name-after>
       <GroupActions
-        v-model:list="list"
-        v-model:type="type"
+        v-model:list="group.cookies"
+        v-model:type="group.type"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />
     </template>
     <template #item="{ index }">
       <CookieFieldWithActions
-        v-model:list="list"
-        v-model:field="list[index]!"
+        v-model:list="group.cookies"
+        v-model:field="group.cookies[index]!"
         :index
       />
     </template>

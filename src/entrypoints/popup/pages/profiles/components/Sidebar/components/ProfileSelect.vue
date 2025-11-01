@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import type { UUID } from "node:crypto";
-import type { HeaderMod, Profile } from "@/lib/storage";
+import type { HeaderMod, Profile } from "@/lib/type";
 import {
   Tooltip,
   TooltipContent,
@@ -47,9 +47,9 @@ function modNameAndValueIsExist(mod: HeaderMod) {
 
 function hasNameAndValueMod(profile: Profile) {
   return profile.requestHeaderModGroups.some(
-    group => group.mods.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
+    group => group.items.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
   ) || profile.responseHeaderModGroups.some(
-    group => group.mods.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
+    group => group.items.some(mod => mod.enabled && modNameAndValueIsExist(mod)),
   );
 }
 function getProfileStatus(profile: Profile) {
@@ -118,7 +118,7 @@ function renderShortcutHint(index: number) {
         <Tooltip>
           <TooltipTrigger as-child>
             <div class="indicator">
-              <ContextMenu :id="profile.id">
+              <ContextMenu :id="profile.id" v-model="profilesStore.manager.profiles[index]!">
                 <template #trigger>
                   <button
                     :class="cn(

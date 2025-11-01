@@ -55,11 +55,6 @@ export const settings: SettingGroup[] = [
         ],
         key: "language",
       },
-      {
-        type: "checkbox",
-        label: `Enable ${getModKey()} + 1-9 shortcut to switch profiles`,
-        key: "enableProfileShortcut",
-      },
     ],
   },
   {
@@ -77,6 +72,18 @@ export const settings: SettingGroup[] = [
         label: "Category for random emoji assignment",
         options: categories,
         key: "randomEmojiCategory",
+      },
+    ],
+  },
+  {
+    fieldsetTitle: "Shortcuts",
+    anchor: "shortcuts",
+    anchorIcon: "i-lucide-command",
+    fields: [
+      {
+        type: "checkbox",
+        label: `Enable ${getModKey()} + 1-9 shortcut to switch profiles`,
+        key: "enableProfileShortcut",
       },
     ],
   },

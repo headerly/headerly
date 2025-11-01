@@ -18,7 +18,9 @@ const profilesStore = useProfilesStore();
     <Sidebar class="col-start-1 row-span-2" />
     <Header class="col-start-2 row-start-1" />
     <main
-      class="col-start-2 row-start-2 overflow-x-hidden overflow-y-auto"
+      class="
+        col-start-2 row-start-2 flex flex-col overflow-x-hidden overflow-y-auto
+      "
     >
       <!-- Use `key` to force refresh components to prevent `auto-animate`
          from applying animations across profiles -->

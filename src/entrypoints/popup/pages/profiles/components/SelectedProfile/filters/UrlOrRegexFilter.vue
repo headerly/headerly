@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { Filter } from "@/lib/storage";
+import type { UrlOrRegexFilter } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -13,57 +13,79 @@ import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useQuery } from "@tanstack/vue-query";
 import { computed } from "vue";
 
-const list = defineModel<NonNullable<Filter["urlFilter"]>>("list", {
+const { filterType } = defineProps<{
+  filterType: "urlFilter" | "regexFilter";
+}>();
+
+const list = defineModel<UrlOrRegexFilter[]>({
   required: true,
 });
 
 const field = {
-  title: "URL Filter",
-  placeholder: "|https://google.com/",
-  description: (
-    <>
-      <p>
-        <a
-          href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#url_filter_syntax"
-          target="_blank"
-        >
-          URL pattern syntax
-        </a>
-      </p>
-      <ul>
-        <li>
-          <code>*</code>
-          — Wildcard: matches any characters.
-        </li>
-        <li>
-          <code>|</code>
-          — Anchor: marks start or end of the URL.
-        </li>
-        <li>
-          <code>||</code>
-          — Domain anchor: matches start of a (sub)domain.
-        </li>
-        <li>
-          <code>^</code>
-          — Separator: matches anything except letters, digits,
-          <code>_ - . %</code>
-          , or end of URL.
-        </li>
-      </ul>
-      <p>
-        Format: (optional anchor) + pattern + (optional anchor)
-      </p>
-      <p>Omitted = all URLs match. Empty string not allowed.</p>
-      <p>Note: Only one of urlFilter or regexFilter can be used.</p>
-    </>
-  ),
-};
+  urlFilter: {
+    title: "URL Filter",
+    description: (
+      <>
+        <p>
+          <a
+            href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#url_filter_syntax"
+            target="_blank"
+          >
+            URL pattern syntax
+          </a>
+        </p>
+        <ul>
+          <li>
+            <code>*</code>
+            — Wildcard: matches any characters.
+          </li>
+          <li>
+            <code>|</code>
+            — Anchor: marks start or end of the URL.
+          </li>
+          <li>
+            <code>||</code>
+            — Domain anchor: matches start of a (sub)domain.
+          </li>
+          <li>
+            <code>^</code>
+            — Separator: matches anything except letters, digits,
+            <code>_ - . %</code>
+            , or end of URL.
+          </li>
+        </ul>
+        <p>
+          Format: (optional anchor) + pattern + (optional anchor)
+        </p>
+        <p>Omitted = all URLs match. Empty string not allowed.</p>
+        <p>Note: Only one of urlFilter or regexFilter can be used.</p>
+      </>
+    ),
+  },
+  regexFilter: {
+    title: "Regex Filter",
+    description: (
+      <>
+        <p>
+          Regular expression to match against the network request url.
+        </p>
+        <p>
+          This follows the
+          {" "}
+          <a href="https://github.com/google/re2/wiki/syntax" target="_blank">RE2</a>
+          {" "}
+          syntax.
+        </p>
+      </>
+    ),
+  },
+} as const;
 
 const profilesStore = useProfilesStore();
 
 function deleteGroup() {
   // Using `=undefined` will result in loss of responsiveness.
-  delete profilesStore.selectedProfile.filters.urlFilter;
+  delete profilesStore.selectedProfile.filters[filterType];
 }
 
 function newField() {
@@ -99,15 +121,14 @@ const canUseCurrentUrl = computed(() => {
 
 <template>
   <Group
-    v-if="list?.length"
     v-model:list="list"
-    :name="field.title"
+    :name="field[filterType].title"
     type="radio"
   >
     <template #name-after>
       <GroupActions
         v-model:list="list"
-        :description="field.description"
+        :description="field[filterType].description"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
@@ -116,7 +137,7 @@ const canUseCurrentUrl = computed(() => {
       <input
         v-model="list[index]!.value"
         type="text"
-        :placeholder="field.placeholder"
+        placeholder="|https://example.com/"
         class="
           input input-sm w-full text-base text-base-content
           placeholder:italic
@@ -130,7 +151,9 @@ const canUseCurrentUrl = computed(() => {
                 :disabled="!canUseCurrentUrl"
                 class="btn btn-square btn-soft btn-xs btn-primary"
                 @click="() => {
-                  list[index]!.value = `|${currentUrl!.href}|`;
+                  list[index]!.value = filterType === 'urlFilter'
+                    // Metacharacters *+?()|
+                    ? `|${currentUrl!.href}|` : currentUrl!.href.replaceAll(/[-\\^$*+?()|.\[\]{}:]/g, '\\$&');
                 }"
               >
                 <i class="i-lucide-at-sign size-4" />

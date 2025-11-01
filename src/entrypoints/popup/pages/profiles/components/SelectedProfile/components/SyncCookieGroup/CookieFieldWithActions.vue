@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MaybeRefOrGetter } from "vue";
-import type { SyncCookie } from "@/lib/storage";
+import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import {
   Tooltip,

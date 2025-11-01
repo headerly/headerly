@@ -18,10 +18,10 @@ const profilesStore = useProfilesStore();
 
 const empty = computed(() => {
   const noMods = profilesStore.selectedProfile.requestHeaderModGroups.every(
-    group => group.mods.length === 0,
+    group => group.items.length === 0,
   )
   && profilesStore.selectedProfile.responseHeaderModGroups.every(
-    group => group.mods.length === 0,
+    group => group.items.length === 0,
   )
   && profilesStore.selectedProfile.syncCookieGroups.every(
     group => group.cookies.length === 0,
@@ -57,7 +57,7 @@ const addModModalStore = useAddModModalStore();
 <template>
   <div
     v-auto-animate
-    :class="cn(disabled && 'opacity-60', 'size-full px-2 pb-2', className)"
+    :class="cn(disabled && 'opacity-60', 'h-full flex-1', className)"
   >
     <div
       v-if="empty"
@@ -82,28 +82,22 @@ const addModModalStore = useAddModModalStore();
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full">
+    <div v-else v-auto-animate class="w-full px-2 pb-2">
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
         :key="id"
-        v-model:list="profilesStore.selectedProfile.requestHeaderModGroups[index]!.mods"
-        v-model:type="profilesStore.selectedProfile.requestHeaderModGroups[index]!.type"
-        :group-id="id"
+        v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
         action-type="request"
       />
       <SyncCookieGroup
         v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
         :key="id"
-        v-model:list="profilesStore.selectedProfile.syncCookieGroups[index]!.cookies"
-        v-model:type="profilesStore.selectedProfile.syncCookieGroups[index]!.type"
-        :group-id="id"
+        v-model="profilesStore.selectedProfile.syncCookieGroups[index]!"
       />
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
         :key="id"
-        v-model:list="profilesStore.selectedProfile.responseHeaderModGroups[index]!.mods"
-        v-model:type="profilesStore.selectedProfile.responseHeaderModGroups[index]!.type"
-        :group-id="id"
+        v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"
         action-type="response"
       />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />

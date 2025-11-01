@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeaderMod } from "@/lib/storage";
+import type { HeaderMod } from "@/lib/type";
 import {
   Sheet,
   SheetContent,
@@ -40,8 +40,8 @@ const searchResults = computed(() => {
   return profilesStore.manager.profiles.filter(profile =>
     profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     || profile.emoji.includes(searchKeyword.value)
-    || profile.requestHeaderModGroups.some(({ mods }) => mods.some(matchHeaderMod))
-    || profile.responseHeaderModGroups.some(({ mods }) => mods.some(matchHeaderMod)),
+    || profile.requestHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod))
+    || profile.responseHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod)),
   );
 });
 </script>

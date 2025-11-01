@@ -1,6 +1,6 @@
 import type { EmojiCategoryKey } from "#/constants/emoji";
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
-import type { UUID } from "node:crypto";
+import type { HeaderMod, Profile, ProfileManager, SyncCookie } from "./type";
 import { useStorageAsync } from "@vueuse/core";
 import { toRaw } from "vue";
 
@@ -52,60 +52,6 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
   };
 }
 
-export interface GroupItem {
-  id: UUID;
-  enabled: boolean;
-  comments?: string;
-}
-
-interface BaseMod extends GroupItem {
-  /**
-   * Directly corresponds to the id of the browser.declarativeNetRequest dynamic rules.
-   * Must be a number(>=1); UUID cannot be used.
-   */
-  name: string;
-  operation: HeaderModOperation;
-}
-
-interface AppendOrSetMod extends BaseMod {
-  operation: "append" | "set";
-  value: string;
-}
-
-interface RemoveMod extends BaseMod {
-  operation: "remove";
-}
-
-export type HeaderMod = AppendOrSetMod | RemoveMod;
-
-export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];
-
-export interface Filter {
-  urlFilter?: ({ value: string } & GroupItem)[] | undefined;
-}
-
-export type GroupType = "radio" | "checkbox";
-
-export interface HeaderModGroup {
-  id: UUID;
-  type: GroupType;
-  mods: HeaderMod[];
-}
-
-export interface SyncCookie extends GroupItem {
-  domain: string;
-  name: string;
-  value: string;
-  // Only used to query new cookies after the first sync.
-  path: string;
-}
-
-export interface SyncCookieGroup {
-  id: UUID;
-  type: GroupType;
-  cookies: SyncCookie[];
-}
-
 export function createSyncCookie(overrides?: Partial<SyncCookie>) {
   return {
     id: crypto.randomUUID(),
@@ -116,23 +62,6 @@ export function createSyncCookie(overrides?: Partial<SyncCookie>) {
     path: "/",
     ...(overrides ?? {}),
   } as const satisfies SyncCookie;
-}
-
-export interface Profile {
-  requestHeaderModGroups: HeaderModGroup[];
-  responseHeaderModGroups: HeaderModGroup[];
-  syncCookieGroups: SyncCookieGroup[];
-  filters: Filter;
-  id: UUID;
-  name: string;
-  enabled: boolean;
-  emoji: string;
-  ignoreGlobalWarning?: boolean;
-}
-
-export interface ProfileManager {
-  profiles: Profile[];
-  selectedProfileId: UUID;
 }
 
 export function createMod(overrides?: Partial<HeaderMod>) {
@@ -155,7 +84,7 @@ export function createProfile(overrides?: Partial<Profile>) {
     requestHeaderModGroups: [{
       id: crypto.randomUUID(),
       type: "checkbox",
-      mods: [createMod()],
+      items: [createMod()],
     }],
     responseHeaderModGroups: [],
     syncCookieGroups: [],

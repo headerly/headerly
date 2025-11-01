@@ -18,6 +18,7 @@ interface Tab {
     icon: string;
     action: () => void;
     excluded?: boolean;
+    disabled?: boolean;
   }[];
 }
 
@@ -76,7 +77,7 @@ const tabs = [
     items: [
       {
         title: "URL Filter",
-        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
+        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         icon: "i-lucide-link",
         action: async () => {
           const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -89,29 +90,76 @@ const tabs = [
             },
           ];
         },
+        get disabled() {
+          return (profilesStore.selectedProfile.filters.urlFilter
+            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
+          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
+        },
       },
       {
         title: "Request Domains",
         description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         icon: "i-lucide-server",
-        action: () => {},
+        action: async () => {
+          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+          const url = new URL(currentTab?.url ?? "");
+          profilesStore.selectedProfile.filters.requestDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: crypto.randomUUID(),
+                enabled: true,
+                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+              },
+            ],
+          };
+        },
+        get disabled() {
+          return profilesStore.selectedProfile.filters.requestDomains
+            && profilesStore.selectedProfile.filters.requestDomains.items.length > 0;
+        },
       },
       {
         title: "Excluded Request Domains",
         description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         icon: "i-lucide-server",
-        action: () => {},
+        action: async () => {
+          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+          const url = new URL(currentTab?.url ?? "");
+          profilesStore.selectedProfile.filters.excludedRequestDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: crypto.randomUUID(),
+                enabled: true,
+                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+              },
+            ],
+          };
+        },
         excluded: true,
+        get disabled() {
+          return profilesStore.selectedProfile.filters.excludedRequestDomains
+            && profilesStore.selectedProfile.filters.excludedRequestDomains.items.length > 0;
+        },
       },
       {
         title: "Regex Filter",
-        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed.",
+        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         icon: "i-lucide-asterisk",
         action: () => {
-          // profilesStore.selectedProfile.filters.regexFilter = {
-          //   enabled: true,
-          //   value: "",
-          // };
+          profilesStore.selectedProfile.filters.regexFilter = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              value: "",
+            },
+          ];
+        },
+        get disabled() {
+          return (profilesStore.selectedProfile.filters.urlFilter
+            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
+          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
         },
       },
       {
@@ -144,27 +192,48 @@ const tabs = [
         title: "Initiator Domains",
         description: "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         icon: "i-lucide-globe",
-        action: () => {},
+        action: async () => {
+          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+          const url = new URL(currentTab?.url ?? "");
+          profilesStore.selectedProfile.filters.initiatorDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: crypto.randomUUID(),
+                enabled: true,
+                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+              },
+            ],
+          };
+        },
+        get disabled() {
+          return profilesStore.selectedProfile.filters.initiatorDomains
+            && profilesStore.selectedProfile.filters.initiatorDomains.items.length > 0;
+        },
       },
       {
         title: "Excluded Initiator Domains",
         description: "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
         icon: "i-lucide-globe",
-        action: () => {},
+        action: async () => {
+          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+          const url = new URL(currentTab?.url ?? "");
+          profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: crypto.randomUUID(),
+                enabled: true,
+                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+              },
+            ],
+          };
+        },
         excluded: true,
-      },
-      {
-        title: "Request Domains",
-        description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
-        icon: "i-lucide-server",
-        action: () => {},
-      },
-      {
-        title: "Excluded Request Domains",
-        description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
-        icon: "i-lucide-server",
-        action: () => {},
-        excluded: true,
+        get disabled() {
+          return profilesStore.selectedProfile.filters.excludedInitiatorDomains
+            && profilesStore.selectedProfile.filters.excludedInitiatorDomains.items.length > 0;
+        },
       },
       {
         title: "Request Methods",
@@ -211,6 +280,11 @@ const tabs = [
 
 const addModModalStore = useAddModModalStore();
 
+const UI_TEXT = {
+  close: "✕",
+  closeModal: "Close modal",
+} as const;
+
 watch(() => addModModalStore.isOpen, (newValue) => {
   if (newValue) {
     dialogRef.value?.showModal();
@@ -235,8 +309,8 @@ watch(() => addModModalStore.isOpen, (newValue) => {
           class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
           @click="addModModalStore.isOpen = false"
         >
-          ✕
-          <span class="sr-only">Close modal</span>
+          {{ UI_TEXT.close }}
+          <span class="sr-only">{{ UI_TEXT.closeModal }}</span>
         </button>
       </form>
 
@@ -254,13 +328,17 @@ watch(() => addModModalStore.isOpen, (newValue) => {
           >
             <div class="list rounded-box">
               <button
-                v-for="{ title, description, icon, action, excluded } in tab.items"
+                v-for="{ title, description, icon, action, excluded, disabled } in tab.items"
                 :key="title"
+                :disabled="disabled"
                 class="list-row btn h-min text-start btn-ghost"
+                :class="{ 'btn-disabled opacity-50': disabled }"
                 @click="() => {
-                  action()
-                  addModModalStore.isOpen = false
-                  dialogRef?.close()
+                  if (!disabled) {
+                    action()
+                    addModModalStore.isOpen = false
+                    dialogRef?.close()
+                  }
                 }"
               >
                 <i :class="icon" class="size-6" />

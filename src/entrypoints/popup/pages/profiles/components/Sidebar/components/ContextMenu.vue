@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { UUID } from "node:crypto";
+import type { Profile } from "@/lib/type";
 import { useProfilesStore } from "#/stores/useProfilesStore";
-import { computed, useTemplateRef, watch } from "vue";
+import { useTemplateRef, watch } from "vue";
+import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
 const { id } = defineProps<{
@@ -16,7 +18,6 @@ const UI_TEXT = {
   pause: "Pause",
   resume: "Resume",
   duplicate: "Duplicate",
-  delete: "Delete",
   moveUp: "Move Up",
   moveDown: "Move Down",
 } as const;
@@ -28,15 +29,20 @@ watch(
   },
 );
 
-const currentProfile = computed(() => {
-  return profilesStore.manager.profiles.find(profile => profile.id === id);
+const profile = defineModel<Profile>({
+  required: true,
 });
 
 const popovertarget = `popover-profile-context-menu-${id}`;
+
+async function copyProfileId() {
+  await navigator.clipboard.writeText(profile.value.id);
+  toast.success("Profile ID copied to clipboard.");
+}
 </script>
 
 <template>
-  <div v-if="currentProfile">
+  <div v-if="profile">
     <div
       :popovertarget
       :style="`anchor-name:--${popovertarget}`"
@@ -61,12 +67,12 @@ const popovertarget = `popover-profile-context-menu-${id}`;
       <li>
         <button @click="profilesStore.toggleProfileEnabled(id)">
           <i
-            :class="cn('size-4', currentProfile.enabled ? 'i-lucide-pause' : `
+            :class="cn('size-4', profile.enabled ? 'i-lucide-pause' : `
               i-lucide-play
             `)"
           />
           <span>
-            {{ currentProfile.enabled ? UI_TEXT.pause : UI_TEXT.resume }}
+            {{ profile.enabled ? UI_TEXT.pause : UI_TEXT.resume }}
           </span>
         </button>
       </li>
@@ -81,8 +87,22 @@ const popovertarget = `popover-profile-context-menu-${id}`;
           class="flex gap-2 text-error"
           @click="profilesStore.deleteProfile(id)"
         >
-          <i class="i-lucide-trash size-4" />
-          <span>{{ UI_TEXT.delete }}</span>
+          <i
+            :class="cn(
+              'size-4',
+              profilesStore.manager.profiles.length === 1
+                ? `i-lucide-refresh-ccw` : `i-lucide-trash`,
+            )"
+          />
+          <span>{{ profilesStore.manager.profiles.length === 1 ? 'Reset' : 'Delete' }}</span>
+        </button>
+      </li>
+      <li>
+        <button
+          @click="copyProfileId"
+        >
+          <i class="i-lucide-copy size-4" />
+          <span>Copy ID</span>
         </button>
       </li>
       <div class="divider my-0" />

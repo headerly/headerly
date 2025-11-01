@@ -1,5 +1,5 @@
 import type { UUID } from "node:crypto";
-import type { GroupType, HeaderModGroup, Profile } from "@/lib/storage";
+import type { GroupType, HeaderModGroup, Profile } from "@/lib/type";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -24,7 +24,7 @@ function cloneHeaderModGroupsWithNewId(groups: HeaderModGroup[]): HeaderModGroup
   return groups.map(group => ({
     ...group,
     id: crypto.randomUUID(),
-    mods: group.mods.map(mod => ({
+    mods: group.items.map(mod => ({
       ...mod,
       id: crypto.randomUUID(),
     })),
@@ -160,7 +160,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     const newGroup = {
       id: crypto.randomUUID(),
       type: groupType,
-      mods: [mod],
+      items: [mod],
     } as const satisfies HeaderModGroup;
     groups.push(newGroup);
   }

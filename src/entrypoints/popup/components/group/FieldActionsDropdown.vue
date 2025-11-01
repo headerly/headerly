@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GroupItem } from "@/lib/storage";
+import type { GroupItem } from "@/lib/type";
 import { head } from "es-toolkit";
 import { computed, ref, useTemplateRef } from "vue";
 

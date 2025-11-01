@@ -1,5 +1,5 @@
 // import type { UUID } from "node:crypto";
-// import type { HeaderMod, Profile } from "@/lib/storage";
+// import type { HeaderMod, Profile } from "@/lib/type";
 
 // const INVALID_LEVEL = {
 //   /**
