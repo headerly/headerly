@@ -103,6 +103,15 @@ async function refreshCookie() {
 }
 
 const cookieDialogRef = useTemplateRef("cookieDialogRef");
+
+const refreshButtonDisabled = computed(() => {
+  return !field.value.name || isPending.value || !isCookieValid.value
+    || displayCookies.value.some(cookie =>
+      cookie.path === field.value.path
+      && cookie.name === field.value.name
+      && cookie.value === field.value.value,
+    );
+});
 </script>
 
 <template>
@@ -157,7 +166,7 @@ const cookieDialogRef = useTemplateRef("cookieDialogRef");
         <Tooltip>
           <TooltipTrigger as-child>
             <button
-              :disabled="field.name === ''"
+              :disabled="refreshButtonDisabled"
               class="btn btn-square btn-soft btn-xs btn-primary"
               @click="refreshCookie"
             >
