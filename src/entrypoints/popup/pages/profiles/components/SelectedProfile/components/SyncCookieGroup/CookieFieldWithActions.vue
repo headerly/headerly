@@ -10,7 +10,7 @@ import {
 } from "#/components/ui/tooltip";
 import { useQuery } from "@tanstack/vue-query";
 import { pick } from "es-toolkit";
-import { toValue, useTemplateRef } from "vue";
+import { computed, toValue, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
         cookie.domain === targetDomain
         || cookie.domain === `.${targetDomain}`,
       )
-        .map(cookie => pick(cookie, ["name", "value", "path"]))
+        .map(cookie => ({ ...pick(cookie, ["name", "value", "path"]), isMissing: false }))
       ;
     },
     enabled: Boolean(domain),
@@ -46,10 +46,38 @@ function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
 
 const { data: cookies, isPending } = useCookiesQuery(() => field.value.domain);
 
+const isCookieValid = computed(() => {
+  if (!field.value.name || !cookies.value) {
+    return true;
+  }
+  return cookies.value.some(cookie => cookie.name === field.value.name);
+});
+
+const displayCookies = computed(() => {
+  if (!cookies.value)
+    return [];
+
+  if (isCookieValid.value) {
+    return cookies.value;
+  }
+
+  if (field.value.name) {
+    const missingCookie = {
+      name: field.value.name,
+      value: field.value.value,
+      path: field.value.path,
+      isMissing: true,
+    };
+    return [missingCookie, ...cookies.value];
+  }
+
+  return cookies.value;
+});
+
 function handleNameChange(e: Event) {
   const name = (e.target as HTMLSelectElement).value;
-  const selectedCookie = cookies.value?.find(cookie => cookie.name === name);
-  if (selectedCookie) {
+  const selectedCookie = displayCookies.value?.find(cookie => cookie.name === name);
+  if (selectedCookie && !selectedCookie.isMissing) {
     field.value.value = selectedCookie.value;
     field.value.path = selectedCookie.path;
   }
@@ -97,25 +125,29 @@ const cookieDialogRef = useTemplateRef("cookieDialogRef");
         <label class="relative flex-1">
           <select
             v-model="field.name"
-            :disabled="cookies == null || cookies.length === 0 || isPending"
+            :disabled="displayCookies.length === 0 || isPending"
             :class="cn(
               'select select-sm text-base',
               Boolean(field.value) && 'text-base-content',
+              !isCookieValid && field.name && 'text-warning select-warning',
             )"
             @change="handleNameChange"
           >
-            <div class="max-h-[calc(100dvh_/_2_-_1rem)]">
-              <option value="" disabled>
-                {{ cookies && cookies.length > 0 ? "Pick a cookie" : "No available" }}
-              </option>
-              <option
-                v-for="cookie in cookies"
-                :key="cookie.name"
-                :value="cookie.name"
-              >
-                {{ cookie.name }}
-              </option>
-            </div>
+            <option
+              value="" disabled class="font-medium text-base-content/66 italic"
+            >
+              {{ displayCookies.length > 0 ? "Pick a cookie" : "No available" }}
+            </option>
+            <option
+              v-for="cookie in displayCookies"
+              :key="cookie.name"
+              :value="cookie.name"
+              :class="cn(
+                cookie.isMissing ? 'text-warning' : 'text-base-content',
+              )"
+            >
+              {{ cookie.name }}{{ cookie.isMissing ? ' (Missing)' : '' }}
+            </option>
           </select>
         </label>
       </div>
