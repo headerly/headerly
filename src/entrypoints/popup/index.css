@@ -6,6 +6,8 @@
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
   logs: false;
+  /* https://github.com/saadeghi/daisyui/issues/3882 */
+  exclude: properties;
 };
 
 @theme {
