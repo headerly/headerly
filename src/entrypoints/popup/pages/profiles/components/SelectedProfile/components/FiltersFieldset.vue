@@ -11,12 +11,12 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
 
 <template>
   <UrlOrRegexFilter
-    v-if="filters.urlFilter"
+    v-if="filters.urlFilter?.length"
     v-model="filters.urlFilter"
     filter-type="urlFilter"
   />
   <UrlOrRegexFilter
-    v-if="filters.regexFilter"
+    v-if="filters.regexFilter?.length"
     v-model="filters.regexFilter"
     filter-type="regexFilter"
   />

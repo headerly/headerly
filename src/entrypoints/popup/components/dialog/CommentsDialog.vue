@@ -39,10 +39,7 @@ defineExpose({
 <template>
   <dialog
     ref="commentsDialogRef"
-    class="
-      modal modal-bottom
-      sm:modal-middle
-    "
+    class="modal modal-middle"
   >
     <div class="modal-box">
       <form method="dialog">

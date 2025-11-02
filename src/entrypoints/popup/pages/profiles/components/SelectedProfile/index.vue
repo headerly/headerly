@@ -47,7 +47,6 @@ const showGlobalRuleWarning = computed(() => {
   return (
     Object.keys(profilesStore.selectedProfile.filters).length === 0
     && !empty.value
-    && !profilesStore.selectedProfile.ignoreGlobalWarning
   );
 });
 
@@ -83,6 +82,48 @@ const addModModalStore = useAddModModalStore();
       />
     </div>
     <div v-else v-auto-animate class="w-full px-2 pb-2">
+      <div
+        v-if="profilesStore.selectedProfile.errorMessage"
+        role="alert"
+        class="mt-2 alert alert-soft alert-error"
+      >
+        <i class="i-lucide-bug size-6" />
+        <div>
+          <p>This profile caused an error when registering rules.</p>
+          <p>{{ profilesStore.selectedProfile.errorMessage }}</p>
+        </div>
+        <div class="flex gap-1">
+          <a
+            target="_blank"
+            href="https://github.com/headerly/headerly/issues"
+            class="btn btn-square btn-sm btn-error"
+          >
+            <i class="i-lucide-github size-4" />
+          </a>
+        </div>
+      </div>
+      <div
+        v-if="showGlobalRuleWarning"
+        role="alert"
+        class="mt-2 alert alert-soft alert-warning"
+      >
+        <i class="i-lucide-triangle-alert size-6" />
+        <div>
+          <p>This profile affects every request and might break sites.</p>
+          <p>Add a condition to avoid issues.</p>
+        </div>
+        <div class="flex gap-1">
+          <button
+            class="btn btn-square btn-sm btn-warning"
+            @click="() => {
+              addModModalStore.currentTab = 'conditions';
+              addModModalStore.isOpen = true;
+            }"
+          >
+            <i class="i-lucide-cross size-4" />
+          </button>
+        </div>
+      </div>
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
         :key="id"
@@ -101,34 +142,6 @@ const addModModalStore = useAddModModalStore();
         action-type="response"
       />
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
-      <div
-        v-if="showGlobalRuleWarning"
-        role="alert"
-        class="mt-2 alert alert-soft alert-warning"
-      >
-        <i class="i-lucide-triangle-alert size-6" />
-        <div>
-          <p>This rule affects every request and might break sites.</p>
-          <p>Add a condition to avoid issues.</p>
-        </div>
-        <div class="flex gap-1">
-          <button
-            class="btn btn-square btn-soft btn-sm btn-warning"
-            @click="() => profilesStore.selectedProfile.ignoreGlobalWarning = true"
-          >
-            <i class="i-lucide-x size-4" />
-          </button>
-          <button
-            class="btn btn-square btn-soft btn-sm btn-success"
-            @click="() => {
-              addModModalStore.currentTab = 'conditions';
-              addModModalStore.isOpen = true;
-            }"
-          >
-            <i class="i-lucide-plus size-4" />
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>

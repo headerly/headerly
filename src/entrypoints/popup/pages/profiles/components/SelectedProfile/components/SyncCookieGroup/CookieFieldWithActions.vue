@@ -31,8 +31,12 @@ function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
     queryKey: ["cookies", domain],
     queryFn: async () => {
       const cookies = await browser.cookies.getAll({ domain: toValue(domain) });
-      // Filter sub-domain cookies
-      return cookies.filter(cookie => cookie.domain === `.${toValue(domain)}`)
+      // Filter cookies that match the exact domain or are subdomains
+      const targetDomain = toValue(domain);
+      return cookies.filter(cookie =>
+        cookie.domain === targetDomain
+        || cookie.domain === `.${targetDomain}`,
+      )
         .map(cookie => pick(cookie, ["name", "value", "path"]))
       ;
     },
@@ -167,26 +171,31 @@ const cookieDialogRef = useTemplateRef("cookieDialogRef");
   </div>
   <dialog ref="cookieDialogRef" class="modal">
     <div class="modal-box">
-      <h3 class="text-lg font-bold">
+      <h3 class="text-lg font-semibold">
         View Cookie
       </h3>
       <div role="alert" class="mt-4 alert alert-soft alert-warning">
         <i class="i-lucide-triangle-alert size-6" />
         <span>Warning: Sharing cookies with others may result in the leakage of login credentials!</span>
       </div>
-      <div
-        class="textarea mt-2 h-24 w-full text-base wrap-anywhere select-all"
+      <textarea
+        class="textarea mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
         placeholder="Comments"
-      >
-        {{ field.value }}
-      </div>
+        disabled
+        :value="field.value"
+      />
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-sm">
-            Confirm
+          <button class="btn btn-soft">
+            Close
           </button>
         </form>
       </div>
     </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>
+        <span class="sr-only">Close</span>
+      </button>
+    </form>
   </dialog>
 </template>

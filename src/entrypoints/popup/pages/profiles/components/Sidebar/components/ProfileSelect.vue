@@ -107,8 +107,8 @@ function renderShortcutHint(index: number) {
                   <span
                     :class="cn(
                       'indicator-item status',
-                      profile.enabled && `status-success`,
-
+                      profile.enabled && 'status-success',
+                      profile.errorMessage && '!status-error',
                     )"
                   />
                   <span

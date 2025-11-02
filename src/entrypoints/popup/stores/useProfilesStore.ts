@@ -1,5 +1,6 @@
 import type { UUID } from "node:crypto";
 import type { GroupType, HeaderModGroup, Profile } from "@/lib/type";
+import { onMessage } from "##/background/errorMessage";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -36,6 +37,20 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { ref: manager } = useProfileManagerStorage(resolve);
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
+
+  onMessage("generateProfileId2ErrorMap", (message) => {
+    const profileId2ErrorMap = message.data;
+    for (const profile of manager.value.profiles) {
+      if (profileId2ErrorMap.has(profile.id)) {
+        profile.errorMessage = String(profileId2ErrorMap.get(profile.id));
+      } else {
+        delete profile.errorMessage;
+      }
+    }
+    return true;
+  });
+
+  // Enforce single-switch mode by disabling other profiles when selectedProfileId changes.
   watch(() => manager.value.selectedProfileId, () => {
     if (settingsStore.switchMode === "single") {
       manager.value.profiles.forEach((profile) => {

@@ -73,8 +73,8 @@ export interface Profile {
   name: string;
   enabled: boolean;
   emoji: string;
-  ignoreGlobalWarning?: boolean;
   comments: string;
+  errorMessage?: string;
 }
 
 export interface ProfileManager {

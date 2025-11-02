@@ -288,25 +288,7 @@ watch(() => addModModalStore.isOpen, (newValue) => {
         </button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
-        Add a new action
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-  <TooltipProvider :delay-duration="200">
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <button
-          class="btn btn-square btn-ghost btn-sm btn-primary"
-          @click="() => {
-            addModModalStore.currentTab = 'conditions';
-            addModModalStore.isOpen = true
-          }"
-        >
-          <i class="i-lucide-list-filter-plus size-4" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="top">
-        Add a new condition
+        Add a new action or condition
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
@@ -361,5 +343,10 @@ watch(() => addModModalStore.isOpen, (newValue) => {
         </template>
       </div>
     </div>
+    <form method="dialog" class="modal-backdrop">
+      <button @click="addModModalStore.isOpen = false">
+        <span class="sr-only">{{ UI_TEXT.close }}</span>
+      </button>
+    </form>
   </dialog>
 </template>

@@ -68,13 +68,13 @@ const nextOperation = computed(() => {
         <label class="flex-1">
           <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`">
             <option
-              v-for="field in autocomplete(actionType, field.operation, field.name)"
-              :key="field"
-              :value="field"
+              v-for="option in autocomplete(actionType, field.operation, field.name)"
+              :key="option"
+              :value="option"
             />
           </datalist>
           <input
-            :value="field.name"
+            v-model.lazy.trim="field.name"
             type="text"
             placeholder="Name"
             class="
@@ -82,12 +82,6 @@ const nextOperation = computed(() => {
               placeholder:italic
             "
             :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
-            @change="(e) => {
-              // Although the HTTP standard considers header names to be case-insensitive,
-              // `chrome.declarativeNetRequest` will report an error
-              // when receiving a header name with uppercase characters.
-              field.name = (e.target as HTMLInputElement).value.toLowerCase().trim()
-            }"
           >
         </label>
         <label v-if="field.operation !== 'remove'" class="flex-1">
