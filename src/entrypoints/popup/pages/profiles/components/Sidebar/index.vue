@@ -8,7 +8,6 @@ import {
 } from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { getBrowserApiService } from "@/entrypoints/background/BrowserApiService";
 import { cn, getModKey } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSelect from "./components/ProfileSelect.vue";
@@ -20,7 +19,9 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 
-const { openInFullscreen } = getBrowserApiService();
+function openInFullscreen() {
+  browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
+}
 
 const isDEV = import.meta.env.DEV;
 

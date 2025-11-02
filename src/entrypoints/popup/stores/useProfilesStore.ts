@@ -41,8 +41,8 @@ export const useProfilesStore = defineStore("profiles", () => {
   onMessage("generateProfileId2ErrorMap", (message) => {
     const profileId2ErrorMap = message.data;
     for (const profile of manager.value.profiles) {
-      if (profileId2ErrorMap.has(profile.id)) {
-        profile.errorMessage = String(profileId2ErrorMap.get(profile.id));
+      if (profileId2ErrorMap[profile.id]) {
+        profile.errorMessage = profileId2ErrorMap[profile.id];
       } else {
         delete profile.errorMessage;
       }

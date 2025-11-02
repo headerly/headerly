@@ -1,7 +1,6 @@
 import type { Profile, ProfileManager } from "@/lib/type";
 import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
-import { registerBrowserApiService } from "./BrowserApiService";
 import { unregisterAllRules, updateRules } from "./declarativeNetRequest";
 
 export type ProfileCoreData = Pick<Profile, "id" | "enabled" | "requestHeaderModGroups" | "responseHeaderModGroups" | "filters" | "syncCookieGroups">;
@@ -53,7 +52,6 @@ function diffProfiles(
 export default defineBackground({
   type: "module",
   main() {
-    registerBrowserApiService();
     const { item: powerOnItem } = usePowerOnStorage();
     const { item: profileManagerItem } = useProfileManagerStorage();
     let lastProfiles: Profile[] | null = null;
@@ -75,6 +73,12 @@ export default defineBackground({
 
     const debouncedProfileManagerChange = debounce(async (manager: ProfileManager) => {
       if (await powerOnItem.getValue()) {
+        // Service Worker restarts cause the in-memory mapping of profile IDs to rule IDs to be lost,
+        // making targeted updates impossible.
+        // Delete all rules and register them all.
+        if (!lastProfiles) {
+          await unregisterAllRules();
+        }
         const changes = diffProfiles(lastProfiles, manager.profiles);
         // Skip if no meaningful changes detected (only check `ProfileCoreData` fields)
         if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
@@ -86,11 +90,11 @@ export default defineBackground({
     }, 500);
 
     powerOnItem.getValue().then((powerOn) => {
-      if (powerOn) {
-        debouncedPowerOnChange(powerOn);
-      } else {
-        unregisterAllRules();
-      }
+      debouncedPowerOnChange(powerOn!);
+    });
+
+    powerOnItem.watch((powerOn) => {
+      debouncedPowerOnChange(powerOn!);
     });
 
     profileManagerItem.watch((manager) => {

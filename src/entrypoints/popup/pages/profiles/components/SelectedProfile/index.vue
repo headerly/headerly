@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import type { Profile } from "@/lib/type";
 import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
@@ -14,6 +15,23 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
+function hasAnyFilters(filters: Profile["filters"]): boolean {
+  return Object.values(filters).some((filterValue) => {
+    if (!filterValue)
+      return false;
+
+    if (Array.isArray(filterValue)) {
+      return filterValue.length > 0;
+    }
+
+    if (typeof filterValue === "object" && "items" in filterValue) {
+      return filterValue.items.length > 0;
+    }
+
+    throw new Error(`Unknown filter type, please update hasAnyFilters function accordingly.`);
+  });
+}
+
 const profilesStore = useProfilesStore();
 
 const empty = computed(() => {
@@ -27,14 +45,7 @@ const empty = computed(() => {
     group => group.items.length === 0,
   );
 
-  const noFilters = Object.values(profilesStore.selectedProfile.filters).every(
-    (filter) => {
-      if (Array.isArray(filter)) {
-        return filter.length === 0;
-      }
-      return false;
-    },
-  );
+  const noFilters = !hasAnyFilters(profilesStore.selectedProfile.filters);
 
   return noMods && noFilters;
 },
@@ -44,10 +55,10 @@ const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
 
 const showGlobalRuleWarning = computed(() => {
-  return (
-    Object.keys(profilesStore.selectedProfile.filters).length === 0
-    && !empty.value
-  );
+  const filters = profilesStore.selectedProfile.filters;
+  const hasFilters = hasAnyFilters(filters);
+
+  return !hasFilters && !empty.value;
 });
 
 const addModModalStore = useAddModModalStore();

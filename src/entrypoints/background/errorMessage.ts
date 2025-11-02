@@ -6,7 +6,7 @@ interface ProtocolMap {
    *
    * @returns Indicates whether the popup has received the message.
    */
-  generateProfileId2ErrorMap: (map: Map<UUID, string>) => boolean;
+  generateProfileId2ErrorMap: (errorMap: Record<UUID, string>) => boolean;
 }
 
 export const { sendMessage, onMessage } = defineExtensionMessaging<ProtocolMap>();

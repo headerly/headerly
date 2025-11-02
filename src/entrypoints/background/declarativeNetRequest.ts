@@ -25,13 +25,14 @@ export async function updateRules(changes: ProfileChanges) {
 
   const allResults = [...deleteResults, ...updateResults];
 
-  const profileId2ErrorMap = new Map(
-    allResults
-      .filter((result): result is PromiseFulfilledResult<{ success: false; profileId: UUID; error: unknown }> =>
-        result.status === "fulfilled" && !result.value.success,
-      )
-      .map(result => [result.value.profileId, String(result.value.error)] as const),
-  );
+  const profileId2ErrorMap: Record<UUID, string> = {};
+  allResults
+    .filter((result): result is PromiseFulfilledResult<{ success: false; profileId: UUID; error: unknown }> =>
+      result.status === "fulfilled" && !result.value.success,
+    )
+    .forEach((result) => {
+      profileId2ErrorMap[result.value.profileId] = String(result.value.error);
+    });
 
   await handleRegistrationErrors(profileId2ErrorMap);
 }
@@ -228,7 +229,7 @@ function buildResponseHeaders(profile: ProfileCoreData) {
   return responseHeaders;
 }
 
-async function handleRegistrationErrors(profileId2ErrorMap: Map<UUID, string>) {
+async function handleRegistrationErrors(profileId2ErrorMap: Record<UUID, string>) {
   const updateStorageWithErrors = async () => {
     const { item: profileManagerStorageItem } = useProfileManagerStorage();
     const profileManager = await profileManagerStorageItem.getValue();
@@ -239,9 +240,7 @@ async function handleRegistrationErrors(profileId2ErrorMap: Map<UUID, string>) {
       ...profileManager,
       profiles: profileManager.profiles.map(profile => ({
         ...profile,
-        errorMessage: profileId2ErrorMap.has(profile.id)
-          ? String(profileId2ErrorMap.get(profile.id))
-          : undefined,
+        errorMessage: profileId2ErrorMap[profile.id],
       })),
     };
     await profileManagerStorageItem.setValue(profileManagerWithErrorMassage);
@@ -249,7 +248,8 @@ async function handleRegistrationErrors(profileId2ErrorMap: Map<UUID, string>) {
 
   try {
     await sendMessage("generateProfileId2ErrorMap", profileId2ErrorMap);
-  } catch {
+  } catch (error) {
+    console.error("Failed to send error map to popup:", error);
     await updateStorageWithErrors();
   }
 }

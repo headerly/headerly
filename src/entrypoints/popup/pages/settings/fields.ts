@@ -48,16 +48,16 @@ export const settings = [
         key: "theme",
         onChange: setTheme,
       },
-      {
-        type: "select",
-        label: "Language",
-        options: [
-          { label: "English", value: "en-US" },
-          { label: "Simplified Chinese", value: "zh-CN" },
-          { label: "Japanese", value: "ja" },
-        ],
-        key: "language",
-      },
+      // {
+      //   type: "select",
+      //   label: "Language",
+      //   options: [
+      //     { label: "English", value: "en-US" },
+      //     { label: "Simplified Chinese", value: "zh-CN" },
+      //     { label: "Japanese", value: "ja" },
+      //   ],
+      //   key: "language",
+      // },
       {
         type: "checkbox",
         label: "Display the badges for numbers 1-9 in the sidebar",
