@@ -66,10 +66,6 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
   const profilesToRegister = [...changes.created, ...changes.modified];
 
   for (const profile of profilesToRegister) {
-    if (!profile.enabled) {
-      continue;
-    }
-
     const condition = buildRuleCondition(profile);
     const requestHeaders = buildRequestHeaders(profile);
     const responseHeaders = buildResponseHeaders(profile);

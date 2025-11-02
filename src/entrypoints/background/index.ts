@@ -3,7 +3,7 @@ import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { unregisterAllRules, updateRules } from "./declarativeNetRequest";
 
-export type ProfileCoreData = Pick<Profile, "id" | "enabled" | "requestHeaderModGroups" | "responseHeaderModGroups" | "filters" | "syncCookieGroups">;
+export type ProfileCoreData = Pick<Profile, "id" | "requestHeaderModGroups" | "responseHeaderModGroups" | "filters" | "syncCookieGroups">;
 
 export interface ProfileChanges {
   deleted: ProfileCoreData[];
@@ -11,7 +11,7 @@ export interface ProfileChanges {
   created: ProfileCoreData[];
 }
 
-function pickProfileFields(profile: Profile): ProfileCoreData {
+function pickProfileFields(profile: Profile) {
   return pick(profile, ["id", "enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups"]);
 }
 
@@ -23,28 +23,46 @@ function diffProfiles(
     return {
       deleted: [],
       modified: [],
-      created: newProfiles.map(pickProfileFields),
+      created: newProfiles.filter(p => p.enabled).map(pickProfileFields),
     };
   }
 
   const oldPickedProfileMap = new Map(oldProfiles.map(p => [p.id, pickProfileFields(p)]));
   const newPickedProfileMap = new Map(newProfiles.map(p => [p.id, pickProfileFields(p)]));
 
-  const deleted = oldProfiles
-    .filter(p => !newPickedProfileMap.has(p.id))
-    .map(pickProfileFields);
+  const deleted: ProfileCoreData[] = [];
+  const created: ProfileCoreData[] = [];
+  const modified: ProfileCoreData[] = [];
 
-  const created = newProfiles
-    .filter(p => !oldPickedProfileMap.has(p.id))
-    .map(pickProfileFields);
+  // Handle deleted profiles
+  for (const oldProfile of oldProfiles) {
+    if (!newPickedProfileMap.has(oldProfile.id) && oldProfile.enabled) {
+      deleted.push(pickProfileFields(oldProfile));
+    }
+  }
 
-  const modified = newProfiles
-    .filter((p) => {
-      const oldPickedProfile = oldPickedProfileMap.get(p.id);
-      const newPickedProfile = pickProfileFields(p);
-      return oldPickedProfile && !isEqual(oldPickedProfile, newPickedProfile);
-    })
-    .map(pickProfileFields);
+  // Handle new and modified profiles
+  for (const newProfile of newProfiles) {
+    const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
+    const newPickedProfile = pickProfileFields(newProfile);
+
+    if (!oldPickedProfile) {
+      if (newProfile.enabled) {
+        created.push(newPickedProfile);
+      }
+    } else {
+      const wasEnabled = oldPickedProfile.enabled;
+      const isEnabled = newPickedProfile.enabled;
+
+      if (wasEnabled && !isEnabled) {
+        deleted.push(newPickedProfile);
+      } else if (!wasEnabled && isEnabled) {
+        created.push(newPickedProfile);
+      } else if (isEnabled && !isEqual(oldPickedProfile, newPickedProfile)) {
+        modified.push(newPickedProfile);
+      }
+    }
+  }
 
   return { deleted, modified, created };
 }
