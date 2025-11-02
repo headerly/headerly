@@ -249,7 +249,9 @@ async function handleRegistrationErrors(profileId2ErrorMap: Record<UUID, string>
   try {
     await sendMessage("generateProfileId2ErrorMap", profileId2ErrorMap);
   } catch (error) {
-    console.error("Failed to send error map to popup:", error);
+    if (error instanceof Error && error.message !== "Could not establish connection. Receiving end does not exist.") {
+      console.error("Failed to send error map to popup:", error);
+    }
     await updateStorageWithErrors();
   }
 }
