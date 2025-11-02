@@ -87,9 +87,8 @@ const popovertarget = "popover-sidebar-menu";
           <span>About</span>
         </RouterLink>
       </li>
-      <li>
+      <li v-if="isDEV">
         <button
-          v-if="isDEV"
           class="flex flex-row items-center gap-2"
           @click="openInFullscreen"
         >
