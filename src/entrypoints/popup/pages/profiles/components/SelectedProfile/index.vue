@@ -4,6 +4,7 @@ import type { Profile } from "@/lib/type";
 import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
+import { difference, union } from "es-toolkit";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
@@ -15,21 +16,17 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-function hasAnyFilters(filters: Profile["filters"]): boolean {
-  return Object.values(filters).some((filterValue) => {
-    if (!filterValue)
-      return false;
+function hasAnyFilters(filters: Profile["filters"]) {
+  const arrayKeys = ["urlFilter", "regexFilter"] as const;
+  const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const;
 
-    if (Array.isArray(filterValue)) {
-      return filterValue.length > 0;
-    }
+  // To prevent forgetting to update the null value calculation logic.
+  if (difference(Object.keys(filters), union(arrayKeys, groupKeys)).length > 0) {
+    throw new Error(`Unknown filter keys, please update hasAnyFilters function accordingly.`);
+  }
 
-    if (typeof filterValue === "object" && "items" in filterValue) {
-      return filterValue.items.length > 0;
-    }
-
-    throw new Error(`Unknown filter type, please update hasAnyFilters function accordingly.`);
-  });
+  return arrayKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
+    || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)));
 }
 
 const profilesStore = useProfilesStore();
@@ -62,6 +59,12 @@ const showGlobalRuleWarning = computed(() => {
 });
 
 const addModModalStore = useAddModModalStore();
+
+function ignoreWarning() {
+  profilesStore.selectedProfile.filters.urlFilter = [
+    { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
+  ];
+}
 </script>
 
 <template>
@@ -109,6 +112,7 @@ const addModModalStore = useAddModModalStore();
             href="https://github.com/headerly/headerly/issues"
             class="btn btn-square btn-sm btn-error"
           >
+            <span class="sr-only">Creating an issue on GitHub</span>
             <i class="i-lucide-github size-4" />
           </a>
         </div>
@@ -126,11 +130,19 @@ const addModModalStore = useAddModModalStore();
         <div class="flex gap-1">
           <button
             class="btn btn-square btn-sm btn-warning"
+            @click="ignoreWarning"
+          >
+            <span class="sr-only">Ignore this warning</span>
+            <i class="i-lucide-ban size-4" />
+          </button>
+          <button
+            class="btn btn-square btn-sm btn-warning"
             @click="() => {
               addModModalStore.currentTab = 'conditions';
               addModModalStore.isOpen = true;
             }"
           >
+            <span class="sr-only">Add a new condition</span>
             <i class="i-lucide-cross size-4" />
           </button>
         </div>
