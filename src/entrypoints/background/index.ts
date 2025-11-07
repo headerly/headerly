@@ -3,6 +3,58 @@ import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { unregisterAllRules, updateRules } from "./declarativeNetRequest";
 
+export default defineBackground({
+  type: "module",
+  main() {
+    // Service Worker top-level can't return a Promise.
+    initialize();
+  },
+});
+
+async function initialize() {
+  const { item: powerOnItem } = usePowerOnStorage();
+  const { item: profileManagerItem } = useProfileManagerStorage();
+  let lastProfiles = (await profileManagerItem.getValue())!.profiles;
+
+  const debouncedPowerOnChange = debounce(async (powerOn: boolean) => {
+    if (powerOn) {
+      const manager = await profileManagerItem.getValue();
+      // When power on, treat all profiles as created
+      const changes = {
+        deleted: [],
+        modified: [],
+        created: manager!.profiles.map(pickProfileFields),
+      } as const satisfies ProfileChanges;
+      await updateRules(changes);
+      lastProfiles = manager!.profiles;
+      browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
+    } else {
+      await unregisterAllRules();
+      lastProfiles = [];
+      setIconAndBadgeForDisabled();
+    }
+  }, 500);
+
+  const debouncedProfileManagerChange = debounce(async (manager: ProfileManager) => {
+    if (await powerOnItem.getValue()) {
+      const changes = diffProfiles(lastProfiles, manager.profiles);
+      if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
+        return;
+      }
+      lastProfiles = manager.profiles;
+      await updateRules(changes);
+    }
+  }, 500);
+
+  powerOnItem.watch((powerOn) => {
+    debouncedPowerOnChange(powerOn!);
+  });
+
+  profileManagerItem.watch((manager) => {
+    debouncedProfileManagerChange(manager!);
+  });
+}
+
 const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups"] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id", "relatedRuleId"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
@@ -61,52 +113,21 @@ function diffProfiles(
   return { deleted, modified, created };
 }
 
-export default defineBackground({
-  type: "module",
-  main() {
-    // Service Worker top-level can't return a Promise.
-    initialize();
-  },
-});
-
-async function initialize() {
-  const { item: powerOnItem } = usePowerOnStorage();
-  const { item: profileManagerItem } = useProfileManagerStorage();
-  let lastProfiles = (await profileManagerItem.getValue())!.profiles;
-
-  const debouncedPowerOnChange = debounce(async (powerOn: boolean) => {
-    if (powerOn) {
-      const manager = await profileManagerItem.getValue();
-      // When power on, treat all profiles as created
-      const changes: ProfileChanges = {
-        deleted: [],
-        modified: [],
-        created: manager!.profiles.map(pickProfileFields),
-      };
-      await updateRules(changes);
-      lastProfiles = manager!.profiles;
-    } else {
-      await unregisterAllRules();
-      lastProfiles = [];
-    }
-  }, 500);
-
-  const debouncedProfileManagerChange = debounce(async (manager: ProfileManager) => {
-    if (await powerOnItem.getValue()) {
-      const changes = diffProfiles(lastProfiles, manager.profiles);
-      if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
-        return;
-      }
-      lastProfiles = manager.profiles;
-      await updateRules(changes);
-    }
-  }, 500);
-
-  powerOnItem.watch((powerOn) => {
-    debouncedPowerOnChange(powerOn!);
-  });
-
-  profileManagerItem.watch((manager) => {
-    debouncedProfileManagerChange(manager!);
-  });
+function setIconAndBadgeForDisabled() {
+  browser.action.setBadgeTextColor({ color: "white" });
+  browser.action.setBadgeBackgroundColor({ color: "gray" });
+  browser.action.setBadgeText({ text: "❚❚" });
+  const SIZE = 32;
+  const iconPath = `/${browser.runtime.getManifest().icons![SIZE]!}`;
+  fetch(iconPath)
+    .then(response => response.blob())
+    .then(blob => createImageBitmap(blob))
+    .then((imageBitmap) => {
+      const canvas = new OffscreenCanvas(SIZE, SIZE);
+      const context = canvas.getContext("2d")!;
+      context.filter = "grayscale(100%)";
+      context.drawImage(imageBitmap, 0, 0);
+      const imageData = context.getImageData(0, 0, SIZE, SIZE);
+      browser.action.setIcon({ imageData });
+    });
 }

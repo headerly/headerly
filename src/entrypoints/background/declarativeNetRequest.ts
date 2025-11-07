@@ -41,6 +41,15 @@ export async function updateRules(changes: ProfileChanges) {
     });
 
   await handleRegistrationErrors(profileId2ErrorMap);
+  const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
+  const registeredRuleCount = registeredRules.length;
+  if (registeredRuleCount > 0) {
+    browser.action.setBadgeTextColor({ color: "white" });
+    browser.action.setBadgeBackgroundColor({ color: "orange" });
+    browser.action.setBadgeText({ text: String(registeredRules.length) });
+  } else {
+    browser.action.setBadgeText({ text: "" });
+  }
 }
 
 async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
