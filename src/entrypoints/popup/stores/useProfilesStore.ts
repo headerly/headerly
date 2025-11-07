@@ -1,6 +1,6 @@
 import type { UUID } from "node:crypto";
 import type { GroupType, HeaderModGroup, Profile } from "@/lib/type";
-import { onMessage } from "##/background/errorMessage";
+import { onMessage } from "##/background/message";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -38,16 +38,26 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
 
-  onMessage("generateProfileId2ErrorMap", (message) => {
+  onMessage("updateProfileErrorMessage", (message) => {
     const profileId2ErrorMap = message.data;
     for (const profile of manager.value.profiles) {
-      if (profileId2ErrorMap[profile.id]) {
-        profile.errorMessage = profileId2ErrorMap[profile.id];
+      const errorMessage = profileId2ErrorMap[profile.id];
+      if (errorMessage) {
+        profile.errorMessage = errorMessage;
       } else {
         delete profile.errorMessage;
       }
     }
-    return true;
+  });
+
+  onMessage("updateProfileRelatedRuleId", (message) => {
+    const profileId2RuleIdMap = message.data;
+    for (const profile of manager.value.profiles) {
+      const relatedRuleId = profileId2RuleIdMap[profile.id];
+      if (relatedRuleId) {
+        profile.relatedRuleId = relatedRuleId;
+      }
+    }
   });
 
   // Enforce single-switch mode by disabling other profiles when selectedProfileId changes.

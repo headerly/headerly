@@ -75,6 +75,7 @@ export interface Profile {
   emoji: string;
   comments: string;
   errorMessage?: string;
+  relatedRuleId: number;
 }
 
 export interface ProfileManager {

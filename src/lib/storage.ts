@@ -93,6 +93,7 @@ export function createProfile(overrides?: Partial<Profile>) {
     syncCookieGroups: [],
     filters: {},
     comments: "",
+    relatedRuleId: 0,
     ...(overrides ?? {}),
   } as const satisfies Profile;
 }

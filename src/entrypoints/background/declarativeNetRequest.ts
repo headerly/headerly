@@ -1,10 +1,9 @@
 import type { UUID } from "node:crypto";
 import type { ProfileChanges, ProfileCoreData } from "./index";
 import { useProfileManagerStorage } from "@/lib/storage";
-import { sendMessage } from "./errorMessage";
+import { sendMessage } from "./message";
 
-const profileId2RuleIdMap = new Map<UUID, number>();
-let ruleIdCounter = 0;
+const { item: profileManagerItem } = useProfileManagerStorage();
 
 export async function unregisterAllRules() {
   const oldRules = await browser.declarativeNetRequest.getDynamicRules();
@@ -15,8 +14,15 @@ export async function unregisterAllRules() {
   await browser.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: oldRuleIds,
   });
-  profileId2RuleIdMap.clear();
-  ruleIdCounter = 0;
+  const manager = await profileManagerItem.getValue();
+  await profileManagerItem.setValue({
+    ...manager!,
+    profiles: manager!.profiles.map(profile => ({
+      ...profile,
+      errorMessage: undefined,
+      relatedRuleId: 0,
+    })),
+  });
 }
 
 export async function updateRules(changes: ProfileChanges) {
@@ -42,18 +48,25 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
 
   // Handle deleted profiles - only remove rules
   for (const deletedProfile of changes.deleted) {
-    const ruleId = profileId2RuleIdMap.get(deletedProfile.id);
-    if (ruleId) {
-      const result = await browser.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [ruleId],
-      }).then(() => {
-        profileId2RuleIdMap.delete(deletedProfile.id);
-        return { success: true, profileId: deletedProfile.id } as const;
-      }).catch((error) => {
-        return { success: false, profileId: deletedProfile.id, error } as const;
-      });
-      results.push({ status: "fulfilled", value: result });
-    }
+    const ruleId = deletedProfile.relatedRuleId;
+    const result = await browser.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [ruleId],
+    }).then(async () => {
+      try {
+        await sendMessage("updateProfileRelatedRuleId", { [deletedProfile.id]: 0 });
+      } catch (error) {
+        logReceivingEndDoesNotExistOtherError(error);
+        const manager = await profileManagerItem.getValue();
+        await profileManagerItem.setValue({
+          ...manager!,
+          profiles: manager!.profiles.map(p => p.id === deletedProfile.id ? { ...p, relatedRuleId: 0 } : p),
+        });
+      }
+      return { success: true, profileId: deletedProfile.id } as const;
+    }).catch((error) => {
+      return { success: false, profileId: deletedProfile.id, error } as const;
+    });
+    results.push({ status: "fulfilled", value: result });
   }
 
   return results;
@@ -76,7 +89,7 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
     }
 
     const rule = {
-      id: ++ruleIdCounter,
+      id: await getNewRuleId(),
       priority: 1,
       condition,
       action: {
@@ -88,14 +101,23 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     // For modified profiles, remove old rule first
     const deleteOldRuleId = changes.modified.includes(profile)
-      ? profileId2RuleIdMap.get(profile.id)
+      ? profile.relatedRuleId
       : undefined;
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : [],
       addRules: [rule],
-    }).then(() => {
-      profileId2RuleIdMap.set(profile.id, rule.id);
+    }).then(async () => {
+      try {
+        await sendMessage("updateProfileRelatedRuleId", { [profile.id]: rule.id });
+      } catch (error) {
+        logReceivingEndDoesNotExistOtherError(error);
+        const manager = await profileManagerItem.getValue();
+        await profileManagerItem.setValue({
+          ...manager!,
+          profiles: manager!.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
+        });
+      }
       return { success: true, profileId: profile.id } as const;
     }).catch((error) => {
       return { success: false, profileId: profile.id, error } as const;
@@ -227,8 +249,7 @@ function buildResponseHeaders(profile: ProfileCoreData) {
 
 async function handleRegistrationErrors(profileId2ErrorMap: Record<UUID, string>) {
   const updateStorageWithErrors = async () => {
-    const { item: profileManagerStorageItem } = useProfileManagerStorage();
-    const profileManager = await profileManagerStorageItem.getValue();
+    const profileManager = await profileManagerItem.getValue();
     if (!profileManager) {
       return;
     }
@@ -239,15 +260,34 @@ async function handleRegistrationErrors(profileId2ErrorMap: Record<UUID, string>
         errorMessage: profileId2ErrorMap[profile.id],
       })),
     };
-    await profileManagerStorageItem.setValue(profileManagerWithErrorMassage);
+    await profileManagerItem.setValue(profileManagerWithErrorMassage);
   };
 
   try {
-    await sendMessage("generateProfileId2ErrorMap", profileId2ErrorMap);
+    await sendMessage("updateProfileErrorMessage", profileId2ErrorMap);
   } catch (error) {
-    if (error instanceof Error && error.message !== "Could not establish connection. Receiving end does not exist.") {
-      console.error("Failed to send error map to popup:", error);
-    }
+    logReceivingEndDoesNotExistOtherError(error);
     await updateStorageWithErrors();
   }
+}
+
+function logReceivingEndDoesNotExistOtherError(error: unknown): boolean {
+  const result = error instanceof Error && error.message === "Could not establish connection. Receiving end does not exist.";
+  if (!result) {
+    console.error("Failed to send data to extension page:", error);
+  }
+  return result;
+}
+
+async function getNewRuleId() {
+  const existingRules = await browser.declarativeNetRequest.getDynamicRules();
+  const existingIds = existingRules.map(r => r.id);
+  return findMissingPositive(existingIds);
+}
+
+function findMissingPositive(numbers: number[]) {
+  const set = new Set(numbers);
+  let i = 1;
+  while (set.has(i)) i++;
+  return i;
 }
