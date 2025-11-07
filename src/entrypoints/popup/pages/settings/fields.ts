@@ -24,7 +24,7 @@ type SettingField = SelectField | CheckboxField;
 
 interface SettingGroup {
   fieldsetTitle: string;
-  fields: readonly SettingField[];
+  fields: SettingField[];
   anchor: string;
   anchorIcon: string;
 }
@@ -124,4 +124,4 @@ export const settings = [
       },
     ],
   },
-] as const satisfies SettingGroup[];
+] satisfies SettingGroup[];

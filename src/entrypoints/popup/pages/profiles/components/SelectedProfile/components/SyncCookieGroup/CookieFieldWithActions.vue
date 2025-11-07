@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { UUID } from "node:crypto";
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
+import Select from "#/components/select/Select.vue";
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +11,7 @@ import {
   TooltipTrigger,
 } from "#/components/ui/tooltip";
 import { useQuery } from "@tanstack/vue-query";
-import { pick } from "es-toolkit";
+import { isEqual, pick, sortBy } from "es-toolkit";
 import { computed, toValue, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
@@ -28,16 +30,19 @@ const field = defineModel<SyncCookie>("field", {
 
 function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ["cookies", domain],
+    queryKey: ["cookies", domain, field.value],
     queryFn: async () => {
       const cookies = await browser.cookies.getAll({ domain: toValue(domain) });
-      // Filter cookies that match the exact domain or are subdomains
-      const targetDomain = toValue(domain);
-      return cookies.filter(cookie =>
-        cookie.domain === targetDomain
-        || cookie.domain === `.${targetDomain}`,
-      )
-        .map(cookie => ({ ...pick(cookie, ["name", "value", "path"]), isMissing: false }))
+
+      return cookies.filter(
+        cookie => cookie.domain === toValue(domain) || cookie.domain === `.${toValue(domain)}`,
+      ).map((cookie) => {
+        const isSelected = isEqual(pick(cookie, ["domain", "path", "name"]), pick(field.value, ["domain", "path", "name"]));
+        return {
+          ...pick(cookie, ["name", "value", "path", "domain"]),
+          id: isSelected ? field.value.id : crypto.randomUUID(),
+        };
+      })
       ;
     },
     enabled: Boolean(domain),
@@ -46,48 +51,76 @@ function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
 
 const { data: cookies, isPending } = useCookiesQuery(() => field.value.domain);
 
-const isCookieValid = computed(() => {
-  if (!field.value.name || !cookies.value) {
-    return true;
-  }
-  return cookies.value.some(cookie => cookie.name === field.value.name);
-});
-
-const displayCookies = computed(() => {
-  if (!cookies.value)
+const cookieOptions = computed(() => {
+  if (isPending.value) {
     return [];
-
-  if (isCookieValid.value) {
-    return cookies.value;
   }
-
-  if (field.value.name) {
-    const missingCookie = {
-      name: field.value.name,
-      value: field.value.value,
-      path: field.value.path,
-      isMissing: true,
+  function createOption(cookie: Pick<SyncCookie, "id" | "name" | "value" | "path" | "domain">) {
+    return {
+      value: cookie.id,
+      label: cookie.name,
+      cookieValue: cookie.value,
+      path: cookie.path,
+      domain: cookie.domain,
+      isMissing: false,
     };
-    return [missingCookie, ...cookies.value];
+  }
+  const options = cookies.value?.map(createOption) ?? [];
+  if (!options.find(
+    option =>
+      option.value === field.value.id,
+  ) && field.value.value) {
+    options.push({
+      ...createOption(field.value),
+      isMissing: true,
+    });
   }
 
-  return cookies.value;
+  return sortBy(options, ["label", "domain", "path"]);
 });
-
-function handleNameChange(e: Event) {
-  const name = (e.target as HTMLSelectElement).value;
-  const selectedCookie = displayCookies.value?.find(cookie => cookie.name === name);
-  if (selectedCookie && !selectedCookie.isMissing) {
-    field.value.value = selectedCookie.value;
-    field.value.path = selectedCookie.path;
-  }
-}
 
 function handleDomainChange(e: Event) {
-  field.value.domain = (e.target as HTMLInputElement).value;
+  const userInput = (e.target as HTMLInputElement).value;
+  try {
+    const url = new URL(userInput);
+    field.value.domain = url.hostname;
+  } catch {
+    field.value.domain = (e.target as HTMLInputElement).value;
+  }
   field.value.name = "";
   field.value.value = "";
+  field.value.path = "";
 }
+
+const cookieDialogRef = useTemplateRef("cookieDialogRef");
+
+const disabled = computed(() => {
+  return cookieOptions.value.length === 0 || isPending.value;
+});
+
+function updateCookie(newCookieId: UUID) {
+  const selected = cookieOptions.value.find(cookie => cookie.value === newCookieId);
+  if (selected) {
+    field.value.value = selected.cookieValue;
+    field.value.domain = selected.domain;
+    field.value.name = selected.label;
+    field.value.path = selected.path;
+  }
+}
+
+const selectedCookieOption = computed(() => {
+  return cookieOptions.value.find((cookie) => {
+    return cookie.value === field.value.id;
+  });
+});
+
+const refreshButtonDisabled = computed(() => {
+  return !field.value.name
+    || isPending.value
+    || selectedCookieOption.value?.isMissing
+    || cookieOptions.value.length === 0
+    || selectedCookieOption.value?.cookieValue === field.value.value;
+});
 
 async function refreshCookie() {
   const cookie = await browser.cookies.get({
@@ -101,24 +134,13 @@ async function refreshCookie() {
     toast.error("The cookie was not found. It may no longer exist.");
   }
 }
-
-const cookieDialogRef = useTemplateRef("cookieDialogRef");
-
-const refreshButtonDisabled = computed(() => {
-  return !field.value.name || isPending.value || !isCookieValid.value
-    || displayCookies.value.some(cookie =>
-      cookie.path === field.value.path
-      && cookie.name === field.value.name
-      && cookie.value === field.value.value,
-    );
-});
 </script>
 
 <template>
   <div class="flex flex-1 items-center justify-between gap-1">
     <label class="label flex flex-1">
       <slot name="field-before" />
-      <div class="flex flex-1 gap-1">
+      <div class="grid flex-1 grid-cols-2 gap-1">
         <label class="flex-1">
           <input
             :value="field.domain"
@@ -131,33 +153,51 @@ const refreshButtonDisabled = computed(() => {
             @change="handleDomainChange"
           >
         </label>
-        <label class="relative flex-1">
-          <select
-            v-model="field.name"
-            :disabled="displayCookies.length === 0 || isPending"
-            :class="cn(
-              'select select-sm text-base',
-              Boolean(field.value) && 'text-base-content',
-              !isCookieValid && field.name && 'text-warning select-warning',
-            )"
-            @change="handleNameChange"
+        <label class="relative">
+          <Select
+            v-model="field.id"
+            :options="cookieOptions"
+            :disabled
+            :placeholder="disabled ? 'No available' : 'Pick a cookie'"
+            class="w-full select-sm text-base"
+            :type="selectedCookieOption?.isMissing ? 'warning' : 'normal'"
+            :loading="isPending"
+            @change="(v) => updateCookie(v)"
           >
-            <option
-              value="" disabled class="font-medium text-base-content/66 italic"
-            >
-              {{ displayCookies.length > 0 ? "Pick a cookie" : "No available" }}
-            </option>
-            <option
-              v-for="cookie in displayCookies"
-              :key="cookie.name"
-              :value="cookie.name"
-              :class="cn(
-                cookie.isMissing ? 'text-warning' : 'text-base-content',
-              )"
-            >
-              {{ cookie.name }}{{ cookie.isMissing ? ' (Missing)' : '' }}
-            </option>
-          </select>
+            <template #label="{ option }">
+              <div :class="cn('flex gap-1', option.isMissing ? 'text-warning' : '')">
+                <span class="max-w-50 truncate">
+                  {{ option.label }}
+                </span>
+                <span
+                  v-if="option.isMissing"
+                >
+                  (Missing)
+                </span>
+                <TooltipProvider :delay-duration="200">
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <button class="btn btn-square btn-ghost btn-xs btn-info">
+                        <i
+                          class="i-lucide-circle-question-mark size-4"
+                        />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      :collision-padding="20"
+                      side="top"
+                      class="
+                        prose prose-sm flex max-h-40 w-full max-w-lg
+                        overflow-y-auto text-base-content
+                      "
+                    >
+                      <span>{{ `Domain: ${option.domain} - Path: ${option.path}` }}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </template>
+          </Select>
         </label>
       </div>
     </label>

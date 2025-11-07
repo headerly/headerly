@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Fieldset from "#/components/group/Fieldset.vue";
+import Select from "#/components/select/Select.vue";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
@@ -44,23 +45,16 @@ const settingsStore = useSettingsStore();
                 "
               >
                 {{ field.label }}:
-                <select
+                <Select
                   v-model="settingsStore[field.key]"
-                  class="select cursor-pointer"
+                  class="min-w-60"
+                  :options="field.options"
                   @change="() => {
                     if ('onChange' in field) {
-                      field.onChange();
+                      field.onChange?.();
                     }
                   }"
-                >
-                  <option
-                    v-for="option in field.options"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
+                />
               </label>
 
               <label
