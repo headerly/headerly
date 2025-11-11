@@ -92,10 +92,7 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
     const requestHeaders = buildRequestHeaders(profile);
     const responseHeaders = buildResponseHeaders(profile);
 
-    // Skip if no actions
-    if (requestHeaders.length === 0 && responseHeaders.length === 0) {
-      continue;
-    }
+    const noActions = requestHeaders.length === 0 && responseHeaders.length === 0;
 
     const rule = {
       id: await getNewRuleId(),
@@ -115,7 +112,8 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : [],
-      addRules: [rule],
+      // If there are no actions, simply delete the rule.
+      addRules: noActions ? [rule] : [],
     }).then(async () => {
       try {
         await sendMessage("updateProfileRelatedRuleId", { [profile.id]: rule.id });
