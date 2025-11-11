@@ -207,10 +207,11 @@ function buildRequestHeaders(profile: ProfileCoreData) {
           header: mod.name.trim().toLowerCase(),
           operation: mod.operation,
         } satisfies Browser.declarativeNetRequest.ModifyHeaderInfo;
-        if (mod.operation !== "remove") {
-          requestHeaders.push({ ...headerInfo, value: mod.value.trim() });
-        } else {
+
+        if (mod.operation === "remove") {
           requestHeaders.push(headerInfo);
+        } else if (mod.value.trim()) {
+          requestHeaders.push({ ...headerInfo, value: mod.value.trim() });
         }
       }
     }
@@ -244,10 +245,11 @@ function buildResponseHeaders(profile: ProfileCoreData) {
           header: mod.name.trim(),
           operation: mod.operation,
         };
-        if (mod.operation !== "remove") {
-          responseHeaders.push({ ...headerInfo, value: mod.value.trim() });
-        } else {
+
+        if (mod.operation === "remove") {
           responseHeaders.push(headerInfo);
+        } else if (mod.value.trim()) {
+          responseHeaders.push({ ...headerInfo, value: mod.value.trim() });
         }
       }
     }
