@@ -23,6 +23,14 @@ function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
 }
 
+async function clearDnrRules() {
+  const rules = await browser.declarativeNetRequest.getDynamicRules();
+  const ruleIds = rules.map(rule => rule.id);
+  await browser.declarativeNetRequest.updateDynamicRules({
+    removeRuleIds: ruleIds,
+  });
+}
+
 const isDEV = import.meta.env.DEV;
 
 const popovertarget = "popover-sidebar-menu";
@@ -94,6 +102,15 @@ const popovertarget = "popover-sidebar-menu";
         >
           <i class="i-lucide-maximize size-4" />
           <span>Expand to Full Tab</span>
+        </button>
+      </li>
+      <li v-if="isDEV">
+        <button
+          class="flex flex-row items-center gap-2"
+          @click="clearDnrRules"
+        >
+          <i class="i-lucide-ban size-4" />
+          <span>Clear DNR rules</span>
         </button>
       </li>
     </ul>
