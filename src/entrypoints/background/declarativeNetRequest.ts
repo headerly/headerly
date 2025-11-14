@@ -92,7 +92,7 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
     const requestHeaders = buildRequestHeaders(profile);
     const responseHeaders = buildResponseHeaders(profile);
 
-    const noActions = requestHeaders.length === 0 && responseHeaders.length === 0;
+    const hasActions = requestHeaders.length > 0 || responseHeaders.length > 0;
 
     const rule = {
       id: await getNewRuleId(),
@@ -111,19 +111,21 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       : undefined;
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : [],
-      // If there are no actions, simply delete the rule.
-      addRules: noActions ? [rule] : [],
+      removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : undefined,
+      // If there are no actions, simply delete the rule(if exists).
+      addRules: hasActions ? [rule] : undefined,
     }).then(async () => {
-      try {
-        await sendMessage("updateProfileRelatedRuleId", { [profile.id]: rule.id });
-      } catch (error) {
-        logReceivingEndDoesNotExistOtherError(error);
-        const manager = await profileManagerItem.getValue();
-        await profileManagerItem.setValue({
-          ...manager!,
-          profiles: manager!.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
-        });
+      if (hasActions) {
+        try {
+          await sendMessage("updateProfileRelatedRuleId", { [profile.id]: rule.id });
+        } catch (error) {
+          logReceivingEndDoesNotExistOtherError(error);
+          const manager = await profileManagerItem.getValue();
+          await profileManagerItem.setValue({
+            ...manager!,
+            profiles: manager!.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
+          });
+        }
       }
       return { success: true, profileId: profile.id } as const;
     }).catch((error) => {
