@@ -14,15 +14,21 @@ export async function unregisterAllRules() {
   await browser.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: oldRuleIds,
   });
-  const manager = await profileManagerItem.getValue();
-  await profileManagerItem.setValue({
-    ...manager,
-    profiles: manager.profiles.map(profile => ({
-      ...profile,
-      errorMessage: "",
-      relatedRuleId: 0,
-    })),
-  });
+
+  try {
+    await sendMessage("unregisterAllRules");
+  } catch (error) {
+    logReceivingEndDoesNotExistOtherError(error);
+    const manager = await profileManagerItem.getValue();
+    await profileManagerItem.setValue({
+      ...manager,
+      profiles: manager.profiles.map(profile => ({
+        ...profile,
+        errorMessage: "",
+        relatedRuleId: 0,
+      })),
+    });
+  }
 }
 
 export async function updateRules(changes: ProfileChanges) {
@@ -32,13 +38,11 @@ export async function updateRules(changes: ProfileChanges) {
   const allResults = [...deleteResults, ...updateResults];
 
   const profileId2ErrorRecord: Record<UUID, string> = {};
-  allResults
-    .filter((result): result is PromiseFulfilledResult<{ success: false; profileId: UUID; error: unknown }> =>
-      result.status === "fulfilled" && !result.value.success,
-    )
-    .forEach((result) => {
-      profileId2ErrorRecord[result.value.profileId] = String(result.value.error);
-    });
+  for (const result of allResults) {
+    if (result.status === "fulfilled") {
+      profileId2ErrorRecord[result.value.profileId] = result.value.success ? "" : String(result.value.error);
+    }
+  }
 
   await handleRegistrationErrors(profileId2ErrorRecord);
   const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
@@ -116,14 +120,20 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       addRules: hasActions ? [rule] : undefined,
     }).then(async () => {
       if (hasActions) {
+        const relatedRuleId = deleteOldRuleId ? 0 : rule.id;
         try {
-          await sendMessage("updateProfileRelatedRuleId", { [profile.id]: rule.id });
+          await sendMessage("updateProfileRelatedRuleId", { [profile.id]: relatedRuleId });
         } catch (error) {
           logReceivingEndDoesNotExistOtherError(error);
           const manager = await profileManagerItem.getValue();
           await profileManagerItem.setValue({
             ...manager,
-            profiles: manager.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
+            profiles: manager.profiles.map(p => p.id === profile.id
+              ? {
+                  ...p,
+                  relatedRuleId,
+                }
+              : p),
           });
         }
       }

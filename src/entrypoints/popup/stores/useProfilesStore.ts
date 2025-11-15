@@ -45,6 +45,13 @@ export const useProfilesStore = defineStore("profiles", () => {
     return new Map(manager.value.profiles.map(p => [p.id, p]));
   });
 
+  onMessage("unregisterAllRules", () => {
+    for (const profile of manager.value.profiles) {
+      profile.relatedRuleId = 0;
+      profile.errorMessage = "";
+    }
+  });
+
   onMessage("updateProfileErrorMessage", (message) => {
     const profileId2ErrorRecord = message.data;
     for (const [profileId, errorMessage] of Object.entries(profileId2ErrorRecord) as Entries<typeof profileId2ErrorRecord>) {
