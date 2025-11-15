@@ -26,6 +26,12 @@ export async function updateRules(changes: ProfileChanges) {
     if (result.status !== "fulfilled") {
       continue;
     }
+    if (result.value.deleteRuleId) {
+      deleteRelatedRuleIds.push(result.value.profileId);
+    }
+    if (result.value.newRuleId) {
+      profileId2RelatedRuleIdRecord[result.value.profileId] = result.value.newRuleId;
+    }
     if (result.value.success) {
       deleteErrorMessageIds.push(result.value.profileId);
     } else {
