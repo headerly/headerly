@@ -5,14 +5,16 @@ import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecor
 import { sendMessage } from "../message";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
-import { logReceivingEndDoesNotExistOtherError } from "./util";
+import { logReceivingEndDoesNotExistOtherError, updateBadge } from "./util";
 
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
 
 export async function updateRules(changes: ProfileChanges) {
-  const deleteResults = await deleteRules({ deleted: changes.deleted });
-  const updateResults = await upsertRules({ created: changes.created, modified: changes.modified });
+  const [deleteResults, updateResults] = await Promise.all([
+    deleteRules({ deleted: changes.deleted }),
+    upsertRules({ created: changes.created, modified: changes.modified }),
+  ]);
 
   const allResults = [...deleteResults, ...updateResults];
 
@@ -30,24 +32,17 @@ export async function updateRules(changes: ProfileChanges) {
       profileId2ErrorRecord[result.value.profileId] = String(result.value.error);
     }
   }
-  await handleRegistrationErrorMessageChange({
-    upsertRecord: profileId2ErrorRecord,
-    deleteIds: deleteErrorMessageIds,
-  });
-  await handleRegistrationRelatedRuleIdChange({
-    upsertRecord: profileId2RelatedRuleIdRecord,
-    deleteIds: deleteRelatedRuleIds,
-  });
-
-  const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
-  const registeredRuleCount = registeredRules.length;
-  if (registeredRuleCount > 0) {
-    browser.action.setBadgeTextColor({ color: "white" });
-    browser.action.setBadgeBackgroundColor({ color: "orange" });
-    browser.action.setBadgeText({ text: String(registeredRules.length) });
-  } else {
-    browser.action.setBadgeText({ text: "" });
-  }
+  await Promise.all([
+    handleRegistrationRelatedRuleIdChange({
+      upsertRecord: profileId2RelatedRuleIdRecord,
+      deleteIds: deleteRelatedRuleIds,
+    }),
+    handleRegistrationErrorMessageChange({
+      upsertRecord: profileId2ErrorRecord,
+      deleteIds: deleteErrorMessageIds,
+    }),
+    updateBadge(),
+  ]);
 }
 
 interface RuleUpdateResult {
