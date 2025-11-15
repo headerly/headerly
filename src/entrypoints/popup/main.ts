@@ -11,12 +11,11 @@ import "@fontsource-variable/intel-one-mono";
 import "./index.css";
 
 setTheme();
-const pinia = createPinia();
-const app = createApp(App);
-app.use(pinia);
-app.use(autoAnimatePlugin);
-app.use(router);
-app.use(VueQueryPlugin, {
-  enableDevtoolsV6Plugin: true,
-});
-app.mount("#app");
+createApp(App)
+  .use(router)
+  .use(createPinia())
+  .use(autoAnimatePlugin)
+  .use(VueQueryPlugin, {
+    enableDevtoolsV6Plugin: true,
+  })
+  .mount("#app");

@@ -6,27 +6,23 @@ import { toRaw } from "vue";
 
 function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (value: T) => void) {
   const item = storage.defineItem<T>(key, {
-    init() {
-      return initialValue;
-    },
+    fallback: initialValue,
   });
 
   const ref = useStorageAsync<T>(
     key,
     initialValue,
     {
-      setItem(_, value: T) {
+      setItem(_, value) {
         // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
         // We need to store the original array in the proxy.
         // Note that this will still be broken if only some of the keys on the object are proxies!
-        return item.setValue(toRaw(value));
+        return item.setValue(toRaw(value as T));
       },
-      getItem(_) {
-        // TODO: Remove after PR merge
-        // https://github.com/wxt-dev/wxt/pull/1909
-        return item.getValue()!;
+      getItem() {
+        return item.getValue();
       },
-      removeItem(_) {
+      removeItem() {
         return item.removeValue();
       },
     } as StorageLikeAsync,

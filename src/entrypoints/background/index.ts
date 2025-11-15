@@ -14,7 +14,7 @@ export default defineBackground({
 async function initialize() {
   const { item: powerOnItem } = usePowerOnStorage();
   const { item: profileManagerItem } = useProfileManagerStorage();
-  let lastProfiles = (await profileManagerItem.getValue())!.profiles;
+  let lastProfiles = (await profileManagerItem.getValue()).profiles;
 
   const debouncedPowerOnChange = debounce(async (powerOn: boolean) => {
     if (powerOn) {
@@ -23,10 +23,10 @@ async function initialize() {
       const changes = {
         deleted: [],
         modified: [],
-        created: manager!.profiles.map(pickProfileFields),
+        created: manager.profiles.map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
-      lastProfiles = manager!.profiles;
+      lastProfiles = manager.profiles;
       browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
     } else {
       await unregisterAllRules();

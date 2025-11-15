@@ -5,7 +5,7 @@ import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
-import { computed, toRaw, watch } from "vue";
+import { computed, ref, toRaw, watch } from "vue";
 import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -34,6 +34,8 @@ export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: 
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise, resolve } = Promise.withResolvers();
+  const ready = ref(false);
+  promise.then(() => ready.value = true);
   const { ref: manager } = useProfileManagerStorage(resolve);
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
@@ -202,7 +204,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager,
     canUndo,
     canRedo,
-    ready: promise,
+    ready,
     // Getters
     selectedProfile,
     // Actions

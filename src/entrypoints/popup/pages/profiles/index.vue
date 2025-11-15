@@ -10,6 +10,7 @@ const profilesStore = useProfilesStore();
 
 <template>
   <div
+    v-if="profilesStore.ready"
     :class="cn(
       `grid grid-cols-[3rem_minmax(0,1fr)] grid-rows-[3rem_minmax(0,1fr)]`,
       'size-full',

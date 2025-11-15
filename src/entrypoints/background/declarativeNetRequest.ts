@@ -16,8 +16,8 @@ export async function unregisterAllRules() {
   });
   const manager = await profileManagerItem.getValue();
   await profileManagerItem.setValue({
-    ...manager!,
-    profiles: manager!.profiles.map(profile => ({
+    ...manager,
+    profiles: manager.profiles.map(profile => ({
       ...profile,
       errorMessage: undefined,
       relatedRuleId: 0,
@@ -67,8 +67,8 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
         logReceivingEndDoesNotExistOtherError(error);
         const manager = await profileManagerItem.getValue();
         await profileManagerItem.setValue({
-          ...manager!,
-          profiles: manager!.profiles.map(p => p.id === deletedProfile.id ? { ...p, relatedRuleId: 0 } : p),
+          ...manager,
+          profiles: manager.profiles.map(p => p.id === deletedProfile.id ? { ...p, relatedRuleId: 0 } : p),
         });
       }
       return { success: true, profileId: deletedProfile.id } as const;
@@ -122,8 +122,8 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
           logReceivingEndDoesNotExistOtherError(error);
           const manager = await profileManagerItem.getValue();
           await profileManagerItem.setValue({
-            ...manager!,
-            profiles: manager!.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
+            ...manager,
+            profiles: manager.profiles.map(p => p.id === profile.id ? { ...p, relatedRuleId: rule.id } : p),
           });
         }
       }
