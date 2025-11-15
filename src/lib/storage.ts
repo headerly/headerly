@@ -90,6 +90,7 @@ export function createProfile(overrides?: Partial<Profile>) {
     filters: {},
     comments: "",
     relatedRuleId: 0,
+    errorMessage: "",
     ...(overrides ?? {}),
   } as const satisfies Profile;
 }

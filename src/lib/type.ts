@@ -74,7 +74,7 @@ export interface Profile {
   enabled: boolean;
   emoji: string;
   comments: string;
-  errorMessage?: string;
+  errorMessage: string;
   relatedRuleId: number;
 }
 

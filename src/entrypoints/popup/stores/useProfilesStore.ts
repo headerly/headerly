@@ -1,4 +1,5 @@
 import type { UUID } from "node:crypto";
+import type { Entries } from "type-fest";
 import type { GroupType, HeaderModGroup, Profile } from "@/lib/type";
 import { onMessage } from "##/background/message";
 import { allEmojis, emoji } from "#/constants/emoji";
@@ -40,23 +41,25 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
 
+  const id2profileMap = computed(() => {
+    return new Map(manager.value.profiles.map(p => [p.id, p]));
+  });
+
   onMessage("updateProfileErrorMessage", (message) => {
-    const profileId2ErrorMap = message.data;
-    for (const profile of manager.value.profiles) {
-      const errorMessage = profileId2ErrorMap[profile.id];
-      if (errorMessage) {
+    const profileId2ErrorRecord = message.data;
+    for (const [profileId, errorMessage] of Object.entries(profileId2ErrorRecord) as Entries<typeof profileId2ErrorRecord>) {
+      const profile = id2profileMap.value.get(profileId);
+      if (profile) {
         profile.errorMessage = errorMessage;
-      } else {
-        delete profile.errorMessage;
       }
     }
   });
 
   onMessage("updateProfileRelatedRuleId", (message) => {
-    const profileId2RuleIdMap = message.data;
-    for (const profile of manager.value.profiles) {
-      const relatedRuleId = profileId2RuleIdMap[profile.id];
-      if (relatedRuleId) {
+    const profileId2RuleIdRecord = message.data;
+    for (const [profileId, relatedRuleId] of Object.entries(profileId2RuleIdRecord) as Entries<typeof profileId2RuleIdRecord>) {
+      const profile = id2profileMap.value.get(profileId);
+      if (profile) {
         profile.relatedRuleId = relatedRuleId;
       }
     }

@@ -19,7 +19,7 @@ export async function unregisterAllRules() {
     ...manager,
     profiles: manager.profiles.map(profile => ({
       ...profile,
-      errorMessage: undefined,
+      errorMessage: "",
       relatedRuleId: 0,
     })),
   });
@@ -31,16 +31,16 @@ export async function updateRules(changes: ProfileChanges) {
 
   const allResults = [...deleteResults, ...updateResults];
 
-  const profileId2ErrorMap: Record<UUID, string> = {};
+  const profileId2ErrorRecord: Record<UUID, string> = {};
   allResults
     .filter((result): result is PromiseFulfilledResult<{ success: false; profileId: UUID; error: unknown }> =>
       result.status === "fulfilled" && !result.value.success,
     )
     .forEach((result) => {
-      profileId2ErrorMap[result.value.profileId] = String(result.value.error);
+      profileId2ErrorRecord[result.value.profileId] = String(result.value.error);
     });
 
-  await handleRegistrationErrors(profileId2ErrorMap);
+  await handleRegistrationErrors(profileId2ErrorRecord);
   const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
   const registeredRuleCount = registeredRules.length;
   if (registeredRuleCount > 0) {
@@ -258,24 +258,21 @@ function buildResponseHeaders(profile: ProfileCoreData) {
   return responseHeaders;
 }
 
-async function handleRegistrationErrors(profileId2ErrorMap: Record<UUID, string>) {
+async function handleRegistrationErrors(profileId2ErrorRecord: Record<UUID, string>) {
   const updateStorageWithErrors = async () => {
     const profileManager = await profileManagerItem.getValue();
-    if (!profileManager) {
-      return;
-    }
     const profileManagerWithErrorMassage = {
       ...profileManager,
       profiles: profileManager.profiles.map(profile => ({
         ...profile,
-        errorMessage: profileId2ErrorMap[profile.id],
+        errorMessage: profileId2ErrorRecord[profile.id] ?? "",
       })),
     };
     await profileManagerItem.setValue(profileManagerWithErrorMassage);
   };
 
   try {
-    await sendMessage("updateProfileErrorMessage", profileId2ErrorMap);
+    await sendMessage("updateProfileErrorMessage", profileId2ErrorRecord);
   } catch (error) {
     logReceivingEndDoesNotExistOtherError(error);
     await updateStorageWithErrors();
