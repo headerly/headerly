@@ -74,11 +74,11 @@ export interface Profile {
   enabled: boolean;
   emoji: string;
   comments: string;
-  errorMessage: string;
-  relatedRuleId: number;
 }
 
 export interface ProfileManager {
   profiles: Profile[];
   selectedProfileId: UUID;
 }
+
+export type ActionType = "request" | "response";

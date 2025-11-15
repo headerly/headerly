@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { ActionType } from "#/stores/useProfilesStore";
-import type { HeaderModGroup } from "@/lib/type";
+import type { ActionType, HeaderModGroup } from "@/lib/type";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups, useProfilesStore } from "#/stores/useProfilesStore";

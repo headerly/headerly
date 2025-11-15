@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { ActionType } from "#/stores/useProfilesStore";
-import type { HeaderMod, HeaderModOperation } from "@/lib/type";
+import type { ActionType, HeaderMod, HeaderModOperation } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import {
   Tooltip,

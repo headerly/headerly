@@ -1,7 +1,8 @@
 import type { Profile, ProfileManager } from "@/lib/type";
 import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
-import { unregisterAllRules, updateRules } from "./declarativeNetRequest";
+import { updateRules } from "./DNR/registerRule";
+import { unregisterAllRules } from "./DNR/unregisterAllRule";
 
 export default defineBackground({
   type: "module",
@@ -56,7 +57,7 @@ async function initialize() {
 }
 
 const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups"] as const satisfies (keyof Profile)[];
-const CORE_KEYS = [...NEED_WATCH_KEYS, "id", "relatedRuleId"] as const satisfies (keyof Profile)[];
+const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
 
 export interface ProfileChanges {

@@ -97,14 +97,14 @@ function ignoreWarning() {
     </div>
     <div v-else v-auto-animate class="w-full px-2 pb-2">
       <div
-        v-if="profilesStore.selectedProfile.errorMessage"
+        v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
         role="alert"
         class="mt-2 alert alert-soft alert-error"
       >
         <i class="i-lucide-bug size-6" />
         <div>
           <p>This profile caused an error when registering rules.</p>
-          <p>{{ profilesStore.selectedProfile.errorMessage }}</p>
+          <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
         </div>
         <div class="flex gap-1">
           <a

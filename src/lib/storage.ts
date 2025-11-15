@@ -1,5 +1,6 @@
 import type { EmojiCategoryKey } from "#/constants/emoji";
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
+import type { UUID } from "node:crypto";
 import type { HeaderMod, Profile, ProfileManager, SyncCookie } from "./type";
 import { useStorageAsync } from "@vueuse/core";
 import { toRaw } from "vue";
@@ -89,8 +90,6 @@ export function createProfile(overrides?: Partial<Profile>) {
     syncCookieGroups: [],
     filters: {},
     comments: "",
-    relatedRuleId: 0,
-    errorMessage: "",
     ...(overrides ?? {}),
   } as const satisfies Profile;
 }
@@ -107,6 +106,14 @@ const defaultProfileManager = createDefaultProfileManager();
 
 export function useProfileManagerStorage(onReady?: (value: ProfileManager) => void) {
   return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, onReady);
+}
+
+export function useProfileId2RelatedRuleIdRecordStorage() {
+  return useBrowserStorage<Record<UUID, number>>("local:profileId2RelatedRuleIdRecord", {});
+}
+
+export function useProfileId2ErrorMessageRecordStorage() {
+  return useBrowserStorage<Record<UUID, string>>("local:profileId2ErrorMessageRecord", {});
 }
 
 export function usePowerOnStorage() {

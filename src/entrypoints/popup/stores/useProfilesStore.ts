@@ -1,16 +1,14 @@
 import type { UUID } from "node:crypto";
 import type { Entries } from "type-fest";
-import type { GroupType, HeaderModGroup, Profile } from "@/lib/type";
+import type { ActionType, GroupType, HeaderModGroup, Profile } from "@/lib/type";
 import { onMessage } from "##/background/message";
 import { allEmojis, emoji } from "#/constants/emoji";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
-import { createMod, createProfile, createSyncCookie, useProfileManagerStorage } from "@/lib/storage";
+import { createMod, createProfile, createSyncCookie, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { useSettingsStore } from "./useSettingsStore";
-
-export type ActionType = "request" | "response";
 
 function getProfileIcon() {
   const settingsStore = useSettingsStore();
@@ -38,37 +36,33 @@ export const useProfilesStore = defineStore("profiles", () => {
   const ready = ref(false);
   promise.then(() => ready.value = true);
   const { ref: manager } = useProfileManagerStorage(resolve);
+  const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage();
+  const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage();
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
 
-  const id2profileMap = computed(() => {
-    return new Map(manager.value.profiles.map(p => [p.id, p]));
-  });
-
   onMessage("unregisterAllRules", () => {
-    for (const profile of manager.value.profiles) {
-      profile.relatedRuleId = 0;
-      profile.errorMessage = "";
-    }
+    profileId2ErrorMessageRecord.value = {};
+    profileId2RelatedRuleIdRecord.value = {};
   });
 
   onMessage("updateProfileErrorMessage", (message) => {
-    const profileId2ErrorRecord = message.data;
-    for (const [profileId, errorMessage] of Object.entries(profileId2ErrorRecord) as Entries<typeof profileId2ErrorRecord>) {
-      const profile = id2profileMap.value.get(profileId);
-      if (profile) {
-        profile.errorMessage = errorMessage;
-      }
+    const { upsertRecord: upsertErrorMap = {}, deleteIds = [] } = message.data;
+    for (const [profileId, errorMessage] of Object.entries(upsertErrorMap) as Entries<typeof upsertErrorMap>) {
+      profileId2ErrorMessageRecord.value[profileId] = errorMessage;
+    }
+    for (const profileId of deleteIds) {
+      delete profileId2ErrorMessageRecord.value[profileId];
     }
   });
 
   onMessage("updateProfileRelatedRuleId", (message) => {
-    const profileId2RuleIdRecord = message.data;
-    for (const [profileId, relatedRuleId] of Object.entries(profileId2RuleIdRecord) as Entries<typeof profileId2RuleIdRecord>) {
-      const profile = id2profileMap.value.get(profileId);
-      if (profile) {
-        profile.relatedRuleId = relatedRuleId;
-      }
+    const { upsertRecord: upsertRuleIdMap = {}, deleteIds = [] } = message.data;
+    for (const [profileId, relatedRuleId] of Object.entries(upsertRuleIdMap) as Entries<typeof upsertRuleIdMap>) {
+      profileId2RelatedRuleIdRecord.value[profileId] = relatedRuleId;
+    }
+    for (const profileId of deleteIds) {
+      delete profileId2RelatedRuleIdRecord.value[profileId];
     }
   });
 
@@ -212,6 +206,8 @@ export const useProfilesStore = defineStore("profiles", () => {
   return {
     // State
     manager,
+    profileId2RelatedRuleIdRecord,
+    profileId2ErrorMessageRecord,
     canUndo,
     canRedo,
     ready,

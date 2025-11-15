@@ -107,8 +107,12 @@ function renderShortcutHint(index: number) {
                   <span
                     :class="cn(
                       'indicator-item status',
-                      profile.errorMessage && 'status-error',
-                      profile.relatedRuleId && 'status-success',
+                      profilesStore.profileId2ErrorMessageRecord[profile.id] && `
+                        status-error
+                      `,
+                      profilesStore.profileId2RelatedRuleIdRecord[profile.id] && `
+                        status-success
+                      `,
                     )"
                   />
                   <span
