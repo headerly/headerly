@@ -2,7 +2,7 @@ import type { Profile, ProfileManager } from "@/lib/type";
 import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
-import { unregisterAllRules } from "./DNR/unregisterAllRule";
+import { unregisterAllRules } from "./DNR/unregisterAllRules";
 
 export default defineBackground({
   type: "module",
