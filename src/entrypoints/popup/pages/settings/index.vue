@@ -49,10 +49,8 @@ const settingsStore = useSettingsStore();
                   v-model="settingsStore[field.key]"
                   class="min-w-60"
                   :options="field.options"
-                  @change="() => {
-                    if ('onChange' in field) {
-                      field.onChange?.();
-                    }
+                  @change="(v) => {
+                    field.onChange?.(v);
                   }"
                 />
               </label>

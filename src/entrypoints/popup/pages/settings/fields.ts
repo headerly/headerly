@@ -1,7 +1,8 @@
+import type { Theme } from "@/lib/storage";
 import { categories } from "#/constants/emoji";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { setTheme } from "#/theme";
+import { handleThemeChange } from "#/theme";
 import { getModKey } from "@/lib/utils";
 
 interface BaseSettingField {
@@ -12,7 +13,7 @@ interface BaseSettingField {
 interface SelectField extends BaseSettingField {
   options: readonly { label: string; value: string }[];
   type: "select";
-  onChange?: (e: Event) => void;
+  onChange?: (v: string) => void;
 }
 
 interface CheckboxField extends BaseSettingField {
@@ -46,18 +47,11 @@ export const settings = [
           { label: "Dark", value: "dark" },
         ],
         key: "theme",
-        onChange: setTheme,
+        onChange: (value) => {
+          const newTheme = value as Theme;
+          handleThemeChange(newTheme);
+        },
       },
-      // {
-      //   type: "select",
-      //   label: "Language",
-      //   options: [
-      //     { label: "English", value: "en-US" },
-      //     { label: "Simplified Chinese", value: "zh-CN" },
-      //     { label: "Japanese", value: "ja" },
-      //   ],
-      //   key: "language",
-      // },
       {
         type: "checkbox",
         label: "Display the badges for numbers 1-9 in the sidebar",
