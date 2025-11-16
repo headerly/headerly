@@ -8,6 +8,7 @@ import { getModKey } from "@/lib/utils";
 interface BaseSettingField {
   label: string;
   key: keyof ReturnType<typeof useSettingsStore>;
+  description?: string;
 }
 
 interface SelectField extends BaseSettingField {
@@ -104,6 +105,7 @@ export const settings = [
           { label: "Multiple", value: "multiple" },
           { label: "Single", value: "single" },
         ],
+        description: "In single mode, you can enable only one profile at a time, and switching profiles automatically enables the one you select.",
         key: "switchMode",
         onChange: () => {
           if (settingsStore.switchMode === "single") {
@@ -115,6 +117,12 @@ export const settings = [
             });
           }
         },
+      },
+      {
+        type: "checkbox",
+        label: "Use native DNR resource type behavior",
+        key: "nativeResourceTypeBehavior",
+        description: "Resource type defaults to 'all', but enabling this option will not set it to 'all', and rules without a resource type condition will match only a narrower range of requests.",
       },
     ],
   },

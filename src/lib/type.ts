@@ -33,6 +33,10 @@ export interface DomainsFilter {
   items: ({ value: string } & GroupItem)[];
 }
 
+export interface ResourceTypeFilter extends GroupItem {
+  value: `${Browser.declarativeNetRequest.ResourceType}`[];
+}
+
 export interface Filter {
   urlFilter?: UrlOrRegexFilter[];
   regexFilter?: UrlOrRegexFilter[];
@@ -40,6 +44,8 @@ export interface Filter {
   excludedInitiatorDomains?: DomainsFilter;
   requestDomains?: DomainsFilter;
   excludedRequestDomains?: DomainsFilter;
+  resourceTypes?: ResourceTypeFilter[];
+  excludedResourceTypes?: ResourceTypeFilter[];
 }
 
 export type GroupType = "radio" | "checkbox";

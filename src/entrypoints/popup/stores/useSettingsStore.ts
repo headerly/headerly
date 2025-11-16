@@ -6,6 +6,7 @@ import {
   useEnableMetaKSearchStorage,
   useEnableMetaNumberShortcutStorage,
   useEnableUndoAndRedoShortcutStorage,
+  useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
   useSwitchModeStorage,
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore("settings", () => {
     enableMetaKSearch: useEnableMetaKSearchStorage(),
     enableUndoAndRedoShortcut: useEnableUndoAndRedoShortcutStorage(),
     switchMode: useSwitchModeStorage(),
+    nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
   } as const;
 
   const isModified = computed(() => {

@@ -152,3 +152,7 @@ export function useDisplayNumberBadgeStorage() {
 export function useSwitchModeStorage() {
   return useBrowserStorage<"multiple" | "single">("local:switchMode", "multiple");
 }
+
+export function useNativeResourceTypeBehaviorStorage() {
+  return useBrowserStorage<boolean>("local:nativeResourceTypeBehavior", false);
+}

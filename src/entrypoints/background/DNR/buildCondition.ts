@@ -1,7 +1,29 @@
 import type { ProfileCoreData } from "..";
 
-export function buildCondition(profile: ProfileCoreData) {
+interface BuildConditionOptions {
+  nativeResourceTypeBehavior: boolean;
+}
+
+export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
+
+  if (profile.filters.resourceTypes?.length) {
+    const enabledResourceTypes = profile.filters.resourceTypes.find(f => f.enabled);
+    if (enabledResourceTypes && enabledResourceTypes.value.length > 0) {
+      condition.resourceTypes = enabledResourceTypes.value;
+    }
+  } else if (!options.nativeResourceTypeBehavior) {
+    // If no resource types are specified, match all types
+    // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
+    condition.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+  }
+
+  if (profile.filters.excludedResourceTypes?.length) {
+    const excludedResourceTypes = profile.filters.excludedResourceTypes.find(f => f.enabled);
+    if (excludedResourceTypes && excludedResourceTypes.value.length > 0) {
+      condition.excludedResourceTypes = excludedResourceTypes.value;
+    }
+  }
 
   if (profile.filters.urlFilter?.length) {
     const enabledUrlFilter = profile.filters.urlFilter.find(f => f.enabled);

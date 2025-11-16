@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 import type { ProfileChanges } from "../index";
 import type { UpdateProfileErrorMessageOptions, UpdateProfileRelatedRuleIdOptions } from "../message";
-import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
+import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
 import { sendMessage } from "../message";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
@@ -87,9 +87,10 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
   // Handle created and modified profiles - add new rules (modified also removes old ones)
   const profilesToRegister = [...changes.created, ...changes.modified];
-
+  const { item: nativeResourceTypeBehaviorItem } = useNativeResourceTypeBehaviorStorage();
+  const nativeResourceTypeBehavior = await nativeResourceTypeBehaviorItem.getValue();
   for (const profile of profilesToRegister) {
-    const condition = buildCondition(profile);
+    const condition = buildCondition(profile, { nativeResourceTypeBehavior });
     const action = buildAction(profile);
     const hasActions = action.requestHeaders?.length || action.responseHeaders?.length;
 

@@ -1,12 +1,35 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import Fieldset from "#/components/group/Fieldset.vue";
 import Select from "#/components/select/Select.vue";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/components/ui/tooltip";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { settings } from "./fields";
 
 const settingsStore = useSettingsStore();
+
+function InfoTooltip({ description }: { description: string }) {
+  return (
+    <TooltipProvider delay-duration={200}>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <button class="btn ms-1 btn-square btn-ghost btn-xs btn-info">
+            <i class="i-lucide-circle-question-mark size-4 cursor-pointer" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" class="w-80">
+          {description}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 </script>
 
 <template>
@@ -37,35 +60,51 @@ const settingsStore = useSettingsStore();
         <template #main>
           <div class="flex size-full flex-col gap-2">
             <template v-for="field in setting.fields" :key="field.label">
-              <label
+              <div
                 v-if="field.type === 'select'"
-                class="
-                  label flex flex-col items-start whitespace-normal
-                  text-base-content
-                "
               >
-                {{ field.label }}:
-                <Select
-                  v-model="settingsStore[field.key]"
-                  class="min-w-60"
-                  :options="field.options"
-                  @change="(v) => {
-                    field.onChange?.(v);
-                  }"
-                />
-              </label>
-
-              <label
-                v-else-if="field.type === 'checkbox'"
-                class="label items-start whitespace-normal text-base-content"
-              >
-                <input
-                  v-model="settingsStore[field.key]"
-                  type="checkbox"
-                  class="checkbox"
+                <label
+                  class="
+                    label flex flex-col items-start whitespace-normal
+                    text-base-content
+                  "
                 >
-                {{ field.label }}
-              </label>
+                  {{ field.label }}:
+                  <div class="flex items-center">
+                    <Select
+                      v-model="settingsStore[field.key]"
+                      class="min-w-60"
+                      :options="field.options"
+                      @change="(v) => {
+                        field.onChange?.(v);
+                      }"
+                    />
+                    <InfoTooltip
+                      v-if="'description' in field && field.description"
+                      :description="field.description"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div
+                v-else-if="field.type === 'checkbox'"
+                class="flex items-center"
+              >
+                <label
+                  class="label items-start whitespace-normal text-base-content"
+                >
+                  <input
+                    v-model="settingsStore[field.key]"
+                    type="checkbox"
+                    class="checkbox"
+                  >
+                  {{ field.label }}
+                </label>
+                <InfoTooltip
+                  v-if="'description' in field && field.description"
+                  :description="field.description"
+                />
+              </div>
             </template>
           </div>
         </template>
