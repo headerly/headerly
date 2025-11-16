@@ -1,21 +1,8 @@
-<script setup lang="ts">
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/components/ui/tooltip";
-import { useAddModModalStore } from "#/stores/useAddModModalStore";
 import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useTemplateRef, watch } from "vue";
-
-const dialogRef = useTemplateRef("dialogRef");
-
-const profilesStore = useProfilesStore();
 
 interface Tab {
   label: string;
-  value: string;
+  value: "actions" | "conditions";
   icon: string;
   items: {
     title: string;
@@ -25,7 +12,8 @@ interface Tab {
   }[];
 }
 
-const tabs = [
+const profilesStore = useProfilesStore();
+export const tabs: Tab[] = [
   {
     label: "Actions",
     value: "actions",
@@ -257,96 +245,4 @@ const tabs = [
       },
     ],
   },
-] satisfies Tab[];
-
-const addModModalStore = useAddModModalStore();
-
-const UI_TEXT = {
-  close: "✕",
-  closeModal: "Close modal",
-} as const;
-
-watch(() => addModModalStore.isOpen, (newValue) => {
-  if (newValue) {
-    dialogRef.value?.showModal();
-  }
-});
-</script>
-
-<template>
-  <TooltipProvider :delay-duration="200">
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <button
-          class="btn btn-square btn-ghost btn-sm btn-primary"
-          @click="() => {
-            addModModalStore.currentTab = 'actions';
-            addModModalStore.isOpen = true
-          }"
-        >
-          <i class="i-lucide-cross size-4" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        Add a new action or condition
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-  <dialog ref="dialogRef" class="modal">
-    <div class="modal-box">
-      <form method="dialog">
-        <button
-          class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
-          @click="addModModalStore.isOpen = false"
-        >
-          {{ UI_TEXT.close }}
-          <span class="sr-only">{{ UI_TEXT.closeModal }}</span>
-        </button>
-      </form>
-
-      <div class="tabs-box mt-5 tabs">
-        <template v-for="tab in tabs" :key="tab.label">
-          <label class="tab w-1/2">
-            <input v-model="addModModalStore.currentTab" type="radio" name="add-action-or-condition" :value="tab.value">
-            <i :class="tab.icon" class="me-2 size-4" />
-            {{ tab.label }}
-          </label>
-          <div
-            class="
-              tab-content mt-1 max-h-[70vh] overflow-y-auto border-base-300
-            "
-          >
-            <div class="list rounded-box">
-              <button
-                v-for="{ title, description, action, disabled } in tab.items"
-                :key="title"
-                :disabled="disabled"
-                class="list-row btn h-min text-start btn-ghost"
-                :class="{ 'btn-disabled opacity-50': disabled }"
-                @click="() => {
-                  if (!disabled) {
-                    action()
-                    addModModalStore.isOpen = false
-                    dialogRef?.close()
-                  }
-                }"
-              >
-                <div>
-                  <div>{{ title }}</div>
-                  <div class="text-xs font-normal opacity-60">
-                    {{ description }}
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button @click="addModModalStore.isOpen = false">
-        <span class="sr-only">{{ UI_TEXT.close }}</span>
-      </button>
-    </form>
-  </dialog>
-</template>
+];

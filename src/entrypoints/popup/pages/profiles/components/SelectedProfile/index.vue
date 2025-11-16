@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { Profile } from "@/lib/type";
-import { useAddModModalStore } from "#/stores/useAddModModalStore";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
 import { difference, union } from "es-toolkit";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
+import AddModModal from "../Header/components/AddModModal/index.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 import ModGroup from "./components/ModGroup/index.vue";
@@ -58,8 +64,6 @@ const showGlobalRuleWarning = computed(() => {
   return !hasFilters && !empty.value && hasRule;
 });
 
-const addModModalStore = useAddModModalStore();
-
 function ignoreWarning() {
   profilesStore.selectedProfile.filters.urlFilter = [
     { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
@@ -107,14 +111,22 @@ function ignoreWarning() {
           <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
         </div>
         <div class="flex gap-1">
-          <a
-            target="_blank"
-            href="https://github.com/headerly/headerly/issues"
-            class="btn btn-square btn-sm btn-error"
-          >
-            <span class="sr-only">Creating an issue on GitHub</span>
-            <i class="i-lucide-github size-4" />
-          </a>
+          <TooltipProvider :delay-duration="200">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a
+                  target="_blank"
+                  href="https://github.com/headerly/headerly/issues"
+                  class="btn btn-square btn-ghost btn-sm btn-error"
+                >
+                  <i class="i-lucide-github size-4" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                Report this issue on GitHub
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div
@@ -128,23 +140,26 @@ function ignoreWarning() {
           <p>Add a condition to avoid issues.</p>
         </div>
         <div class="flex gap-1">
-          <button
-            class="btn btn-square btn-sm btn-warning"
-            @click="ignoreWarning"
-          >
-            <span class="sr-only">Ignore this warning</span>
-            <i class="i-lucide-ban size-4" />
-          </button>
-          <button
-            class="btn btn-square btn-sm btn-warning"
-            @click="() => {
-              addModModalStore.currentTab = 'conditions';
-              addModModalStore.isOpen = true;
-            }"
-          >
-            <span class="sr-only">Add a new condition</span>
-            <i class="i-lucide-cross size-4" />
-          </button>
+          <TooltipProvider :delay-duration="200">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <button
+                  class="btn btn-square btn-ghost btn-sm btn-warning"
+                  @click="ignoreWarning"
+                >
+                  <i class="i-lucide-ban size-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                Ignore this warning
+              </TooltipContent>
+            </Tooltip>
+            <AddModModal
+              tooltip-text="Add a new condition"
+              default-tab="conditions"
+              class="btn btn-square btn-sm btn-warning"
+            />
+          </tooltipprovider>
         </div>
       </div>
       <ModGroup

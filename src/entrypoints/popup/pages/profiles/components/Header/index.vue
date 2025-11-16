@@ -11,7 +11,7 @@ import { useSettingsStore } from "#/stores/useSettingsStore";
 import { useEventListener } from "@vueuse/core";
 import { ref } from "vue";
 import { cn, getModKey } from "@/lib/utils";
-import AddModModal from "./components/AddModModal.vue";
+import AddModModal from "./components/AddModModal/index.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";
 import SecondaryOperations from "./components/SecondaryOperations.vue";
 
@@ -170,7 +170,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <AddModModal />
+      <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>
