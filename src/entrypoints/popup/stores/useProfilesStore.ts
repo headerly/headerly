@@ -32,12 +32,18 @@ export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: 
 }
 
 export const useProfilesStore = defineStore("profiles", () => {
-  const { promise, resolve } = Promise.withResolvers();
+  const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
+  const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
+  const { promise: profileId2RelatedRuleIdRecordPromise, resolve: profileId2RelatedRuleIdRecordResolve } = Promise.withResolvers();
   const ready = ref(false);
-  promise.then(() => ready.value = true);
-  const { ref: manager } = useProfileManagerStorage(resolve);
-  const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage();
-  const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage();
+  Promise.all([
+    managerPromise,
+    profileId2ErrorMessageRecordPromise,
+    profileId2RelatedRuleIdRecordPromise,
+  ]).then(() => ready.value = true);
+  const { ref: manager } = useProfileManagerStorage(managerResolve);
+  const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage(profileId2ErrorMessageRecordResolve);
+  const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage(profileId2RelatedRuleIdRecordResolve);
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
 
@@ -75,7 +81,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   });
   // Clear history when the storage is ready to avoid undoing to empty state.
-  promise.then(clear);
+  managerPromise.then(clear);
 
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;

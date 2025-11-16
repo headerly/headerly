@@ -108,12 +108,12 @@ export function useProfileManagerStorage(onReady?: (value: ProfileManager) => vo
   return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, onReady);
 }
 
-export function useProfileId2RelatedRuleIdRecordStorage() {
-  return useBrowserStorage<Record<UUID, number>>("local:profileId2RelatedRuleIdRecord", {});
+export function useProfileId2RelatedRuleIdRecordStorage(onReady?: (value: Record<UUID, number>) => void) {
+  return useBrowserStorage<Record<UUID, number>>("local:profileId2RelatedRuleIdRecord", {}, onReady);
 }
 
-export function useProfileId2ErrorMessageRecordStorage() {
-  return useBrowserStorage<Record<UUID, string>>("local:profileId2ErrorMessageRecord", {});
+export function useProfileId2ErrorMessageRecordStorage(onReady?: (value: Record<UUID, string>) => void) {
+  return useBrowserStorage<Record<UUID, string>>("local:profileId2ErrorMessageRecord", {}, onReady);
 }
 
 export function usePowerOnStorage() {
