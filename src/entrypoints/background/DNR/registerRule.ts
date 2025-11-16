@@ -116,12 +116,11 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : undefined,
       addRules: hasActions ? [rule] : undefined,
     }).then(async () => {
-      const isDeleted = deleteOldRuleId && !hasActions;
       return {
         success: true,
         profileId: profile.id,
-        deleteRuleId: isDeleted ? deleteOldRuleId : undefined,
-        newRuleId: !isDeleted ? rule.id : undefined,
+        deleteRuleId: deleteOldRuleId && !hasActions ? deleteOldRuleId : undefined,
+        newRuleId: hasActions ? rule.id : undefined,
       };
     }).catch((error) => {
       return {
