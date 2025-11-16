@@ -15,6 +15,7 @@ interface ProtocolMap {
   updateProfileErrorMessage: (options: UpdateProfileErrorMessageOptions) => void;
   updateProfileRelatedRuleId: (options: UpdateProfileRelatedRuleIdOptions) => void;
   unregisterAllRules: () => void;
+  reinitializeAllRules: () => void;
 }
 
 export const { sendMessage, onMessage } = defineExtensionMessaging<ProtocolMap>();

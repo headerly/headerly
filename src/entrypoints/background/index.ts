@@ -3,6 +3,7 @@ import { debounce, isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
+import { onMessage } from "./message";
 
 export default defineBackground({
   type: "module",
@@ -16,6 +17,21 @@ async function initialize() {
   const { item: powerOnItem } = usePowerOnStorage();
   const { item: profileManagerItem } = useProfileManagerStorage();
   let lastProfiles = (await profileManagerItem.getValue()).profiles;
+
+  onMessage("reinitializeAllRules", async () => {
+    const powerOn = await powerOnItem.getValue();
+    if (powerOn) {
+      await unregisterAllRules();
+      const manager = await profileManagerItem.getValue();
+      const changes = {
+        deleted: [],
+        modified: [],
+        created: manager.profiles.map(pickProfileFields),
+      } as const satisfies ProfileChanges;
+      await updateRules(changes);
+      lastProfiles = manager.profiles;
+    }
+  });
 
   const debouncedPowerOnChange = debounce(async (powerOn: boolean) => {
     if (powerOn) {

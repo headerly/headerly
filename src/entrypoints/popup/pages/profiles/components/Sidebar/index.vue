@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { sendMessage } from "##/background/message";
 import {
   Tooltip,
   TooltipContent,
@@ -63,7 +64,6 @@ const popovertarget = "popover-sidebar-menu";
     >
       <li>
         <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
-          <i class="i-lucide-cross size-4" />
           <span>Add New Profile</span>
         </button>
       </li>
@@ -74,7 +74,6 @@ const popovertarget = "popover-sidebar-menu";
             :popovertarget
             popovertargetaction="hide"
           >
-            <i class="i-lucide-search size-4" />
             <span>Search</span>
             <span v-if="settingsStore.enableMetaKSearch">
               <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
@@ -85,13 +84,11 @@ const popovertarget = "popover-sidebar-menu";
       </li>
       <li>
         <RouterLink to="/settings" class="flex flex-row items-center gap-2">
-          <i class="i-lucide-settings size-4" />
           <span>Settings</span>
         </RouterLink>
       </li>
       <li>
         <RouterLink to="/about" class="flex flex-row items-center gap-2">
-          <i class="i-lucide-badge-info size-4" />
           <span>About</span>
         </RouterLink>
       </li>
@@ -100,7 +97,6 @@ const popovertarget = "popover-sidebar-menu";
           class="flex flex-row items-center gap-2"
           @click="openInFullscreen"
         >
-          <i class="i-lucide-maximize size-4" />
           <span>Expand to Full Tab</span>
         </button>
       </li>
@@ -109,8 +105,17 @@ const popovertarget = "popover-sidebar-menu";
           class="flex flex-row items-center gap-2"
           @click="clearDnrRules"
         >
-          <i class="i-lucide-ban size-4" />
           <span>Clear DNR rules</span>
+        </button>
+      </li>
+      <li v-if="isDEV">
+        <button
+          class="flex flex-row items-center gap-2"
+          @click="() => {
+            sendMessage('reinitializeAllRules');
+          }"
+        >
+          <span>Reinitialize DNR rules</span>
         </button>
       </li>
     </ul>
