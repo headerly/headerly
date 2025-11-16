@@ -66,22 +66,17 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
   for (const deletedProfile of changes.deleted) {
     const profileId2RelatedRuleIdRecord = await profileId2RelatedRuleIdRecordItem.getValue();
     const ruleId = profileId2RelatedRuleIdRecord[deletedProfile.id];
-    const result = await browser.declarativeNetRequest.updateDynamicRules({
+    await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: ruleId ? [ruleId] : undefined,
-    }).then(() => {
-      return {
+    });
+    results.push({
+      status: "fulfilled",
+      value: {
         success: true,
         profileId: deletedProfile.id,
         deleteRuleId: ruleId,
-      };
-    }).catch((error) => {
-      return {
-        success: false,
-        profileId: deletedProfile.id,
-        error,
-      };
+      },
     });
-    results.push({ status: "fulfilled", value: result });
   }
 
   return results;
@@ -107,25 +102,33 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     // For modified profiles, remove old rule first
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteOldRuleId = changes.modified.includes(profile)
+    const deleteRuleId = changes.modified.includes(profile)
       ? record[profile.id]
       : undefined;
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       // If there are no actions, simply delete the rule(if exists).
-      removeRuleIds: deleteOldRuleId ? [deleteOldRuleId] : undefined,
+      removeRuleIds: deleteRuleId ? [deleteRuleId] : undefined,
       addRules: hasActions ? [rule] : undefined,
     }).then(async () => {
       return {
         success: true,
         profileId: profile.id,
-        deleteRuleId: deleteOldRuleId && !hasActions ? deleteOldRuleId : undefined,
+        deleteRuleId: deleteRuleId && !hasActions ? deleteRuleId : undefined,
         newRuleId: hasActions ? rule.id : undefined,
       };
-    }).catch((error) => {
+    }).catch(async (error) => {
+      const isUpdateOldRuleError = hasActions && deleteRuleId;
+      // If updating the old rule failed, try to remove it again to avoid dangling rules.
+      if (isUpdateOldRuleError) {
+        await browser.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: [deleteRuleId],
+        });
+      }
       return {
         success: false,
         profileId: profile.id,
+        deleteRuleId: isUpdateOldRuleError ? deleteRuleId : undefined,
         error,
       };
     });
