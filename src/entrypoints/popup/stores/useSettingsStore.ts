@@ -6,7 +6,6 @@ import {
   useEnableMetaKSearchStorage,
   useEnableMetaNumberShortcutStorage,
   useEnableUndoAndRedoShortcutStorage,
-  useLanguageStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
   useSwitchModeStorage,
@@ -16,7 +15,6 @@ import {
 export const useSettingsStore = defineStore("settings", () => {
   const storageConfigs = {
     powerOn: usePowerOnStorage(),
-    language: useLanguageStorage(),
     theme: useThemeStorage(),
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),

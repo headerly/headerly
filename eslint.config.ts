@@ -1,5 +1,4 @@
 import antfu from "@antfu/eslint-config";
-import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 import tailwind from "eslint-plugin-better-tailwindcss";
 
 export default antfu(
@@ -45,12 +44,4 @@ export default antfu(
   {
     ignores: ["**/*.md"],
   },
-)
-  .append(...vueI18n.configs["flat/recommended"], {
-    settings: {
-      "vue-i18n": {
-        localeDir: "./src/assets/_locales/*.json",
-        messageSyntaxVersion: "^9.0.0",
-      },
-    },
-  });
+);

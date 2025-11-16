@@ -133,10 +133,6 @@ export function useRandomEmojiCategoryStorage() {
   return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "foodDrink");
 }
 
-export function useLanguageStorage() {
-  return useBrowserStorage<string>("local:language", "en-US");
-}
-
 export function useEnableMetaNumberShortcutStorage() {
   return useBrowserStorage<boolean>("local:enableCtrlNumberShortcut", true);
 }
