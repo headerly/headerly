@@ -54,8 +54,8 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
 const showGlobalRuleWarning = computed(() => {
   const filters = profilesStore.selectedProfile.filters;
   const hasFilters = hasAnyFilters(filters);
-
-  return !hasFilters && !empty.value;
+  const hasRule = Boolean(profilesStore.profileId2RelatedRuleIdRecord[profilesStore.selectedProfile.id]);
+  return !hasFilters && !empty.value && hasRule;
 });
 
 const addModModalStore = useAddModModalStore();
