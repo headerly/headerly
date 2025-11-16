@@ -8,13 +8,6 @@ const profilesStore = useProfilesStore();
 
 const popovertarget = `popover-profile-secondary-operations`;
 
-const UI_TEXT = {
-  copyId: "Copy ID",
-  duplicate: "Duplicate",
-  moveUp: "Move Up",
-  moveDown: "Move Down",
-} as const;
-
 async function copyProfileId() {
   await navigator.clipboard.writeText(profilesStore.selectedProfile.id);
   toast.success("Profile ID copied to clipboard.");
@@ -44,13 +37,13 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       <li>
         <button @click="copyProfileId">
           <i class="i-lucide-copy size-4" />
-          <span>{{ UI_TEXT.copyId }}</span>
+          <span>Copy ID</span>
         </button>
       </li>
       <li>
         <button @click="profilesStore.duplicateProfile()">
           <i class="i-lucide-copy-plus size-4" />
-          <span>{{ UI_TEXT.duplicate }}</span>
+          <span>Duplicate</span>
         </button>
       </li>
       <li>
@@ -73,7 +66,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
           @click="profilesStore.moveProfileUp()"
         >
           <i class="i-lucide-arrow-big-up size-4" />
-          <span>{{ UI_TEXT.moveUp }}</span>
+          <span>Move Up</span>
         </button>
       </li>
       <li>
@@ -83,7 +76,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
           @click="profilesStore.moveProfileDown()"
         >
           <i class="i-lucide-arrow-big-down size-4" />
-          <span>{{ UI_TEXT.moveDown }}</span>
+          <span>Move Down</span>
         </button>
       </li>
     </ul>

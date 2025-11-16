@@ -86,11 +86,6 @@ const field = {
   },
 };
 
-const UI_TEXT = {
-  useCurrentDomain: "Use the domain of the current tab",
-  deleteDomain: "Delete this domain",
-} as const;
-
 const profilesStore = useProfilesStore();
 
 function deleteGroup() {
@@ -171,7 +166,7 @@ const canUseCurrentUrl = computed(() => {
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              {{ UI_TEXT.useCurrentDomain }}
+              Use the domain of the current tab
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -181,7 +176,7 @@ const canUseCurrentUrl = computed(() => {
             domainsFilter.items.splice(index, 1);
           }"
         >
-          <span class="sr-only">{{ UI_TEXT.deleteDomain }}</span>
+          <span class="sr-only">Delete this domain</span>
           <i class="i-lucide-x size-4" />
         </button>
         <ActionsDropdown

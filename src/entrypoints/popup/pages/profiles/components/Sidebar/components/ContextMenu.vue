@@ -15,14 +15,6 @@ const profilesStore = useProfilesStore();
 
 const popoverRef = useTemplateRef("popoverRef");
 
-const UI_TEXT = {
-  pause: "Pause",
-  resume: "Resume",
-  duplicate: "Duplicate",
-  moveUp: "Move Up",
-  moveDown: "Move Down",
-} as const;
-
 watch(
   () => open,
   () => {
@@ -75,14 +67,14 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
             `)"
           />
           <span>
-            {{ profile.enabled ? UI_TEXT.pause : UI_TEXT.resume }}
+            {{ profile.enabled ? 'Pause' : 'Resume' }}
           </span>
         </button>
       </li>
       <li>
         <button @click="profilesStore.duplicateProfile(id)">
           <i class="i-lucide-copy-plus size-4" />
-          <span>{{ UI_TEXT.duplicate }}</span>
+          <span>Duplicate</span>
         </button>
       </li>
       <li>
@@ -128,7 +120,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
           @click="profilesStore.moveProfileUp(id)"
         >
           <i class="i-lucide-arrow-big-up size-4" />
-          <span>{{ UI_TEXT.moveUp }}</span>
+          <span>Move Up</span>
         </button>
       </li>
       <li>
@@ -138,7 +130,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
           @click="profilesStore.moveProfileDown(id)"
         >
           <i class="i-lucide-arrow-big-down size-4" />
-          <span>{{ UI_TEXT.moveDown }}</span>
+          <span>Move Down</span>
         </button>
       </li>
     </ul>

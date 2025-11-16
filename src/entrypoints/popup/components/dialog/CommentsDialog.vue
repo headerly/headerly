@@ -9,14 +9,6 @@ const commentsInput = ref(comments.value);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
-const UI_TEXT = {
-  title: "Edit Comments",
-  placeholder: "Add your comments here...",
-  save: "Save",
-  cancel: "Cancel",
-  close: "Close",
-} as const;
-
 function open() {
   commentsInput.value = comments.value;
   commentsDialogRef.value?.showModal();
@@ -48,31 +40,31 @@ defineExpose({
         </button>
       </form>
       <h3 class="text-lg font-semibold">
-        {{ UI_TEXT.title }}
+        Edit Comments
       </h3>
       <textarea
         v-model="commentsInput"
         class="textarea mt-4 h-24 w-full text-base"
-        :placeholder="UI_TEXT.placeholder"
+        placeholder="Add your comments here..."
         autofocus
       />
       <div class="modal-action">
         <form method="dialog">
           <button class="btn btn-soft">
-            {{ UI_TEXT.cancel }}
+            Cancel
           </button>
         </form>
         <button
           class="btn btn-soft btn-primary"
           @click="handleSave"
         >
-          {{ UI_TEXT.save }}
+          Save
         </button>
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
       <button>
-        <span class="sr-only">{{ UI_TEXT.close }}</span>
+        <span class="sr-only">Close</span>
       </button>
     </form>
   </dialog>
