@@ -30,6 +30,7 @@ const checked = computed(() => {
 
 <template>
   <Fieldset
+    v-if="list.length"
     v-auto-animate
     :name
   >
