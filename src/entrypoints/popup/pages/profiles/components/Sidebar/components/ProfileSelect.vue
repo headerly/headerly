@@ -96,14 +96,18 @@ function renderShortcutHint(index: number) {
                 <button
                   :class="cn(
                     `
-                      btn indicator btn-square text-xl btn-soft btn-sm
+                      btn indicator relative btn-square text-xl btn-soft btn-sm
                       hover:btn-primary
                     `,
                     { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
                   )"
                   @click="profilesStore.manager.selectedProfileId = profile.id"
                 >
-                  {{ profile.emoji }}
+                  <span
+                    :class="cn({ 'opacity-30': !profile.enabled })"
+                  >
+                    {{ profile.emoji }}
+                  </span>
                   <span
                     :class="cn(
                       'indicator-item status',
@@ -124,6 +128,13 @@ function renderShortcutHint(index: number) {
                   >
                     {{ index + 1 }}
                   </span>
+                  <i
+                    v-if="!profile.enabled"
+                    class="
+                      absolute right-0 bottom-0 i-lucide-pause size-4
+                      -translate-1/2
+                    "
+                  />
                 </button>
               </template>
             </ContextMenu>

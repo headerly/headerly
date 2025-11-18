@@ -30,6 +30,9 @@ async function initialize() {
       } as const satisfies ProfileChanges;
       await updateRules(changes);
       lastProfiles = manager.profiles;
+    } else {
+      await unregisterAllRules();
+      lastProfiles = [];
     }
   });
 
