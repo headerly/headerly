@@ -75,5 +75,9 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
     }
   }
 
+  if (profile.filters.domainType?.enabled) {
+    condition.domainType = profile.filters.domainType.value;
+  }
+
   return condition;
 }

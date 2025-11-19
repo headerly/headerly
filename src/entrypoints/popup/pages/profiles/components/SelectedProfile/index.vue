@@ -9,7 +9,7 @@ import {
 } from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { difference, union } from "es-toolkit";
+import { difference } from "es-toolkit";
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import AddModModal from "../Header/components/AddModModal/index.vue";
@@ -25,14 +25,16 @@ const { class: className } = defineProps<{
 function hasAnyFilters(filters: Profile["filters"]) {
   const arrayKeys = ["urlFilter", "regexFilter"] as const;
   const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const;
-
+  const baseTypeKeys = ["domainType"] as const;
   // To prevent forgetting to update the null value calculation logic.
-  if (difference(Object.keys(filters), union(arrayKeys, groupKeys)).length > 0) {
+  const keysUnion = [...arrayKeys, ...groupKeys, ...baseTypeKeys];
+  if (difference(Object.keys(filters), keysUnion).length > 0) {
     throw new Error(`Unknown filter keys, please update hasAnyFilters function accordingly.`);
   }
 
   return arrayKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
-    || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)));
+    || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)))
+    || baseTypeKeys.some(key => Boolean(filters[key]));
 }
 
 const profilesStore = useProfilesStore();

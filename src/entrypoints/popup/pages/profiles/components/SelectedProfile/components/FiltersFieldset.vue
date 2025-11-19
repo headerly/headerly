@@ -1,8 +1,9 @@
 <script setup lang="tsx">
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { computed } from "vue";
-import DomainsFilter from "../filters/DomainsFilter.vue";
-import UrlOrRegexFilter from "../filters/UrlOrRegexFilter.vue";
+import DomainsFilter from "../conditions/DomainsFilter.vue";
+import DomainType from "../conditions/DomainType.vue";
+import UrlOrRegexFilter from "../conditions/UrlOrRegexFilter.vue";
 
 const profilesStore = useProfilesStore();
 
@@ -39,5 +40,9 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
     v-if="filters.excludedInitiatorDomains?.items.length"
     v-model="filters.excludedInitiatorDomains"
     filter-type="excludedInitiatorDomains"
+  />
+  <DomainType
+    v-if="filters.domainType"
+    v-model="filters.domainType"
   />
 </template>

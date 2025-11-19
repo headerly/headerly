@@ -147,20 +147,28 @@ export const tabs: Tab[] = [
           || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
         },
       },
-      {
-        title: "Specified Tabs",
-        description: "List of tab IDs which the rule should match. An ID of TAB_ID_NONE includes requests which don't originate from a tab. An empty list is not allowed. Only supported for session-scoped rules.",
-        action: () => {},
-      },
-      {
-        title: "Excluded Specified Tabs",
-        description: "List of tab IDs which the rule should not match. An ID of TAB_ID_NONE excludes requests which don't originate from a tab. Only supported for session-scoped rules.",
-        action: () => {},
-      },
+      // {
+      //   title: "Specified Tabs",
+      //   description: "List of tab IDs which the rule should match. An ID of TAB_ID_NONE includes requests which don't originate from a tab. An empty list is not allowed. Only supported for session-scoped rules.",
+      //   action: () => {},
+      // },
+      // {
+      //   title: "Excluded Specified Tabs",
+      //   description: "List of tab IDs which the rule should not match. An ID of TAB_ID_NONE excludes requests which don't originate from a tab. Only supported for session-scoped rules.",
+      //   action: () => {},
+      // },
       {
         title: "Domain Type",
         description: "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.domainType = {
+            enabled: true,
+            value: "firstParty",
+          };
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.domainType);
+        },
       },
       {
         title: "Excluded Domain Type",
@@ -233,16 +241,16 @@ export const tabs: Tab[] = [
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         action: () => {},
       },
-      {
-        title: "Response Headers",
-        description: "Rule matches if the request matches any response header condition in this list (if specified).",
-        action: () => {},
-      },
-      {
-        title: "Excluded Response Headers",
-        description: "Rule does not match if the request matches any response header condition in this list (if specified). If both excludedResponseHeaders and responseHeaders are specified, then excludedResponseHeaders takes precedence.",
-        action: () => {},
-      },
+      // {
+      //   title: "Response Headers",
+      //   description: "Rule matches if the request matches any response header condition in this list (if specified).",
+      //   action: () => {},
+      // },
+      // {
+      //   title: "Excluded Response Headers",
+      //   description: "Rule does not match if the request matches any response header condition in this list (if specified). If both excludedResponseHeaders and responseHeaders are specified, then excludedResponseHeaders takes precedence.",
+      //   action: () => {},
+      // },
     ],
   },
 ];
