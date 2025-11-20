@@ -3,6 +3,7 @@ import { useProfilesStore } from "#/stores/useProfilesStore";
 import { computed } from "vue";
 import DomainsFilter from "../conditions/DomainsFilter.vue";
 import DomainType from "../conditions/DomainType.vue";
+import IsUrlFilterCaseSensitive from "../conditions/IsUrlFilterCaseSensitive.vue";
 import UrlOrRegexFilter from "../conditions/UrlOrRegexFilter.vue";
 
 const profilesStore = useProfilesStore();
@@ -11,6 +12,10 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
 </script>
 
 <template>
+  <IsUrlFilterCaseSensitive
+    v-if="filters.isUrlFilterCaseSensitive"
+    v-model="filters.isUrlFilterCaseSensitive"
+  />
   <UrlOrRegexFilter
     v-if="filters.urlFilter?.length"
     v-model="filters.urlFilter"

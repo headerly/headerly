@@ -9,7 +9,7 @@ import {
 } from "#/components/ui/tooltip";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 
-const model = defineModel<NonNullable<Filter["domainType"]>>({
+const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({
   required: true,
 });
 
@@ -18,7 +18,7 @@ const profilesStore = useProfilesStore();
 
 <template>
   <Fieldset
-    name="Resource Type"
+    name="Url Filter Case Sensitive"
   >
     <template #main>
       <div class="flex items-center gap-2">
@@ -26,19 +26,19 @@ const profilesStore = useProfilesStore();
           <input
             v-model="model.value"
             type="radio"
-            value="firstParty"
+            :value="true"
             class="radio radio-sm"
           >
-          First Party
+          On
         </label>
         <label class="label gap-2 text-base text-base-content">
           <input
             v-model="model.value"
             type="radio"
-            value="thirdParty"
+            :value="false"
             class="radio radio-sm"
           >
-          Third Party
+          Off
         </label>
       </div>
     </template>
@@ -56,7 +56,7 @@ const profilesStore = useProfilesStore();
             <button
               class="btn btn-square btn-ghost btn-xs btn-error"
               @click="() => {
-                delete profilesStore.selectedProfile.filters.domainType
+                delete profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive
               }"
             >
               <i class="i-lucide-trash size-4" />

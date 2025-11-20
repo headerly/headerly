@@ -79,5 +79,9 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
     condition.domainType = profile.filters.domainType.value;
   }
 
+  if (profile.filters.isUrlFilterCaseSensitive?.enabled) {
+    condition.isUrlFilterCaseSensitive = profile.filters.isUrlFilterCaseSensitive.value;
+  }
+
   return condition;
 }

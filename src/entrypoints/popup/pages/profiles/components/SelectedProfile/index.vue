@@ -25,7 +25,7 @@ const { class: className } = defineProps<{
 function hasAnyFilters(filters: Profile["filters"]) {
   const arrayKeys = ["urlFilter", "regexFilter"] as const;
   const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const;
-  const baseTypeKeys = ["domainType"] as const;
+  const baseTypeKeys = ["domainType", "isUrlFilterCaseSensitive"] as const;
   // To prevent forgetting to update the null value calculation logic.
   const keysUnion = [...arrayKeys, ...groupKeys, ...baseTypeKeys];
   if (difference(Object.keys(filters), keysUnion).length > 0) {

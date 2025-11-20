@@ -52,6 +52,10 @@ export interface Filter {
   resourceTypes?: ResourceTypeFilter[];
   excludedResourceTypes?: ResourceTypeFilter[];
   domainType?: DomainTypeFilter;
+  isUrlFilterCaseSensitive?: {
+    enabled: boolean;
+    value: boolean;
+  };
 }
 
 export type GroupType = "radio" | "checkbox";

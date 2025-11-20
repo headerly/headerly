@@ -62,6 +62,19 @@ export const tabs: Tab[] = [
     icon: "i-lucide-list-filter-plus",
     items: [
       {
+        title: "Url&Regex Filter Case Sensitive",
+        description: "Specifies whether the URL filter is case sensitive.",
+        action: () => {
+          profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
+            enabled: true,
+            value: false,
+          };
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
+        },
+      },
+      {
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         action: async () => {
