@@ -1,5 +1,5 @@
 import type { Profile, ProfileManager } from "@/lib/type";
-import { debounce, isEqual, pick } from "es-toolkit";
+import { isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
@@ -36,7 +36,7 @@ async function initialize() {
     }
   });
 
-  const debouncedPowerOnChange = debounce(async (powerOn: boolean) => {
+  const debouncedPowerOnChange = async (powerOn: boolean) => {
     if (powerOn) {
       const manager = await profileManagerItem.getValue();
       // When power on, treat all profiles as created
@@ -53,9 +53,9 @@ async function initialize() {
       lastProfiles = [];
       setIconAndBadgeForDisabled();
     }
-  }, 500);
+  };
 
-  const debouncedProfileManagerChange = debounce(async (manager: ProfileManager) => {
+  const debouncedProfileManagerChange = async (manager: ProfileManager) => {
     if (await powerOnItem.getValue()) {
       const changes = diffProfiles(lastProfiles, manager.profiles);
       if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
@@ -64,7 +64,7 @@ async function initialize() {
       lastProfiles = manager.profiles;
       await updateRules(changes);
     }
-  }, 500);
+  };
 
   powerOnItem.watch((powerOn) => {
     debouncedPowerOnChange(powerOn!);
