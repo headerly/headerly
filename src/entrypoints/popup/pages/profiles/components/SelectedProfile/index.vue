@@ -22,18 +22,23 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
+type FilterKeys = (keyof Profile["filters"])[];
+
 function hasAnyFilters(filters: Profile["filters"]) {
-  const arrayKeys = ["urlFilter", "regexFilter"] as const;
-  const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const;
-  const baseTypeKeys = ["domainType", "isUrlFilterCaseSensitive"] as const;
+  const arrayWithEnabledKeys = ["urlFilter", "regexFilter"] as const satisfies FilterKeys;
+  const primitiveArrayKeys = ["requestMethods", "excludedRequestMethods", "resourceTypes", "excludedResourceTypes"] as const satisfies FilterKeys;
+  const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const satisfies FilterKeys;
+  const baseTypeKeys = ["domainType", "isUrlFilterCaseSensitive"] as const satisfies FilterKeys;
+
   // To prevent forgetting to update the null value calculation logic.
-  const keysUnion = [...arrayKeys, ...groupKeys, ...baseTypeKeys];
+  const keysUnion = [...arrayWithEnabledKeys, ...primitiveArrayKeys, ...groupKeys, ...baseTypeKeys] as const satisfies FilterKeys;
   if (difference(Object.keys(filters), keysUnion).length > 0) {
     throw new Error(`Unknown filter keys, please update hasAnyFilters function accordingly.`);
   }
 
-  return arrayKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
+  return arrayWithEnabledKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
     || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)))
+    || primitiveArrayKeys.some(key => filters[key] && filters[key].length)
     || baseTypeKeys.some(key => Boolean(filters[key]));
 }
 

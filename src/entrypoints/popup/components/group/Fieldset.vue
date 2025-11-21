@@ -12,7 +12,7 @@ const { name } = defineProps<{
   >
     <legend
       data-testid="fieldset-legend"
-      class="fieldset-legend text-base font-medium"
+      class="fieldset-legend text-base font-semibold"
     >
       <slot name="name-before" />
       <span data-testid="fieldset-name">{{ name }}</span>

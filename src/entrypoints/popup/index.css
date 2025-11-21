@@ -15,6 +15,10 @@
   --font-mono: "Intel One Mono Variable", monospace;
 };
 
+:root {
+  --border: 2px;
+}
+
 @theme inline {
   --animate-meteor-effect: meteor 5s linear infinite;
   @keyframes meteor {

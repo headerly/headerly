@@ -4,6 +4,7 @@ import { computed } from "vue";
 import DomainsFilter from "../conditions/DomainsFilter.vue";
 import DomainType from "../conditions/DomainType.vue";
 import IsUrlFilterCaseSensitive from "../conditions/IsUrlFilterCaseSensitive.vue";
+import ResourceTypeOrRequestMethod from "../conditions/ResourceTypeOrRequestMethod.vue";
 import UrlOrRegexFilter from "../conditions/UrlOrRegexFilter.vue";
 
 const profilesStore = useProfilesStore();
@@ -49,5 +50,25 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
   <DomainType
     v-if="filters.domainType"
     v-model="filters.domainType"
+  />
+  <ResourceTypeOrRequestMethod
+    v-if="filters.resourceTypes"
+    v-model="filters.resourceTypes"
+    type="resourceTypes"
+  />
+  <ResourceTypeOrRequestMethod
+    v-if="filters.excludedResourceTypes"
+    v-model="filters.excludedResourceTypes"
+    type="excludedResourceTypes"
+  />
+  <ResourceTypeOrRequestMethod
+    v-if="filters.requestMethods"
+    v-model="filters.requestMethods"
+    type="requestMethods"
+  />
+  <ResourceTypeOrRequestMethod
+    v-if="filters.excludedRequestMethods"
+    v-model="filters.excludedRequestMethods"
+    type="excludedRequestMethods"
   />
 </template>

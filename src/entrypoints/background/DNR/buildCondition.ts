@@ -7,21 +7,37 @@ interface BuildConditionOptions {
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
 
-  if (profile.filters.resourceTypes?.length) {
-    const enabledResourceTypes = profile.filters.resourceTypes.find(f => f.enabled);
-    if (enabledResourceTypes && enabledResourceTypes.value.length > 0) {
-      condition.resourceTypes = enabledResourceTypes.value;
-    }
-  } else if (!options.nativeResourceTypeBehavior) {
-    // If no resource types are specified, match all types
+  if (!profile.filters.resourceTypes && !profile.filters.excludedResourceTypes && !options.nativeResourceTypeBehavior) {
+    // If no resource types are specified, match all types.
     // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
     condition.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
   }
 
-  if (profile.filters.excludedResourceTypes?.length) {
-    const excludedResourceTypes = profile.filters.excludedResourceTypes.find(f => f.enabled);
-    if (excludedResourceTypes && excludedResourceTypes.value.length > 0) {
-      condition.excludedResourceTypes = excludedResourceTypes.value;
+  if (profile.filters.resourceTypes) {
+    const enabledResourceTypes = profile.filters.resourceTypes;
+    if (enabledResourceTypes && enabledResourceTypes.length > 0) {
+      condition.resourceTypes = enabledResourceTypes;
+    }
+  }
+
+  if (profile.filters.excludedResourceTypes) {
+    const excludedResourceTypes = profile.filters.excludedResourceTypes;
+    if (excludedResourceTypes && excludedResourceTypes.length > 0) {
+      condition.excludedResourceTypes = excludedResourceTypes;
+    }
+  }
+
+  if (profile.filters.requestMethods) {
+    const enabledRequestMethods = profile.filters.requestMethods;
+    if (enabledRequestMethods && enabledRequestMethods.length > 0) {
+      condition.requestMethods = enabledRequestMethods;
+    }
+  }
+
+  if (profile.filters.excludedRequestMethods) {
+    const excludedRequestMethods = profile.filters.excludedRequestMethods;
+    if (excludedRequestMethods && excludedRequestMethods.length > 0) {
+      condition.excludedRequestMethods = excludedRequestMethods;
     }
   }
 

@@ -33,10 +33,6 @@ export interface DomainsFilter {
   items: ({ value: string } & GroupItem)[];
 }
 
-export interface ResourceTypeFilter extends GroupItem {
-  value: `${Browser.declarativeNetRequest.ResourceType}`[];
-}
-
 export interface DomainTypeFilter {
   enabled: boolean;
   value: `${Browser.declarativeNetRequest.DomainType}`;
@@ -49,8 +45,10 @@ export interface Filter {
   excludedInitiatorDomains?: DomainsFilter;
   requestDomains?: DomainsFilter;
   excludedRequestDomains?: DomainsFilter;
-  resourceTypes?: ResourceTypeFilter[];
-  excludedResourceTypes?: ResourceTypeFilter[];
+  resourceTypes?: `${Browser.declarativeNetRequest.ResourceType}`[];
+  excludedResourceTypes?: `${Browser.declarativeNetRequest.ResourceType}`[];
+  requestMethods?: `${Browser.declarativeNetRequest.RequestMethod}`[];
+  excludedRequestMethods?: `${Browser.declarativeNetRequest.RequestMethod}`[];
   domainType?: DomainTypeFilter;
   isUrlFilterCaseSensitive?: {
     enabled: boolean;

@@ -18,7 +18,7 @@ const profilesStore = useProfilesStore();
 
 <template>
   <Fieldset
-    name="Resource Type"
+    name="Domain Type"
   >
     <template #main>
       <div class="flex items-center gap-2">

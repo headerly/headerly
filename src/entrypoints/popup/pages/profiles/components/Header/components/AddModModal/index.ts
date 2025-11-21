@@ -62,19 +62,6 @@ export const tabs: Tab[] = [
     icon: "i-lucide-list-filter-plus",
     items: [
       {
-        title: "Url&Regex Filter Case Sensitive",
-        description: "Specifies whether the URL filter is case sensitive.",
-        action: () => {
-          profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
-            enabled: true,
-            value: false,
-          };
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
-        },
-      },
-      {
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         action: async () => {
@@ -85,6 +72,25 @@ export const tabs: Tab[] = [
               id: crypto.randomUUID(),
               enabled: true,
               value: ["https", "http"].includes(url.protocol) ? `||${url.hostname}/` : "",
+              comments: "",
+            },
+          ];
+        },
+        get disabled() {
+          return (profilesStore.selectedProfile.filters.urlFilter
+            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
+          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
+        },
+      },
+      {
+        title: "Regex Filter",
+        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
+        action: () => {
+          profilesStore.selectedProfile.filters.regexFilter = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              value: "",
               comments: "",
             },
           ];
@@ -139,25 +145,6 @@ export const tabs: Tab[] = [
         get disabled() {
           return profilesStore.selectedProfile.filters.excludedRequestDomains
             && profilesStore.selectedProfile.filters.excludedRequestDomains.items.length > 0;
-        },
-      },
-      {
-        title: "Regex Filter",
-        description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
-        action: () => {
-          profilesStore.selectedProfile.filters.regexFilter = [
-            {
-              id: crypto.randomUUID(),
-              enabled: true,
-              value: "",
-              comments: "",
-            },
-          ];
-        },
-        get disabled() {
-          return (profilesStore.selectedProfile.filters.urlFilter
-            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
-          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
         },
       },
       // {
@@ -237,22 +224,55 @@ export const tabs: Tab[] = [
       {
         title: "Request Methods",
         description: "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.requestMethods = Object.values(browser.declarativeNetRequest.RequestMethod);
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.requestMethods);
+        },
       },
       {
         title: "Excluded Request Methods",
         description: "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.excludedRequestMethods = Object.values(browser.declarativeNetRequest.RequestMethod);
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.excludedRequestMethods);
+        },
       },
       {
         title: "Resource Types",
         description: "List of resource types which the rule can match. An empty list is not allowed.",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.resourceTypes);
+        },
       },
       {
         title: "Excluded Resource Types",
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
-        action: () => {},
+        action: () => {
+          profilesStore.selectedProfile.filters.excludedResourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.excludedResourceTypes);
+        },
+      },
+      {
+        title: "Url & Regex Filter Case Sensitive",
+        description: "Specifies whether the URL filter is case sensitive.",
+        action: () => {
+          profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
+            enabled: true,
+            value: false,
+          };
+        },
+        get disabled() {
+          return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
+        },
       },
       // {
       //   title: "Response Headers",
