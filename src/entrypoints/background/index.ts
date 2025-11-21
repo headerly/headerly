@@ -18,35 +18,32 @@ async function initialize() {
   const { item: profileManagerItem } = useProfileManagerStorage();
   let lastProfiles = (await profileManagerItem.getValue()).profiles;
 
+  async function treatAllProfilesAsCreated() {
+    const manager = await profileManagerItem.getValue();
+    // When power on, treat all profiles as created
+    const changes = {
+      deleted: [],
+      modified: [],
+      created: manager.profiles.filter(p => p.enabled).map(pickProfileFields),
+    } as const satisfies ProfileChanges;
+    await updateRules(changes);
+    lastProfiles = manager.profiles;
+  }
+
   onMessage("reinitializeAllRules", async () => {
     const powerOn = await powerOnItem.getValue();
     if (powerOn) {
       await unregisterAllRules();
-      const manager = await profileManagerItem.getValue();
-      const changes = {
-        deleted: [],
-        modified: [],
-        created: manager.profiles.map(pickProfileFields),
-      } as const satisfies ProfileChanges;
-      await updateRules(changes);
-      lastProfiles = manager.profiles;
+      await treatAllProfilesAsCreated();
     } else {
       await unregisterAllRules();
       lastProfiles = [];
     }
   });
 
-  const debouncedPowerOnChange = async (powerOn: boolean) => {
+  const onPowerOnChange = async (powerOn: boolean) => {
     if (powerOn) {
-      const manager = await profileManagerItem.getValue();
-      // When power on, treat all profiles as created
-      const changes = {
-        deleted: [],
-        modified: [],
-        created: manager.profiles.map(pickProfileFields),
-      } as const satisfies ProfileChanges;
-      await updateRules(changes);
-      lastProfiles = manager.profiles;
+      await treatAllProfilesAsCreated();
       browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
     } else {
       await unregisterAllRules();
@@ -55,7 +52,7 @@ async function initialize() {
     }
   };
 
-  const debouncedProfileManagerChange = async (manager: ProfileManager) => {
+  const onProfileManagerChange = async (manager: ProfileManager) => {
     if (await powerOnItem.getValue()) {
       const changes = diffProfiles(lastProfiles, manager.profiles);
       if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
@@ -67,11 +64,11 @@ async function initialize() {
   };
 
   powerOnItem.watch((powerOn) => {
-    debouncedPowerOnChange(powerOn!);
+    onPowerOnChange(powerOn);
   });
 
   profileManagerItem.watch((manager) => {
-    debouncedProfileManagerChange(manager!);
+    onProfileManagerChange(manager);
   });
 }
 
