@@ -170,7 +170,6 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>
@@ -192,6 +191,9 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+      <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
+
       <SecondaryOperations>
         <template #trigger="{ popovertarget }">
           <button

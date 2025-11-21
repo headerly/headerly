@@ -161,7 +161,7 @@ function ignoreWarning() {
               default-tab="conditions"
               class="btn btn-square btn-sm btn-warning"
             />
-          </tooltipprovider>
+          </TooltipProvider>
         </div>
       </div>
       <ModGroup

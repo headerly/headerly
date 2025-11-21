@@ -45,7 +45,7 @@ const popovertarget = "popover-sidebar-menu";
       :popovertarget
       :class="cn(
         `
-          btn mx-2 btn-square btn-soft btn-sm btn-primary
+          btn mx-2 btn-square btn-soft btn-sm
           [anchor-name:--anchor-sidebar-menu]
         `,
         settingsStore.powerOn || 'opacity-60',
@@ -62,11 +62,6 @@ const popovertarget = "popover-sidebar-menu";
         [position-anchor:--anchor-sidebar-menu]
       "
     >
-      <li>
-        <button class="flex flex-row items-center gap-2" @click="profilesStore.addProfile">
-          <span>Add New Profile</span>
-        </button>
-      </li>
       <li>
         <ProfileManage>
           <button
@@ -129,6 +124,21 @@ const popovertarget = "popover-sidebar-menu";
       )"
     >
       <ProfileSelect />
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              class="btn btn-square self-center btn-soft btn-sm btn-primary"
+              @click="profilesStore.addProfile"
+            >
+              <i class="i-lucide-plus size-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Add new profile</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
 
     <div class="divider m-0" />

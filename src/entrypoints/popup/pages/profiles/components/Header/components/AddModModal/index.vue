@@ -25,7 +25,7 @@ const dialogRef = useTemplateRef("dialogRef");
     <Tooltip>
       <TooltipTrigger as-child>
         <button
-          :class="cn('btn btn-square btn-ghost btn-sm btn-primary', className)"
+          :class="cn('btn btn-square btn-sm btn-primary', className)"
           @click="() => {
             dialogRef?.showModal()
           }"
