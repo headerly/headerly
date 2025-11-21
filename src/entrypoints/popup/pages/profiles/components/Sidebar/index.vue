@@ -139,8 +139,8 @@ const popovertarget = "popover-sidebar-menu";
           <TooltipTrigger as-child>
             <label
               :class="cn(
-                'btn btn-square btn-soft btn-sm',
-                settingsStore.powerOn ? 'btn-error' : `
+                'btn btn-square btn-sm',
+                settingsStore.powerOn ? 'btn-soft btn-error' : `
                   animate-pulse btn-success
                 `,
               )"
