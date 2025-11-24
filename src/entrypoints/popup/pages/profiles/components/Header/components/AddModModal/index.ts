@@ -13,6 +13,21 @@ interface Tab {
 }
 
 const profilesStore = useProfilesStore();
+
+async function getCurrentTabHostname() {
+  const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  // Try to construct URL object, return null if invalid URL(for example, `chrome://extensions/`)
+  try {
+    const url = new URL(currentTab?.url ?? "");
+    if (!url) {
+      return "";
+    }
+    return (["https", "http"].includes(url.protocol) ? url.hostname : "");
+  } catch {
+    return "";
+  }
+}
+
 export const tabs: Tab[] = [
   {
     label: "Actions",
@@ -65,13 +80,12 @@ export const tabs: Tab[] = [
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         action: async () => {
-          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-          const url = new URL(currentTab?.url ?? "");
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.urlFilter = [
             {
               id: crypto.randomUUID(),
               enabled: true,
-              value: ["https", "http"].includes(url.protocol) ? `||${url.hostname}/` : "",
+              value: hostname ? `||${hostname}/` : "",
               comments: "",
             },
           ];
@@ -105,15 +119,14 @@ export const tabs: Tab[] = [
         title: "Request Domains",
         description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         action: async () => {
-          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-          const url = new URL(currentTab?.url ?? "");
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.requestDomains = {
             type: "checkbox",
             items: [
               {
                 id: crypto.randomUUID(),
                 enabled: true,
-                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                value: hostname,
                 comments: "",
               },
             ],
@@ -128,15 +141,14 @@ export const tabs: Tab[] = [
         title: "Excluded Request Domains",
         description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         action: async () => {
-          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-          const url = new URL(currentTab?.url ?? "");
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.excludedRequestDomains = {
             type: "checkbox",
             items: [
               {
                 id: crypto.randomUUID(),
                 enabled: true,
-                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                value: hostname ? `||${hostname}/` : "",
                 comments: "",
               },
             ],
@@ -179,15 +191,14 @@ export const tabs: Tab[] = [
         title: "Initiator Domains",
         description: "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         action: async () => {
-          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-          const url = new URL(currentTab?.url ?? "");
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.initiatorDomains = {
             type: "checkbox",
             items: [
               {
                 id: crypto.randomUUID(),
                 enabled: true,
-                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                value: hostname ? `||${hostname}/` : "",
                 comments: "",
               },
             ],
@@ -202,15 +213,14 @@ export const tabs: Tab[] = [
         title: "Excluded Initiator Domains",
         description: "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
         action: async () => {
-          const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-          const url = new URL(currentTab?.url ?? "");
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
             type: "checkbox",
             items: [
               {
                 id: crypto.randomUUID(),
                 enabled: true,
-                value: ["https", "http"].includes(url.protocol) ? url.hostname : "",
+                value: hostname ? `||${hostname}/` : "",
                 comments: "",
               },
             ],
