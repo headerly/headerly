@@ -284,16 +284,6 @@ export const tabs: Tab[] = [
           return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
         },
       },
-      // {
-      //   title: "Response Headers",
-      //   description: "Rule matches if the request matches any response header condition in this list (if specified).",
-      //   action: () => {},
-      // },
-      // {
-      //   title: "Excluded Response Headers",
-      //   description: "Rule does not match if the request matches any response header condition in this list (if specified). If both excludedResponseHeaders and responseHeaders are specified, then excludedResponseHeaders takes precedence.",
-      //   action: () => {},
-      // },
     ],
   },
 ];
