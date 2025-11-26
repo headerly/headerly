@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
-import Header from "./components/Header";
+import Header from "./components/Header/index.vue";
 import SelectedProfile from "./components/SelectedProfile";
 import Sidebar from "./components/Sidebar";
 

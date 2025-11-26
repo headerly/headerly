@@ -2,9 +2,9 @@
 import type { UUID } from "node:crypto";
 import type { Profile } from "@/lib/type";
 import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
+import { copyProfile, copyProfileId } from "#/pages/profiles/components/Header/components/copyProfile";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useTemplateRef, watch } from "vue";
-import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
 const { id } = defineProps<{
@@ -27,11 +27,6 @@ const profile = defineModel<Profile>({
 });
 
 const popovertarget = `popover-profile-context-menu-${id}`;
-
-async function copyProfileId() {
-  await navigator.clipboard.writeText(profile.value.id);
-  toast.success("Profile ID copied to clipboard.");
-}
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 </script>
@@ -105,8 +100,14 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
         </button>
       </li>
       <li>
+        <button @click="() => copyProfile(profile)">
+          <i class="i-lucide-download size-4" />
+          <span>Copy Profile</span>
+        </button>
+      </li>
+      <li>
         <button
-          @click="copyProfileId"
+          @click="() => copyProfileId(profile)"
         >
           <i class="i-lucide-copy size-4" />
           <span>Copy ID</span>

@@ -2,16 +2,11 @@
 import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useTemplateRef } from "vue";
-import { toast } from "vue-sonner";
+import { copyProfile, copyProfileId } from "./copyProfile";
 
 const profilesStore = useProfilesStore();
 
 const popovertarget = `popover-profile-secondary-operations`;
-
-async function copyProfileId() {
-  await navigator.clipboard.writeText(profilesStore.selectedProfile.id);
-  toast.success("Profile ID copied to clipboard.");
-}
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 </script>
@@ -35,7 +30,13 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       "
     >
       <li>
-        <button @click="copyProfileId">
+        <button @click="() => copyProfile(profilesStore.selectedProfile)">
+          <i class="i-lucide-download size-4" />
+          <span>Copy Profile</span>
+        </button>
+      </li>
+      <li>
+        <button @click="() => copyProfileId(profilesStore.selectedProfile)">
           <i class="i-lucide-copy size-4" />
           <span>Copy ID</span>
         </button>

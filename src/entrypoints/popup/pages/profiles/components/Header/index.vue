@@ -199,7 +199,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           <button
             :popovertarget
             :style="`anchor-name:--${popovertarget}`"
-            class="btn btn-square btn-soft btn-sm"
+            class="btn btn-square btn-ghost btn-sm"
           >
             <i class="i-lucide-ellipsis-vertical size-4" />
             <span class="sr-only">Open Secondary Operations Dropdown</span>
