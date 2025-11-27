@@ -78,6 +78,11 @@ const popovertarget = "popover-sidebar-menu";
         </ProfileManage>
       </li>
       <li>
+        <RouterLink to="/import" class="flex flex-row items-center gap-2">
+          <span>Import Profiles</span>
+        </RouterLink>
+      </li>
+      <li>
         <RouterLink to="/settings" class="flex flex-row items-center gap-2">
           <span>Settings</span>
         </RouterLink>
@@ -129,7 +134,7 @@ const popovertarget = "popover-sidebar-menu";
           <TooltipTrigger as-child>
             <button
               class="btn btn-square self-center btn-soft btn-sm btn-primary"
-              @click="profilesStore.addProfile"
+              @click="profilesStore.addProfile()"
             >
               <i class="i-lucide-plus size-4" />
             </button>

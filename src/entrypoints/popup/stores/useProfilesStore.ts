@@ -87,13 +87,13 @@ export const useProfilesStore = defineStore("profiles", () => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
 
-  function addProfile() {
+  function addProfile(profile?: Profile) {
     const newProfile = createProfile({
       name: `New Profile ${manager.value.profiles.length + 1}`,
       emoji: getProfileIcon(),
     });
-    manager.value.profiles.push(newProfile);
-    manager.value.selectedProfileId = newProfile.id;
+    manager.value.profiles.push(profile ?? newProfile);
+    manager.value.selectedProfileId = (profile ?? newProfile).id;
   }
 
   function duplicateProfile(profileId?: UUID) {
