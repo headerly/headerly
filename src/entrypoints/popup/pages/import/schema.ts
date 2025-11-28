@@ -90,6 +90,7 @@ const urlFilterCaseSensitiveSchema = z.object({
   value: z.boolean(),
 });
 
+// There will be no tabs filter, as it is meaningless in cross-device scenarios.
 const filterSchema = z.object({
   urlFilter: z.array(urlOrRegexFilterSchema).optional(),
   regexFilter: z.array(urlOrRegexFilterSchema).optional(),

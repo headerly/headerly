@@ -6,6 +6,9 @@ export async function copyProfileId(profile: Profile) {
   toast.success("Profile ID copied to clipboard.");
 }
 
+// TODO: Tab filters offer no benefit for sharing.
+// After implementing a tab filter, you need to manually delete
+// the relevant fields to prevent them from appearing in the clipboard.
 export async function copyProfile(profile: Profile) {
   const profileString = JSON.stringify(profile, null, 2);
   // Manually deleting UUIDs from each Profile is too tedious,
