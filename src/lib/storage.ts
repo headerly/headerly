@@ -120,8 +120,6 @@ export function usePowerOnStorage() {
   return useBrowserStorage<boolean>("local:powerOn", true);
 }
 
-export type Theme = "light" | "dark" | "system";
-
 export function useAutoAssignEmojiStorage() {
   return useBrowserStorage<boolean>("local:autoAssignEmoji", true);
 }
