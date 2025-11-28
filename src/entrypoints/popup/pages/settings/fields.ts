@@ -1,8 +1,7 @@
-import type { Theme } from "@/lib/storage";
+import type { BasicColorSchema } from "@vueuse/core";
 import { categories } from "#/constants/emoji";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useSettingsStore } from "#/stores/useSettingsStore";
-import { handleThemeChange } from "#/theme";
 import { getModKey } from "@/lib/utils";
 
 interface BaseSettingField {
@@ -43,15 +42,11 @@ export const settings = [
         type: "select",
         label: "Theme",
         options: [
-          { label: "System", value: "system" },
+          { label: "Auto", value: "auto" },
           { label: "Light", value: "light" },
           { label: "Dark", value: "dark" },
-        ],
+        ] satisfies { label: string; value: BasicColorSchema }[],
         key: "theme",
-        onChange: (value) => {
-          const newTheme = value as Theme;
-          handleThemeChange(newTheme);
-        },
       },
       {
         type: "checkbox",

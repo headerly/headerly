@@ -15,6 +15,9 @@ const settingsStore = useSettingsStore();
         <component :is="Component" />
       </KeepAlive>
     </RouterView>
-    <Toaster :theme="settingsStore.theme" rich-colors />
+    <Toaster
+      :theme="settingsStore.theme === 'auto' ? 'system' : settingsStore.theme"
+      rich-colors
+    />
   </div>
 </template>

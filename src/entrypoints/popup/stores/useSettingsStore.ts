@@ -1,3 +1,4 @@
+import { useColorMode } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
@@ -10,13 +11,15 @@ import {
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
   useSwitchModeStorage,
-  useThemeStorage,
 } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", () => {
+  const theme = useColorMode({
+    attribute: "data-theme",
+    emitAuto: true,
+  });
   const storageConfigs = {
     powerOn: usePowerOnStorage(),
-    theme: useThemeStorage(),
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),
     displayNumberBadge: useDisplayNumberBadgeStorage(),
@@ -47,6 +50,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   return {
     ...settings,
+    theme,
     isModified,
     resetToDefault,
   };

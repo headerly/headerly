@@ -75,9 +75,6 @@ function InfoTooltip({ description }: { description: string }) {
                       v-model="settingsStore[field.key]"
                       class="min-w-60"
                       :options="field.options"
-                      @change="(v) => {
-                        field.onChange?.(v);
-                      }"
                     />
                     <InfoTooltip
                       v-if="'description' in field && field.description"

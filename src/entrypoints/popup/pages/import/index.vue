@@ -180,7 +180,6 @@ async function confirmImport() {
 
 <style scoped>
 :deep(.cm-editor) {
-  background-color: #1D232A !important;
   height: 100%;
 }
 
@@ -190,7 +189,6 @@ async function confirmImport() {
 
 :deep(.cm-gutters) {
   font-family: 'Intel One Mono Variable', monospace !important;
-  background-color: #1D232A !important;
   height: 100%;
 }
 </style>

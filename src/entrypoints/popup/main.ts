@@ -4,13 +4,11 @@ import { createPinia } from "pinia";
 import { createApp } from "vue";
 import App from "./App.vue";
 import { router } from "./router";
-import { initializeTheme } from "./theme";
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/intel-one-mono";
 import "./index.css";
 
-initializeTheme();
 createApp(App)
   .use(router)
   .use(createPinia())
