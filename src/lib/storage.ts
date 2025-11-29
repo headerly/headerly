@@ -3,6 +3,7 @@ import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
 import type { UUID } from "node:crypto";
 import type { HeaderMod, Profile, ProfileManager, SyncCookie } from "./type";
 import { useStorageAsync } from "@vueuse/core";
+import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 
 function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (value: T) => void) {
@@ -37,6 +38,14 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, onReady?: (v
       onReady,
     },
   );
+
+  // Ensure data synchronization between multiple tab pages to avoid data inconsistency
+  item.watch((newValue) => {
+    if (!isEqual(toRaw(ref.value), newValue)) {
+      ref.value = newValue;
+    }
+  });
+
   return {
     /**
      * The reactive object returned by `useStorageAsync`. It can only be used in the webpages, not in the background.
