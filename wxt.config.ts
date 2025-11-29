@@ -15,7 +15,6 @@ export default defineConfig({
     permissions: [
       "storage",
       "declarativeNetRequest",
-      "declarativeNetRequestFeedback",
     ],
     host_permissions: [
       "<all_urls>",
