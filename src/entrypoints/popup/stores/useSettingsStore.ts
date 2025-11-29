@@ -33,13 +33,14 @@ export const useSettingsStore = defineStore("settings", () => {
   const isModified = computed(() => {
     return Object.values(storageConfigs).some(
       config => config.ref.value !== config.initialValue,
-    );
+    ) || theme.value !== "auto";
   });
 
   const resetToDefault = () => {
     Object.values(storageConfigs).forEach((config) => {
       config.ref.value = config.initialValue;
     });
+    theme.value = "auto";
   };
 
   const settings = Object.fromEntries(
