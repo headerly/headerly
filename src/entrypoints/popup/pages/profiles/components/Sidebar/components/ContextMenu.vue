@@ -37,8 +37,14 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       :popovertarget
       :style="`anchor-name:--${popovertarget}`"
       @contextmenu="(e) => {
-        e.preventDefault();
-        popoverRef?.togglePopover();
+        e.preventDefault()
+      }"
+      @mouseup="(event) => {
+        // https://github.com/whatwg/html/issues/10905
+        const rightClick = event.button === 2;
+        if (rightClick || event.ctrlKey) {
+          popoverRef?.showPopover();
+        }
       }"
     >
       <slot name="trigger" />
