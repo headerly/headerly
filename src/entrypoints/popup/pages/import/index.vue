@@ -43,6 +43,7 @@ function addIdsToProfile(profileData: ProfileWithoutIds) {
   return {
     ...profileData,
     id: crypto.randomUUID(),
+    syncCookieGroups: [],
     requestHeaderModGroups: profileData.requestHeaderModGroups.map(group => ({
       ...group,
       id: crypto.randomUUID(),
@@ -52,14 +53,6 @@ function addIdsToProfile(profileData: ProfileWithoutIds) {
       })),
     })),
     responseHeaderModGroups: profileData.responseHeaderModGroups.map(group => ({
-      ...group,
-      id: crypto.randomUUID(),
-      items: group.items.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-    })),
-    syncCookieGroups: profileData.syncCookieGroups.map(group => ({
       ...group,
       id: crypto.randomUUID(),
       items: group.items.map(item => ({

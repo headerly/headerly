@@ -61,18 +61,6 @@ const headerModGroupSchema = z.object({
   items: z.array(headerModSchema),
 });
 
-const syncCookieSchema = groupItemWithoutIdSchema.extend({
-  domain: z.string(),
-  name: z.string(),
-  value: z.string(),
-  path: z.string(),
-});
-
-const syncCookieGroupSchema = z.object({
-  type: groupTypeSchema,
-  items: z.array(syncCookieSchema),
-});
-
 const urlOrRegexFilterSchema = groupItemWithValueSchema;
 
 const domainsFilterSchema = z.object({
@@ -114,7 +102,6 @@ export const profileWithoutIdsZodSchema = z.object({
   comments: z.string(),
   requestHeaderModGroups: z.array(headerModGroupSchema),
   responseHeaderModGroups: z.array(headerModGroupSchema),
-  syncCookieGroups: z.array(syncCookieGroupSchema),
   filters: filterSchema,
 });
 

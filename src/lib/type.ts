@@ -54,6 +54,10 @@ export interface Filter {
     enabled: boolean;
     value: boolean;
   };
+  tabIds?: {
+    enabled: boolean;
+    value: number[];
+  };
 }
 
 export type GroupType = "radio" | "checkbox";
