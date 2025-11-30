@@ -6,7 +6,7 @@ import App from "./App.vue";
 import { router } from "./router";
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
-import "@fontsource-variable/intel-one-mono";
+import "@fontsource-variable/jetbrains-mono";
 import "./index.css";
 
 createApp(App)

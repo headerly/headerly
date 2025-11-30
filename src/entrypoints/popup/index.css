@@ -12,7 +12,7 @@
 
 @theme {
   --font-sans: "Inter Variable", sans-serif;
-  --font-mono: "Intel One Mono Variable", monospace;
+  --font-mono: "JetBrains Mono Variable", monospace;
 };
 
 :root {

@@ -177,11 +177,11 @@ async function confirmImport() {
 }
 
 :deep(.cm-content) {
-  font-family: 'Intel One Mono Variable', monospace !important;
+  font-family: 'JetBrains Mono Variable', monospace !important;
 }
 
 :deep(.cm-gutters) {
-  font-family: 'Intel One Mono Variable', monospace !important;
+  font-family: 'JetBrains Mono Variable', monospace !important;
   height: 100%;
 }
 </style>

@@ -6,7 +6,7 @@ pre-commit:
       stage_fixed: true
     typecheck:
       glob: "*.{ts,vue}"
-      run: pnpm exec vue-tsc --noEmit
+      run: pnpm run typecheck
 commit-msg:
   commands:
     commitlint:

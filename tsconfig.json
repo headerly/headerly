@@ -8,8 +8,6 @@
       "unplugin-vue-router/client"
     ],
     /* Linting */
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
