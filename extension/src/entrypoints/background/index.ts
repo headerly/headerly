@@ -5,72 +5,74 @@ import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 
+const lastProfilesStorageItem = storage.defineItem<Profile[]>(
+  "local:lastProfiles",
+  {
+    fallback: [],
+  },
+);
+
 export default defineBackground({
   type: "module",
   main() {
-    // Service Worker top-level can't return a Promise.
-    initialize();
+    const { item: powerOnItem } = usePowerOnStorage();
+    const { item: profileManagerItem } = useProfileManagerStorage();
+    // `storage.watch` must be registered synchronously at the top level of the service worker;
+    // asynchronous registration will cause the service worker to lose events while in an inactive state.
+    powerOnItem.watch((powerOn) => {
+      onPowerOnChange(powerOn);
+    });
+    profileManagerItem.watch((manager) => {
+      onProfileManagerChange(manager);
+    });
+
+    onMessage("reinitializeAllRules", async () => {
+      const powerOn = await powerOnItem.getValue();
+      if (powerOn) {
+        await unregisterAllRules();
+        await treatAllProfilesAsCreated();
+      } else {
+        await unregisterAllRules();
+        lastProfilesStorageItem.setValue([]);
+      }
+    });
+
+    async function onPowerOnChange(powerOn: boolean) {
+      if (powerOn) {
+        await treatAllProfilesAsCreated();
+        browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
+      } else {
+        await unregisterAllRules();
+        lastProfilesStorageItem.setValue([]);
+        setIconAndBadgeForDisabled();
+      }
+    };
+
+    async function onProfileManagerChange(manager: ProfileManager) {
+      if (await powerOnItem.getValue()) {
+        const lastProfiles = await lastProfilesStorageItem.getValue();
+        const changes = diffProfiles(lastProfiles, manager.profiles);
+        if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
+          return;
+        }
+        lastProfilesStorageItem.setValue(manager.profiles);
+        await updateRules(changes);
+      }
+    };
+
+    async function treatAllProfilesAsCreated() {
+      const manager = await profileManagerItem.getValue();
+      // When power on, treat all profiles as created
+      const changes = {
+        deleted: [],
+        modified: [],
+        created: manager.profiles.filter(p => p.enabled).map(pickProfileFields),
+      } as const satisfies ProfileChanges;
+      await updateRules(changes);
+      lastProfilesStorageItem.setValue(manager.profiles);
+    }
   },
 });
-
-async function initialize() {
-  const { item: powerOnItem } = usePowerOnStorage();
-  const { item: profileManagerItem } = useProfileManagerStorage();
-  let lastProfiles = (await profileManagerItem.getValue()).profiles;
-
-  async function treatAllProfilesAsCreated() {
-    const manager = await profileManagerItem.getValue();
-    // When power on, treat all profiles as created
-    const changes = {
-      deleted: [],
-      modified: [],
-      created: manager.profiles.filter(p => p.enabled).map(pickProfileFields),
-    } as const satisfies ProfileChanges;
-    await updateRules(changes);
-    lastProfiles = manager.profiles;
-  }
-
-  onMessage("reinitializeAllRules", async () => {
-    const powerOn = await powerOnItem.getValue();
-    if (powerOn) {
-      await unregisterAllRules();
-      await treatAllProfilesAsCreated();
-    } else {
-      await unregisterAllRules();
-      lastProfiles = [];
-    }
-  });
-
-  const onPowerOnChange = async (powerOn: boolean) => {
-    if (powerOn) {
-      await treatAllProfilesAsCreated();
-      browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
-    } else {
-      await unregisterAllRules();
-      lastProfiles = [];
-      setIconAndBadgeForDisabled();
-    }
-  };
-
-  const onProfileManagerChange = async (manager: ProfileManager) => {
-    if (await powerOnItem.getValue()) {
-      const changes = diffProfiles(lastProfiles, manager.profiles);
-      if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
-        return;
-      }
-      lastProfiles = manager.profiles;
-      await updateRules(changes);
-    }
-  };
-
-  powerOnItem.watch((powerOn) => {
-    onPowerOnChange(powerOn);
-  });
-
-  profileManagerItem.watch((manager) => {
-    onProfileManagerChange(manager);
-  });
-}
 
 const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups"] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
