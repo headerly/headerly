@@ -63,7 +63,7 @@ const checked = computed(() => {
     <template #main>
       <div
         v-auto-animate
-        class="flex flex-col gap-1.5"
+        class="flex flex-col gap-1"
       >
         <div
           v-for="item, index in list"

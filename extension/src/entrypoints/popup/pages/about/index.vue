@@ -21,7 +21,7 @@ const name = browser.runtime.getManifest().name;
         <div
           class="
             relative flex h-full flex-col items-start justify-end
-            overflow-hidden rounded-2xl border border-base-100 bg-surface-900
+            overflow-hidden rounded-2xl border border-base-100 bg-highlight
             px-4 py-8 shadow-xl
           "
         >

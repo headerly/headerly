@@ -55,7 +55,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
 <template>
   <header
     :class="cn(
-      `flex items-center justify-between gap-1 bg-surface-900 py-1 pr-1 pl-2`,
+      `flex items-center justify-between gap-1 bg-emphasis py-1 pr-1 pl-2`,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"

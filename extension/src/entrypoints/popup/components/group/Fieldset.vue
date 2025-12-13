@@ -9,7 +9,7 @@ const { name } = defineProps<{
     v-auto-animate
     data-testid="fieldset"
     class="
-      fieldset w-full rounded-box border border-base-300 bg-surface-900 p-3
+      fieldset w-full rounded-box border border-base-300 bg-emphasis p-3
       text-base/tight
     "
   >

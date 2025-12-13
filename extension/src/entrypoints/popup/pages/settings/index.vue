@@ -53,7 +53,7 @@ function InfoTooltip({ description }: { description: string }) {
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="
-          fieldset gap-y-4 rounded-box border border-base-300 bg-surface-900 p-4
+          fieldset gap-y-4 rounded-box border border-base-300 bg-emphasis p-4
         "
       >
         <template #main>
