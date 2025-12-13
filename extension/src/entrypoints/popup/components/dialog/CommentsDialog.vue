@@ -44,7 +44,7 @@ defineExpose({
       </h3>
       <textarea
         v-model="commentsInput"
-        class="textarea mt-4 h-24 w-full text-base"
+        class="textarea mt-4 h-24 w-full"
         placeholder="Add your comments here..."
         autofocus
       />

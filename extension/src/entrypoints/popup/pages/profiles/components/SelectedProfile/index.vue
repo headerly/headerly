@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { Profile } from "@/lib/type";
-import { difference } from "es-toolkit";
+import { difference, isNotNil } from "es-toolkit";
 import { computed } from "vue";
 import {
   Tooltip,
@@ -76,6 +76,11 @@ function ignoreWarning() {
     { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
   ];
 }
+
+const arr = ["dog", "cat", null];
+
+arr.filter(item => typeof item === "string").map(item => item.toUpperCase());
+arr.filter(isNotNil).map(item => item.toUpperCase()); // 'item' is possibly 'null'.(18047)
 </script>
 
 <template>

@@ -78,7 +78,7 @@ const popovertarget = "emoji-picker-popover";
     :id="popovertarget"
     popover
     class="
-      dropdown h-82 w-67 rounded-box bg-base-300 pt-2 shadow-sm
+      dropdown h-82 w-67 rounded-box bg-surface-950 pt-2 shadow-sm
       [position-anchor:--anchor-emoji-picker]
     "
   >
@@ -143,7 +143,7 @@ const popovertarget = "emoji-picker-popover";
                 :key="emoji"
                 class="
                   btn btn-square size-9 text-xl btn-ghost btn-sm
-                  hover:bg-base-100
+                  hover:bg-surface-800
                 "
                 @click="selectedEmoji = emoji"
               >

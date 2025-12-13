@@ -72,27 +72,19 @@ const nextOperation = computed(() => {
               :value="option"
             />
           </datalist>
-          <input
-            v-model.lazy.trim="field.name"
-            type="text"
+          <InputText
+            v-model="field.name"
             placeholder="Name"
-            class="
-              input input-sm w-full text-base text-base-content
-              placeholder:italic
-            "
+            class="w-full"
             :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
-          >
+          />
         </label>
         <label v-if="field.operation !== 'remove'" class="flex-1">
-          <input
-            v-model.trim.lazy="field.value"
-            type="text"
+          <InputText
+            v-model="field.value"
             placeholder="Value"
-            class="
-              input input-sm text-base text-base-content
-              placeholder:italic
-            "
-          >
+            class="w-full"
+          />
         </label>
       </div>
     </label>

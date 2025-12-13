@@ -1,8 +1,10 @@
 import { resolve } from "node:path";
+import { PrimeVueResolver } from "@primevue/auto-import-resolver";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import turboConsole from "unplugin-turbo-console/vite";
+import vueComponents from "unplugin-vue-components/vite";
 import vueRouter from "unplugin-vue-router/vite";
 import vueDevtools from "vite-plugin-vue-devtools";
 
@@ -48,6 +50,15 @@ export default defineConfig({
       });
     },
   },
+  imports: {
+    addons: {
+      vueTemplate: true,
+    },
+    presets: [
+      "vue",
+      "vue-router",
+    ],
+  },
   vite: () => ({
     plugins: [
       vueDevtools({
@@ -66,9 +77,12 @@ export default defineConfig({
         dts: "./.wxt/typed-router.d.ts",
         exclude: ["**/components/**"],
       }),
+      vueComponents({
+        resolvers: [
+          PrimeVueResolver(),
+        ],
+        dts: resolve("./.wxt/vue-components.d.ts"),
+      }),
     ],
-    build: {
-      target: "esnext",
-    },
   }),
 });

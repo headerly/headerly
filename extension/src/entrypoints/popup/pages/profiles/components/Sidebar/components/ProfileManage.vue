@@ -55,7 +55,7 @@ const searchResults = computed(() => {
     <SheetTrigger as-child>
       <slot />
     </SheetTrigger>
-    <SheetContent side="left" class="w-2/5 text-base">
+    <SheetContent side="left" class="w-2/5">
       <SheetHeader>
         <SheetTitle>Search Profiles</SheetTitle>
         <SheetDescription class="sr-only">
@@ -63,10 +63,20 @@ const searchResults = computed(() => {
         </SheetDescription>
       </SheetHeader>
       <div class="grid w-full gap-1 overflow-y-auto px-2 py-1">
-        <label class="input mb-2 w-full">
-          <i class="i-lucide-search size-4 opacity-50" />
-          <input v-model.lazy.trim="searchKeyword" type="search" class="w-full" placeholder="Search" autofocus>
-        </label>
+        <div class="relative mb-2 w-full">
+          <i
+            class="
+              absolute top-1/2 left-3 i-lucide-search size-4 -translate-y-1/2
+              opacity-50
+            "
+          />
+          <InputText
+            v-model="searchKeyword"
+            placeholder="Search"
+            class="w-full pl-10"
+            autofocus
+          />
+        </div>
         <div v-auto-animate class="flex flex-col gap-1">
           <div
             v-for="profile in searchResults"

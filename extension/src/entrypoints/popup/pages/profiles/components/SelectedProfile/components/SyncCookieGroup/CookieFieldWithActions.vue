@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { UUID } from "node:crypto";
+import type { SelectChangeEvent } from "primevue/select";
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import Select from "#/components/select/Select.vue";
 import { useQuery } from "@tanstack/vue-query";
 import { isEqual, pick, sortBy } from "es-toolkit";
 import { computed, toValue, useTemplateRef } from "vue";
@@ -14,7 +14,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/entrypoints/popup/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 
 const { index } = defineProps<{
   index: number;
@@ -98,7 +97,8 @@ const disabled = computed(() => {
   return cookieOptions.value.length === 0 || isPending.value;
 });
 
-function updateCookie(newCookieId: UUID) {
+function updateCookie(e: SelectChangeEvent) {
+  const newCookieId = e.value as UUID;
   const selected = cookieOptions.value.find(cookie => cookie.value === newCookieId);
   if (selected) {
     field.value.value = selected.cookieValue;
@@ -142,62 +142,29 @@ async function refreshCookie() {
       <slot name="field-before" />
       <div class="grid flex-1 grid-cols-2 gap-1">
         <label class="flex-1">
-          <input
-            :value="field.domain"
+          <InputText
+            v-model="field.domain"
             type="text"
             placeholder="Domain"
             class="
-              input input-sm w-full text-base text-base-content
+              w-full text-base-content
               placeholder:italic
             "
             @change="handleDomainChange"
-          >
+          />
         </label>
         <label class="relative">
           <Select
             v-model="field.id"
             :options="cookieOptions"
-            :disabled
+            option-label="label"
+            option-value="value"
             :placeholder="disabled ? 'No available' : 'Pick a cookie'"
-            class="w-full select-sm text-base"
-            :type="selectedCookieOption?.isMissing ? 'warning' : 'normal'"
+            class="w-full select-sm"
+            :invalid="selectedCookieOption?.isMissing"
             :loading="isPending"
-            @change="(v) => updateCookie(v)"
-          >
-            <template #label="{ option }">
-              <div :class="cn('flex gap-1', option.isMissing ? 'text-warning' : '')">
-                <span class="max-w-50 truncate">
-                  {{ option.label }}
-                </span>
-                <span
-                  v-if="option.isMissing"
-                >
-                  (Missing)
-                </span>
-                <TooltipProvider :delay-duration="200">
-                  <Tooltip>
-                    <TooltipTrigger as-child>
-                      <button class="btn btn-square btn-ghost btn-xs btn-info">
-                        <i
-                          class="i-lucide-circle-question-mark size-4"
-                        />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      :collision-padding="20"
-                      side="top"
-                      class="
-                        prose prose-sm flex max-h-40 w-full max-w-lg
-                        overflow-y-auto text-base-content
-                      "
-                    >
-                      <span>{{ `Domain: ${option.domain} - Path: ${option.path}` }}</span>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </template>
-          </Select>
+            @change="updateCookie"
+          />
         </label>
       </div>
     </label>
@@ -260,7 +227,7 @@ async function refreshCookie() {
         <span>Warning: Sharing cookies with others may result in the leakage of login credentials!</span>
       </div>
       <textarea
-        class="textarea mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
+        class="textarea mt-2 min-h-24 w-full wrap-anywhere select-all"
         placeholder="Comments"
         disabled
         :value="field.value"

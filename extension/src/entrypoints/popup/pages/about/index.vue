@@ -21,8 +21,8 @@ const name = browser.runtime.getManifest().name;
         <div
           class="
             relative flex h-full flex-col items-start justify-end
-            overflow-hidden rounded-2xl border border-base-100 bg-base-200 px-4
-            py-8 shadow-xl
+            overflow-hidden rounded-2xl border border-base-100 bg-surface-900
+            px-4 py-8 shadow-xl
           "
         >
           <RouterLink
@@ -50,9 +50,7 @@ const name = browser.runtime.getManifest().name;
           </h1>
 
           <p
-            class="
-              relative z-50 mb-4 text-base font-normal text-base-content/66
-            "
+            class="relative z-50 mb-4 font-normal text-base-content/66"
           >
             {{ description }}
           </p>

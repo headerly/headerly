@@ -36,13 +36,11 @@ const checked = computed(() => {
   >
     <template #name-before>
       <label v-if="type">
-        <input
-          type="checkbox"
-          class="checkbox checkbox-sm"
-          :checked
+        <Checkbox
+          :model-value="checked"
           :indeterminate
-          @change="(e) => {
-            const checked = (e.target as HTMLInputElement).checked;
+          :binary="true"
+          @update:model-value="(checked: boolean) => {
             if (type === 'checkbox'){
               list.forEach(item => {
                 item.enabled = checked;
@@ -56,7 +54,7 @@ const checked = computed(() => {
               });
             }
           }"
-        >
+        />
       </label>
     </template>
     <template #name-after>
@@ -72,17 +70,17 @@ const checked = computed(() => {
           :key="item.id"
         >
           <div class="flex flex-1 items-center justify-between gap-1">
-            <input
+            <Checkbox
               v-if="type === 'checkbox'"
               v-model="item.enabled"
-              type="checkbox"
-              class="checkbox mr-1 checkbox-sm"
-            >
-            <input
+              :binary="true"
+              class="me-2"
+            />
+            <RadioButton
               v-else
               v-model="item.enabled"
-              type="checkbox"
-              class="radio mr-1 size-5"
+              :value="true"
+              class="me-2"
               @click="() => {
                 list.forEach(m => {
                   if (m.id === item.id) {
@@ -92,7 +90,7 @@ const checked = computed(() => {
                   m.enabled = false;
                 });
               }"
-            >
+            />
             <div class="flex flex-1 items-center">
               <slot :index="index" name="item" />
             </div>

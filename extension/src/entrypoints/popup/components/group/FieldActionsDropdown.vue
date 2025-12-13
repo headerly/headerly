@@ -85,7 +85,7 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
     :style="`position-anchor:${anchorname}`"
     popover
     class="
-      menu dropdown w-52 rounded-box bg-base-300 p-2 font-medium
+      menu dropdown w-52 rounded-box bg-surface-950 p-2 font-medium
       text-base-content shadow-sm
       [position-area:end_span-start]
       [position-try-fallbacks:flip-block]

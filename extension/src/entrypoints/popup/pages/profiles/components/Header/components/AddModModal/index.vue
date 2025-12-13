@@ -55,11 +55,11 @@ const dialogRef = useTemplateRef("dialogRef");
       <div class="tabs-box mt-5 tabs">
         <template v-for="tab in tabs" :key="tab.value">
           <label class="tab w-1/2">
-            <input
+            <RadioButton
               v-model="currentTab"
               :value="tab.value"
-              type="radio"
-            >
+              class="me-2"
+            />
             <i :class="tab.icon" class="me-2 size-4" />
             {{ tab.label }}
           </label>

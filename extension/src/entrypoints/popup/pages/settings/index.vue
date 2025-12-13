@@ -1,6 +1,6 @@
 <script setup lang="tsx">
+import type { Writable } from "type-fest";
 import Fieldset from "#/components/group/Fieldset.vue";
-import Select from "#/components/select/Select.vue";
 import {
   Tooltip,
   TooltipContent,
@@ -53,8 +53,7 @@ function InfoTooltip({ description }: { description: string }) {
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="
-          fieldset gap-y-4 rounded-box border border-base-300 bg-base-200 p-4
-          text-base
+          fieldset gap-y-4 rounded-box border border-base-300 bg-surface-900 p-4
         "
       >
         <template #main>
@@ -74,7 +73,10 @@ function InfoTooltip({ description }: { description: string }) {
                     <Select
                       v-model="settingsStore[field.key]"
                       class="min-w-60"
-                      :options="field.options"
+                      label-id="value"
+                      :options="field.options as Writable<typeof field.options>"
+                      option-label="label"
+                      option-value="value"
                     />
                     <InfoTooltip
                       v-if="'description' in field && field.description"
@@ -90,11 +92,11 @@ function InfoTooltip({ description }: { description: string }) {
                 <label
                   class="label items-start whitespace-normal text-base-content"
                 >
-                  <input
+                  <Checkbox
                     v-model="settingsStore[field.key]"
-                    type="checkbox"
-                    class="checkbox"
-                  >
+                    :binary="true"
+                    class="me-2"
+                  />
                   {{ field.label }}
                 </label>
                 <InfoTooltip

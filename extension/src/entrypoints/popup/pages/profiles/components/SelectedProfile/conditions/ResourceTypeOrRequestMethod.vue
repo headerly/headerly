@@ -98,27 +98,24 @@ const checked = computed(() => {
         <label
           v-for="option in options"
           :key="option.value"
-          class="flex items-center gap-2 text-base"
+          class="flex items-center gap-2"
         >
-          <input
+          <Checkbox
             v-model="model"
-            type="checkbox"
-            class="checkbox checkbox-sm"
             :value="option.value"
-          >
+            class="me-2"
+          />
           <span>{{ option.label }}</span>
         </label>
       </div>
     </template>
     <template #name-before>
-      <input
-        type="checkbox"
-        class="checkbox checkbox-sm"
-        :checked
+      <Checkbox
+        :model-value="checked"
         :indeterminate
-        @change="
-          (e) => {
-            const checked = (e.target as HTMLInputElement).checked;
+        :binary="true"
+        @update:model-value="
+          (checked: boolean) => {
             if (checked) {
               model = options.map(option => option.value) as NonNullable<Filter[T]>;
             } else {
@@ -126,7 +123,7 @@ const checked = computed(() => {
             }
           }
         "
-      >
+      />
     </template>
     <template #name-after>
       <TooltipProvider :delay-duration="200">

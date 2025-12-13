@@ -37,7 +37,8 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       data-slot="sheet-content"
       :class="cn(
         `
-          fixed z-50 flex flex-col bg-base-100 shadow-lg transition ease-in-out
+          fixed z-50 flex flex-col bg-surface-800 shadow-lg transition
+          ease-in-out
           data-[state=closed]:animate-out data-[state=closed]:duration-300
           data-[state=open]:animate-in data-[state=open]:duration-500
         `,

@@ -22,32 +22,29 @@ const profilesStore = useProfilesStore();
   >
     <template #main>
       <div class="flex items-center gap-2">
-        <label class="label gap-2 text-base text-base-content">
-          <input
+        <label class="label gap-2 text-base-content">
+          <RadioButton
             v-model="model.value"
-            type="radio"
             :value="true"
-            class="radio radio-sm"
-          >
+            class="me-2"
+          />
           On
         </label>
-        <label class="label gap-2 text-base text-base-content">
-          <input
+        <label class="label gap-2 text-base-content">
+          <RadioButton
             v-model="model.value"
-            type="radio"
             :value="false"
-            class="radio radio-sm"
-          >
+            class="me-2"
+          />
           Off
         </label>
       </div>
     </template>
     <template #name-before>
-      <input
+      <Checkbox
         v-model="model.enabled"
-        type="checkbox"
-        class="checkbox checkbox-sm"
-      >
+        :binary="true"
+      />
     </template>
     <template #name-after>
       <TooltipProvider :delay-duration="200">

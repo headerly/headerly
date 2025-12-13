@@ -135,15 +135,11 @@ const canUseCurrentUrl = computed(() => {
       />
     </template>
     <template #item="{ index }">
-      <input
+      <InputText
         v-model="list[index]!.value"
-        type="text"
         placeholder="|https://example.com/"
-        class="
-          input input-sm w-full text-base text-base-content
-          placeholder:italic
-        "
-      >
+        class="flex-1"
+      />
       <div class="ml-1 flex gap-0.5">
         <TooltipProvider :delay-duration="200">
           <Tooltip>

@@ -55,7 +55,8 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       :style="`position-anchor:--${popovertarget}`"
       popover
       class="
-        menu dropdown z-1 w-52 rounded-box bg-base-300 p-2 font-medium shadow-sm
+        menu dropdown z-1 w-52 rounded-box bg-surface-950 p-2 font-medium
+        shadow-sm
         [position-area:span-end_end]
         [position-try-fallbacks:flip-block]
       "
