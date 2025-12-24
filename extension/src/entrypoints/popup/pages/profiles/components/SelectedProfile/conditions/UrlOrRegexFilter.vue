@@ -13,13 +13,13 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
-const { filterType } = defineProps<{
-  filterType: "urlFilter" | "regexFilter";
-}>();
-
 const list = defineModel<UrlOrRegexFilter[]>({
   required: true,
 });
+
+const { filterType } = defineProps<{
+  filterType: "urlFilter" | "regexFilter";
+}>();
 
 const field = {
   urlFilter: {

@@ -16,10 +16,6 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const { index } = defineProps<{
-  index: number;
-}>();
-
 const list = defineModel<SyncCookie[]>("list", {
   required: true,
 });
@@ -27,6 +23,10 @@ const list = defineModel<SyncCookie[]>("list", {
 const field = defineModel<SyncCookie>("field", {
   required: true,
 });
+
+const { index } = defineProps<{
+  index: number;
+}>();
 
 function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
   return useQuery({

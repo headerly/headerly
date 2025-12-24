@@ -23,21 +23,25 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "pnpm --recursive --sequential run typecheck"
   },
-  "devDependencies": {
-    "@antfu/eslint-config": "^6.0.0",
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
-    "@commitlint/types": "^20.0.0",
-    "@types/node": "^24.8.1",
-    "eslint": "^9.38.0",
-    "eslint-plugin-better-tailwindcss": "^3.7.10",
-    "lefthook": "^2.0.0",
-    "typescript": "^5.9.3",
-    "vue-tsc": "^3.1.0"
+  "dependencies": {
+    "@egoist/tailwindcss-icons": "catalog:",
+    "@tailwindcss/typography": "catalog:",
+    "clsx": "catalog:",
+    "daisyui": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tw-animate-css": "catalog:"
   },
-  "pnpm": {
-    "overrides": {
-      "vite": "catalog:"
-    }
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/types": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "lefthook": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

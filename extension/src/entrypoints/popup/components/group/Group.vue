@@ -4,14 +4,14 @@ import { head } from "es-toolkit";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
 
+const list = defineModel<GroupItem[]>("list", {
+  required: true,
+});
+
 const { name, type } = defineProps<{
   name: string;
   type?: GroupType;
 }>();
-
-const list = defineModel<GroupItem[]>("list", {
-  required: true,
-});
 
 const indeterminate = computed(() => {
   if (type === "checkbox") {
@@ -94,7 +94,7 @@ const checked = computed(() => {
               }"
             >
             <div class="flex flex-1 items-center">
-              <slot :index="index" name="item" />
+              <slot :index name="item" />
             </div>
           </div>
         </div>

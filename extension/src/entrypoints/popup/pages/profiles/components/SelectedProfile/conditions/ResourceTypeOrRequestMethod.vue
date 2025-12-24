@@ -11,6 +11,10 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
+const model = defineModel<NonNullable<Filter[T]>>({
+  required: true,
+});
+
 const { type } = defineProps<{
   type: T;
 }>();
@@ -21,10 +25,6 @@ const nameMap = {
   requestMethods: "Request Methods",
   excludedRequestMethods: "Excluded Request Methods",
 };
-const model = defineModel<NonNullable<Filter[T]>>({
-  required: true,
-});
-
 const profilesStore = useProfilesStore();
 
 interface ResourceTypeOption {

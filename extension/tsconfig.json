@@ -15,5 +15,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true
+  },
+  "vueCompilerOptions": {
+    "fallthroughAttributes": true,
+    "strictTemplates": true
   }
 }

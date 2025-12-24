@@ -20,6 +20,10 @@ interface Props {
   loading?: boolean;
 }
 
+const value = defineModel<T["value"] | null>({
+  required: false,
+});
+
 const {
   options,
   disabled = false,
@@ -32,10 +36,6 @@ const {
 const emit = defineEmits<{
   (e: "change", value: T["value"]): void;
 }>();
-
-const value = defineModel<T["value"] | null>({
-  required: false,
-});
 
 const triggerClasses = computed(() => cn(
   size === "xs" && "select-xs",
@@ -51,13 +51,13 @@ const triggerClasses = computed(() => cn(
 
 <template>
   <Select
-    v-model="value" :disabled="disabled" @update:model-value="(v) => {
+    v-model="value" :disabled @update:model-value="(v) => {
       emit('change', v as T['value']);
     }"
   >
     <SelectTrigger :class="triggerClasses">
       <div v-if="loading" class="h-4 w-20 skeleton" />
-      <SelectValue v-else :placeholder="placeholder" class="truncate" />
+      <SelectValue v-else :placeholder class="truncate" />
     </SelectTrigger>
     <SelectContent>
       <SelectItem

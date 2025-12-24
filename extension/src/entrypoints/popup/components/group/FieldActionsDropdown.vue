@@ -5,10 +5,6 @@ import { head } from "es-toolkit";
 import { ref, useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
-const { index } = defineProps<{
-  index: number;
-}>();
-
 const list = defineModel<GroupItem[]>("list", {
   required: true,
 });
@@ -16,6 +12,10 @@ const list = defineModel<GroupItem[]>("list", {
 const field = defineModel<GroupItem>("field", {
   required: true,
 });
+
+const { index } = defineProps<{
+  index: number;
+}>();
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 

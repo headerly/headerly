@@ -7,6 +7,10 @@ import { copyProfile, copyProfileId } from "@/entrypoints/popup/pages/profiles/c
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 
+const profile = defineModel<Profile>({
+  required: true,
+});
+
 const { id } = defineProps<{
   id: UUID;
 }>();
@@ -21,10 +25,6 @@ watch(
     popoverRef.value?.togglePopover();
   },
 );
-
-const profile = defineModel<Profile>({
-  required: true,
-});
 
 const popovertarget = `popover-profile-context-menu-${id}`;
 

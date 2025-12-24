@@ -9,6 +9,12 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+const list = defineModel<GroupItem[]>("list", {
+  required: true,
+});
+
+const type = defineModel<GroupType>("type");
+
 const { description } = defineProps<{
   description?: string | VNode;
 }>();
@@ -17,12 +23,6 @@ const emit = defineEmits<{
   (e: "deleteGroup"): void;
   (e: "newField"): void;
 }>();
-
-const list = defineModel<GroupItem[]>("list", {
-  required: true,
-});
-
-const type = defineModel<GroupType>("type");
 
 function transferGroupType() {
   if (type.value === "checkbox") {

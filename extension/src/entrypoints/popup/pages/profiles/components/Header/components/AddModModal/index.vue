@@ -72,7 +72,7 @@ const dialogRef = useTemplateRef("dialogRef");
               <button
                 v-for="{ title, description, action, disabled } in tab.items"
                 :key="title"
-                :disabled="disabled"
+                :disabled
                 class="list-row btn h-min text-start btn-ghost"
                 :class="{ 'btn-disabled opacity-50': disabled }"
                 @click="() => {

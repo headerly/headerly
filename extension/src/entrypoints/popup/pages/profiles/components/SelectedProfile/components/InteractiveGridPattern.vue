@@ -70,8 +70,8 @@ function handleMouseLeave() {
       :key="index"
       :x="getX(index)"
       :y="getY(index)"
-      :width="width"
-      :height="height"
+      :width
+      :height
       :class="getRectClass(index)"
       @mouseenter="handleMouseEnter(index)"
       @mouseleave="handleMouseLeave"

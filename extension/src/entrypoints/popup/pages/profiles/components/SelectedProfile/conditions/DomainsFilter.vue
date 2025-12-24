@@ -13,13 +13,13 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
-const { filterType } = defineProps<{
-  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
-}>();
-
 const domainsFilter = defineModel<DomainsFilter>({
   required: true,
 });
+
+const { filterType } = defineProps<{
+  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
+}>();
 
 const field = {
   requestDomains: {

@@ -15,11 +15,6 @@ import {
 } from "@/entrypoints/popup/constants/header";
 import { cn } from "@/lib/utils";
 
-const { actionType, index } = defineProps<{
-  actionType: ActionType;
-  index: number;
-}>();
-
 const list = defineModel<HeaderMod[]>("list", {
   required: true,
 });
@@ -27,6 +22,11 @@ const list = defineModel<HeaderMod[]>("list", {
 const field = defineModel<HeaderMod>("field", {
   required: true,
 });
+
+const { actionType, index } = defineProps<{
+  actionType: ActionType;
+  index: number;
+}>();
 
 const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID_PREFIX";
 
