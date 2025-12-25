@@ -57,7 +57,7 @@ function transferGroupType() {
           <p v-if="typeof description === 'string'">
             {{ description }}
           </p>
-          <Component :is="description" v-else />
+          <component :is="description" v-else />
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

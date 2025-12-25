@@ -140,7 +140,7 @@ function renderShortcutHint(index: number) {
             </ContextMenu>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>{{ profile.name }} <Component :is="renderShortcutHint(index)" /></p>
+            <p>{{ profile.name }} <component :is="renderShortcutHint(index)" /></p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

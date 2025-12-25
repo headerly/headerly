@@ -49,7 +49,6 @@ function InfoTooltip({ description }: { description: string }) {
     >
       <Fieldset
         v-for="setting in settings"
-        :id="setting.anchor"
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="

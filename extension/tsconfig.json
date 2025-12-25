@@ -17,7 +17,7 @@
     "esModuleInterop": true
   },
   "vueCompilerOptions": {
-    "fallthroughAttributes": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "dataAttributes": ["data-slot", "data-size", "data-testid"]
   }
 }
