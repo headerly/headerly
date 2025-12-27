@@ -43,8 +43,8 @@ function InfoTooltip({ description }: { description: string }) {
     <Sidebar class="col-start-1 row-span-2" />
     <main
       class="
-        text-base-content col-start-2 row-start-2 overflow-x-hidden
-        overflow-y-auto px-2 pb-2
+        col-start-2 row-start-2 overflow-x-hidden overflow-y-auto px-2 pb-2
+        text-base-content
       "
     >
       <Fieldset
@@ -52,7 +52,7 @@ function InfoTooltip({ description }: { description: string }) {
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="
-          fieldset rounded-box border-base-300 bg-base-200 gap-y-4 border p-4
+          fieldset gap-y-4 rounded-box border border-base-300 bg-base-200 p-4
           text-base
         "
       >
@@ -64,12 +64,14 @@ function InfoTooltip({ description }: { description: string }) {
               >
                 <label
                   class="
-                    label text-base-content flex flex-col items-start
-                    whitespace-normal
+                    label flex flex-col items-start whitespace-normal
+                    text-base-content
                   "
                 >
                   {{ field.label }}:
                   <div class="flex items-center">
+                    <!-- @vue-expect-error The type of `settingsStore[field.key]`
+                     was miscalculated as `never`, I don’t know how to solve this issue -->
                     <Select
                       v-model="settingsStore[field.key]"
                       class="min-w-60"
@@ -87,7 +89,7 @@ function InfoTooltip({ description }: { description: string }) {
                 class="flex items-center"
               >
                 <label
-                  class="label text-base-content items-start whitespace-normal"
+                  class="label items-start whitespace-normal text-base-content"
                 >
                   <input
                     v-model="settingsStore[field.key]"

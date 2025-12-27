@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends GroupItem">
 import type { VNode } from "vue";
 import type { GroupItem, GroupType } from "@/lib/type";
 import {
@@ -9,30 +9,30 @@ import {
 } from "@/entrypoints/popup/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const list = defineModel<GroupItem[]>("list", {
+const list = defineModel<T[]>("list", {
   required: true,
 });
 
-const type = defineModel<GroupType>("type");
-
-const { description } = defineProps<{
+const { description, type } = defineProps<{
   description?: string | VNode;
+  type?: GroupType;
 }>();
 
 const emit = defineEmits<{
   (e: "deleteGroup"): void;
   (e: "newField"): void;
+  (e: "update:type", value: GroupType): void;
 }>();
 
 function transferGroupType() {
-  if (type.value === "checkbox") {
-    type.value = "radio";
+  if (type === "checkbox") {
+    emit("update:type", "radio");
     const firstEnabledMod = list.value.find(mod => mod.enabled);
     list.value.forEach((mod) => {
       mod.enabled = mod === firstEnabledMod;
     });
   } else {
-    type.value = "checkbox";
+    emit("update:type", "checkbox");
   }
 }
 </script>

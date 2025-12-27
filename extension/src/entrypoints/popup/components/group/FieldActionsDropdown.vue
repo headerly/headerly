@@ -1,15 +1,15 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/type";
 import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
 import { head } from "es-toolkit";
 import { ref, useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
-const list = defineModel<GroupItem[]>("list", {
+const list = defineModel<T[]>("list", {
   required: true,
 });
 
-const field = defineModel<GroupItem>("field", {
+const field = defineModel<T>("field", {
   required: true,
 });
 

@@ -20,8 +20,8 @@ interface Props {
   loading?: boolean;
 }
 
-const value = defineModel<T["value"] | null>({
-  required: false,
+const value = defineModel<T["value"]>({
+  required: true,
 });
 
 const {
@@ -51,7 +51,9 @@ const triggerClasses = computed(() => cn(
 
 <template>
   <Select
-    v-model="value" :disabled @update:model-value="(v) => {
+    v-model="value"
+    :disabled
+    @update:model-value="(v) => {
       emit('change', v as T['value']);
     }"
   >

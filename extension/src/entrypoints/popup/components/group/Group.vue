@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/type";
 import { head } from "es-toolkit";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
 
-const list = defineModel<GroupItem[]>("list", {
+const list = defineModel<T[]>("list", {
   required: true,
 });
 
