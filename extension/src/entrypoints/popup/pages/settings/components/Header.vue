@@ -20,7 +20,7 @@ const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
 <template>
   <header
     :class="cn(
-      'flex items-center justify-between bg-base-200 px-2',
+      'bg-base-200 flex items-center justify-between px-2',
       className,
     )"
   >

@@ -39,13 +39,13 @@ const popovertarget = "popover-sidebar-menu";
 
 <template>
   <aside
-    :class="cn('flex h-full flex-col justify-between bg-base-200 py-2', className)"
+    :class="cn('bg-base-200 flex h-full flex-col justify-between py-2', className)"
   >
     <button
       :popovertarget
       :class="cn(
         `
-          btn mx-2 btn-square btn-soft btn-sm
+          btn btn-square btn-soft btn-sm mx-2
           [anchor-name:--anchor-sidebar-menu]
         `,
         settingsStore.powerOn || 'opacity-60',
@@ -58,7 +58,7 @@ const popovertarget = "popover-sidebar-menu";
       :id="popovertarget"
       popover
       class="
-        menu dropdown z-1 w-52 rounded-box bg-base-300 p-2 font-medium shadow-sm
+        menu dropdown rounded-box bg-base-300 z-1 w-52 p-2 font-medium shadow-sm
         [position-anchor:--anchor-sidebar-menu]
       "
     >
@@ -71,8 +71,8 @@ const popovertarget = "popover-sidebar-menu";
           >
             <span>Search</span>
             <span v-if="settingsStore.enableMetaKSearch">
-              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="kbd font-mono kbd-sm">K</kbd>
+              <kbd class="kbd kbd-sm mr-1 font-mono">{{ getModKey() }}</kbd>
+              <kbd class="kbd kbd-sm font-mono">K</kbd>
             </span>
           </button>
         </ProfileManage>
@@ -133,7 +133,7 @@ const popovertarget = "popover-sidebar-menu";
         <Tooltip>
           <TooltipTrigger as-child>
             <button
-              class="btn btn-square self-center btn-soft btn-sm btn-primary"
+              class="btn btn-square btn-soft btn-sm btn-primary self-center"
               @click="profilesStore.addProfile()"
             >
               <i class="i-lucide-plus size-4" />
@@ -156,7 +156,7 @@ const popovertarget = "popover-sidebar-menu";
               :class="cn(
                 'btn btn-square btn-sm',
                 settingsStore.powerOn ? 'btn-soft btn-error' : `
-                  animate-pulse btn-success
+                  btn-success animate-pulse
                 `,
               )"
             >

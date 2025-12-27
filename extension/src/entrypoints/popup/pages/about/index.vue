@@ -14,22 +14,22 @@ const name = browser.runtime.getManifest().name;
       <div class="relative w-full max-w-xs">
         <div
           class="
-            absolute inset-0 size-full scale-[0.80] rounded-full bg-error
-            bg-gradient-to-r from-info to-success blur-3xl
+            bg-error from-info to-success absolute inset-0 size-full
+            scale-[0.80] rounded-full bg-gradient-to-r blur-3xl
           "
         />
         <div
           class="
-            relative flex h-full flex-col items-start justify-end
-            overflow-hidden rounded-2xl border border-base-100 bg-base-200 px-4
-            py-8 shadow-xl
+            border-base-100 bg-base-200 relative flex h-full flex-col
+            items-start justify-end overflow-hidden rounded-2xl border px-4 py-8
+            shadow-xl
           "
         >
           <RouterLink
             to="/profiles"
             class="
-              mb-4 flex size-5 items-center justify-center rounded-full border
-              border-base-content/33 text-base-content/66 transition
+              border-base-content/33 text-base-content/66 mb-4 flex size-5
+              items-center justify-center rounded-full border transition
               hover:border-base-content hover:text-base-content
             "
           >
@@ -39,8 +39,8 @@ const name = browser.runtime.getManifest().name;
 
           <h1
             class="
-              relative z-50 mb-4 flex items-center gap-2 text-xl font-bold
-              text-base-content
+              text-base-content relative z-50 mb-4 flex items-center gap-2
+              text-xl font-bold
             "
           >
             {{ name }} © 2025
@@ -51,7 +51,7 @@ const name = browser.runtime.getManifest().name;
 
           <p
             class="
-              relative z-50 mb-4 text-base font-normal text-base-content/66
+              text-base-content/66 relative z-50 mb-4 text-base font-normal
             "
           >
             {{ description }}
@@ -65,10 +65,10 @@ const name = browser.runtime.getManifest().name;
               target="_blank"
               rel="noopener noreferrer"
               class="
-                btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
+                btn btn-ghost btn-sm relative z-50 mt-4 flex items-center gap-2
               "
             >
-              <i class="i-lucide-github size-4 text-base-content/66" />
+              <i class="i-lucide-github text-base-content/66 size-4" />
               GitHub & MIT
             </a>
             <!-- <a

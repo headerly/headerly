@@ -147,7 +147,7 @@ async function refreshCookie() {
             type="text"
             placeholder="Domain"
             class="
-              input input-sm w-full text-base text-base-content
+              input input-sm text-base-content w-full text-base
               placeholder:italic
             "
             @change="handleDomainChange"
@@ -159,7 +159,7 @@ async function refreshCookie() {
             :options="cookieOptions"
             :disabled
             :placeholder="disabled ? 'No available' : 'Pick a cookie'"
-            class="w-full select-sm text-base"
+            class="select-sm w-full text-base"
             :type="selectedCookieOption?.isMissing ? 'warning' : 'normal'"
             :loading="isPending"
             @change="(v) => updateCookie(v)"
@@ -187,8 +187,8 @@ async function refreshCookie() {
                       :collision-padding="20"
                       side="top"
                       class="
-                        prose prose-sm flex max-h-40 w-full max-w-lg
-                        overflow-y-auto text-base-content
+                        prose prose-sm text-base-content flex max-h-40 w-full
+                        max-w-lg overflow-y-auto
                       "
                     >
                       <span>{{ `Domain: ${option.domain} - Path: ${option.path}` }}</span>
@@ -255,7 +255,7 @@ async function refreshCookie() {
       <h3 class="text-lg font-semibold">
         View Cookie
       </h3>
-      <div role="alert" class="mt-4 alert alert-soft alert-warning">
+      <div role="alert" class="alert alert-soft alert-warning mt-4">
         <i class="i-lucide-triangle-alert size-6" />
         <span>Warning: Sharing cookies with others may result in the leakage of login credentials!</span>
       </div>

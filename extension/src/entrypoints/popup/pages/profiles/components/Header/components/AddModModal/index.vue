@@ -42,7 +42,7 @@ const dialogRef = useTemplateRef("dialogRef");
     <div class="modal-box">
       <form method="dialog">
         <button
-          class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
+          class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2"
           @click="() => {
             dialogRef?.close()
           }"
@@ -52,7 +52,7 @@ const dialogRef = useTemplateRef("dialogRef");
         </button>
       </form>
 
-      <div class="tabs-box mt-5 tabs">
+      <div class="tabs-box tabs mt-5">
         <template v-for="tab in tabs" :key="tab.value">
           <label class="tab w-1/2">
             <input
@@ -65,7 +65,7 @@ const dialogRef = useTemplateRef("dialogRef");
           </label>
           <div
             class="
-              tab-content mt-1 max-h-[70vh] overflow-y-auto border-base-300
+              tab-content border-base-300 mt-1 max-h-[70vh] overflow-y-auto
             "
           >
             <div class="list rounded-box">
@@ -73,7 +73,7 @@ const dialogRef = useTemplateRef("dialogRef");
                 v-for="{ title, description, action, disabled } in tab.items"
                 :key="title"
                 :disabled
-                class="list-row btn h-min text-start btn-ghost"
+                class="list-row btn btn-ghost h-min text-start"
                 :class="{ 'btn-disabled opacity-50': disabled }"
                 @click="() => {
                   action()

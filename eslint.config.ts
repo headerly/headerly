@@ -53,6 +53,12 @@ export default antfu(
     },
   },
   {
+    files: ["pnpm-workspace.yaml"],
+    rules: {
+      "yaml/sort-keys": "off",
+    },
+  },
+  {
     ignores: ["**/*.md"],
   },
 );

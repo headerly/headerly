@@ -24,10 +24,5 @@
     "typescript": "~5.9.3",
     "vite": "npm:rolldown-vite@7.2.5",
     "vue-tsc": "^3.1.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.2.5"
-    }
   }
 }

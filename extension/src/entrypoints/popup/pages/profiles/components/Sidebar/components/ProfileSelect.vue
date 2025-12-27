@@ -96,8 +96,9 @@ function renderShortcutHint(index: number) {
                 <button
                   :class="cn(
                     `
-                      btn indicator relative btn-square text-xl btn-soft btn-sm
+                      btn indicator btn-square btn-soft btn-sm
                       hover:btn-primary
+                      relative text-xl
                     `,
                     { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
                   )"
@@ -122,8 +123,8 @@ function renderShortcutHint(index: number) {
                   <span
                     v-if="settingsStore.displayNumberBadge && index < 9"
                     class="
-                      indicator-item badge size-4 px-1 font-mono indicator-start
-                      indicator-middle
+                      indicator-item badge indicator-start indicator-middle
+                      size-4 px-1 font-mono
                     "
                   >
                     {{ index + 1 }}
@@ -131,7 +132,7 @@ function renderShortcutHint(index: number) {
                   <i
                     v-if="!profile.enabled"
                     class="
-                      absolute right-0 bottom-0 i-lucide-pause size-4
+                      i-lucide-pause absolute right-0 bottom-0 size-4
                       -translate-1/2
                     "
                   />

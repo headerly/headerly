@@ -77,7 +77,7 @@ const nextOperation = computed(() => {
             type="text"
             placeholder="Name"
             class="
-              input input-sm w-full text-base text-base-content
+              input input-sm text-base-content w-full text-base
               placeholder:italic
             "
             :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
@@ -89,7 +89,7 @@ const nextOperation = computed(() => {
             type="text"
             placeholder="Value"
             class="
-              input input-sm text-base text-base-content
+              input input-sm text-base-content text-base
               placeholder:italic
             "
           >
@@ -102,7 +102,7 @@ const nextOperation = computed(() => {
           <TooltipTrigger as-child>
             <button
               :class="cn(`
-                btn btn-square font-medium whitespace-nowrap btn-soft btn-xs
+                btn btn-square btn-soft btn-xs font-medium whitespace-nowrap
               `, {
                 'btn-accent': field.operation === 'set',
                 'btn-info': field.operation === 'append',

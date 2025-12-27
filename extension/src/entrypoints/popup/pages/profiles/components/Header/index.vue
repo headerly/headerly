@@ -55,7 +55,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
 <template>
   <header
     :class="cn(
-      `flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2`,
+      `bg-base-200 flex items-center justify-between gap-1 py-1 pr-1 pl-2`,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"
@@ -67,8 +67,8 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
       <button
         v-if="!profileNameEditing"
         class="
-          btn flex items-center gap-1 px-1.5 text-base font-semibold btn-ghost
-          btn-sm btn-primary
+          btn btn-ghost btn-sm btn-primary flex items-center gap-1 px-1.5
+          text-base font-semibold
         "
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
@@ -86,15 +86,16 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           type="text"
           required
           class="
-            input input-sm max-w-xs text-base
+            input input-sm
             user-invalid:input-error
+            max-w-xs text-base
           "
           @keyup.enter="handleEditProfileName"
           @keyup.esc="profileNameEditing = false"
         >
         <button
           class="
-            btn flex btn-square items-center gap-2 text-base btn-soft btn-sm
+            btn btn-square btn-soft btn-sm flex items-center gap-2 text-base
           "
           @click="handleEditProfileName"
         >
@@ -117,8 +118,8 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           <TooltipContent side="bottom">
             Undo
             <span v-if="settingsStore.enableUndoAndRedoShortcut">
-              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="kbd font-mono kbd-sm">Z</kbd>
+              <kbd class="kbd kbd-sm mr-1 font-mono">{{ getModKey() }}</kbd>
+              <kbd class="kbd kbd-sm font-mono">Z</kbd>
             </span>
           </TooltipContent>
         </Tooltip>
@@ -137,9 +138,9 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
           <TooltipContent side="bottom">
             Redo
             <span v-if="settingsStore.enableUndoAndRedoShortcut">
-              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="mr-1 kbd font-mono kbd-sm">Shift</kbd>
-              <kbd class="kbd font-mono kbd-sm">Z</kbd>
+              <kbd class="kbd kbd-sm mr-1 font-mono">{{ getModKey() }}</kbd>
+              <kbd class="kbd kbd-sm mr-1 font-mono">Shift</kbd>
+              <kbd class="kbd kbd-sm font-mono">Z</kbd>
             </span>
           </TooltipContent>
         </Tooltip>

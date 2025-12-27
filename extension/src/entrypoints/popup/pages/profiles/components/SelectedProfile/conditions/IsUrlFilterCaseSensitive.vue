@@ -22,7 +22,7 @@ const profilesStore = useProfilesStore();
   >
     <template #main>
       <div class="flex items-center gap-2">
-        <label class="label gap-2 text-base text-base-content">
+        <label class="label text-base-content gap-2 text-base">
           <input
             v-model="model.value"
             type="radio"
@@ -31,7 +31,7 @@ const profilesStore = useProfilesStore();
           >
           On
         </label>
-        <label class="label gap-2 text-base text-base-content">
+        <label class="label text-base-content gap-2 text-base">
           <input
             v-model="model.value"
             type="radio"

@@ -76,9 +76,10 @@ const searchResults = computed(() => {
             <button
               :class="cn(
                 `
-                  btn grid w-full grid-cols-[1rem_1fr] place-content-center
-                  items-center justify-start gap-2 btn-ghost
+                  btn btn-ghost
                   hover:btn-primary
+                  grid w-full grid-cols-[1rem_1fr] place-content-center
+                  items-center justify-start gap-2
                 `,
               )"
               @click="profilesStore.manager.selectedProfileId = profile.id"

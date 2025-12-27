@@ -55,7 +55,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       :style="`position-anchor:--${popovertarget}`"
       popover
       class="
-        menu dropdown z-1 w-52 rounded-box bg-base-300 p-2 font-medium shadow-sm
+        menu dropdown rounded-box bg-base-300 z-1 w-52 p-2 font-medium shadow-sm
         [position-area:span-end_end]
         [position-try-fallbacks:flip-block]
       "
@@ -80,7 +80,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       </li>
       <li>
         <button
-          class="flex gap-2 text-error"
+          class="text-error flex gap-2"
           @click="profilesStore.deleteProfile(id)"
         >
           <i

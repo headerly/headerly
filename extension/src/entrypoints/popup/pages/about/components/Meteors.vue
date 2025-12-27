@@ -17,7 +17,7 @@ defineProps({
     :class="
       cn(
         `
-          absolute h-0.5 w-0.5 rotate-[45deg] animate-meteor-effect
+          animate-meteor-effect absolute h-0.5 w-0.5 rotate-[45deg]
           rounded-[9999px] bg-slate-500 shadow-[0_0_0_1px_#ffffff10]
         `,
         `

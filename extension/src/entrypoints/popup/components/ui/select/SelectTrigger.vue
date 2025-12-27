@@ -21,8 +21,8 @@ const forwardedProps = useForwardProps(delegatedProps);
     v-bind="forwardedProps"
     :class="cn(
       `
-        select flex w-fit cursor-pointer items-center justify-between gap-2
-        bg-none px-3 whitespace-nowrap text-base-content
+        select text-base-content flex w-fit cursor-pointer items-center
+        justify-between gap-2 bg-none px-3 whitespace-nowrap
         transition-[color,box-shadow]
         disabled:cursor-not-allowed disabled:opacity-50
         data-placeholder:text-current/60 data-placeholder:italic

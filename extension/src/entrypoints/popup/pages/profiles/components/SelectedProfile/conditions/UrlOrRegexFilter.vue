@@ -140,7 +140,7 @@ const canUseCurrentUrl = computed(() => {
         type="text"
         placeholder="|https://example.com/"
         class="
-          input input-sm w-full text-base text-base-content
+          input input-sm text-base-content w-full text-base
           placeholder:italic
         "
       >

@@ -130,7 +130,7 @@ async function confirmImport() {
   <div class="flex size-full flex-col overflow-x-hidden overflow-y-auto">
     <div
       class="
-        sticky top-0 z-10 flex items-center justify-between bg-base-200 p-2
+        bg-base-200 sticky top-0 z-10 flex items-center justify-between p-2
       "
     >
       <div class="flex items-center">

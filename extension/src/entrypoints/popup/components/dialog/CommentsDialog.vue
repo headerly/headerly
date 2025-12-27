@@ -35,7 +35,7 @@ defineExpose({
   >
     <div class="modal-box">
       <form method="dialog">
-        <button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">
+        <button class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2">
           <i class="i-lucide-x size-4" />
         </button>
       </form>

@@ -5,8 +5,8 @@ declare module "vue" {
     vAutoAnimate: typeof vAutoAnimate;
   }
   export interface HTMLAttributes {
-    popover?: boolean;
+    popover?: "auto" | "manual" | "" | boolean;
     popovertarget?: string;
-    popovertargetaction?: "hide";
+    popovertargetaction?: "toggle" | "show" | "hide";
   }
 }

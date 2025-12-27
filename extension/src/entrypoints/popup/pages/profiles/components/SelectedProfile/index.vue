@@ -90,11 +90,11 @@ function ignoreWarning() {
         overflow-hidden
       "
     >
-      <i class="i-lucide-cross size-8 text-base-content" />
+      <i class="i-lucide-cross text-base-content size-8" />
       <p
         class="
-          z-10 text-center text-xl font-medium tracking-tighter
-          whitespace-pre-wrap text-base-content
+          text-base-content z-10 text-center text-xl font-medium
+          tracking-tighter whitespace-pre-wrap
         "
       >
         No data, please add any mods or filters first.
@@ -110,7 +110,7 @@ function ignoreWarning() {
       <div
         v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
         role="alert"
-        class="mt-2 alert alert-soft alert-error"
+        class="alert alert-soft alert-error mt-2"
       >
         <i class="i-lucide-bug size-6" />
         <div>
@@ -139,7 +139,7 @@ function ignoreWarning() {
       <div
         v-if="showGlobalRuleWarning"
         role="alert"
-        class="mt-2 alert alert-soft alert-warning"
+        class="alert alert-soft alert-warning mt-2"
       >
         <i class="i-lucide-triangle-alert size-6" />
         <div>

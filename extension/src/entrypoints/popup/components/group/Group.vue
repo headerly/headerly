@@ -76,7 +76,7 @@ const checked = computed(() => {
               v-if="type === 'checkbox'"
               v-model="item.enabled"
               type="checkbox"
-              class="checkbox mr-1 checkbox-sm"
+              class="checkbox checkbox-sm mr-1"
             >
             <input
               v-else

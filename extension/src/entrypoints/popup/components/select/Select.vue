@@ -56,7 +56,7 @@ const triggerClasses = computed(() => cn(
     }"
   >
     <SelectTrigger :class="triggerClasses">
-      <div v-if="loading" class="h-4 w-20 skeleton" />
+      <div v-if="loading" class="skeleton h-4 w-20" />
       <SelectValue v-else :placeholder class="truncate" />
     </SelectTrigger>
     <SelectContent>

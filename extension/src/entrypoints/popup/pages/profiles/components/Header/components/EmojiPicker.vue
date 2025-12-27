@@ -67,8 +67,8 @@ const popovertarget = "emoji-picker-popover";
   <button
     :popovertarget
     class="
-      btn btn-square items-center justify-center text-xl btn-ghost btn-sm
-      btn-primary
+      btn btn-square btn-ghost btn-sm btn-primary items-center justify-center
+      text-xl
       [anchor-name:--anchor-emoji-picker]
     "
   >
@@ -78,7 +78,7 @@ const popovertarget = "emoji-picker-popover";
     :id="popovertarget"
     popover
     class="
-      dropdown h-82 w-67 rounded-box bg-base-300 pt-2 shadow-sm
+      dropdown rounded-box bg-base-300 h-82 w-67 pt-2 shadow-sm
       [position-anchor:--anchor-emoji-picker]
     "
   >
@@ -142,7 +142,7 @@ const popovertarget = "emoji-picker-popover";
                 v-for="emoji in virtualItems[virtualRow.index]?.emojis"
                 :key="emoji"
                 class="
-                  btn btn-square size-9 text-xl btn-ghost btn-sm
+                  btn btn-square btn-ghost btn-sm size-9 text-xl
                   hover:bg-base-100
                 "
                 @click="selectedEmoji = emoji"
