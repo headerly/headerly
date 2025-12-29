@@ -1,8 +1,10 @@
 import { resolve } from "node:path";
+import { ShadcnResolver } from "@headerly/components/resolver";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import turboConsole from "unplugin-turbo-console/vite";
+import vueComponents from "unplugin-vue-components/vite";
 import vueRouter from "unplugin-vue-router/vite";
 import vueDevtools from "vite-plugin-vue-devtools";
 
@@ -45,6 +47,8 @@ export default defineConfig({
     "prepare:types": async (_, entries) => {
       entries.push({
         module: "./typed-router.d.ts",
+      }, {
+        module: "./vue-components.d.ts",
       });
     },
   },
@@ -65,6 +69,12 @@ export default defineConfig({
         // because the `types` directory does not exist when the plugin executes.
         dts: "./.wxt/typed-router.d.ts",
         exclude: ["**/components/**"],
+      }),
+      vueComponents({
+        resolvers: [
+          ShadcnResolver(),
+        ],
+        dts: "./.wxt/vue-components.d.ts",
       }),
     ],
     build: {

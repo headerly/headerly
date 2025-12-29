@@ -1,27 +1,31 @@
 {
-  "name": "components",
+  "name": "@headerly/components",
   "type": "module",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+  "exports": {
+    ".": "./src/index.ts",
+    "./globals.css": "./src/globals.css",
+    "./resolver": "./src/resolver.ts"
   },
   "dependencies": {
+    "@vueuse/core": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "lucide-vue-next": "catalog:",
     "reka-ui": "catalog:",
     "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:",
-    "vue": "catalog:"
+    "vaul-vue": "catalog:",
+    "vue": "catalog:",
+    "vue-sonner": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/tsconfig": "catalog:",
     "typescript": "catalog:",
+    "unplugin-vue-components": "catalog:",
     "vite": "catalog:",
     "vue-tsc": "catalog:"
   }

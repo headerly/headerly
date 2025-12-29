@@ -60,17 +60,19 @@ const name = browser.runtime.getManifest().name;
           <Meteors />
 
           <div class="flex gap-2">
-            <a
-              href="https://github.com/headerly/headerly"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="
-                btn btn-ghost btn-sm relative z-50 mt-4 flex items-center gap-2
-              "
+            <VButton
+              as-child
+              class="relative z-50 mt-4 flex items-center gap-2"
             >
-              <i class="i-lucide-github text-base-content/66 size-4" />
-              GitHub & MIT
-            </a>
+              <a
+                href="https://github.com/headerly/headerly"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i class="i-lucide-github text-base-content/66 size-4" />
+                GitHub & MIT
+              </a>
+            </VButton>
             <!-- <a
               rel="noopener noreferrer"
               href="https://headerly.dev/docs"

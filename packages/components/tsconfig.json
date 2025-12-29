@@ -5,6 +5,12 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "skipLibCheck": true
   },
   "include": [
@@ -12,7 +18,7 @@
     "src/**/*.vue"
   ],
   "vueCompilerOptions": {
-    "fallthroughAttributes": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "dataAttributes": ["data-slot", "data-size", "data-inset"]
   }
 }

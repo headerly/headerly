@@ -43,8 +43,8 @@ function InfoTooltip({ description }: { description: string }) {
     <Sidebar class="col-start-1 row-span-2" />
     <main
       class="
-        col-start-2 row-start-2 overflow-x-hidden overflow-y-auto px-2 pb-2
-        text-base-content
+        text-base-content col-start-2 row-start-2 overflow-x-hidden
+        overflow-y-auto px-2 pb-2
       "
     >
       <Fieldset
@@ -52,7 +52,7 @@ function InfoTooltip({ description }: { description: string }) {
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="
-          fieldset gap-y-4 rounded-box border border-base-300 bg-base-200 p-4
+          fieldset rounded-box border-base-300 bg-base-200 gap-y-4 border p-4
           text-base
         "
       >
@@ -64,8 +64,8 @@ function InfoTooltip({ description }: { description: string }) {
               >
                 <label
                   class="
-                    label flex flex-col items-start whitespace-normal
-                    text-base-content
+                    label text-base-content flex flex-col items-start
+                    whitespace-normal
                   "
                 >
                   {{ field.label }}:
@@ -89,7 +89,7 @@ function InfoTooltip({ description }: { description: string }) {
                 class="flex items-center"
               >
                 <label
-                  class="label items-start whitespace-normal text-base-content"
+                  class="label text-base-content items-start whitespace-normal"
                 >
                   <input
                     v-model="settingsStore[field.key]"

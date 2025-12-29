@@ -4,30 +4,30 @@ packages:
   - packages/*
 
 catalog:
-  '@antfu/eslint-config': ^6.0.0
-  '@codemirror/lang-json': ^6.0.2
-  '@codemirror/theme-one-dark': ^6.1.3
-  '@commitlint/cli': ^20.1.0
-  '@commitlint/config-conventional': ^20.0.0
-  '@commitlint/types': ^20.0.0
-  '@egoist/tailwindcss-icons': 1.9.0
-  '@fontsource-variable/inter': ^5.2.8
-  '@fontsource-variable/jetbrains-mono': ^5.2.8
-  '@formkit/auto-animate': ^0.9.0
-  '@iconify-json/lucide': ^1.2.70
-  '@tailwindcss/typography': 0.5.19
-  '@tailwindcss/vite': ^4.1.14
-  '@tanstack/vue-query': ^5.90.5
-  '@tanstack/vue-virtual': ^3.13.12
-  '@total-typescript/ts-reset': ^0.6.1
-  '@types/node': ^24.8.1
-  '@vitejs/plugin-vue': ^6.0.1
-  '@vitejs/plugin-vue-jsx': ^5.1.1
-  '@vitest/browser-playwright': ^4.0.3
-  '@vue/tsconfig': ^0.8.1
-  '@vueuse/core': ^13.9.0
-  '@webext-core/messaging': ^2.3.0
-  '@wxt-dev/auto-icons': ^1.1.0
+  "@antfu/eslint-config": ^6.0.0
+  "@codemirror/lang-json": ^6.0.2
+  "@codemirror/theme-one-dark": ^6.1.3
+  "@commitlint/cli": ^20.1.0
+  "@commitlint/config-conventional": ^20.0.0
+  "@commitlint/types": ^20.0.0
+  "@egoist/tailwindcss-icons": 1.9.0
+  "@fontsource-variable/inter": ^5.2.8
+  "@fontsource-variable/jetbrains-mono": ^5.2.8
+  "@formkit/auto-animate": ^0.9.0
+  "@iconify-json/lucide": ^1.2.70
+  "@tailwindcss/typography": 0.5.19
+  "@tailwindcss/vite": ^4.1.14
+  "@tanstack/vue-query": ^5.90.5
+  "@tanstack/vue-virtual": ^3.13.12
+  "@total-typescript/ts-reset": ^0.6.1
+  "@types/node": ^24.8.1
+  "@vitejs/plugin-vue": ^6.0.1
+  "@vitejs/plugin-vue-jsx": ^5.1.1
+  "@vitest/browser-playwright": ^4.0.3
+  "@vue/tsconfig": ^0.8.1
+  "@vueuse/core": 13.9.0
+  "@webext-core/messaging": ^2.3.0
+  "@wxt-dev/auto-icons": ^1.1.0
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   codemirror: ^6.0.2
@@ -50,7 +50,7 @@ catalog:
   unplugin-turbo-console: ^2.2.0
   unplugin-vue-router: ^0.16.0
   vee-validate: ^4.15.1
-  vite: npm:rolldown-vite@latest
+  vite: npm:rolldown-vite@^7.3.0
   vite-plugin-vue-devtools: ^8.0.3
   vitepress: 2.0.0-alpha.15
   vitest: ^4.0.3
@@ -58,17 +58,23 @@ catalog:
   vue: ^3.5.22
   vue-codemirror6: ^1.4.1
   vue-router: ^4.6.3
-  vue-sonner: ^2.0.9
+  vue-sonner: 2.0.9
   vue-tsc: ^3.1.0
-  wxt: ^0.20.11
+  wxt: ^0.20.13
   zod: ^4.1.12
+  baseline-browser-mapping: ^2.9.11
+  vaul-vue: ^0.4.1
+  unplugin-vue-components: 30.0.0
+  tsdown: ^0.18.3
+  "@tsconfig/node18": ^18.2.6
+  "@tsconfig/node24": ^24.0.3
 
 catalogMode: prefer
 
 ignoreWorkspaceRootCheck: true
 
 overrides:
-  vite: 'catalog:'
+  vite: "catalog:"
 
 shellEmulator: true
 

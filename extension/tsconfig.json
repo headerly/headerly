@@ -7,7 +7,6 @@
       "unplugin-turbo-console/client",
       "unplugin-vue-router/client"
     ],
-    /* Linting */
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
