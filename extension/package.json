@@ -30,6 +30,7 @@
     "pinia": "catalog:",
     "reka-ui": "catalog:",
     "tailwind-merge": "catalog:",
+    "ts-pattern": "catalog:",
     "type-fest": "catalog:",
     "vee-validate": "catalog:",
     "vue": "catalog:",
