@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { ref, useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 import { tabs } from ".";
 

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { HeaderMod } from "@/lib/type";
-import { useEventListener } from "@vueuse/core";
-import { computed, ref } from "vue";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +7,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/entrypoints/popup/components/ui/sheet";
+} from "#/ui/sheet";
+import { useEventListener } from "@vueuse/core";
+import { computed, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";

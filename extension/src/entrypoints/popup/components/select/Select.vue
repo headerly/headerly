@@ -1,13 +1,13 @@
 <script setup lang="ts" generic="T extends {label: string, value: string, disabled?: boolean}">
 import type { HTMLAttributes } from "vue";
-import { computed } from "vue";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/entrypoints/popup/components/ui/select";
+} from "#/ui/select";
+import { computed } from "vue";
 import { cn } from "@/lib/utils";
 
 interface Props {

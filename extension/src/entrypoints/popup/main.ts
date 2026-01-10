@@ -9,7 +9,7 @@ import { router } from "./router";
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
-import "@headerly/components/globals.css";
+import "./index.css";
 
 createApp(App)
   .use(router)

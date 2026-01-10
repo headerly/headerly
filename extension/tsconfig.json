@@ -17,6 +17,13 @@
   },
   "vueCompilerOptions": {
     "strictTemplates": true,
-    "dataAttributes": ["data-slot", "data-size", "data-testid"]
+    "dataAttributes": [
+      "data-slot",
+      "data-size",
+      "data-testid",
+      "data-inset",
+      "data-variant",
+      "data-orientation"
+    ]
   }
 }

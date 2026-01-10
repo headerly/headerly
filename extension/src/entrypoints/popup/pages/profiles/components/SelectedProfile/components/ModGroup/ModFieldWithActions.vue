@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { ActionType, HeaderMod, HeaderModOperation } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import { computed } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { computed } from "vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,

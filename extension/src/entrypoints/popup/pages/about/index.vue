@@ -15,7 +15,7 @@ const name = browser.runtime.getManifest().name;
         <div
           class="
             bg-error from-info to-success absolute inset-0 size-full
-            scale-[0.80] rounded-full bg-gradient-to-r blur-3xl
+            scale-[0.80] rounded-full bg-linear-to-r blur-3xl
           "
         />
         <div
@@ -60,7 +60,7 @@ const name = browser.runtime.getManifest().name;
           <Meteors />
 
           <div class="flex gap-2">
-            <VButton
+            <Button
               as-child
               class="relative z-50 mt-4 flex items-center gap-2"
             >
@@ -69,10 +69,10 @@ const name = browser.runtime.getManifest().name;
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <i class="i-lucide-github text-base-content/66 size-4" />
+                <i class="text-base-content/66 i-lucide-github size-4" />
                 GitHub & MIT
               </a>
-            </VButton>
+            </Button>
             <!-- <a
               rel="noopener noreferrer"
               href="https://headerly.dev/docs"

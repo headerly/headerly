@@ -43,3 +43,5 @@ stats.html
 .husky/
 docs/.vitepress/dist
 docs/.vitepress/cache
+.rolldown
+dist

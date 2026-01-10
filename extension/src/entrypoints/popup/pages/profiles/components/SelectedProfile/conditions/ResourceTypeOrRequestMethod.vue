@@ -1,14 +1,14 @@
 <script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
 import type { Filter } from "@/lib/type";
 import Fieldset from "#/components/group/Fieldset.vue";
-import { difference, inRange } from "es-toolkit";
-import { computed } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { difference, inRange } from "es-toolkit";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const model = defineModel<NonNullable<Filter[T]>>({

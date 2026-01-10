@@ -1,13 +1,13 @@
 <script setup lang="tsx">
 import type { UUID } from "node:crypto";
-import { useEventListener } from "@vueuse/core";
-import { onMounted, ref, watch } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useEventListener } from "@vueuse/core";
+import { onMounted, ref, watch } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
@@ -132,7 +132,7 @@ function renderShortcutHint(index: number) {
                   <i
                     v-if="!profile.enabled"
                     class="
-                      i-lucide-pause absolute right-0 bottom-0 size-4
+                      absolute right-0 bottom-0 i-lucide-pause size-4
                       -translate-1/2
                     "
                   />

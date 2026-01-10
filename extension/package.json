@@ -17,7 +17,6 @@
     "@codemirror/lang-json": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@formkit/auto-animate": "catalog:",
-    "@headerly/components": "workspace:*",
     "@tanstack/vue-query": "catalog:",
     "@tanstack/vue-virtual": "catalog:",
     "@vueuse/core": "catalog:",

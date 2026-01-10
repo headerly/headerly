@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { Profile } from "@/lib/type";
-import { difference } from "es-toolkit";
-import { computed } from "vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { difference } from "es-toolkit";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
@@ -90,7 +90,7 @@ function ignoreWarning() {
         overflow-hidden
       "
     >
-      <i class="i-lucide-cross text-base-content size-8" />
+      <i class="text-base-content i-lucide-cross size-8" />
       <p
         class="
           text-base-content z-10 text-center text-xl font-medium

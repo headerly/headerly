@@ -4,16 +4,16 @@ import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Select from "#/components/select/Select.vue";
-import { useQuery } from "@tanstack/vue-query";
-import { isEqual, pick, sortBy } from "es-toolkit";
-import { computed, toValue, useTemplateRef } from "vue";
-import { toast } from "vue-sonner";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useQuery } from "@tanstack/vue-query";
+import { isEqual, pick, sortBy } from "es-toolkit";
+import { computed, toValue, useTemplateRef } from "vue";
+import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
 const list = defineModel<SyncCookie[]>("list", {
@@ -187,7 +187,7 @@ async function refreshCookie() {
                       :collision-padding="20"
                       side="top"
                       class="
-                        prose prose-sm text-base-content flex max-h-40 w-full
+                        text-base-content prose prose-sm flex max-h-40 w-full
                         max-w-lg overflow-y-auto
                       "
                     >

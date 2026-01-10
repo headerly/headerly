@@ -1,5 +1,4 @@
 import { resolve } from "node:path";
-import { ShadcnResolver } from "@headerly/components/resolver";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
@@ -71,9 +70,7 @@ export default defineConfig({
         exclude: ["**/components/**"],
       }),
       vueComponents({
-        resolvers: [
-          ShadcnResolver(),
-        ],
+        resolvers: [],
         dts: "./.wxt/vue-components.d.ts",
       }),
     ],
