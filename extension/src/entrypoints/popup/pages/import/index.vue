@@ -130,7 +130,8 @@ async function confirmImport() {
   <div class="flex size-full flex-col overflow-x-hidden overflow-y-auto">
     <div
       class="
-        bg-base-200 sticky top-0 z-10 flex items-center justify-between p-2
+        sticky top-0 z-10 flex items-center justify-between
+        bg-primary-foreground p-2
       "
     >
       <div class="flex items-center">
@@ -157,8 +158,6 @@ async function confirmImport() {
     </div>
 
     <div class="flex flex-1 flex-col">
-      <!-- @vue-expect-error The third-party library does not use generics to
-       correctly annotate the type of VModel -->
       <CodeMirror
         v-model="userInput"
         class="flex-1"

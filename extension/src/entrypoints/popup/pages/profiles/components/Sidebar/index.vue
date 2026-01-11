@@ -39,7 +39,7 @@ const popovertarget = "popover-sidebar-menu";
 
 <template>
   <aside
-    :class="cn('bg-base-200 flex h-full flex-col justify-between py-2', className)"
+    :class="cn('flex h-full flex-col justify-between bg-primary-foreground py-2', className)"
   >
     <button
       :popovertarget

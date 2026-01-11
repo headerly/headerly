@@ -15,10 +15,6 @@ interface Props extends PrimitiveProps {
 const props = withDefaults(defineProps<Props>(), {
   as: "button",
 });
-
-defineEmits<{
-  click: [e: MouseEvent];
-}>();
 </script>
 
 <template>

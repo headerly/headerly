@@ -52,8 +52,8 @@ function InfoTooltip({ description }: { description: string }) {
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="
-          fieldset rounded-box border-base-300 bg-base-200 gap-y-4 border p-4
-          text-base
+          fieldset rounded-box border-base-300 gap-y-4 border
+          bg-primary-foreground p-4 text-base
         "
       >
         <template #main>
@@ -70,8 +70,6 @@ function InfoTooltip({ description }: { description: string }) {
                 >
                   {{ field.label }}:
                   <div class="flex items-center">
-                    <!-- @vue-expect-error The type of `settingsStore[field.key]`
-                     was miscalculated as `never`, I don’t know how to solve this issue -->
                     <Select
                       v-model="settingsStore[field.key]"
                       class="min-w-60"

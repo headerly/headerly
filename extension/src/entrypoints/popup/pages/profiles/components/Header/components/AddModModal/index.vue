@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from "#/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -24,14 +25,16 @@ const dialogRef = useTemplateRef("dialogRef");
   <TooltipProvider :delay-duration="200">
     <Tooltip>
       <TooltipTrigger as-child>
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           :class="cn('btn btn-square btn-sm btn-primary', className)"
           @click="() => {
             dialogRef?.showModal()
           }"
         >
           <i class="i-lucide-cross size-4" />
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
         {{ tooltipText }}

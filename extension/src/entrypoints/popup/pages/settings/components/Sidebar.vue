@@ -24,7 +24,10 @@ function handleAnchorClick(event: Event, anchor: string) {
 <template>
   <aside
     :class="cn(
-      'bg-base-200 flex h-full flex-col items-center justify-start py-2',
+      `
+        flex h-full flex-col items-center justify-start bg-primary-foreground
+        py-2
+      `,
       className,
     )"
   >

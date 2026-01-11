@@ -21,7 +21,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     v-bind="forwarded"
     :class="
       cn(`
-        peer size-4 shrink-0 rounded-lg border border-input shadow-xs
+        peer size-4 shrink-0 rounded border border-input shadow-xs
         transition-shadow outline-none
         focus-visible:border-ring focus-visible:ring-[3px]
         focus-visible:ring-ring/50

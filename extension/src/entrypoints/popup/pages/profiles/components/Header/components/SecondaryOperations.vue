@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
+import { Button } from "#/ui/button";
 import { useTemplateRef } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { copyProfile, copyProfileId } from "./copyProfile";
@@ -12,13 +13,14 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
 </script>
 
 <template>
-  <div>
-    <div
-      :popovertarget
-      :style="`anchor-name:--${popovertarget}`"
-    >
-      <slot name="trigger" :popovertarget />
-    </div>
+  <Button
+    variant="outline"
+    size="icon"
+    as-child
+    :popovertarget
+    :style="`anchor-name:--${popovertarget}`"
+  >
+    <slot name="trigger" :popovertarget />
     <ul
       :id="popovertarget"
       :style="`position-anchor:--${popovertarget}`"
@@ -85,5 +87,5 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       ref="commentsDialogRef"
       v-model="profilesStore.selectedProfile.comments"
     />
-  </div>
+  </Button>
 </template>

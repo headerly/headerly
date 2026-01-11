@@ -16,14 +16,7 @@
     "esModuleInterop": true
   },
   "vueCompilerOptions": {
-    "strictTemplates": true,
-    "dataAttributes": [
-      "data-slot",
-      "data-size",
-      "data-testid",
-      "data-inset",
-      "data-variant",
-      "data-orientation"
-    ]
+    "checkUnknownDirectives": true,
+    "strictVModel": true
   }
 }

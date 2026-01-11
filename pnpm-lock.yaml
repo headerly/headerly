@@ -76,7 +76,7 @@ catalogs:
       specifier: ^0.8.1
       version: 0.8.1
     '@vueuse/core':
-      specifier: 13.9.0
+      specifier: 'catalog:'
       version: 13.9.0
     '@webext-core/messaging':
       specifier: ^2.3.0

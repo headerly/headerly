@@ -8,7 +8,10 @@ const { name } = defineProps<{
   <fieldset
     v-auto-animate
     data-testid="fieldset"
-    class="fieldset rounded-box border-base-300 bg-base-200 w-full border p-3"
+    class="
+      fieldset rounded-box border-base-300 w-full border bg-primary-foreground
+      p-3
+    "
   >
     <legend
       data-testid="fieldset-legend"

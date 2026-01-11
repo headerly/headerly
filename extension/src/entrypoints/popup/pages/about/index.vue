@@ -20,9 +20,9 @@ const name = browser.runtime.getManifest().name;
         />
         <div
           class="
-            border-base-100 bg-base-200 relative flex h-full flex-col
-            items-start justify-end overflow-hidden rounded-2xl border px-4 py-8
-            shadow-xl
+            border-base-100 relative flex h-full flex-col items-start
+            justify-end overflow-hidden rounded-2xl border bg-primary-foreground
+            px-4 py-8 shadow-xl
           "
         >
           <RouterLink

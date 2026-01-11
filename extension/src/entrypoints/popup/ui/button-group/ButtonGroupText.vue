@@ -16,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <!-- @vue-expect-error -->
   <Primitive
     role="group"
     data-slot="button-group"

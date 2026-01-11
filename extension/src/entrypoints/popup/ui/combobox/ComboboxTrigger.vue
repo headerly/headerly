@@ -13,7 +13,6 @@ const forwarded = useForwardProps(delegatedProps);
 </script>
 
 <template>
-  <!-- @vue-expect-error -->
   <ComboboxTrigger
     data-slot="combobox-trigger"
     v-bind="forwarded"
