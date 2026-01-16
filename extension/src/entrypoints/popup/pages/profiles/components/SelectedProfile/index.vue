@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { difference } from "es-toolkit";
+import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
@@ -22,24 +22,35 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-type FilterKeys = (keyof Profile["filters"])[];
-
 function hasAnyFilters(filters: Profile["filters"]) {
-  const arrayWithEnabledKeys = ["urlFilter", "regexFilter"] as const satisfies FilterKeys;
-  const primitiveArrayKeys = ["requestMethods", "excludedRequestMethods", "resourceTypes", "excludedResourceTypes"] as const satisfies FilterKeys;
-  const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const satisfies FilterKeys;
-  const baseTypeKeys = ["domainType", "isUrlFilterCaseSensitive"] as const satisfies FilterKeys;
-
-  // To prevent forgetting to update the null value calculation logic.
-  const keysUnion = [...arrayWithEnabledKeys, ...primitiveArrayKeys, ...groupKeys, ...baseTypeKeys] as const satisfies FilterKeys;
-  if (difference(Object.keys(filters), keysUnion).length > 0) {
-    throw new Error(`Unknown filter keys, please update hasAnyFilters function accordingly.`);
-  }
-
-  return arrayWithEnabledKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
-    || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)))
-    || primitiveArrayKeys.some(key => filters[key] && filters[key].length)
-    || baseTypeKeys.some(key => Boolean(filters[key]));
+  return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
+    return match(key)
+      .with("urlFilter", "regexFilter", (k) => {
+        return filters[k]?.some(f => Boolean(f.value)) ?? false;
+      })
+      .with(
+        "requestMethods",
+        "excludedRequestMethods",
+        "resourceTypes",
+        "excludedResourceTypes",
+        (k) => {
+          return (filters[k]?.length ?? 0) > 0;
+        },
+      )
+      .with(
+        "requestDomains",
+        "excludedRequestDomains",
+        "initiatorDomains",
+        "excludedInitiatorDomains",
+        (k) => {
+          return filters[k]?.items.some(f => Boolean(f.value)) ?? false;
+        },
+      )
+      .with("domainType", "isUrlFilterCaseSensitive", "tabIds", (k) => {
+        return Boolean(filters[k]);
+      })
+      .exhaustive();
+  });
 }
 
 const profilesStore = useProfilesStore();
