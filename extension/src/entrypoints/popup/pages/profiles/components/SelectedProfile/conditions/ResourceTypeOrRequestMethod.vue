@@ -129,7 +129,7 @@ const checked = computed(() => {
       >
     </template>
     <template #name-after>
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button

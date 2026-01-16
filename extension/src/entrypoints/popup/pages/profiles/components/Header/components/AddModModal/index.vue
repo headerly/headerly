@@ -22,7 +22,7 @@ const dialogRef = useTemplateRef("dialogRef");
 </script>
 
 <template>
-  <TooltipProvider :delay-duration="200">
+  <TooltipProvider>
     <Tooltip>
       <TooltipTrigger as-child>
         <Button

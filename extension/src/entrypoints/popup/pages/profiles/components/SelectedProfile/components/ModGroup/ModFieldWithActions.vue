@@ -97,7 +97,7 @@ const nextOperation = computed(() => {
       </div>
     </label>
     <div class="flex gap-0.5">
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button

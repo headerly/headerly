@@ -42,7 +42,6 @@ function handleAnchorClick(event: Event, anchor: string) {
       <TooltipProvider
         v-for="value in settings"
         :key="value.anchor"
-        :delay-duration="200"
       >
         <Tooltip>
           <TooltipTrigger as-child>

@@ -145,7 +145,7 @@ const canUseCurrentUrl = computed(() => {
         "
       >
       <div class="ml-1 flex gap-0.5">
-        <TooltipProvider :delay-duration="200">
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
               <button

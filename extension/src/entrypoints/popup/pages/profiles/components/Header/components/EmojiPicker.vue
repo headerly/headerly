@@ -87,7 +87,7 @@ const popovertarget = "emoji-picker-popover";
         <nav class="rounded-box glass">
           <ul class="flex flex-nowrap justify-between gap-1 p-1">
             <li v-for="item in emojisWithCategory" :key="item.label">
-              <TooltipProvider :delay-duration="200">
+              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger as-child>
                     <button

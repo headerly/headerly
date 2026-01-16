@@ -174,7 +174,7 @@ async function refreshCookie() {
                 >
                   (Missing)
                 </span>
-                <TooltipProvider :delay-duration="200">
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger as-child>
                       <button class="btn btn-square btn-ghost btn-xs btn-info">
@@ -202,7 +202,7 @@ async function refreshCookie() {
       </div>
     </label>
     <div class="flex gap-0.5">
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button

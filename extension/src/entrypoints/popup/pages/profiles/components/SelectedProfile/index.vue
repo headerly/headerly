@@ -118,7 +118,7 @@ function ignoreWarning() {
           <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
         </div>
         <div class="flex gap-1">
-          <TooltipProvider :delay-duration="200">
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger as-child>
                 <a
@@ -147,7 +147,7 @@ function ignoreWarning() {
           <p>Add a condition to avoid issues.</p>
         </div>
         <div class="flex gap-1">
-          <TooltipProvider :delay-duration="200">
+          <TooltipProvider>
             <Tooltip>
               <TooltipTrigger as-child>
                 <button

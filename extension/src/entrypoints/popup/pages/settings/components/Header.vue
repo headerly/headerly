@@ -31,7 +31,7 @@ const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
       </h1>
     </div>
     <div class="flex items-center gap-2">
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button

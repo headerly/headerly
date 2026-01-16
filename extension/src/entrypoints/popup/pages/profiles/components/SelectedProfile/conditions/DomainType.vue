@@ -50,7 +50,7 @@ const profilesStore = useProfilesStore();
       >
     </template>
     <template #name-after>
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button

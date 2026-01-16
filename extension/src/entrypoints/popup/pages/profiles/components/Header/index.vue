@@ -64,10 +64,9 @@ const undoAndRedoButtonGroup = [
     icon: "i-lucide-undo-2",
     tooltip: <>
       Undo
-      <Kbd>{getModKey()}</Kbd>
-      +
+      <Kbd class="mr-1">{getModKey()}</Kbd>
       <Kbd>Z</Kbd>
-             </>,
+    </>,
     get disabled() {
       return !profilesStore.canUndo;
     },
@@ -78,12 +77,10 @@ const undoAndRedoButtonGroup = [
     icon: "i-lucide-redo-2",
     tooltip: <>
       Redo
-      <Kbd>{getModKey()}</Kbd>
-      +
-      <Kbd>Shift</Kbd>
-      +
+      <Kbd class="mr-1">{getModKey()}</Kbd>
+      <Kbd class="mr-1">Shift</Kbd>
       <Kbd>Z</Kbd>
-             </>,
+    </>,
     get disabled() {
       return !profilesStore.canRedo;
     },
@@ -109,6 +106,7 @@ const undoAndRedoButtonGroup = [
       <EmojiPicker v-model="profilesStore.selectedProfile.emoji" />
       <Button
         v-if="!profileNameEditing"
+        variant="ghost"
         class="
           btn btn-ghost btn-sm btn-primary flex items-center gap-1 px-1.5
           text-base font-semibold
@@ -147,7 +145,7 @@ const undoAndRedoButtonGroup = [
     </div>
     <div class="flex items-center justify-between gap-1 p-1">
       <ButtonGroup>
-        <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key" :delay-duration="200">
+        <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key">
           <Tooltip>
             <TooltipTrigger as-child>
               <Button
@@ -166,7 +164,7 @@ const undoAndRedoButtonGroup = [
         </TooltipProvider>
       </ButtonGroup>
       <ButtonGroup>
-        <TooltipProvider :delay-duration="200">
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
               <Toggle
@@ -185,7 +183,7 @@ const undoAndRedoButtonGroup = [
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <TooltipProvider :delay-duration="200">
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
               <Button

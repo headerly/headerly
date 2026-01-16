@@ -1,5 +1,7 @@
 <script setup lang="tsx">
 import type { UUID } from "node:crypto";
+import { Button } from "#/ui/button";
+import { Kbd } from "#/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -62,8 +64,8 @@ function renderShortcutHint(index: number) {
   }
   return (
     <span>
-      <kbd class="kbd kbd-sm font-mono mr-1">{getModKey()}</kbd>
-      <kbd class="kbd kbd-sm font-mono">{String(index + 1)}</kbd>
+      <Kbd class="mr-1">{getModKey()}</Kbd>
+      <Kbd>{String(index + 1)}</Kbd>
     </span>
   );
 }
@@ -88,19 +90,16 @@ function renderShortcutHint(index: number) {
         }
       }"
     >
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <ContextMenu :id="profile.id" v-model="profilesStore.manager.profiles[index]!">
               <template #trigger>
-                <button
+                <Button
+                  size="icon"
+                  :variant="profilesStore.manager.selectedProfileId === profile.id ? 'default' : 'secondary'"
                   :class="cn(
-                    `
-                      btn indicator btn-square btn-soft btn-sm
-                      hover:btn-primary
-                      relative text-xl
-                    `,
-                    { 'btn-active btn-primary': profilesStore.manager.selectedProfileId === profile.id },
+                    `indicator relative flex text-xl`,
                   )"
                   @click="profilesStore.manager.selectedProfileId = profile.id"
                 >
@@ -109,7 +108,7 @@ function renderShortcutHint(index: number) {
                   >
                     {{ profile.emoji }}
                   </span>
-                  <span
+                  <!-- <span
                     :class="cn(
                       'indicator-item status',
                       profilesStore.profileId2ErrorMessageRecord[profile.id] && `
@@ -128,7 +127,7 @@ function renderShortcutHint(index: number) {
                     "
                   >
                     {{ index + 1 }}
-                  </span>
+                  </span> -->
                   <i
                     v-if="!profile.enabled"
                     class="

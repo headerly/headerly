@@ -40,7 +40,7 @@ function transferGroupType() {
 <template>
   <div class="flex gap-1">
     <slot name="buttons-before" />
-    <TooltipProvider v-if="description" :delay-duration="200">
+    <TooltipProvider v-if="description">
       <Tooltip>
         <TooltipTrigger as-child>
           <button
@@ -61,7 +61,7 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-    <TooltipProvider v-if="type" :delay-duration="200">
+    <TooltipProvider v-if="type">
       <Tooltip>
         <TooltipTrigger as-child>
           <button
@@ -83,7 +83,7 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-    <TooltipProvider :delay-duration="200">
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
           <button
@@ -98,7 +98,7 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-    <TooltipProvider :delay-duration="200">
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
           <button

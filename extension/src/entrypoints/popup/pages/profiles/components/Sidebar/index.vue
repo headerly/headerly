@@ -129,7 +129,7 @@ const popovertarget = "popover-sidebar-menu";
       )"
     >
       <ProfileSelect />
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <button
@@ -149,7 +149,7 @@ const popovertarget = "popover-sidebar-menu";
     <div class="divider m-0" />
 
     <div class="flex flex-col items-center">
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
             <label
