@@ -129,7 +129,7 @@ const undoAndRedoButtonGroup = [
           @keyup.esc="profileNameEditing = false"
         />
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           class="flex items-center gap-2 text-base"
           @click="handleEditProfileName"
@@ -143,7 +143,7 @@ const undoAndRedoButtonGroup = [
         <Tooltip>
           <TooltipTrigger as-child>
             <Button
-              variant="outline"
+              variant="secondary"
               size="icon-sm"
               :disabled="btn.disabled"
               @click="btn.onClick"
@@ -159,18 +159,26 @@ const undoAndRedoButtonGroup = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Toggle
-              v-model="profilesStore.selectedProfile.enabled"
-              size="sm"
-              variant="outline"
-              class="data-state=off:text-destructive!"
+            <Button
+              size="icon-sm"
+              variant="secondary"
+              :class="{
+                'bg-primary! text-primary-foreground!': profilesStore.selectedProfile.enabled,
+              }"
+              as-child
             >
-              <i
-                :class="cn('size-4', profilesStore.selectedProfile.enabled
-                  ? 'i-lucide-pause'
-                  : 'i-lucide-play')"
-              />
-            </Toggle>
+              <Toggle
+                v-model="profilesStore.selectedProfile.enabled"
+                size="sm"
+                class="data-state=off:text-destructive!"
+              >
+                <i
+                  :class="cn('size-4', profilesStore.selectedProfile.enabled
+                    ? 'i-lucide-pause'
+                    : 'i-lucide-play')"
+                />
+              </Toggle>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
             {{ profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile' }}
@@ -182,7 +190,7 @@ const undoAndRedoButtonGroup = [
           <TooltipTrigger as-child>
             <Button
               size="icon-sm"
-              variant="outline"
+              variant="secondary"
               class="text-destructive!"
               @click="profilesStore.deleteProfile(profilesStore.selectedProfile.id)"
             >

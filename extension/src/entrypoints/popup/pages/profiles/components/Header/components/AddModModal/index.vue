@@ -3,7 +3,6 @@ import { Button } from "#/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -47,7 +46,7 @@ bus.on(() => {
         <TooltipTrigger as-child>
           <DialogTrigger as-child>
             <Button
-              variant="outline"
+              variant="secondary"
               size="icon-sm"
               :class="className"
             >

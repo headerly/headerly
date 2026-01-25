@@ -44,7 +44,7 @@ function transferGroupType() {
     <TooltipProvider v-if="description">
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button size="icon-xs" variant="outline">
+          <Button size="icon-xs" variant="ghost">
             <i class="i-lucide-circle-question-mark size-4" />
           </Button>
         </TooltipTrigger>
@@ -65,7 +65,7 @@ function transferGroupType() {
         <TooltipTrigger as-child>
           <Button
             size="icon-xs"
-            variant="outline"
+            variant="secondary"
             @click="emit('newField')"
           >
             <i class="i-lucide-plus size-4" />
@@ -81,7 +81,7 @@ function transferGroupType() {
         <TooltipTrigger as-child>
           <Button
             size="icon-xs"
-            variant="outline"
+            variant="secondary"
             class="text-destructive!"
             @click="emit('deleteGroup')"
           >
@@ -98,7 +98,7 @@ function transferGroupType() {
         <TooltipTrigger as-child>
           <Button
             size="icon-xs"
-            variant="outline"
+            variant="secondary"
             @click="transferGroupType"
           >
             <i

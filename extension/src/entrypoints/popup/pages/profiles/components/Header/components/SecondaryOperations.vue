@@ -22,7 +22,7 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
       <Button
-        variant="outline"
+        variant="secondary"
         size="icon-sm"
       >
         <i class="i-lucide-ellipsis-vertical size-4" />

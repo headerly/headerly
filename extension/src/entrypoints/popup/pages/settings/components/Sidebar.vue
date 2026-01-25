@@ -28,7 +28,7 @@ function handleAnchorClick(anchor: string) {
       className,
     )"
   >
-    <Button as-child size="icon-sm" variant="outline">
+    <Button as-child size="icon-sm" variant="secondary">
       <RouterLink
         to="/profiles"
       >

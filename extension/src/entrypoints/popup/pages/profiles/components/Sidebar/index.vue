@@ -46,8 +46,6 @@ async function clearDnrRules() {
 }
 
 const isDEV = import.meta.env.DEV;
-
-const popovertarget = "popover-sidebar-menu";
 </script>
 
 <template>
@@ -57,8 +55,7 @@ const popovertarget = "popover-sidebar-menu";
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
         <Button
-          variant="outline"
-          :popovertarget
+          variant="secondary"
           size="icon-sm"
           :class="cn(
             `
