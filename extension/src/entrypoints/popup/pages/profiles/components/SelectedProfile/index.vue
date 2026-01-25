@@ -101,7 +101,7 @@ function ignoreWarning() {
         overflow-hidden
       "
     >
-      <i class="text-base-content i-lucide-cross size-8" />
+      <i class="text-base-content i-lucide-plus size-8" />
       <p
         class="
           text-base-content z-10 text-center text-xl font-medium

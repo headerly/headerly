@@ -7,7 +7,6 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { ref, useTemplateRef } from "vue";
-import { cn } from "@/lib/utils";
 import { tabs } from ".";
 
 const { defaultTab, class: className } = defineProps<{
@@ -27,13 +26,13 @@ const dialogRef = useTemplateRef("dialogRef");
       <TooltipTrigger as-child>
         <Button
           variant="outline"
-          size="icon"
-          :class="cn('btn btn-square btn-sm btn-primary', className)"
+          size="icon-sm"
+          :class="className"
           @click="() => {
             dialogRef?.showModal()
           }"
         >
-          <i class="i-lucide-cross size-4" />
+          <i class="i-lucide-plus size-4" />
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom">

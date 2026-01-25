@@ -37,8 +37,13 @@ function handleAnchorClick(event: Event, anchor: string) {
       <i class="i-lucide-arrow-left size-4" />
       <span class="sr-only">Back to profiles</span>
     </RouterLink>
-    <div class="divider m-0" />
-    <div class="flex flex-col gap-1 px-2 py-1.25">
+    <div
+      class="
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
+      "
+    />    <div class="flex flex-col gap-1 px-2 py-1.25">
       <TooltipProvider
         v-for="value in settings"
         :key="value.anchor"

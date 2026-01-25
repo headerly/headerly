@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from "#/ui/button";
 import Meteors from "./components/Meteors.vue";
 
 const version = browser.runtime.getManifest().version;
@@ -14,23 +15,22 @@ const name = browser.runtime.getManifest().name;
       <div class="relative w-full max-w-xs">
         <div
           class="
-            bg-error from-info to-success absolute inset-0 size-full
-            scale-[0.80] rounded-full bg-linear-to-r blur-3xl
+            absolute inset-0 size-full scale-[0.80] rounded-full bg-destructive
+            bg-linear-to-r from-sky-500 to-green-500 blur-3xl
           "
         />
         <div
           class="
-            border-base-100 relative flex h-full flex-col items-start
-            justify-end overflow-hidden rounded-2xl border bg-primary-foreground
-            px-4 py-8 shadow-xl
+            relative flex h-full flex-col items-start justify-end
+            overflow-hidden rounded-2xl border bg-primary-foreground px-4 py-8
+            shadow-xl
           "
         >
           <RouterLink
             to="/profiles"
             class="
-              border-base-content/33 text-base-content/66 mb-4 flex size-5
-              items-center justify-center rounded-full border transition
-              hover:border-base-content hover:text-base-content
+              mb-4 flex size-5 items-center justify-center rounded-full border
+              transition
             "
           >
             <i class="i-lucide-arrow-left size-3" />
@@ -38,21 +38,16 @@ const name = browser.runtime.getManifest().name;
           </RouterLink>
 
           <h1
-            class="
-              text-base-content relative z-50 mb-4 flex items-center gap-2
-              text-xl font-bold
-            "
+            class="relative z-50 mb-4 flex items-center gap-2 text-xl font-bold"
           >
             {{ name }} © 2025
-            <div class="border-base-content/33 font-mono text-xs font-normal">
+            <span class="font-mono text-xs font-normal">
               v{{ version }}
-            </div>
+            </span>
           </h1>
 
           <p
-            class="
-              text-base-content/66 relative z-50 mb-4 text-base font-normal
-            "
+            class="relative z-50 mb-4 text-base font-normal"
           >
             {{ description }}
           </p>
@@ -62,6 +57,7 @@ const name = browser.runtime.getManifest().name;
           <div class="flex gap-2">
             <Button
               as-child
+              variant="secondary"
               class="relative z-50 mt-4 flex items-center gap-2"
             >
               <a
@@ -69,7 +65,7 @@ const name = browser.runtime.getManifest().name;
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <i class="text-base-content/66 i-lucide-github size-4" />
+                <i class="i-lucide-github size-4" />
                 GitHub & MIT
               </a>
             </Button>

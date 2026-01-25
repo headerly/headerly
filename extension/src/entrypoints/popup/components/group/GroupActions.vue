@@ -90,7 +90,7 @@ function transferGroupType() {
             class="btn btn-square btn-ghost btn-xs btn-primary"
             @click="emit('newField')"
           >
-            <i class="i-lucide-cross size-4" />
+            <i class="i-lucide-plus size-4" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="top">

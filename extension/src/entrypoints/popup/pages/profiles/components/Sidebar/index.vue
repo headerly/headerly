@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { Button } from "#/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "#/ui/dropdown-menu";
+import { Label } from "#/ui/label";
+import { Switch } from "#/ui/switch";
+
 import {
   Tooltip,
   TooltipContent,
@@ -39,134 +52,111 @@ const popovertarget = "popover-sidebar-menu";
 
 <template>
   <aside
-    :class="cn('flex h-full flex-col justify-between bg-primary-foreground py-2', className)"
+    :class="cn(`flex h-full flex-col justify-between border-r py-2`, className)"
   >
-    <button
-      :popovertarget
-      :class="cn(
-        `
-          btn btn-square btn-soft btn-sm mx-2
-          [anchor-name:--anchor-sidebar-menu]
-        `,
-        settingsStore.powerOn || 'opacity-60',
-      )"
-    >
-      <i class="i-lucide-menu size-4" />
-      <span class="sr-only">Open sidebar menu</span>
-    </button>
-    <ul
-      :id="popovertarget"
-      popover
+    <DropdownMenu>
+      <DropdownMenuTrigger as-child>
+        <Button
+          variant="outline"
+          :popovertarget
+          size="icon-sm"
+          :class="cn(
+            `
+              mx-2
+              [anchor-name:--anchor-sidebar-menu]
+            `,
+            settingsStore.powerOn || 'opacity-60',
+          )"
+        >
+          <i class="i-lucide-menu size-4" />
+          <span class="sr-only">Open sidebar menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
+        <DropdownMenuGroup>
+          <DropdownMenuItem @click="profilesStore.addProfile()">
+            New profile
+          </DropdownMenuItem>
+          <ProfileManage>
+            <DropdownMenuItem @select.prevent>
+              Search profile
+              <DropdownMenuShortcut v-if="settingsStore.enableMetaKSearch">
+                {{ `${getModKey()}+K` }}
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </ProfileManage>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/import">
+              Import profile
+            </RouterLink>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/settings">
+              Settings
+            </RouterLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/about">
+              About
+            </RouterLink>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <template v-if="isDEV">
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem @click="openInFullscreen">
+              Expand to Full Tab
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              @click="() => {
+                sendMessage('reinitializeAllRules');
+              }"
+            >
+              Reinitialize DNR rules
+            </DropdownMenuItem>
+            <DropdownMenuItem class="text-destructive!" @click="clearDnrRules">
+              Clear DNR rules
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </template>
+      </DropdownMenuContent>
+    </DropdownMenu>
+    <div
       class="
-        menu dropdown rounded-box bg-base-300 z-1 w-52 p-2 font-medium shadow-sm
-        [position-anchor:--anchor-sidebar-menu]
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
       "
-    >
-      <li>
-        <ProfileManage>
-          <button
-            class="flex flex-row items-center gap-2"
-            :popovertarget
-            popovertargetaction="hide"
-          >
-            <span>Search</span>
-            <span v-if="settingsStore.enableMetaKSearch">
-              <kbd class="kbd kbd-sm mr-1 font-mono">{{ getModKey() }}</kbd>
-              <kbd class="kbd kbd-sm font-mono">K</kbd>
-            </span>
-          </button>
-        </ProfileManage>
-      </li>
-      <li>
-        <RouterLink to="/import" class="flex flex-row items-center gap-2">
-          <span>Import Profiles</span>
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/settings" class="flex flex-row items-center gap-2">
-          <span>Settings</span>
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/about" class="flex flex-row items-center gap-2">
-          <span>About</span>
-        </RouterLink>
-      </li>
-      <li v-if="isDEV">
-        <button
-          class="flex flex-row items-center gap-2"
-          @click="openInFullscreen"
-        >
-          <span>Expand to Full Tab</span>
-        </button>
-      </li>
-      <li v-if="isDEV">
-        <button
-          class="flex flex-row items-center gap-2"
-          @click="clearDnrRules"
-        >
-          <span>Clear DNR rules</span>
-        </button>
-      </li>
-      <li v-if="isDEV">
-        <button
-          class="flex flex-row items-center gap-2"
-          @click="() => {
-            sendMessage('reinitializeAllRules');
-          }"
-        >
-          <span>Reinitialize DNR rules</span>
-        </button>
-      </li>
-    </ul>
-
-    <div class="divider m-0" />
-
+    />
     <div
       :class="cn(
-        'flex flex-1 flex-col gap-1 overflow-y-hidden',
+        'flex flex-1 flex-col overflow-y-hidden',
         settingsStore.powerOn || `opacity-60`,
       )"
     >
       <ProfileSelect />
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-soft btn-sm btn-primary self-center"
-              @click="profilesStore.addProfile()"
-            >
-              <i class="i-lucide-plus size-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>Add new profile</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
     </div>
 
-    <div class="divider m-0" />
+    <div
+      class="
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
+      "
+    />
 
     <div class="flex flex-col items-center">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <label
-              :class="cn(
-                'btn btn-square btn-sm',
-                settingsStore.powerOn ? 'btn-soft btn-error' : `
-                  btn-success animate-pulse
-                `,
-              )"
-            >
-              <i class="i-lucide-power size-4" />
-              <input
+            <Label class="size-8">
+              <Switch
                 v-model="settingsStore.powerOn"
-                type="checkbox"
-                class="sr-only"
-              >
-            </label>
+              />
+            </Label>
           </TooltipTrigger>
           <TooltipContent side="right">
             <p>{{ settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension' }}</p>

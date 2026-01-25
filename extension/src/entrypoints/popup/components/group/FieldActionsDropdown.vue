@@ -92,9 +92,23 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
     "
   >
     <slot name="buttons-before" />
-    <div v-if="$slots['buttons-before']" class="divider my-0" />
+    <div
+      v-if="$slots['buttons-before']"
+      class="
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
+      "
+    />
     <template v-for="action in moreActions" :key="action.key">
-      <div v-if="action.divider" class="divider my-0" />
+      <div
+        v-if="action.divider"
+        class="
+          flex h-4 items-center self-stretch
+          before:h-0.5 before:w-full before:grow-1 before:bg-border
+          before:content-['']
+        "
+      />
       <li v-else>
         <button
           class="disabled:pointer-events-none disabled:opacity-60"
@@ -112,7 +126,15 @@ const anchorname = `--anchor-group-more-action-${field.value.id}`;
         </button>
       </li>
     </template>
-    <div v-if="$slots['buttons-after']" class="divider my-0" />
+    <div
+      v-if="$slots['buttons-after']"
+      class="
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
+      "
+    />
+    />
     <slot name="buttons-after" />
   </ul>
   <CommentsDialog
