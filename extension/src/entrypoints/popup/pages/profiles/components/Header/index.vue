@@ -163,6 +163,7 @@ const undoAndRedoButtonGroup = [
               v-model="profilesStore.selectedProfile.enabled"
               size="sm"
               variant="outline"
+              class="data-state=off:text-destructive!"
             >
               <i
                 :class="cn('size-4', profilesStore.selectedProfile.enabled

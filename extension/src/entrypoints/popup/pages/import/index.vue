@@ -16,9 +16,7 @@ const userInput = ref("");
 const lang = json();
 const linter = jsonParseLinter();
 
-const dark = useDark({
-  attribute: "data-theme",
-});
+const dark = useDark();
 
 const validJson = computed(() => {
   try {
