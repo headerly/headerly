@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { HeaderMod } from "@/lib/type";
+import { Button } from "#/ui/button";
+import { Input } from "#/ui/input";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -12,7 +13,6 @@ import { useEventListener } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
@@ -55,43 +55,56 @@ const searchResults = computed(() => {
     <SheetTrigger as-child>
       <slot />
     </SheetTrigger>
-    <SheetContent side="left" class="w-2/5 text-base">
+    <SheetContent
+      side="left" class="
+        flex w-2/5 flex-col gap-4 text-base
+        sm:max-w-xs
+      "
+    >
       <SheetHeader>
-        <SheetTitle>Search Profiles</SheetTitle>
-        <SheetDescription class="sr-only">
-          Search your profiles
-        </SheetDescription>
+        <SheetTitle>Search profiles</SheetTitle>
       </SheetHeader>
-      <div class="grid w-full gap-1 overflow-y-auto px-2 py-1">
-        <label class="input mb-2 w-full">
-          <i class="i-lucide-search size-4 opacity-50" />
-          <input v-model.lazy.trim="searchKeyword" type="search" class="w-full" placeholder="Search" autofocus>
-        </label>
-        <div v-auto-animate class="flex flex-col gap-1">
-          <div
-            v-for="profile in searchResults"
-            :key="profile.id"
-            class="w-full"
+      <div class="relative mx-4">
+        <i
+          class="
+            i-lucide-search absolute top-1/2 left-2.5 size-4 -translate-y-1/2
+            opacity-50
+          "
+        />
+        <Input
+          v-model.lazy.trim="searchKeyword"
+          type="search"
+          placeholder="Search profiles..."
+          class="pl-8"
+          autofocus
+        />
+      </div>
+      <div
+        v-auto-animate
+        class="mx-3 flex flex-1 flex-col gap-1 overflow-y-auto px-1"
+      >
+        <div
+          v-for="profile in searchResults"
+          :key="profile.id"
+          class="w-full"
+        >
+          <Button
+            variant="ghost"
+            class="w-full justify-start gap-2"
+            @click="() => {
+              profilesStore.manager.selectedProfileId = profile.id
+              open = false
+            }"
           >
-            <button
-              :class="cn(
-                `
-                  btn btn-ghost
-                  hover:btn-primary
-                  grid w-full grid-cols-[1rem_1fr] place-content-center
-                  items-center justify-start gap-2
-                `,
-              )"
-              @click="profilesStore.manager.selectedProfileId = profile.id"
-            >
-              <span>{{ profile.emoji }} </span>
-              <span
-                class="
-                  overflow-hidden text-start overflow-ellipsis whitespace-nowrap
-                "
-              >{{ profile.name }}</span>
-            </button>
-          </div>
+            <span class="text-lg leading-none">{{ profile.emoji }} </span>
+            <span class="truncate">{{ profile.name }}</span>
+          </Button>
+        </div>
+        <div
+          v-if="searchResults.length === 0"
+          class="py-6 text-center text-sm text-muted-foreground"
+        >
+          No profiles found.
         </div>
       </div>
     </SheetContent>
