@@ -15,7 +15,9 @@ import { Input } from "#/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
@@ -130,6 +132,10 @@ const selectedCookieOption = computed(() => {
   });
 });
 
+const groupedCookieOptions = computed(() => {
+  return Object.groupBy(cookieOptions.value, option => `${option.domain}${option.path}`);
+});
+
 const refreshButtonDisabled = computed(() => {
   return !field.value.name
     || isPending.value
@@ -189,49 +195,32 @@ async function refreshCookie() {
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem
-                v-for="option in cookieOptions"
-                :key="option.value"
-                :value="option.value"
+              <SelectGroup
+                v-for="(options, domain) in groupedCookieOptions"
+                :key="domain"
               >
-                <div
-                  :class="cn('flex items-center gap-1', option.isMissing ? `
-                    text-warning
-                  ` : '')"
+                <SelectLabel>{{ domain }}</SelectLabel>
+                <SelectItem
+                  v-for="option in options"
+                  :key="option.value"
+                  :value="option.value"
                 >
-                  <span class="max-w-50 truncate">
-                    {{ option.label }}
-                  </span>
-                  <span
-                    v-if="option.isMissing"
+                  <div
+                    :class="cn('flex items-center gap-1', option.isMissing ? `
+                      text-warning
+                    ` : '')"
                   >
-                    (Missing)
-                  </span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger as-child>
-                        <Button
-                          variant="ghost"
-                          size="icon-xs"
-                          class="text-info!"
-                          @click.stop.prevent
-                        >
-                          <i
-                            class="i-lucide-circle-question-mark size-4"
-                          />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        :collision-padding="20"
-                        side="top"
-                        class="max-w-lg"
-                      >
-                        <span>{{ `Domain: ${option.domain} - Path: ${option.path}` }}</span>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </SelectItem>
+                    <span class="max-w-50 truncate">
+                      {{ option.label }}
+                    </span>
+                    <span
+                      v-if="option.isMissing"
+                    >
+                      (Missing)
+                    </span>
+                  </div>
+                </SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>

@@ -162,7 +162,7 @@ const undoAndRedoButtonGroup = [
               size="icon-sm"
               variant="secondary"
               :class="{
-                'bg-primary! text-primary-foreground!': profilesStore.selectedProfile.enabled,
+                'bg-primary! text-primary-foreground!': !profilesStore.selectedProfile.enabled,
               }"
               as-child
             >

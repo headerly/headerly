@@ -91,7 +91,7 @@ const checkedState = computed(() => {
         <template v-else>
           <RadioGroup
             class="flex flex-col gap-1"
-            :model-value="list.find(item => item.enabled)"
+            :model-value="list.find(item => item.enabled)?.id"
             @update:model-value="(val) => {
               list.forEach(item => {
                 item.enabled = item.id === val;

@@ -44,7 +44,7 @@ function transferGroupType() {
     <TooltipProvider v-if="description">
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button size="icon-xs" variant="ghost">
+          <Button size="icon-xs" variant="secondary">
             <i class="i-lucide-circle-question-mark size-4" />
           </Button>
         </TooltipTrigger>

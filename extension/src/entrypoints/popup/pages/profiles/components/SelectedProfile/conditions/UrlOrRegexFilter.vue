@@ -142,7 +142,7 @@ const canUseCurrentUrl = computed(() => {
         type="text"
         placeholder="|https://example.com/"
         class="
-          h-8 flex-1
+          flex-1
           placeholder:italic
         "
       />

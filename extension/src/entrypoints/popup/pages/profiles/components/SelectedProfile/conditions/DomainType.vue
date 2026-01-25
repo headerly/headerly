@@ -44,14 +44,14 @@ const profilesStore = useProfilesStore();
         <Tooltip>
           <TooltipTrigger as-child>
             <Button
-              variant="ghost"
+              variant="secondary"
               size="icon-xs"
               class="text-destructive!"
               @click="() => {
                 delete profilesStore.selectedProfile.filters.domainType
               }"
             >
-              <i class="i-lucide-trash size-4" />
+              <i class="i-lucide-x size-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
