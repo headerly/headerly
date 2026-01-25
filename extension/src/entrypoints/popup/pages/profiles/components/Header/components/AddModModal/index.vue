@@ -6,8 +6,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { useEventBus } from "@vueuse/core";
 import { ref, useTemplateRef } from "vue";
-import { tabs } from ".";
+import { openAddModModalKey } from "./open";
+import { tabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
   defaultTab: "actions" | "conditions";
@@ -18,6 +20,10 @@ const { defaultTab, class: className } = defineProps<{
 const currentTab = ref<typeof defaultTab>(defaultTab);
 
 const dialogRef = useTemplateRef("dialogRef");
+const bus = useEventBus(openAddModModalKey);
+bus.on(() => {
+  dialogRef.value?.showModal();
+});
 </script>
 
 <template>
@@ -44,6 +50,7 @@ const dialogRef = useTemplateRef("dialogRef");
     <div class="modal-box">
       <form method="dialog">
         <button
+
           class="btn btn-circle btn-ghost btn-sm absolute top-2 right-2"
           @click="() => {
             dialogRef?.close()

@@ -36,7 +36,7 @@ const forwardedProps = useForwardProps(delegatedProps);
         *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2
         dark:bg-input/30 dark:hover:bg-input/50
         dark:aria-invalid:ring-destructive/40
-        [&_svg]:pointer-events-none [&_svg]:shrink-0
+        [&_i]:pointer-events-none [&_i]:shrink-0
         [&_svg:not([class*=\'size-\'])]:size-4
         [&_svg:not([class*=\'text-\'])]:text-muted-foreground
       `,

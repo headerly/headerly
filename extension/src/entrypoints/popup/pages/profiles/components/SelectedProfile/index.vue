@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { Profile } from "@/lib/type";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
+
 import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
-import AddModModal from "../Header/components/AddModModal/index.vue";
+import AlertGroup from "./components/AlertGroup.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 import ModGroup from "./components/ModGroup/index.vue";
@@ -22,7 +17,9 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-function hasAnyFilters(filters: Profile["filters"]) {
+const profilesStore = useProfilesStore();
+const hasAnyFilters = computed(() => {
+  const filters = profilesStore.selectedProfile.filters;
   return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
     return match(key)
       .with("urlFilter", "regexFilter", (k) => {
@@ -51,9 +48,7 @@ function hasAnyFilters(filters: Profile["filters"]) {
       })
       .exhaustive();
   });
-}
-
-const profilesStore = useProfilesStore();
+});
 
 const empty = computed(() => {
   const noMods = profilesStore.selectedProfile.requestHeaderModGroups.every(
@@ -66,7 +61,7 @@ const empty = computed(() => {
     group => group.items.length === 0,
   );
 
-  const noFilters = !hasAnyFilters(profilesStore.selectedProfile.filters);
+  const noFilters = !hasAnyFilters.value;
 
   return noMods && noFilters;
 },
@@ -74,19 +69,6 @@ const empty = computed(() => {
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
-
-const showGlobalRuleWarning = computed(() => {
-  const filters = profilesStore.selectedProfile.filters;
-  const hasFilters = hasAnyFilters(filters);
-  const hasRule = Boolean(profilesStore.profileId2RelatedRuleIdRecord[profilesStore.selectedProfile.id]);
-  return !hasFilters && !empty.value && hasRule;
-});
-
-function ignoreWarning() {
-  profilesStore.selectedProfile.filters.urlFilter = [
-    { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
-  ];
-}
 </script>
 
 <template>
@@ -101,11 +83,11 @@ function ignoreWarning() {
         overflow-hidden
       "
     >
-      <i class="text-base-content i-lucide-plus size-8" />
+      <i class="i-lucide-plus size-8" />
       <p
         class="
-          text-base-content z-10 text-center text-xl font-medium
-          tracking-tighter whitespace-pre-wrap
+          z-10 text-center text-xl font-medium tracking-tighter
+          whitespace-pre-wrap
         "
       >
         No data, please add any mods or filters first.
@@ -117,69 +99,8 @@ function ignoreWarning() {
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full px-2 pb-2">
-      <div
-        v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
-        role="alert"
-        class="alert alert-soft alert-error mt-2"
-      >
-        <i class="i-lucide-bug size-6" />
-        <div>
-          <p>This profile caused an error when registering rules.</p>
-          <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
-        </div>
-        <div class="flex gap-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger as-child>
-                <a
-                  target="_blank"
-                  href="https://github.com/headerly/headerly/issues"
-                  class="btn btn-square btn-ghost btn-sm btn-error"
-                >
-                  <i class="i-lucide-github size-4" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Report this issue on GitHub
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-      <div
-        v-if="showGlobalRuleWarning"
-        role="alert"
-        class="alert alert-soft alert-warning mt-2"
-      >
-        <i class="i-lucide-triangle-alert size-6" />
-        <div>
-          <p>This profile affects every request and might break sites.</p>
-          <p>Add a condition to avoid issues.</p>
-        </div>
-        <div class="flex gap-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger as-child>
-                <button
-                  class="btn btn-square btn-ghost btn-sm btn-warning"
-                  @click="ignoreWarning"
-                >
-                  <i class="i-lucide-ban size-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Ignore this warning
-              </TooltipContent>
-            </Tooltip>
-            <AddModModal
-              tooltip-text="Add a new condition"
-              default-tab="conditions"
-              class="btn btn-square btn-sm btn-warning"
-            />
-          </TooltipProvider>
-        </div>
-      </div>
+    <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
+      <AlertGroup :empty :has-any-filters />
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
         :key="id"

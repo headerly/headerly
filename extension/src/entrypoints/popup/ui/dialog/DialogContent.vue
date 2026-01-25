@@ -59,7 +59,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden
           disabled:pointer-events-none
           data-[state=open]:bg-accent data-[state=open]:text-muted-foreground
-          [&_svg]:pointer-events-none [&_svg]:shrink-0
+          [&_i]:pointer-events-none [&_i]:shrink-0
           [&_svg:not([class*='size-'])]:size-4
         "
       >
