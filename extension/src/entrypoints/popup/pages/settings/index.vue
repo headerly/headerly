@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import Fieldset from "#/components/group/Fieldset.vue";
-import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
 import {

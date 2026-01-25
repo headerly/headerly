@@ -1,7 +1,6 @@
 <script setup lang="tsx">
 import type { HTMLAttributes } from "vue";
 import { Button } from "#/ui/button";
-import { ButtonGroup } from "#/ui/button-group";
 import {
   Input,
 } from "#/ui/input";

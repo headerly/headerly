@@ -41,7 +41,7 @@ bus.on(() => {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <TooltipProvider>
+    <TooltipProvider ignore-non-keyboard-focus>
       <Tooltip>
         <TooltipTrigger as-child>
           <DialogTrigger as-child>

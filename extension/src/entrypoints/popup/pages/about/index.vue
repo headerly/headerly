@@ -26,16 +26,19 @@ const name = browser.runtime.getManifest().name;
             shadow-xl
           "
         >
-          <RouterLink
-            to="/profiles"
-            class="
-              mb-4 flex size-5 items-center justify-center rounded-full border
-              transition
-            "
+          <Button
+            as-child
+            variant="secondary"
+            size="icon-xs"
+            class="mb-4 rounded-full border transition"
           >
-            <i class="i-lucide-arrow-left size-3" />
-            <span class="sr-only">Back to profiles</span>
-          </RouterLink>
+            <RouterLink
+              to="/profiles"
+            >
+              <i class="i-lucide-arrow-left size-3" />
+              <span class="sr-only">Back to profiles</span>
+            </RouterLink>
+          </Button>
 
           <h1
             class="relative z-50 mb-4 flex items-center gap-2 text-xl font-bold"
@@ -69,17 +72,6 @@ const name = browser.runtime.getManifest().name;
                 GitHub & MIT
               </a>
             </Button>
-            <!-- <a
-              rel="noopener noreferrer"
-              href="https://headerly.dev/docs"
-              target="_blank"
-              class="
-                btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
-              "
-            >
-              <i class="i-lucide-book-open size-4 text-base-content/66" />
-              Documentation
-            </a> -->
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 <script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
 import type { Filter } from "@/lib/type";
 import Fieldset from "#/components/group/Fieldset.vue";
+import { Button } from "#/ui/button";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
 import {
   Tooltip,
   TooltipContent,
@@ -94,31 +97,33 @@ const checked = computed(() => {
     :name="nameMap[type]"
   >
     <template #main>
-      <div class="grid grid-cols-3 gap-1">
-        <label
+      <div class="grid grid-cols-3 gap-y-2">
+        <div
           v-for="option in options"
           :key="option.value"
-          class="flex items-center gap-2 text-base"
+          class="flex items-center gap-2"
         >
-          <input
-            v-model="model"
-            type="checkbox"
-            class="checkbox checkbox-sm"
-            :value="option.value"
-          >
-          <span>{{ option.label }}</span>
-        </label>
+          <Checkbox
+            :id="option.value"
+            :checked="model.includes(option.value)"
+            @update:checked="(checked: boolean) => {
+              if (checked) {
+                model = [...model, option.value] as NonNullable<Filter[T]>;
+              } else {
+                model = model.filter(v => v !== option.value) as NonNullable<Filter[T]>;
+              }
+            }"
+          />
+          <Label :for="option.value" class="font-normal">{{ option.label }}</Label>
+        </div>
       </div>
     </template>
     <template #name-before>
-      <input
-        type="checkbox"
-        class="checkbox checkbox-sm"
+      <Checkbox
         :checked
         :indeterminate
-        @change="
-          (e) => {
-            const checked = (e.target as HTMLInputElement).checked;
+        @update:checked="
+          (checked: boolean) => {
             if (checked) {
               model = options.map(option => option.value) as NonNullable<Filter[T]>;
             } else {
@@ -126,20 +131,22 @@ const checked = computed(() => {
             }
           }
         "
-      >
+      />
     </template>
     <template #name-after>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-xs btn-error"
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              class="text-destructive!"
               @click="() => {
                 delete profilesStore.selectedProfile.filters[type];
               }"
             >
               <i class="i-lucide-trash size-4" />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
             Delete this condition

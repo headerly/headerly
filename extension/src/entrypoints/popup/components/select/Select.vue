@@ -38,13 +38,13 @@ const emit = defineEmits<{
 }>();
 
 const triggerClasses = computed(() => cn(
-  size === "xs" && "select-xs",
-  size === "sm" && "select-sm",
-  size === "md" && "select-md",
-  size === "lg" && "select-lg",
+  size === "xs" && "h-7 px-2 text-xs",
+  size === "sm" && "h-8 px-3 text-sm",
+  size === "md" && "h-10 px-3 text-sm",
+  size === "lg" && "h-11 px-4 text-base",
 
-  type === "warning" && "text-warning select-warning",
-  type === "error" && "text-error select-error",
+  type === "warning" && "border-warning text-warning",
+  type === "error" && "border-error text-error",
   className,
 ));
 </script>
@@ -58,7 +58,7 @@ const triggerClasses = computed(() => cn(
     }"
   >
     <SelectTrigger :class="triggerClasses">
-      <div v-if="loading" class="skeleton h-4 w-20" />
+      <div v-if="loading" class="h-4 w-20 animate-pulse rounded bg-muted" />
       <SelectValue v-else :placeholder class="truncate" />
     </SelectTrigger>
     <SelectContent>

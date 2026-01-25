@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/type";
 import Fieldset from "#/components/group/Fieldset.vue";
+import { Button } from "#/ui/button";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
+import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({
@@ -14,6 +19,13 @@ const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({
 });
 
 const profilesStore = useProfilesStore();
+
+const radioValue = computed({
+  get: () => String(model.value.value),
+  set: (val: string) => {
+    model.value.value = val === "true";
+  },
+});
 </script>
 
 <template>
@@ -21,46 +33,34 @@ const profilesStore = useProfilesStore();
     name="Url Filter Case Sensitive"
   >
     <template #main>
-      <div class="flex items-center gap-2">
-        <label class="label text-base-content gap-2 text-base">
-          <input
-            v-model="model.value"
-            type="radio"
-            :value="true"
-            class="radio radio-sm"
-          >
-          On
-        </label>
-        <label class="label text-base-content gap-2 text-base">
-          <input
-            v-model="model.value"
-            type="radio"
-            :value="false"
-            class="radio radio-sm"
-          >
-          Off
-        </label>
-      </div>
+      <RadioGroup v-model="radioValue" class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <RadioGroupItem id="on" value="true" />
+          <Label for="on" class="font-normal">On</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <RadioGroupItem id="off" value="false" />
+          <Label for="off" class="font-normal">Off</Label>
+        </div>
+      </RadioGroup>
     </template>
     <template #name-before>
-      <input
-        v-model="model.enabled"
-        type="checkbox"
-        class="checkbox checkbox-sm"
-      >
+      <Checkbox v-model:checked="model.enabled" />
     </template>
     <template #name-after>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-xs btn-error"
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              class="text-destructive!"
               @click="() => {
                 delete profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive
               }"
             >
               <i class="i-lucide-trash size-4" />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
             Delete this condition
@@ -68,5 +68,5 @@ const profilesStore = useProfilesStore();
         </Tooltip>
       </TooltipProvider>
     </template>
-  </fieldset>
+  </Fieldset>
 </template>
