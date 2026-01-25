@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/type";
 import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
@@ -40,7 +41,7 @@ const checkedState = computed(() => {
     :name
   >
     <template #name-before>
-      <label v-if="type">
+      <Label v-if="type">
         <Checkbox
           :model-value="checkedState"
           @update:model-value="(val) => {
@@ -59,7 +60,7 @@ const checkedState = computed(() => {
             }
           }"
         />
-      </label>
+      </Label>
     </template>
     <template #name-after>
       <slot name="name-after" />

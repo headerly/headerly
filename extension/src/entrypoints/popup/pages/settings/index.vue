@@ -1,6 +1,17 @@
 <script setup lang="tsx">
 import Fieldset from "#/components/group/Fieldset.vue";
-import Select from "#/components/select/Select.vue";
+import { Button } from "#/ui/button";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "#/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +30,7 @@ function InfoTooltip({ description }: { description: string }) {
     <TooltipProvider delay-duration={200}>
       <Tooltip>
         <TooltipTrigger as-child>
-          <button class="btn ms-1 btn-square btn-ghost btn-xs btn-info">
+          <button>
             <i class="i-lucide-circle-question-mark size-4 cursor-pointer" />
           </button>
         </TooltipTrigger>
@@ -43,18 +54,14 @@ function InfoTooltip({ description }: { description: string }) {
     <Sidebar class="col-start-1 row-span-2" />
     <main
       class="
-        text-base-content col-start-2 row-start-2 overflow-x-hidden
-        overflow-y-auto px-2 pb-2
+        col-start-2 row-start-2 overflow-x-hidden overflow-y-auto px-2 pb-2
       "
     >
       <Fieldset
         v-for="setting in settings"
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
-        class="
-          fieldset rounded-box border-base-300 gap-y-4 border
-          bg-primary-foreground p-4 text-base
-        "
+        class="gap-y-4 border bg-primary-foreground p-4 text-base"
       >
         <template #main>
           <div class="flex size-full flex-col gap-2">
@@ -62,44 +69,47 @@ function InfoTooltip({ description }: { description: string }) {
               <div
                 v-if="field.type === 'select'"
               >
-                <label
-                  class="
-                    label text-base-content flex flex-col items-start
-                    whitespace-normal
-                  "
+                <Label
+                  class="flex flex-col items-start whitespace-normal"
                 >
                   {{ field.label }}:
-                  <div class="flex items-center">
-                    <Select
-                      v-model="settingsStore[field.key]"
-                      class="min-w-60"
-                      :options="field.options"
-                    />
+                  <div class="flex items-center gap-1">
+                    <Select v-model="settingsStore[field.key]">
+                      <SelectTrigger class="min-w-60">
+                        <SelectValue placeholder="Select a fruit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Options</SelectLabel>
+                          <SelectItem v-for="option in field.options" :key="option.value" :value="option.value">
+                            {{ option.label }}
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                     <InfoTooltip
                       v-if="'description' in field && field.description"
                       :description="field.description"
                     />
                   </div>
-                </label>
+                </Label>
               </div>
               <div
                 v-else-if="field.type === 'checkbox'"
                 class="flex items-center"
               >
-                <label
-                  class="label text-base-content items-start whitespace-normal"
+                <Label
+                  class="flex items-center whitespace-normal"
                 >
-                  <input
+                  <Checkbox
                     v-model="settingsStore[field.key]"
-                    type="checkbox"
-                    class="checkbox"
-                  >
+                  />
                   {{ field.label }}
-                </label>
-                <InfoTooltip
-                  v-if="'description' in field && field.description"
-                  :description="field.description"
-                />
+                  <InfoTooltip
+                    v-if="'description' in field && field.description"
+                    :description="field.description"
+                  />
+                </Label>
               </div>
             </template>
           </div>

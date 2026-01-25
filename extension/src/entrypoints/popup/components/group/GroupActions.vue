@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { VNode } from "vue";
 import type { GroupItem, GroupType } from "@/lib/type";
+import { Button } from "#/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -43,11 +44,9 @@ function transferGroupType() {
     <TooltipProvider v-if="description">
       <Tooltip>
         <TooltipTrigger as-child>
-          <button
-            class="btn btn-square btn-ghost btn-xs btn-primary"
-          >
+          <Button size="icon-xs" variant="outline">
             <i class="i-lucide-circle-question-mark size-4" />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent
           :collision-padding="20"
@@ -61,37 +60,16 @@ function transferGroupType() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-    <TooltipProvider v-if="type">
-      <Tooltip>
-        <TooltipTrigger as-child>
-          <button
-            :class="cn('btn btn-square btn-ghost btn-xs', {
-              'btn-info': type === 'checkbox',
-              'btn-accent': type === 'radio',
-            })"
-            @click="transferGroupType"
-          >
-            <i
-              :class="cn('size-4', type === 'checkbox'
-                ? `i-lucide-square-check-big` : `i-lucide-circle-dot`)"
-            />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="top">
-          Transfer group type to
-          {{ type === 'checkbox' ? 'Radio' : 'Checkbox' }}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
-          <button
-            class="btn btn-square btn-ghost btn-xs btn-primary"
+          <Button
+            size="icon-xs"
+            variant="outline"
             @click="emit('newField')"
           >
             <i class="i-lucide-plus size-4" />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
           Add a new item
@@ -101,15 +79,37 @@ function transferGroupType() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
-          <button
-            class="btn btn-square btn-ghost btn-xs btn-error"
+          <Button
+            size="icon-xs"
+            variant="outline"
+            class="text-destructive!"
             @click="emit('deleteGroup')"
           >
-            <i class="i-lucide-trash size-4" />
-          </button>
+            <i class="i-lucide-x size-4" />
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
           Delete this group
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+    <TooltipProvider v-if="type">
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button
+            size="icon-xs"
+            variant="outline"
+            @click="transferGroupType"
+          >
+            <i
+              :class="cn('size-4', type === 'checkbox'
+                ? `i-lucide-square-check-big` : `i-lucide-circle-dot`)"
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          Transfer group type to
+          {{ type === 'checkbox' ? 'Radio' : 'Checkbox' }}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -66,7 +66,7 @@ const undoAndRedoButtonGroup = [
       Undo
       <Kbd class="mr-1">{getModKey()}</Kbd>
       <Kbd>Z</Kbd>
-    </>,
+             </>,
     get disabled() {
       return !profilesStore.canUndo;
     },
@@ -80,7 +80,7 @@ const undoAndRedoButtonGroup = [
       <Kbd class="mr-1">{getModKey()}</Kbd>
       <Kbd class="mr-1">Shift</Kbd>
       <Kbd>Z</Kbd>
-    </>,
+             </>,
     get disabled() {
       return !profilesStore.canRedo;
     },
@@ -92,7 +92,10 @@ const undoAndRedoButtonGroup = [
 <template>
   <header
     :class="cn(
-      `flex items-center justify-between gap-1 bg-secondary/33 py-1 pr-1 pl-2`,
+      `
+        flex items-center justify-between gap-1 bg-primary-foreground py-1 pr-1
+        pl-2
+      `,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"
@@ -104,7 +107,7 @@ const undoAndRedoButtonGroup = [
       <Button
         v-if="!profileNameEditing"
         variant="ghost"
-        class="flex items-center gap-1 px-1.5 text-base font-semibold"
+        class="flex items-center gap-1 px-1.5 text-base"
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
           profileNameEditing = true

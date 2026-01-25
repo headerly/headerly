@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from "#/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +21,7 @@ const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
 <template>
   <header
     :class="cn(
-      'flex items-center justify-between bg-primary-foreground px-2',
+      'flex items-center justify-between bg-secondary/33 px-2',
       className,
     )"
   >
@@ -34,17 +35,14 @@ const resetToDefaultModalRef = useTemplateRef("resetToDefaultModalRef");
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
+            <Button
+              variant="secondary"
               :disabled="!settingsStore.isModified"
-              :class="cn(
-                'btn btn-soft btn-sm',
-                settingsStore.isModified && 'btn-error',
-              )"
               @click="resetToDefaultModalRef?.showModal()"
             >
               <i class="i-lucide-refresh-cw size-4" />
               Reset
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="5">
             Reset application settings

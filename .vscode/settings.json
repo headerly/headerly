@@ -49,5 +49,10 @@
   ],
 
   // Tailwind CSS IntelliSense settings
-  "tailwindCSS.classFunctions": ["cva", "cn"]
+  "tailwindCSS.classFunctions": ["cva", "cn"],
+
+  // Exclude some files from the "Go to Definition" recommendation list
+  "search.exclude": {
+    "**/*.css": true
+  }
 }

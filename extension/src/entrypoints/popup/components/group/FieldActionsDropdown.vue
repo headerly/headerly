@@ -1,9 +1,16 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/type";
 import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
+import { Button } from "#/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "#/ui/dropdown-menu";
 import { head } from "es-toolkit";
 import { ref, useTemplateRef } from "vue";
-import { cn } from "@/lib/utils";
 
 const list = defineModel<T[]>("list", {
   required: true,
@@ -23,7 +30,6 @@ const moreActions = [
   {
     key: "duplicate",
     label: "Duplicate",
-    icon: "i-lucide-copy-plus",
     onClick: () => {
       const newField = { ...field.value, id: crypto.randomUUID() };
       list.value.splice(index + 1, 0, newField);
@@ -32,17 +38,12 @@ const moreActions = [
   {
     key: "comments",
     label: "Comments",
-    icon: "i-lucide-square-pen",
     onClick: () => commentsDialogRef.value?.open(),
-    get indicator() {
-      return Boolean(field.value.comments.length);
-    },
   },
   { divider: true, key: "divider" },
   {
     key: "moveUp",
-    label: "Move Up",
-    icon: "i-lucide-arrow-big-up",
+    label: "Move up",
     get disabled() {
       return index === 0;
     },
@@ -53,8 +54,7 @@ const moreActions = [
   },
   {
     key: "moveDown",
-    label: "Move Down",
-    icon: "i-lucide-arrow-big-down",
+    label: "Move down",
     get disabled() {
       return index === list.value.length - 1;
     },
@@ -66,77 +66,35 @@ const moreActions = [
 ];
 
 const comments = ref(field.value.comments || "");
-
-const popovertarget = `popover-group-more-action-${field.value.id}`;
-const anchorname = `--anchor-group-more-action-${field.value.id}`;
 </script>
 
 <template>
-  <button
-    :popovertarget
-    :style="`anchor-name:${anchorname}`"
-    class="btn btn-square btn-ghost btn-xs btn-primary"
-  >
-    <i class="i-lucide-ellipsis-vertical size-4" />
-    <span class="sr-only">More options</span>
-  </button>
-  <ul
-    :id="popovertarget"
-    :style="`position-anchor:${anchorname}`"
-    popover
-    class="
-      menu dropdown rounded-box bg-base-300 text-base-content w-52 p-2
-      font-medium shadow-sm
-      [position-area:end_span-start]
-      [position-try-fallbacks:flip-block]
-    "
-  >
-    <slot name="buttons-before" />
-    <div
-      v-if="$slots['buttons-before']"
-      class="
-        flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow-1 before:bg-border
-        before:content-['']
-      "
-    />
-    <template v-for="action in moreActions" :key="action.key">
-      <div
-        v-if="action.divider"
-        class="
-          flex h-4 items-center self-stretch
-          before:h-0.5 before:w-full before:grow-1 before:bg-border
-          before:content-['']
-        "
+  <DropdownMenu>
+    <DropdownMenuTrigger as-child>
+      <Button size="icon-xs" variant="secondary">
+        <i class="i-lucide-ellipsis-vertical size-4" />
+        <span class="sr-only">More options</span>
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
+      <slot name="buttons-before" />
+      <DropdownMenuSeparator
+        v-if="$slots['buttons-before']"
       />
-      <li v-else>
-        <button
-          class="disabled:pointer-events-none disabled:opacity-60"
+      <template v-for="action in moreActions" :key="action.key">
+        <DropdownMenuSeparator v-if="action.divider" />
+        <DropdownMenuItem
+          v-else
           :disabled="action.disabled"
           @click="action.onClick"
         >
-          <i :class="cn('size-4', action.icon)" />
-          <div class="indicator pr-2">
-            <span>{{ action.label }}</span>
-            <span
-              v-if="action.indicator"
-              class="indicator-item status status-success indicator-middle"
-            />
-          </div>
-        </button>
-      </li>
-    </template>
-    <div
-      v-if="$slots['buttons-after']"
-      class="
-        flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow-1 before:bg-border
-        before:content-['']
-      "
-    />
-    />
-    <slot name="buttons-after" />
-  </ul>
+          <span>{{ action.label }}</span>
+        </DropdownMenuItem>
+      </template>
+      <DropdownMenuSeparator v-if="$slots['buttons-after']" />
+      <slot name="buttons-after" />
+    </DropdownMenuContent>
+  </DropdownMenu>
   <CommentsDialog
     ref="commentsDialogRef"
     v-model="comments"
