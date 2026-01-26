@@ -1,1 +1,4 @@
 * text=auto eol=lf
+
+# Mark Shadcn UI components as generated
+extension/src/entrypoints/popup/ui/** linguist-generated
