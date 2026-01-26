@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { UUID } from "node:crypto";
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
@@ -29,7 +28,7 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useQuery } from "@tanstack/vue-query";
-import { isEqual, pick, sortBy } from "es-toolkit";
+import { pick, sortBy } from "es-toolkit";
 import { computed, ref, toValue } from "vue";
 import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
@@ -48,46 +47,39 @@ const { index } = defineProps<{
 
 function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ["cookies", domain, field.value],
+    queryKey: ["cookies", domain],
     queryFn: async () => {
       const cookies = await browser.cookies.getAll({ domain: toValue(domain) });
 
       return cookies.filter(
         cookie => cookie.domain === toValue(domain) || cookie.domain === `.${toValue(domain)}`,
-      ).map((cookie) => {
-        const isSelected = isEqual(pick(cookie, ["domain", "path", "name"]), pick(field.value, ["domain", "path", "name"]));
-        return {
-          ...pick(cookie, ["name", "value", "path", "domain"]),
-          id: isSelected ? field.value.id : crypto.randomUUID(),
-        };
-      })
-      ;
+      ).map(cookie => pick(cookie, ["name", "value", "path", "domain"]));
     },
-    enabled: Boolean(domain),
+    enabled: Boolean(toValue(domain)),
   });
 }
 
 const { data: cookies, isPending } = useCookiesQuery(() => field.value.domain);
-
+const getCookieKey = (c: Pick<SyncCookie, "name" | "path" | "domain">) => `${c.domain}|${c.path}|${c.name}`;
+function createOption(cookie: Pick<SyncCookie, "name" | "value" | "path" | "domain">) {
+  return {
+    value: getCookieKey(cookie),
+    label: cookie.name,
+    cookieValue: cookie.value,
+    path: cookie.path,
+    domain: cookie.domain,
+    isMissing: false,
+  };
+}
 const cookieOptions = computed(() => {
   if (isPending.value) {
     return [];
   }
-  function createOption(cookie: Pick<SyncCookie, "id" | "name" | "value" | "path" | "domain">) {
-    return {
-      value: cookie.id,
-      label: cookie.name,
-      cookieValue: cookie.value,
-      path: cookie.path,
-      domain: cookie.domain,
-      isMissing: false,
-    };
-  }
+
   const options = cookies.value?.map(createOption) ?? [];
-  if (!options.find(
-    option =>
-      option.value === field.value.id,
-  ) && field.value.value) {
+  const currentKey = getCookieKey(field.value);
+
+  if (field.value.name && !options.find(option => option.value === currentKey)) {
     options.push({
       ...createOption(field.value),
       isMissing: true,
@@ -113,11 +105,11 @@ function handleDomainChange(e: Event) {
 const isCookieDialogOpen = ref(false);
 
 const disabled = computed(() => {
-  return cookieOptions.value.length === 0 || isPending.value;
+  return (cookies.value?.length ?? 0) === 0 || isPending.value;
 });
 
-function updateCookie(newCookieId: UUID) {
-  const selected = cookieOptions.value.find(cookie => cookie.value === newCookieId);
+function updateCookie(newKey: string) {
+  const selected = cookieOptions.value.find(cookie => cookie.value === newKey);
   if (selected) {
     field.value.value = selected.cookieValue;
     field.value.domain = selected.domain;
@@ -127,8 +119,9 @@ function updateCookie(newCookieId: UUID) {
 }
 
 const selectedCookieOption = computed(() => {
+  const currentKey = getCookieKey(field.value);
   return cookieOptions.value.find((cookie) => {
-    return cookie.value === field.value.id;
+    return cookie.value === currentKey;
   });
 });
 
@@ -174,13 +167,13 @@ async function refreshCookie() {
         />
         <div class="relative">
           <Select
-            v-model="field.id"
+            :model-value="getCookieKey(field)"
             :disabled="disabled || isPending"
-            @update:model-value="(v) => updateCookie(v as UUID)"
+            @update:model-value="(v) => updateCookie(v)"
           >
             <SelectTrigger
               :class="cn(
-                'w-full px-3 text-base',
+                'w-full min-w-0 px-3 text-base',
                 selectedCookieOption?.isMissing && 'border-warning text-warning',
               )"
             >
@@ -191,7 +184,7 @@ async function refreshCookie() {
               <SelectValue
                 v-else
                 :placeholder="disabled ? 'Not available' : 'Pick a cookie'"
-                class="truncate"
+                class="block! flex-1 truncate text-left"
               />
             </SelectTrigger>
             <SelectContent>
