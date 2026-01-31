@@ -18,7 +18,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     data-slot="combobox-item"
     v-bind="forwarded"
     :class="cn(`
-      relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5
+      relative flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5
       text-sm outline-hidden select-none
       data-disabled:pointer-events-none data-disabled:opacity-50
       data-highlighted:bg-accent data-highlighted:text-accent-foreground

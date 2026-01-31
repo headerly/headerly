@@ -2,7 +2,6 @@
 import type { ComboboxInputEmits, ComboboxInputProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { SearchIcon } from "lucide-vue-next";
 import { ComboboxInput, useForwardPropsEmits } from "reka-ui";
 import { cn } from "@/lib/utils";
 
@@ -22,25 +21,26 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 </script>
 
 <template>
-  <div
-    data-slot="command-input-wrapper"
-    class="flex h-9 items-center gap-2 border-b px-3"
-  >
-    <SearchIcon class="size-4 shrink-0 opacity-50" />
-    <ComboboxInput
-      data-slot="command-input"
-      :class="cn(
-        `
-          flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden
-          placeholder:text-muted-foreground
-          disabled:cursor-not-allowed disabled:opacity-50
-        `,
-        props.class,
-      )"
+  <ComboboxInput
+    data-slot="command-input"
+    :class="cn(
+      `
+        h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3
+        py-1 text-base shadow-xs transition-[color,box-shadow] outline-none
+        selection:bg-primary selection:text-primary-foreground
+        placeholder:text-muted-foreground
+        disabled:cursor-not-allowed disabled:opacity-50
+        dark:bg-input/30
+      `,
+      `
+        focus-visible:border-ring focus-visible:ring-[3px]
+        focus-visible:ring-ring/50
+      `,
+      props.class,
+    )"
 
-      v-bind="{ ...$attrs, ...forwarded }"
-    >
-      <slot />
-    </ComboboxInput>
-  </div>
+    v-bind="{ ...$attrs, ...forwarded }"
+  >
+    <slot />
+  </ComboboxInput>
 </template>

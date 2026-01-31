@@ -2,6 +2,14 @@
 import type { ActionType, HeaderMod, HeaderModOperation } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Button } from "#/ui/button";
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxViewport,
+} from "#/ui/combobox";
 import { Input } from "#/ui/input";
 import { Label } from "#/ui/label";
 import {
@@ -31,8 +39,6 @@ const { actionType, index } = defineProps<{
   index: number;
 }>();
 
-const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID_PREFIX";
-
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
     return AUTOCOMPLETE_RESPONSE_FIELDS;
@@ -43,13 +49,13 @@ function getAutocompleteList(actionType: ActionType, operation: HeaderModOperati
   }
 }
 
-function autocomplete(actionType: ActionType, operation: HeaderModOperation, input: string) {
-  if (!input) {
-    return [];
-  }
-  const list = getAutocompleteList(actionType, operation);
-  return list.filter(field => field.includes(input) && field !== input);
-}
+const autocompleteList = computed(() => {
+  const query = field.value.name.toLowerCase();
+  const list = getAutocompleteList(actionType, field.value.operation);
+  if (!query)
+    return list;
+  return list.filter(item => item.toLowerCase().includes(query) && item !== field.value.name);
+});
 
 const nextOperation = computed(() => {
   const supportedOperations = ["set", "append", "remove"] as const satisfies HeaderModOperation[];
@@ -67,25 +73,37 @@ const nextOperation = computed(() => {
     <Label class="flex flex-1">
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
-        <Label class="flex-1">
-          <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`">
-            <option
-              v-for="option in autocomplete(actionType, field.operation, field.name)"
-              :key="option"
-              :value="option"
+        <Combobox
+          v-model:search-term="field.name"
+          :model-value="field.name"
+          class="flex-1"
+          @update:model-value="(val) => {
+            if (typeof val === 'string') field.name = val;
+          }"
+        >
+          <ComboboxAnchor class="w-full">
+            <ComboboxInput
+              v-model="field.name"
+              placeholder="Name"
+              class="
+                w-full text-base
+                placeholder:italic
+              "
             />
-          </datalist>
-          <Input
-            v-model.lazy.trim="field.name"
-            type="text"
-            placeholder="Name"
-            class="
-              w-full text-base
-              placeholder:italic
-            "
-            :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
-          />
-        </Label>
+          </ComboboxAnchor>
+
+          <ComboboxList v-if="autocompleteList.length > 0">
+            <ComboboxViewport>
+              <ComboboxItem
+                v-for="option in autocompleteList"
+                :key="option"
+                :value="option"
+              >
+                {{ option }}
+              </ComboboxItem>
+            </ComboboxViewport>
+          </ComboboxList>
+        </Combobox>
         <Label v-if="field.operation !== 'remove'" class="flex-1">
           <Input
             v-model.trim.lazy="field.value"
