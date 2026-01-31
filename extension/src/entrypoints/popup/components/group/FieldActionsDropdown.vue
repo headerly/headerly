@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/type";
-import CommentsDialog from "#/components/dialog/CommentsDialog.vue";
+import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,

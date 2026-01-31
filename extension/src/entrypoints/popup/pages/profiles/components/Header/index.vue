@@ -5,7 +5,6 @@ import {
   Input,
 } from "#/ui/input";
 import { Kbd } from "#/ui/kbd";
-import { Toggle } from "#/ui/toggle";
 import {
   Tooltip,
   TooltipContent,
@@ -17,9 +16,9 @@ import { ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
+import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";
-import SecondaryOperations from "./components/SecondaryOperations.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -156,62 +155,12 @@ const undoAndRedoButtonGroup = [
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              size="icon-sm"
-              variant="secondary"
-              :class="{
-                'bg-primary! text-primary-foreground!': !profilesStore.selectedProfile.enabled,
-              }"
-              as-child
-            >
-              <Toggle
-                v-model="profilesStore.selectedProfile.enabled"
-                size="sm"
-                class="data-state=off:text-destructive!"
-              >
-                <i
-                  :class="cn('size-4', profilesStore.selectedProfile.enabled
-                    ? 'i-lucide-pause'
-                    : 'i-lucide-play')"
-                />
-              </Toggle>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {{ profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile' }}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              size="icon-sm"
-              variant="secondary"
-              class="text-destructive!"
-              @click="profilesStore.deleteProfile(profilesStore.selectedProfile.id)"
-            >
-              <i
-                :class="cn(
-                  'size-4',
-                  profilesStore.manager.profiles.length === 1
-                    ? `i-lucide-refresh-ccw` : `i-lucide-trash`,
-                )"
-              />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" :collision-padding="20">
-            {{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
 
-      <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
-
-      <SecondaryOperations />
+      <IconsGroupWithMore :profile="profilesStore.selectedProfile">
+        <template #after-main>
+          <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
+        </template>
+      </IconsGroupWithMore>
     </div>
   </header>
 </template>
