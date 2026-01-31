@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { Profile } from "@/lib/type";
-import { difference } from "es-toolkit";
+
+import { match } from "ts-pattern";
 import { computed } from "vue";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
-import AddModModal from "../Header/components/AddModModal/index.vue";
+import AlertGroup from "./components/AlertGroup.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 import ModGroup from "./components/ModGroup/index.vue";
@@ -22,27 +17,38 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-type FilterKeys = (keyof Profile["filters"])[];
-
-function hasAnyFilters(filters: Profile["filters"]) {
-  const arrayWithEnabledKeys = ["urlFilter", "regexFilter"] as const satisfies FilterKeys;
-  const primitiveArrayKeys = ["requestMethods", "excludedRequestMethods", "resourceTypes", "excludedResourceTypes"] as const satisfies FilterKeys;
-  const groupKeys = ["requestDomains", "excludedRequestDomains", "initiatorDomains", "excludedInitiatorDomains"] as const satisfies FilterKeys;
-  const baseTypeKeys = ["domainType", "isUrlFilterCaseSensitive"] as const satisfies FilterKeys;
-
-  // To prevent forgetting to update the null value calculation logic.
-  const keysUnion = [...arrayWithEnabledKeys, ...primitiveArrayKeys, ...groupKeys, ...baseTypeKeys] as const satisfies FilterKeys;
-  if (difference(Object.keys(filters), keysUnion).length > 0) {
-    throw new Error(`Unknown filter keys, please update hasAnyFilters function accordingly.`);
-  }
-
-  return arrayWithEnabledKeys.some(key => filters[key] && filters[key].some(f => Boolean(f.value)))
-    || groupKeys.some(key => filters[key] && filters[key].items.some(f => Boolean(f.value)))
-    || primitiveArrayKeys.some(key => filters[key] && filters[key].length)
-    || baseTypeKeys.some(key => Boolean(filters[key]));
-}
-
 const profilesStore = useProfilesStore();
+const hasAnyFilters = computed(() => {
+  const filters = profilesStore.selectedProfile.filters;
+  return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
+    return match(key)
+      .with("urlFilter", "regexFilter", (k) => {
+        return filters[k]?.some(f => Boolean(f.value)) ?? false;
+      })
+      .with(
+        "requestMethods",
+        "excludedRequestMethods",
+        "resourceTypes",
+        "excludedResourceTypes",
+        (k) => {
+          return (filters[k]?.length ?? 0) > 0;
+        },
+      )
+      .with(
+        "requestDomains",
+        "excludedRequestDomains",
+        "initiatorDomains",
+        "excludedInitiatorDomains",
+        (k) => {
+          return filters[k]?.items.some(f => Boolean(f.value)) ?? false;
+        },
+      )
+      .with("domainType", "isUrlFilterCaseSensitive", "tabIds", (k) => {
+        return Boolean(filters[k]);
+      })
+      .exhaustive();
+  });
+});
 
 const empty = computed(() => {
   const noMods = profilesStore.selectedProfile.requestHeaderModGroups.every(
@@ -55,7 +61,7 @@ const empty = computed(() => {
     group => group.items.length === 0,
   );
 
-  const noFilters = !hasAnyFilters(profilesStore.selectedProfile.filters);
+  const noFilters = !hasAnyFilters.value;
 
   return noMods && noFilters;
 },
@@ -63,19 +69,6 @@ const empty = computed(() => {
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
-
-const showGlobalRuleWarning = computed(() => {
-  const filters = profilesStore.selectedProfile.filters;
-  const hasFilters = hasAnyFilters(filters);
-  const hasRule = Boolean(profilesStore.profileId2RelatedRuleIdRecord[profilesStore.selectedProfile.id]);
-  return !hasFilters && !empty.value && hasRule;
-});
-
-function ignoreWarning() {
-  profilesStore.selectedProfile.filters.urlFilter = [
-    { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
-  ];
-}
 </script>
 
 <template>
@@ -90,11 +83,11 @@ function ignoreWarning() {
         overflow-hidden
       "
     >
-      <i class="i-lucide-cross size-8 text-base-content" />
+      <i class="i-lucide-plus size-8" />
       <p
         class="
           z-10 text-center text-xl font-medium tracking-tighter
-          whitespace-pre-wrap text-base-content
+          whitespace-pre-wrap
         "
       >
         No data, please add any mods or filters first.
@@ -106,69 +99,8 @@ function ignoreWarning() {
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full px-2 pb-2">
-      <div
-        v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
-        role="alert"
-        class="mt-2 alert alert-soft alert-error"
-      >
-        <i class="i-lucide-bug size-6" />
-        <div>
-          <p>This profile caused an error when registering rules.</p>
-          <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
-        </div>
-        <div class="flex gap-1">
-          <TooltipProvider :delay-duration="200">
-            <Tooltip>
-              <TooltipTrigger as-child>
-                <a
-                  target="_blank"
-                  href="https://github.com/headerly/headerly/issues"
-                  class="btn btn-square btn-ghost btn-sm btn-error"
-                >
-                  <i class="i-lucide-github size-4" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Report this issue on GitHub
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-      <div
-        v-if="showGlobalRuleWarning"
-        role="alert"
-        class="mt-2 alert alert-soft alert-warning"
-      >
-        <i class="i-lucide-triangle-alert size-6" />
-        <div>
-          <p>This profile affects every request and might break sites.</p>
-          <p>Add a condition to avoid issues.</p>
-        </div>
-        <div class="flex gap-1">
-          <TooltipProvider :delay-duration="200">
-            <Tooltip>
-              <TooltipTrigger as-child>
-                <button
-                  class="btn btn-square btn-ghost btn-sm btn-warning"
-                  @click="ignoreWarning"
-                >
-                  <i class="i-lucide-ban size-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Ignore this warning
-              </TooltipContent>
-            </Tooltip>
-            <AddModModal
-              tooltip-text="Add a new condition"
-              default-tab="conditions"
-              class="btn btn-square btn-sm btn-warning"
-            />
-          </TooltipProvider>
-        </div>
-      </div>
+    <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
+      <AlertGroup :empty :has-any-filters />
       <ModGroup
         v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
         :key="id"

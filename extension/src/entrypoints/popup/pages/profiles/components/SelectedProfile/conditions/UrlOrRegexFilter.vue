@@ -3,23 +3,25 @@ import type { UrlOrRegexFilter } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import { useQuery } from "@tanstack/vue-query";
-import { computed } from "vue";
+import { Button } from "#/ui/button";
+import { Input } from "#/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useQuery } from "@tanstack/vue-query";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-
-const { filterType } = defineProps<{
-  filterType: "urlFilter" | "regexFilter";
-}>();
 
 const list = defineModel<UrlOrRegexFilter[]>({
   required: true,
 });
+
+const { filterType } = defineProps<{
+  filterType: "urlFilter" | "regexFilter";
+}>();
 
 const field = {
   urlFilter: {
@@ -135,22 +137,23 @@ const canUseCurrentUrl = computed(() => {
       />
     </template>
     <template #item="{ index }">
-      <input
+      <Input
         v-model="list[index]!.value"
         type="text"
         placeholder="|https://example.com/"
         class="
-          input input-sm w-full text-base text-base-content
+          flex-1
           placeholder:italic
         "
-      >
+      />
       <div class="ml-1 flex gap-0.5">
-        <TooltipProvider :delay-duration="200">
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <button
+              <Button
+                variant="secondary"
+                size="icon-xs"
                 :disabled="!canUseCurrentUrl"
-                class="btn btn-square btn-soft btn-xs btn-primary"
                 @click="() => {
                   list[index]!.value = filterType === 'urlFilter'
                     // Metacharacters *+?()|
@@ -158,22 +161,24 @@ const canUseCurrentUrl = computed(() => {
                 }"
               >
                 <i class="i-lucide-at-sign size-4" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
               Use the URL of the current tab
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <button
-          class="btn btn-square btn-ghost btn-xs btn-error"
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          class="text-destructive!"
           @click="() => {
             list.splice(index, 1);
           }"
         >
           <span class="sr-only">Delete this header mod</span>
           <i class="i-lucide-x size-4" />
-        </button>
+        </Button>
         <ActionsDropdown
           v-model:list="list"
           v-model:field="list[index]!"

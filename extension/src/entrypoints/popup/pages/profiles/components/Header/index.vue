@@ -1,13 +1,19 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type { HTMLAttributes } from "vue";
-import { useEventListener } from "@vueuse/core";
-import { ref } from "vue";
+import { Button } from "#/ui/button";
+import {
+  Input,
+} from "#/ui/input";
+import { Kbd } from "#/ui/kbd";
+import { Toggle } from "#/ui/toggle";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useEventListener } from "@vueuse/core";
+import { ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
@@ -50,12 +56,46 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
     profilesStore.redo();
   }
 });
+
+const undoAndRedoButtonGroup = [
+  {
+    key: "undo",
+    icon: "i-lucide-undo-2",
+    tooltip: (
+      <p>
+        Undo
+        <Kbd class="mr-1">{getModKey()}</Kbd>
+        <Kbd>Z</Kbd>
+      </p>
+    ),
+    get disabled() {
+      return !profilesStore.canUndo;
+    },
+    onClick: profilesStore.undo,
+  },
+  {
+    key: "redo",
+    icon: "i-lucide-redo-2",
+    tooltip: (
+      <p>
+        Redo
+        <Kbd class="mr-1">{getModKey()}</Kbd>
+        <Kbd class="mr-1">Shift</Kbd>
+        <Kbd>Z</Kbd>
+      </p>
+    ),
+    get disabled() {
+      return !profilesStore.canRedo;
+    },
+    onClick: profilesStore.redo,
+  },
+] as const;
 </script>
 
 <template>
   <header
     :class="cn(
-      `flex items-center justify-between gap-1 bg-base-200 py-1 pr-1 pl-2`,
+      `flex items-center justify-between gap-1 border-b py-1 pr-1 pl-2`,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"
@@ -64,117 +104,94 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
       class="flex items-center gap-1"
     >
       <EmojiPicker v-model="profilesStore.selectedProfile.emoji" />
-      <button
+      <Button
         v-if="!profileNameEditing"
-        class="
-          btn flex items-center gap-1 px-1.5 text-base font-semibold btn-ghost
-          btn-sm btn-primary
-        "
+        variant="ghost"
+        class="flex items-center gap-1 px-1.5 text-base"
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
           profileNameEditing = true
         }"
       >
         <span
-          class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap"
+          class="max-w-50 truncate"
         >
           {{ profilesStore.selectedProfile.name }}</span>
-      </button>
+      </Button>
       <div v-else class="flex gap-1.5">
-        <input
+        <Input
           v-model="profileNameInput"
-          type="text"
+          :class="cn('max-w-xs text-base', profileNameInput.length === 0 && `
+            border-destructive
+          `)"
           required
-          class="
-            input input-sm max-w-xs text-base
-            user-invalid:input-error
-          "
           @keyup.enter="handleEditProfileName"
           @keyup.esc="profileNameEditing = false"
-        >
-        <button
-          class="
-            btn flex btn-square items-center gap-2 text-base btn-soft btn-sm
-          "
+        />
+        <Button
+          variant="ghost"
+          size="icon"
+          class="flex items-center gap-2 text-base"
           @click="handleEditProfileName"
         >
           <i class="i-lucide-check-check size-4" />
-        </button>
+        </Button>
       </div>
     </div>
     <div class="flex items-center justify-between gap-1 p-1">
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key">
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-sm btn-primary"
-              :disabled="!profilesStore.canUndo"
-              @click="profilesStore.undo"
+            <Button
+              variant="secondary"
+              size="icon-sm"
+              :disabled="btn.disabled"
+              @click="btn.onClick"
             >
-              <i class="i-lucide-undo-2 size-4" />
-            </button>
+              <i :class="cn(btn.icon, 'size-4')" />
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            Undo
-            <span v-if="settingsStore.enableUndoAndRedoShortcut">
-              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="kbd font-mono kbd-sm">Z</kbd>
-            </span>
+            <component :is="btn.tooltip" />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-sm btn-primary"
-              :disabled="!profilesStore.canRedo"
-              @click="profilesStore.redo"
+            <Button
+              size="icon-sm"
+              variant="secondary"
+              :class="{
+                'bg-primary! text-primary-foreground!': !profilesStore.selectedProfile.enabled,
+              }"
+              as-child
             >
-              <i class="i-lucide-redo-2 size-4" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            Redo
-            <span v-if="settingsStore.enableUndoAndRedoShortcut">
-              <kbd class="mr-1 kbd font-mono kbd-sm">{{ getModKey() }}</kbd>
-              <kbd class="mr-1 kbd font-mono kbd-sm">Shift</kbd>
-              <kbd class="kbd font-mono kbd-sm">Z</kbd>
-            </span>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <input
-              v-model="profilesStore.selectedProfile.enabled"
-              type="checkbox"
-              :class="cn(
-                `
-                  btn btn-square btn-ghost btn-sm btn-primary
-                  before:size-4
-                  after:hidden
-                `,
-                profilesStore.selectedProfile.enabled
-                  ? 'before:i-lucide-pause'
-                  : `
-                    btn-active
-                    before:i-lucide-play
-                  `,
-              )"
-            >
+              <Toggle
+                v-model="profilesStore.selectedProfile.enabled"
+                size="sm"
+                class="data-state=off:text-destructive!"
+              >
+                <i
+                  :class="cn('size-4', profilesStore.selectedProfile.enabled
+                    ? 'i-lucide-pause'
+                    : 'i-lucide-play')"
+                />
+              </Toggle>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
             {{ profilesStore.selectedProfile.enabled ? 'Pause current profile' : 'Resume current profile' }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-sm btn-error"
+            <Button
+              size="icon-sm"
+              variant="secondary"
+              class="text-destructive!"
               @click="profilesStore.deleteProfile(profilesStore.selectedProfile.id)"
             >
               <i
@@ -184,7 +201,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
                     ? `i-lucide-refresh-ccw` : `i-lucide-trash`,
                 )"
               />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
             {{ profilesStore.manager.profiles.length === 1 ? 'Reset current profile' : 'Delete current profile' }}
@@ -194,18 +211,7 @@ useEventListener(window, "keydown", (event: KeyboardEvent) => {
 
       <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
 
-      <SecondaryOperations>
-        <template #trigger="{ popovertarget }">
-          <button
-            :popovertarget
-            :style="`anchor-name:--${popovertarget}`"
-            class="btn btn-square btn-ghost btn-sm"
-          >
-            <i class="i-lucide-ellipsis-vertical size-4" />
-            <span class="sr-only">Open Secondary Operations Dropdown</span>
-          </button>
-        </template>
-      </SecondaryOperations>
+      <SecondaryOperations />
     </div>
   </header>
 </template>

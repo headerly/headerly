@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProfileWithoutIds } from "./schema";
 import type { Profile } from "@/lib/type";
+import { Button } from "#/ui/button";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { useDark } from "@vueuse/core";
@@ -16,9 +17,7 @@ const userInput = ref("");
 const lang = json();
 const linter = jsonParseLinter();
 
-const dark = useDark({
-  attribute: "data-theme",
-});
+const dark = useDark();
 
 const validJson = computed(() => {
   try {
@@ -130,16 +129,19 @@ async function confirmImport() {
   <div class="flex size-full flex-col overflow-x-hidden overflow-y-auto">
     <div
       class="
-        sticky top-0 z-10 flex items-center justify-between bg-base-200 p-2
+        sticky top-0 z-10 flex items-center justify-between
+        bg-primary-foreground p-2
       "
     >
       <div class="flex items-center">
-        <RouterLink
-          to="/profiles" class="btn btn-square btn-soft btn-sm btn-primary"
-        >
-          <i class="i-lucide-arrow-left size-4" />
-          <span class="sr-only">Back to profiles</span>
-        </RouterLink>
+        <Button as-child variant="secondary" size="icon-sm">
+          <RouterLink
+            to="/profiles"
+          >
+            <i class="i-lucide-arrow-left size-4" />
+            <span class="sr-only">Back to profiles</span>
+          </RouterLink>
+        </Button>
         <div class="ml-4 flex items-center">
           <h1 class="flex items-center gap-2 font-sans font-semibold">
             <i class="i-lucide-download size-5" />
@@ -147,13 +149,14 @@ async function confirmImport() {
           </h1>
         </div>
       </div>
-      <button
-        class="btn btn-soft btn-sm btn-primary"
+      <Button
+        variant="default"
+        size="sm"
         :disabled="!validJson"
         @click="confirmImport"
       >
         Confirm Import
-      </button>
+      </Button>
     </div>
 
     <div class="flex flex-1 flex-col">

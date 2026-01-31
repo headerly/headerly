@@ -15,7 +15,6 @@ import {
 
 export const useSettingsStore = defineStore("settings", () => {
   const theme = useColorMode({
-    attribute: "data-theme",
     emitAuto: true,
   });
   const storageConfigs = {

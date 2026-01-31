@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { Button } from "#/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { settings } from "../fields";
 
@@ -12,8 +13,7 @@ const { class: className } = defineProps<{
   class?: string;
 }>();
 
-function handleAnchorClick(event: Event, anchor: string) {
-  event.preventDefault();
+function handleAnchorClick(anchor: string) {
   const element = document.getElementById(anchor);
   if (element) {
     element.scrollIntoView({ behavior: "smooth" });
@@ -24,34 +24,39 @@ function handleAnchorClick(event: Event, anchor: string) {
 <template>
   <aside
     :class="cn(
-      'flex h-full flex-col items-center justify-start bg-base-200 py-2',
+      `flex h-full flex-col items-center justify-start border-r py-2`,
       className,
     )"
   >
-    <RouterLink
-      to="/profiles" class="btn btn-square btn-soft btn-sm btn-primary"
-    >
-      <i class="i-lucide-arrow-left size-4" />
-      <span class="sr-only">Back to profiles</span>
-    </RouterLink>
-    <div class="divider m-0" />
+    <Button as-child size="icon-sm" variant="secondary">
+      <RouterLink
+        to="/profiles"
+      >
+        <i class="i-lucide-arrow-left size-4" />
+        <span class="sr-only">Back to profiles</span>
+      </RouterLink>
+    </Button>
+    <div
+      class="
+        flex h-4 items-center self-stretch
+        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:content-['']
+      "
+    />
     <div class="flex flex-col gap-1 px-2 py-1.25">
       <TooltipProvider
         v-for="value in settings"
         :key="value.anchor"
-        :delay-duration="200"
       >
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="
-                btn btn-square btn-soft btn-sm
-                hover:btn-primary
-              "
-              @click="(event) => handleAnchorClick(event, value.anchor)"
+            <Button
+              size="icon-sm"
+              variant="secondary"
+              @click.prevent="handleAnchorClick(value.anchor)"
             >
               <i :class="cn('size-4', value.anchorIcon)" />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
             {{ value.fieldsetTitle }}

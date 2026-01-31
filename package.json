@@ -2,7 +2,7 @@
   "name": "headerly",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac",
+  "packageManager": "pnpm@10.28.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/headerly/headerly.git"
@@ -19,25 +19,21 @@
     "docs:preview": "pnpm --filter=docs run preview",
     "zip": "pnpm --filter=extension run zip",
     "test": "pnpm --recursive --sequential run test",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
     "typecheck": "pnpm --recursive --sequential run typecheck"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.0.0",
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
-    "@commitlint/types": "^20.0.0",
-    "@types/node": "^24.8.1",
-    "eslint": "^9.38.0",
-    "eslint-plugin-better-tailwindcss": "^3.7.10",
-    "lefthook": "^2.0.0",
-    "typescript": "^5.9.3",
-    "vue-tsc": "^3.1.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "catalog:"
-    }
+    "@antfu/eslint-config": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/types": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "lefthook": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }

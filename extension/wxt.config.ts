@@ -1,11 +1,12 @@
+import type { WxtViteConfig } from "wxt";
 import { resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import turboConsole from "unplugin-turbo-console/vite";
 import vueRouter from "unplugin-vue-router/vite";
-import vueDevtools from "vite-plugin-vue-devtools";
 
+import vueDevtools from "vite-plugin-vue-devtools";
 import { defineConfig } from "wxt";
 
 // See https://wxt.dev/api/config.html
@@ -45,10 +46,12 @@ export default defineConfig({
     "prepare:types": async (_, entries) => {
       entries.push({
         module: "./typed-router.d.ts",
+      }, {
+        module: "./vue-components.d.ts",
       });
     },
   },
-  vite: () => ({
+  vite: () => <WxtViteConfig>({
     plugins: [
       vueDevtools({
         appendTo: "src/entrypoints/popup/main.ts",

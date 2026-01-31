@@ -1,30 +1,36 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/type";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
+import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { head } from "es-toolkit";
+import { match, P } from "ts-pattern";
 import { computed } from "vue";
 import Fieldset from "./Fieldset.vue";
+
+const list = defineModel<T[]>("list", {
+  required: true,
+});
 
 const { name, type } = defineProps<{
   name: string;
   type?: GroupType;
 }>();
 
-const list = defineModel<GroupItem[]>("list", {
-  required: true,
-});
+const checkedState = computed(() => {
+  const enabledCount = list.value.filter(item => item.enabled).length;
+  const groupStatus = match(enabledCount)
+    .with(0, () => "none" as const)
+    .with(list.value.length, () => "all" as const)
+    .otherwise(() => "some" as const);
 
-const indeterminate = computed(() => {
-  if (type === "checkbox") {
-    return list.value.some(item => item.enabled) && !list.value.every(item => item.enabled);
-  }
-  return false;
-});
-
-const checked = computed(() => {
-  if (type === "checkbox") {
-    return list.value.every(item => item.enabled);
-  }
-  return list.value.some(item => item.enabled);
+  const result = match([type, groupStatus])
+    .with(["checkbox", "none"], () => false)
+    .with(["checkbox", "all"], () => true)
+    .with(["checkbox", "some"], () => "indeterminate" as const)
+    .with(["radio", P.not("none")], () => true)
+    .otherwise(() => false);
+  return result;
 });
 </script>
 
@@ -35,29 +41,26 @@ const checked = computed(() => {
     :name
   >
     <template #name-before>
-      <label v-if="type">
-        <input
-          type="checkbox"
-          class="checkbox checkbox-sm"
-          :checked
-          :indeterminate
-          @change="(e) => {
-            const checked = (e.target as HTMLInputElement).checked;
+      <Label v-if="type">
+        <Checkbox
+          :model-value="checkedState"
+          @update:model-value="(val) => {
+            const isChecked = val === true;
             if (type === 'checkbox'){
               list.forEach(item => {
-                item.enabled = checked;
+                item.enabled = isChecked;
               });
-            } else if (checked){
+            } else if (isChecked){
               const firstItem = head(list);
-              if (firstItem) firstItem.enabled = checked;
+              if (firstItem) firstItem.enabled = true;
             } else {
               list.forEach(item => {
                 item.enabled = false;
               });
             }
           }"
-        >
-      </label>
+        />
+      </Label>
     </template>
     <template #name-after>
       <slot name="name-after" />
@@ -67,37 +70,50 @@ const checked = computed(() => {
         v-auto-animate
         class="flex flex-col gap-1.5"
       >
-        <div
-          v-for="item, index in list"
-          :key="item.id"
-        >
-          <div class="flex flex-1 items-center justify-between gap-1">
-            <input
-              v-if="type === 'checkbox'"
-              v-model="item.enabled"
-              type="checkbox"
-              class="checkbox mr-1 checkbox-sm"
-            >
-            <input
-              v-else
-              v-model="item.enabled"
-              type="checkbox"
-              class="radio mr-1 size-5"
-              @click="() => {
-                list.forEach(m => {
-                  if (m.id === item.id) {
-                    m.enabled = true;
-                    return;
-                  }
-                  m.enabled = false;
-                });
-              }"
-            >
-            <div class="flex flex-1 items-center">
-              <slot :index="index" name="item" />
+        <template v-if="type !== 'radio'">
+          <div
+            v-for="item, index in list"
+            :key="item.id"
+          >
+            <div class="flex flex-1 items-center justify-between gap-1">
+              <Checkbox
+                v-if="type === 'checkbox'"
+                :model-value="item.enabled"
+                class="mr-1"
+                @update:model-value="(val) => item.enabled = val === true"
+              />
+              <div class="flex flex-1 items-center">
+                <slot :index name="item" />
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <RadioGroup
+            class="flex flex-col gap-1"
+            :model-value="list.find(item => item.enabled)?.id"
+            @update:model-value="(val) => {
+              list.forEach(item => {
+                item.enabled = item.id === val;
+              });
+            }"
+          >
+            <div
+              v-for="item, index in list"
+              :key="item.id"
+            >
+              <div class="flex flex-1 items-center justify-between gap-1">
+                <RadioGroupItem
+                  :value="item.id"
+                  class="mr-1"
+                />
+                <div class="flex flex-1 items-center">
+                  <slot :index name="item" />
+                </div>
+              </div>
+            </div>
+          </RadioGroup>
+        </template>
       </div>
     </template>
   </Fieldset>

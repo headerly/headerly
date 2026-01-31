@@ -1,4 +1,5 @@
 import type { ProfileCoreData } from "..";
+import { match } from "ts-pattern";
 
 interface BuildConditionOptions {
   nativeResourceTypeBehavior: boolean;
@@ -13,91 +14,57 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
     condition.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
   }
 
-  if (profile.filters.resourceTypes) {
-    const enabledResourceTypes = profile.filters.resourceTypes;
-    if (enabledResourceTypes && enabledResourceTypes.length > 0) {
-      condition.resourceTypes = enabledResourceTypes;
-    }
-  }
-
-  if (profile.filters.excludedResourceTypes) {
-    const excludedResourceTypes = profile.filters.excludedResourceTypes;
-    if (excludedResourceTypes && excludedResourceTypes.length > 0) {
-      condition.excludedResourceTypes = excludedResourceTypes;
-    }
-  }
-
-  if (profile.filters.requestMethods) {
-    const enabledRequestMethods = profile.filters.requestMethods;
-    if (enabledRequestMethods && enabledRequestMethods.length > 0) {
-      condition.requestMethods = enabledRequestMethods;
-    }
-  }
-
-  if (profile.filters.excludedRequestMethods) {
-    const excludedRequestMethods = profile.filters.excludedRequestMethods;
-    if (excludedRequestMethods && excludedRequestMethods.length > 0) {
-      condition.excludedRequestMethods = excludedRequestMethods;
-    }
-  }
-
-  if (profile.filters.urlFilter?.length) {
-    const enabledUrlFilter = profile.filters.urlFilter.find(f => f.enabled);
-    if (enabledUrlFilter && enabledUrlFilter.value.trim()) {
-      condition.urlFilter = enabledUrlFilter.value.trim();
-    }
-  }
-
-  if (profile.filters.regexFilter?.length) {
-    const enabledRegexFilter = profile.filters.regexFilter.find(f => f.enabled);
-    if (enabledRegexFilter && enabledRegexFilter.value.trim()) {
-      condition.regexFilter = enabledRegexFilter.value.trim();
-    }
-  }
-
-  if (profile.filters.requestDomains?.items.length) {
-    const enabledDomains = profile.filters.requestDomains.items
-      .filter(item => item.enabled && item.value.trim())
-      .map(item => item.value.trim());
-    if (enabledDomains.length > 0) {
-      condition.requestDomains = enabledDomains;
-    }
-  }
-
-  if (profile.filters.excludedRequestDomains?.items.length) {
-    const excludedDomains = profile.filters.excludedRequestDomains.items
-      .filter(item => item.enabled && item.value.trim())
-      .map(item => item.value.trim());
-    if (excludedDomains.length > 0) {
-      condition.excludedRequestDomains = excludedDomains;
-    }
-  }
-
-  if (profile.filters.initiatorDomains?.items.length) {
-    const initiatorDomains = profile.filters.initiatorDomains.items
-      .filter(item => item.enabled && item.value.trim())
-      .map(item => item.value.trim());
-    if (initiatorDomains.length > 0) {
-      condition.initiatorDomains = initiatorDomains;
-    }
-  }
-
-  if (profile.filters.excludedInitiatorDomains?.items.length) {
-    const excludedInitiatorDomains = profile.filters.excludedInitiatorDomains.items
-      .filter(item => item.enabled && item.value.trim())
-      .map(item => item.value.trim());
-    if (excludedInitiatorDomains.length > 0) {
-      condition.excludedInitiatorDomains = excludedInitiatorDomains;
-    }
-  }
-
-  if (profile.filters.domainType?.enabled) {
-    condition.domainType = profile.filters.domainType.value;
-  }
-
-  if (profile.filters.isUrlFilterCaseSensitive?.enabled) {
-    condition.isUrlFilterCaseSensitive = profile.filters.isUrlFilterCaseSensitive.value;
-  }
+  (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
+    match(key)
+      .with("resourceTypes", "excludedResourceTypes", (k) => {
+        const value = profile.filters[k];
+        if (value && value.length > 0) {
+          condition[k] = value;
+        }
+      })
+      .with("requestMethods", "excludedRequestMethods", (k) => {
+        const value = profile.filters[k];
+        if (value && value.length > 0) {
+          condition[k] = value;
+        }
+      })
+      .with("urlFilter", "regexFilter", (k) => {
+        const enabledFilter = profile.filters[k]?.find(f => f.enabled);
+        if (enabledFilter && enabledFilter.value.trim()) {
+          condition[k] = enabledFilter.value.trim();
+        }
+      })
+      .with(
+        "requestDomains",
+        "excludedRequestDomains",
+        "initiatorDomains",
+        "excludedInitiatorDomains",
+        (k) => {
+          const enabledDomains = profile.filters[k]?.items
+            .filter(item => item.enabled && item.value.trim())
+            .map(item => item.value.trim());
+          if (enabledDomains && enabledDomains.length > 0) {
+            condition[k] = enabledDomains;
+          }
+        },
+      )
+      .with("domainType", (k) => {
+        const value = profile.filters[k];
+        if (value?.enabled) {
+          condition[k] = value.value;
+        }
+      })
+      .with("isUrlFilterCaseSensitive", (k) => {
+        const value = profile.filters[k];
+        if (value?.enabled) {
+          condition[k] = value.value;
+        }
+      })
+      .with("tabIds", () => {
+        // Developing
+      })
+      .exhaustive();
+  });
 
   return condition;
 }

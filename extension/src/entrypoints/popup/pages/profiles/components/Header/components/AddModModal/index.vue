@@ -1,13 +1,28 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue";
+import { Button } from "#/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "#/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "#/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { tabs } from ".";
+} from "#/ui/tooltip";
+import { useEventBus } from "@vueuse/core";
+import { ref } from "vue";
+import { openAddModModalKey } from "./open";
+import { tabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
   defaultTab: "actions" | "conditions";
@@ -16,92 +31,80 @@ const { defaultTab, class: className } = defineProps<{
 }>();
 
 const currentTab = ref<typeof defaultTab>(defaultTab);
+const isOpen = ref(false);
 
-const dialogRef = useTemplateRef("dialogRef");
+const bus = useEventBus(openAddModModalKey);
+bus.on(({ target }) => {
+  isOpen.value = true;
+  currentTab.value = target;
+});
 </script>
 
 <template>
-  <TooltipProvider :delay-duration="200">
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <button
-          :class="cn('btn btn-square btn-sm btn-primary', className)"
-          @click="() => {
-            dialogRef?.showModal()
-          }"
-        >
-          <i class="i-lucide-cross size-4" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        {{ tooltipText }}
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-  <dialog ref="dialogRef" class="modal text-base-content">
-    <div class="modal-box">
-      <form method="dialog">
-        <button
-          class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
-          @click="() => {
-            dialogRef?.close()
-          }"
-        >
-          <i class="i-lucide-x size-4" />
-          <span class="sr-only">Close modal</span>
-        </button>
-      </form>
-
-      <div class="tabs-box mt-5 tabs">
-        <template v-for="tab in tabs" :key="tab.value">
-          <label class="tab w-1/2">
-            <input
-              v-model="currentTab"
-              :value="tab.value"
-              type="radio"
+  <Dialog v-model:open="isOpen">
+    <TooltipProvider ignore-non-keyboard-focus>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <DialogTrigger as-child>
+            <Button
+              variant="secondary"
+              size="icon-sm"
+              :class="className"
+              @click="() => {
+                currentTab = defaultTab
+              }"
             >
+              <i class="i-lucide-plus size-4" />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {{ tooltipText }}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+
+    <DialogContent class="max-w-md">
+      <DialogHeader>
+        <DialogTitle class="sr-only">
+          Add action or condition
+        </DialogTitle>
+      </DialogHeader>
+
+      <Tabs v-model="currentTab" class="w-full">
+        <TabsList class="grid w-full grid-cols-2">
+          <TabsTrigger v-for="tab in tabs" :key="tab.value" :value="tab.value">
             <i :class="tab.icon" class="me-2 size-4" />
             {{ tab.label }}
-          </label>
-          <div
-            class="
-              tab-content mt-1 max-h-[70vh] overflow-y-auto border-base-300
-            "
-          >
-            <div class="list rounded-box">
-              <button
-                v-for="{ title, description, action, disabled } in tab.items"
-                :key="title"
-                :disabled="disabled"
-                class="list-row btn h-min text-start btn-ghost"
-                :class="{ 'btn-disabled opacity-50': disabled }"
-                @click="() => {
-                  action()
-                  dialogRef?.close()
-                }"
-              >
-                <div>
-                  <div>{{ title }}</div>
-                  <div class="text-xs font-normal opacity-60">
-                    {{ description }}
-                  </div>
-                </div>
-              </button>
-            </div>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">
+          <div class="mt-2 flex max-h-[60vh] flex-col gap-1 overflow-y-auto">
+            <button
+              v-for="{ title, description, action, disabled } in tab.items"
+              :key="title"
+              :disabled
+              class="
+                flex w-full flex-col items-start rounded-md border p-3 text-left
+                text-sm transition-colors
+                hover:bg-accent
+                disabled:pointer-events-none disabled:opacity-50
+              "
+              @click="() => {
+                action()
+                isOpen = false
+              }"
+            >
+              <div class="font-semibold">
+                {{ title }}
+              </div>
+              <div class="text-xs text-muted-foreground">
+                {{ description }}
+              </div>
+            </button>
           </div>
-        </template>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button
-        @click="() => {
-          dialogRef?.close()
-        }"
-      >
-        <span class="sr-only">
-          Close modal
-        </span>
-      </button>
-    </form>
-  </dialog>
+        </TabsContent>
+      </Tabs>
+    </DialogContent>
+  </Dialog>
 </template>

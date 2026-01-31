@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/type";
 import Fieldset from "#/components/group/Fieldset.vue";
+import { Button } from "#/ui/button";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
+import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const model = defineModel<NonNullable<Filter["domainType"]>>({
@@ -21,46 +25,34 @@ const profilesStore = useProfilesStore();
     name="Domain Type"
   >
     <template #main>
-      <div class="flex items-center gap-2">
-        <label class="label gap-2 text-base text-base-content">
-          <input
-            v-model="model.value"
-            type="radio"
-            value="firstParty"
-            class="radio radio-sm"
-          >
-          First Party
-        </label>
-        <label class="label gap-2 text-base text-base-content">
-          <input
-            v-model="model.value"
-            type="radio"
-            value="thirdParty"
-            class="radio radio-sm"
-          >
-          Third Party
-        </label>
-      </div>
+      <RadioGroup v-model="model.value" class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <RadioGroupItem id="firstParty" value="firstParty" />
+          <Label for="firstParty" class="font-normal">First Party</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <RadioGroupItem id="thirdParty" value="thirdParty" />
+          <Label for="thirdParty" class="font-normal">Third Party</Label>
+        </div>
+      </RadioGroup>
     </template>
     <template #name-before>
-      <input
-        v-model="model.enabled"
-        type="checkbox"
-        class="checkbox checkbox-sm"
-      >
+      <Checkbox v-model:checked="model.enabled" />
     </template>
     <template #name-after>
-      <TooltipProvider :delay-duration="200">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              class="btn btn-square btn-ghost btn-xs btn-error"
+            <Button
+              variant="secondary"
+              size="icon-xs"
+              class="text-destructive!"
               @click="() => {
                 delete profilesStore.selectedProfile.filters.domainType
               }"
             >
-              <i class="i-lucide-trash size-4" />
-            </button>
+              <i class="i-lucide-x size-4" />
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
             Delete this condition
@@ -68,5 +60,5 @@ const profilesStore = useProfilesStore();
         </Tooltip>
       </TooltipProvider>
     </template>
-  </fieldset>
+  </Fieldset>
 </template>

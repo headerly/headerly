@@ -3,23 +3,25 @@ import type { DomainsFilter } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import { useQuery } from "@tanstack/vue-query";
-import { computed } from "vue";
+import { Button } from "#/ui/button";
+import { Input } from "#/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useQuery } from "@tanstack/vue-query";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-
-const { filterType } = defineProps<{
-  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
-}>();
 
 const domainsFilter = defineModel<DomainsFilter>({
   required: true,
 });
+
+const { filterType } = defineProps<{
+  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
+}>();
 
 const field = {
   requestDomains: {
@@ -142,43 +144,45 @@ const canUseCurrentUrl = computed(() => {
       />
     </template>
     <template #item="{ index }">
-      <input
+      <Input
         v-model="domainsFilter.items[index]!.value"
-        type="text"
         placeholder="example.com"
         class="
-          input input-sm w-full text-base text-base-content
+          text-base
           placeholder:italic
         "
-      >
-      <div class="ml-1 flex gap-0.5">
-        <TooltipProvider :delay-duration="200">
+      />
+      <div class="ml-1 flex gap-1">
+        <TooltipProvider>
           <Tooltip>
             <TooltipTrigger as-child>
-              <button
+              <Button
+                variant="outline"
+                size="icon-xs"
                 :disabled="!canUseCurrentUrl"
-                class="btn btn-square btn-soft btn-xs btn-primary"
                 @click="() => {
                   domainsFilter.items[index]!.value = currentUrl!.hostname;
                 }"
               >
                 <i class="i-lucide-at-sign size-4" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
               Use the domain of the current tab
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <button
-          class="btn btn-square btn-ghost btn-xs btn-error"
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          class="text-destructive!"
           @click="() => {
             domainsFilter.items.splice(index, 1);
           }"
         >
           <span class="sr-only">Delete this domain</span>
           <i class="i-lucide-x size-4" />
-        </button>
+        </Button>
         <ActionsDropdown
           v-model:list="domainsFilter.items"
           v-model:field="domainsFilter.items[index]!"

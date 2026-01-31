@@ -1,24 +1,37 @@
 <script setup lang="ts">
-import type { UUID } from "node:crypto";
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import Select from "#/components/select/Select.vue";
-import { useQuery } from "@tanstack/vue-query";
-import { isEqual, pick, sortBy } from "es-toolkit";
-import { computed, toValue, useTemplateRef } from "vue";
-import { toast } from "vue-sonner";
+import { Alert, AlertDescription } from "#/ui/alert";
+import { Button } from "#/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "#/ui/dialog";
+import { Input } from "#/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "#/ui/select";
+import { Textarea } from "#/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { useQuery } from "@tanstack/vue-query";
+import { pick, sortBy } from "es-toolkit";
+import { computed, ref, toValue } from "vue";
+import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
-
-const { index } = defineProps<{
-  index: number;
-}>();
 
 const list = defineModel<SyncCookie[]>("list", {
   required: true,
@@ -28,48 +41,45 @@ const field = defineModel<SyncCookie>("field", {
   required: true,
 });
 
+const { index } = defineProps<{
+  index: number;
+}>();
+
 function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ["cookies", domain, field.value],
+    queryKey: ["cookies", domain],
     queryFn: async () => {
       const cookies = await browser.cookies.getAll({ domain: toValue(domain) });
 
       return cookies.filter(
         cookie => cookie.domain === toValue(domain) || cookie.domain === `.${toValue(domain)}`,
-      ).map((cookie) => {
-        const isSelected = isEqual(pick(cookie, ["domain", "path", "name"]), pick(field.value, ["domain", "path", "name"]));
-        return {
-          ...pick(cookie, ["name", "value", "path", "domain"]),
-          id: isSelected ? field.value.id : crypto.randomUUID(),
-        };
-      })
-      ;
+      ).map(cookie => pick(cookie, ["name", "value", "path", "domain"]));
     },
-    enabled: Boolean(domain),
+    enabled: Boolean(toValue(domain)),
   });
 }
 
 const { data: cookies, isPending } = useCookiesQuery(() => field.value.domain);
-
+const getCookieKey = (c: Pick<SyncCookie, "name" | "path" | "domain">) => `${c.domain}|${c.path}|${c.name}`;
+function createOption(cookie: Pick<SyncCookie, "name" | "value" | "path" | "domain">) {
+  return {
+    value: getCookieKey(cookie),
+    label: cookie.name,
+    cookieValue: cookie.value,
+    path: cookie.path,
+    domain: cookie.domain,
+    isMissing: false,
+  };
+}
 const cookieOptions = computed(() => {
   if (isPending.value) {
     return [];
   }
-  function createOption(cookie: Pick<SyncCookie, "id" | "name" | "value" | "path" | "domain">) {
-    return {
-      value: cookie.id,
-      label: cookie.name,
-      cookieValue: cookie.value,
-      path: cookie.path,
-      domain: cookie.domain,
-      isMissing: false,
-    };
-  }
+
   const options = cookies.value?.map(createOption) ?? [];
-  if (!options.find(
-    option =>
-      option.value === field.value.id,
-  ) && field.value.value) {
+  const currentKey = getCookieKey(field.value);
+
+  if (field.value.name && !options.find(option => option.value === currentKey)) {
     options.push({
       ...createOption(field.value),
       isMissing: true,
@@ -92,14 +102,14 @@ function handleDomainChange(e: Event) {
   field.value.path = "";
 }
 
-const cookieDialogRef = useTemplateRef("cookieDialogRef");
+const isCookieDialogOpen = ref(false);
 
 const disabled = computed(() => {
-  return cookieOptions.value.length === 0 || isPending.value;
+  return (cookies.value?.length ?? 0) === 0 || isPending.value;
 });
 
-function updateCookie(newCookieId: UUID) {
-  const selected = cookieOptions.value.find(cookie => cookie.value === newCookieId);
+function updateCookie(newKey: string) {
+  const selected = cookieOptions.value.find(cookie => cookie.value === newKey);
   if (selected) {
     field.value.value = selected.cookieValue;
     field.value.domain = selected.domain;
@@ -109,9 +119,14 @@ function updateCookie(newCookieId: UUID) {
 }
 
 const selectedCookieOption = computed(() => {
+  const currentKey = getCookieKey(field.value);
   return cookieOptions.value.find((cookie) => {
-    return cookie.value === field.value.id;
+    return cookie.value === currentKey;
   });
+});
+
+const groupedCookieOptions = computed(() => {
+  return Object.groupBy(cookieOptions.value, option => `${option.domain}${option.path}`);
 });
 
 const refreshButtonDisabled = computed(() => {
@@ -138,95 +153,101 @@ async function refreshCookie() {
 
 <template>
   <div class="flex flex-1 items-center justify-between gap-1">
-    <label class="label flex flex-1">
+    <div class="flex flex-1 items-center gap-1">
       <slot name="field-before" />
       <div class="grid flex-1 grid-cols-2 gap-1">
-        <label class="flex-1">
-          <input
-            :value="field.domain"
-            type="text"
-            placeholder="Domain"
-            class="
-              input input-sm w-full text-base text-base-content
-              placeholder:italic
-            "
-            @change="handleDomainChange"
-          >
-        </label>
-        <label class="relative">
+        <Input
+          :model-value="field.domain"
+          placeholder="Domain"
+          class="
+            text-base
+            placeholder:italic
+          "
+          @change="handleDomainChange"
+        />
+        <div class="relative">
           <Select
-            v-model="field.id"
-            :options="cookieOptions"
-            :disabled
-            :placeholder="disabled ? 'No available' : 'Pick a cookie'"
-            class="w-full select-sm text-base"
-            :type="selectedCookieOption?.isMissing ? 'warning' : 'normal'"
-            :loading="isPending"
-            @change="(v) => updateCookie(v)"
+            :model-value="getCookieKey(field)"
+            :disabled="disabled || isPending"
+            @update:model-value="(v) => updateCookie(v)"
           >
-            <template #label="{ option }">
-              <div :class="cn('flex gap-1', option.isMissing ? 'text-warning' : '')">
-                <span class="max-w-50 truncate">
-                  {{ option.label }}
-                </span>
-                <span
-                  v-if="option.isMissing"
+            <SelectTrigger
+              :class="cn(
+                'w-full min-w-0 px-3 text-base',
+                selectedCookieOption?.isMissing && 'border-warning text-warning',
+              )"
+            >
+              <div
+                v-if="isPending"
+                class="h-4 w-20 animate-pulse rounded-sm bg-muted"
+              />
+              <SelectValue
+                v-else
+                :placeholder="disabled ? 'Not available' : 'Pick a cookie'"
+                class="block! flex-1 truncate text-left"
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup
+                v-for="(options, domain) in groupedCookieOptions"
+                :key="domain"
+              >
+                <SelectLabel>{{ domain }}</SelectLabel>
+                <SelectItem
+                  v-for="option in options"
+                  :key="option.value"
+                  :value="option.value"
                 >
-                  (Missing)
-                </span>
-                <TooltipProvider :delay-duration="200">
-                  <Tooltip>
-                    <TooltipTrigger as-child>
-                      <button class="btn btn-square btn-ghost btn-xs btn-info">
-                        <i
-                          class="i-lucide-circle-question-mark size-4"
-                        />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      :collision-padding="20"
-                      side="top"
-                      class="
-                        prose prose-sm flex max-h-40 w-full max-w-lg
-                        overflow-y-auto text-base-content
-                      "
+                  <div
+                    :class="cn('flex items-center gap-1', option.isMissing ? `
+                      text-warning
+                    ` : '')"
+                  >
+                    <span class="max-w-50 truncate">
+                      {{ option.label }}
+                    </span>
+                    <span
+                      v-if="option.isMissing"
                     >
-                      <span>{{ `Domain: ${option.domain} - Path: ${option.path}` }}</span>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </template>
+                      (Missing)
+                    </span>
+                  </div>
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
           </Select>
-        </label>
+        </div>
       </div>
-    </label>
-    <div class="flex gap-0.5">
-      <TooltipProvider :delay-duration="200">
+    </div>
+    <div class="flex gap-1">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
+            <Button
+              variant="outline"
+              size="icon-xs"
               :disabled="refreshButtonDisabled"
-              class="btn btn-square btn-soft btn-xs btn-primary"
               @click="refreshCookie"
             >
               <i class="i-lucide-rotate-ccw size-4" />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="top" :collision-padding="5">
             Refresh to get the latest cookie
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <button
-        class="btn btn-square btn-ghost btn-xs btn-error"
+      <Button
+        variant="ghost"
+        size="icon-xs"
+        class="text-destructive!"
         @click="() => {
           list.splice(index, 1);
         }"
       >
         <span class="sr-only">Delete this header mod</span>
         <i class="i-lucide-x size-4" />
-      </button>
+      </Button>
       <ActionsDropdown
         v-model:list="list"
         v-model:field="field"
@@ -240,7 +261,7 @@ async function refreshCookie() {
                 disabled:pointer-events-none disabled:opacity-60
               "
               :disabled="!field.value"
-              @click="() => cookieDialogRef?.showModal()"
+              @click="() => isCookieDialogOpen = true"
             >
               <i class="i-lucide-eye-off size-4" />
               View Cookie
@@ -250,33 +271,26 @@ async function refreshCookie() {
       </ActionsDropdown>
     </div>
   </div>
-  <dialog ref="cookieDialogRef" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-semibold">
-        View Cookie
-      </h3>
-      <div role="alert" class="mt-4 alert alert-soft alert-warning">
-        <i class="i-lucide-triangle-alert size-6" />
-        <span>Warning: Sharing cookies with others may result in the leakage of login credentials!</span>
-      </div>
-      <textarea
-        class="textarea mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
+
+  <Dialog v-model:open="isCookieDialogOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>View Cookie</DialogTitle>
+      </DialogHeader>
+
+      <Alert variant="warning">
+        <i class="i-lucide-triangle-alert size-4" />
+        <AlertDescription>
+          Warning: Sharing cookies with others may result in the leakage of login credentials!
+        </AlertDescription>
+      </Alert>
+
+      <Textarea
+        class="mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
         placeholder="Comments"
         disabled
         :value="field.value"
       />
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-soft">
-            Close
-          </button>
-        </form>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>
-        <span class="sr-only">Close</span>
-      </button>
-    </form>
-  </dialog>
+    </DialogContent>
+  </Dialog>
 </template>

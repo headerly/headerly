@@ -1,26 +1,33 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue";
+import { Button } from "#/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "#/ui/dialog";
+import { Label } from "#/ui/label";
+import { Textarea } from "#/ui/textarea";
+import { ref } from "vue";
 
 const comments = defineModel<string>({
   required: true,
 });
 
+const openState = ref(false);
 const commentsInput = ref(comments.value);
-
-const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
 function open() {
   commentsInput.value = comments.value;
-  commentsDialogRef.value?.showModal();
-}
-
-function close() {
-  commentsDialogRef.value?.close();
+  openState.value = true;
 }
 
 function handleSave() {
   comments.value = commentsInput.value;
-  close();
+  openState.value = false;
 }
 
 defineExpose({
@@ -29,43 +36,34 @@ defineExpose({
 </script>
 
 <template>
-  <dialog
-    ref="commentsDialogRef"
-    class="modal modal-middle"
-  >
-    <div class="modal-box">
-      <form method="dialog">
-        <button class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm">
-          <i class="i-lucide-x size-4" />
-        </button>
-      </form>
-      <h3 class="text-lg font-semibold">
-        Edit Comments
-      </h3>
-      <textarea
-        v-model="commentsInput"
-        class="textarea mt-4 h-24 w-full text-base"
-        placeholder="Add your comments here..."
-        autofocus
-      />
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-soft">
-            Cancel
-          </button>
-        </form>
-        <button
-          class="btn btn-soft btn-primary"
-          @click="handleSave"
-        >
-          Save
-        </button>
+  <Dialog v-model:open="openState">
+    <DialogContent class="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Edit Comments</DialogTitle>
+        <DialogDescription class="sr-only">
+          Add or edit comments for this profile field.
+        </DialogDescription>
+      </DialogHeader>
+      <div class="grid gap-2 py-2">
+        <Label for="comments" class="sr-only">Comments</Label>
+        <Textarea
+          id="comments"
+          v-model="commentsInput"
+          class="min-h-32 text-base"
+          placeholder="Add your comments here..."
+          autofocus
+        />
       </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>
-        <span class="sr-only">Close</span>
-      </button>
-    </form>
-  </dialog>
+      <DialogFooter class="flex flex-row justify-end gap-2">
+        <DialogClose as-child>
+          <Button variant="secondary">
+            Cancel
+          </Button>
+        </DialogClose>
+        <Button @click="handleSave">
+          Save
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

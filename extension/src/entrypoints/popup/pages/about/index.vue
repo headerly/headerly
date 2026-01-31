@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Button } from "#/ui/button";
 import Meteors from "./components/Meteors.vue";
 
 const version = browser.runtime.getManifest().version;
@@ -14,45 +15,42 @@ const name = browser.runtime.getManifest().name;
       <div class="relative w-full max-w-xs">
         <div
           class="
-            absolute inset-0 size-full scale-[0.80] rounded-full bg-error
-            bg-gradient-to-r from-info to-success blur-3xl
+            absolute inset-0 size-full scale-[0.80] rounded-full bg-destructive
+            bg-linear-to-r from-sky-500 to-green-500 blur-3xl
           "
         />
         <div
           class="
             relative flex h-full flex-col items-start justify-end
-            overflow-hidden rounded-2xl border border-base-100 bg-base-200 px-4
-            py-8 shadow-xl
+            overflow-hidden rounded-2xl border bg-primary-foreground px-4 py-8
+            shadow-xl
           "
         >
-          <RouterLink
-            to="/profiles"
-            class="
-              mb-4 flex size-5 items-center justify-center rounded-full border
-              border-base-content/33 text-base-content/66 transition
-              hover:border-base-content hover:text-base-content
-            "
+          <Button
+            as-child
+            variant="secondary"
+            size="icon-xs"
+            class="mb-4 rounded-full border transition"
           >
-            <i class="i-lucide-arrow-left size-3" />
-            <span class="sr-only">Back to profiles</span>
-          </RouterLink>
+            <RouterLink
+              to="/profiles"
+            >
+              <i class="i-lucide-arrow-left size-3" />
+              <span class="sr-only">Back to profiles</span>
+            </RouterLink>
+          </Button>
 
           <h1
-            class="
-              relative z-50 mb-4 flex items-center gap-2 text-xl font-bold
-              text-base-content
-            "
+            class="relative z-50 mb-4 flex items-center gap-2 text-xl font-bold"
           >
             {{ name }} © 2025
-            <div class="border-base-content/33 font-mono text-xs font-normal">
+            <span class="font-mono text-xs font-normal">
               v{{ version }}
-            </div>
+            </span>
           </h1>
 
           <p
-            class="
-              relative z-50 mb-4 text-base font-normal text-base-content/66
-            "
+            class="relative z-50 mb-4 text-base font-normal"
           >
             {{ description }}
           </p>
@@ -60,28 +58,20 @@ const name = browser.runtime.getManifest().name;
           <Meteors />
 
           <div class="flex gap-2">
-            <a
-              href="https://github.com/headerly/headerly"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="
-                btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
-              "
+            <Button
+              as-child
+              variant="secondary"
+              class="relative z-50 mt-4 flex items-center gap-2"
             >
-              <i class="i-lucide-github size-4 text-base-content/66" />
-              GitHub & MIT
-            </a>
-            <!-- <a
-              rel="noopener noreferrer"
-              href="https://headerly.dev/docs"
-              target="_blank"
-              class="
-                btn relative z-50 mt-4 flex items-center gap-2 btn-ghost btn-sm
-              "
-            >
-              <i class="i-lucide-book-open size-4 text-base-content/66" />
-              Documentation
-            </a> -->
+              <a
+                href="https://github.com/headerly/headerly"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i class="i-lucide-github size-4" />
+                GitHub & MIT
+              </a>
+            </Button>
           </div>
         </div>
       </div>

@@ -6,13 +6,13 @@ import { findHeaderModGroups, useProfilesStore } from "@/entrypoints/popup/store
 import { createMod } from "@/lib/storage";
 import ModField from "./ModFieldWithActions.vue";
 
-const { actionType } = defineProps<{
-  actionType: ActionType;
-}>();
-
 const group = defineModel<HeaderModGroup>({
   required: true,
 });
+
+const { actionType } = defineProps<{
+  actionType: ActionType;
+}>();
 
 const profilesStore = useProfilesStore();
 
@@ -50,8 +50,8 @@ function deleteGroup() {
       <ModField
         v-model:list="group.items"
         v-model:field="group.items[index]!"
-        :action-type="actionType"
-        :index="index"
+        :action-type
+        :index
       />
     </template>
   </Group>

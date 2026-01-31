@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import type { ActionType, HeaderMod, HeaderModOperation } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import { computed } from "vue";
+import { Button } from "#/ui/button";
+import { Input } from "#/ui/input";
+import { Label } from "#/ui/label";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/entrypoints/popup/components/ui/tooltip";
+} from "#/ui/tooltip";
+import { computed } from "vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
 } from "@/entrypoints/popup/constants/header";
 import { cn } from "@/lib/utils";
-
-const { actionType, index } = defineProps<{
-  actionType: ActionType;
-  index: number;
-}>();
 
 const list = defineModel<HeaderMod[]>("list", {
   required: true,
@@ -27,6 +25,11 @@ const list = defineModel<HeaderMod[]>("list", {
 const field = defineModel<HeaderMod>("field", {
   required: true,
 });
+
+const { actionType, index } = defineProps<{
+  actionType: ActionType;
+  index: number;
+}>();
 
 const AUTOCOMPLETE_LIST_ID_PREFIX = "AUTOCOMPLETE_LIST_ID_PREFIX";
 
@@ -61,10 +64,10 @@ const nextOperation = computed(() => {
 
 <template>
   <div class="flex flex-1 items-center justify-between gap-1">
-    <label class="label flex flex-1">
+    <Label class="flex flex-1">
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
-        <label class="flex-1">
+        <Label class="flex-1">
           <datalist :id="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`">
             <option
               v-for="option in autocomplete(actionType, field.operation, field.name)"
@@ -72,42 +75,38 @@ const nextOperation = computed(() => {
               :value="option"
             />
           </datalist>
-          <input
+          <Input
             v-model.lazy.trim="field.name"
             type="text"
             placeholder="Name"
             class="
-              input input-sm w-full text-base text-base-content
+              w-full text-base
               placeholder:italic
             "
             :list="`${AUTOCOMPLETE_LIST_ID_PREFIX}_${field.id}`"
-          >
-        </label>
-        <label v-if="field.operation !== 'remove'" class="flex-1">
-          <input
+          />
+        </Label>
+        <Label v-if="field.operation !== 'remove'" class="flex-1">
+          <Input
             v-model.trim.lazy="field.value"
             type="text"
             placeholder="Value"
             class="
-              input input-sm text-base text-base-content
+              text-base
               placeholder:italic
             "
-          >
-        </label>
+          />
+        </Label>
       </div>
-    </label>
-    <div class="flex gap-0.5">
-      <TooltipProvider :delay-duration="200">
+    </Label>
+    <div class="flex items-center gap-0.5">
+      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <button
-              :class="cn(`
-                btn btn-square font-medium whitespace-nowrap btn-soft btn-xs
-              `, {
-                'btn-accent': field.operation === 'set',
-                'btn-info': field.operation === 'append',
-                'btn-secondary': field.operation === 'remove',
-              })"
+            <Button
+              size="icon-xs"
+              variant="secondary"
+              :class="cn(`whitespace-nowrap`)"
               @click="() => {
                 field.operation = nextOperation.value;
               }"
@@ -119,7 +118,7 @@ const nextOperation = computed(() => {
                   'i-lucide-minus': field.operation === 'remove',
                 })"
               />
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
             <p>Current operation: {{ field.operation }}</p>
@@ -127,15 +126,17 @@ const nextOperation = computed(() => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <button
-        class="btn btn-square btn-ghost btn-xs btn-error"
+      <Button
+        size="icon-xs"
+        variant="secondary"
+        class="text-destructive!"
         @click="() => {
           list.splice(index, 1);
         }"
       >
         <span class="sr-only">Delete this header mod</span>
         <i class="i-lucide-x size-4" />
-      </button>
+      </Button>
       <ActionsDropdown
         v-model:list="list"
         v-model:field="field"

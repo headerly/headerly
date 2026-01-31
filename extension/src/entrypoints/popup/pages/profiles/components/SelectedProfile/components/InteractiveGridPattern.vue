@@ -36,7 +36,7 @@ function getY(index: number) {
 }
 
 const svgClass = computed(() =>
-  cn("absolute inset-0 h-full w-full border border-gray-400/30", props.class),
+  cn("absolute inset-0 size-full border border-gray-400/30", props.class),
 );
 
 function getRectClass(index: number) {
@@ -70,8 +70,8 @@ function handleMouseLeave() {
       :key="index"
       :x="getX(index)"
       :y="getY(index)"
-      :width="width"
-      :height="height"
+      :width
+      :height
       :class="getRectClass(index)"
       @mouseenter="handleMouseEnter(index)"
       @mouseleave="handleMouseLeave"

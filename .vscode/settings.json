@@ -48,7 +48,11 @@
     "postcss"
   ],
 
-  "i18n-ally.localesPaths": ["src/assets/_locales"],
-  "i18n-ally.keystyle": "flat",
-  "i18n-ally.enabledFrameworks": ["vue"]
+  // Tailwind CSS IntelliSense settings
+  "tailwindCSS.classFunctions": ["cva", "cn"],
+
+  // Exclude some files from the "Go to Definition" recommendation list
+  "search.exclude": {
+    "**/*.css": true
+  }
 }

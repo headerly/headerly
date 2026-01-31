@@ -17,6 +17,18 @@ export default antfu(
       "antfu/no-top-level-await": "off",
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
+      "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
+      "vue/no-duplicate-class-names": "error",
+      "vue/prefer-use-template-ref": "error",
+      "vue/no-import-compiler-macros": "error",
+      "vue/no-v-html": "error",
+      "vue/define-macros-order": [
+        "error",
+        {
+          order: ["defineOptions", "defineModel", "defineProps", "defineEmits", "defineSlots"],
+          defineExposeLast: true,
+        },
+      ],
     },
   },
   {
@@ -25,20 +37,26 @@ export default antfu(
     },
     settings: {
       "better-tailwindcss": {
-        entryPoint: "./src/entrypoints/popup/index.css",
+        entryPoint: "./extension/src/entrypoints/popup/index.css",
       },
     },
     rules: {
       ...tailwind.configs.recommended!.rules,
-      "better-tailwindcss/no-unregistered-classes": [
+      "better-tailwindcss/no-unknown-classes": [
         "error",
         {
           ignore: [
-            "indicator-item",
-            "list-row",
+            "i-lucide-*",
+            "toaster",
           ],
         },
       ],
+    },
+  },
+  {
+    files: ["pnpm-workspace.yaml"],
+    rules: {
+      "yaml/sort-keys": "off",
     },
   },
   {
