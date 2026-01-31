@@ -53,7 +53,7 @@ export const itemMediaVariants = cva(
         default: "bg-transparent",
         icon: `
           size-8 rounded-sm border bg-muted
-          [&_svg:not([class*='size-'])]:size-4
+          [&_i:not([class*='size-'])]:size-4
         `,
         image:
           `

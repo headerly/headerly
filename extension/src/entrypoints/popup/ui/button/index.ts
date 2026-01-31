@@ -13,7 +13,7 @@ export const buttonVariants = cva(
     aria-invalid:border-destructive aria-invalid:ring-destructive/20
     dark:aria-invalid:ring-destructive/40
     [&_i]:pointer-events-none [&_i]:shrink-0
-    [&_svg:not([class*='size-'])]:size-4
+    [&_i:not([class*='size-'])]:size-4
   `,
   {
     variants: {

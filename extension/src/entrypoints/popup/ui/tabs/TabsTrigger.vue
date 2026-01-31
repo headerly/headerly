@@ -31,7 +31,7 @@ const forwardedProps = useForwardProps(delegatedProps);
         dark:data-[state=active]:bg-input/30
         dark:data-[state=active]:text-foreground
         [&_i]:pointer-events-none [&_i]:shrink-0
-        [&_svg:not([class*=\'size-\'])]:size-4
+        [&_i:not([class*=\'size-\'])]:size-4
       `,
       props.class,
     )"

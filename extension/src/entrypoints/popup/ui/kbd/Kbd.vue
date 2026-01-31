@@ -15,7 +15,7 @@ const props = defineProps<{
         justify-center gap-1 rounded-sm bg-muted px-1 font-mono text-xs
         font-medium text-muted-foreground select-none
       `,
-      '[&_svg:not([class*=\'size-\'])]:size-3',
+      '[&_i:not([class*=\'size-\'])]:size-3',
       `
         [[data-slot=tooltip-content]_&]:bg-background/20
         [[data-slot=tooltip-content]_&]:text-background

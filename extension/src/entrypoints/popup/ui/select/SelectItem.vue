@@ -30,8 +30,8 @@ const forwardedProps = useForwardProps(delegatedProps);
           focus:bg-accent focus:text-accent-foreground
           data-disabled:pointer-events-none data-disabled:opacity-50
           [&_i]:pointer-events-none [&_i]:shrink-0
-          [&_svg:not([class*=\'size-\'])]:size-4
-          [&_svg:not([class*=\'text-\'])]:text-muted-foreground
+          [&_i:not([class*=\'size-\'])]:size-4
+          [&_i:not([class*=\'text-\'])]:text-muted-foreground
           *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2
         `,
         props.class,

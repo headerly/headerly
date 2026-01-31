@@ -15,7 +15,7 @@ export const toggleVariants = cva(
     data-[state=on]:bg-accent data-[state=on]:text-accent-foreground
     dark:aria-invalid:ring-destructive/40
     [&_i]:pointer-events-none [&_i]:shrink-0
-    [&_svg:not([class*='size-'])]:size-4
+    [&_i:not([class*='size-'])]:size-4
   `,
   {
     variants: {

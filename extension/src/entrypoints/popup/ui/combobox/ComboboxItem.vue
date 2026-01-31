@@ -23,8 +23,8 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       data-disabled:pointer-events-none data-disabled:opacity-50
       data-highlighted:bg-accent data-highlighted:text-accent-foreground
       [&_i]:pointer-events-none [&_i]:shrink-0
-      [&_svg:not([class*=\'size-\'])]:size-4
-      [&_svg:not([class*=\'text-\'])]:text-muted-foreground
+      [&_i:not([class*=\'size-\'])]:size-4
+      [&_i:not([class*=\'text-\'])]:text-muted-foreground
     `, props.class)"
   >
     <slot />

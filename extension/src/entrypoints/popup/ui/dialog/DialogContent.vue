@@ -60,7 +60,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           disabled:pointer-events-none
           data-[state=open]:bg-accent data-[state=open]:text-muted-foreground
           [&_i]:pointer-events-none [&_i]:shrink-0
-          [&_svg:not([class*='size-'])]:size-4
+          [&_i:not([class*='size-'])]:size-4
         "
       >
         <X />
