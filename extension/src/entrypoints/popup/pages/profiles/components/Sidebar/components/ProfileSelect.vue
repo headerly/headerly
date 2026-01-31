@@ -140,7 +140,7 @@ function renderShortcutHint(index: number) {
                     <i
                       v-if="!profile.enabled"
                       class="
-                        i-lucide-pause absolute right-0 bottom-0 size-4
+                        absolute right-0 bottom-0 i-lucide-pause size-4
                         -translate-1/2
                       "
                     />

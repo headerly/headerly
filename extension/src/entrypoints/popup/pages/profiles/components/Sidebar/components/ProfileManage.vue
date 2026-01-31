@@ -67,7 +67,7 @@ const searchResults = computed(() => {
       <div class="relative mx-4">
         <i
           class="
-            i-lucide-search absolute top-1/2 left-2.5 size-4 -translate-y-1/2
+            absolute top-1/2 left-2.5 i-lucide-search size-4 -translate-y-1/2
             opacity-50
           "
         />

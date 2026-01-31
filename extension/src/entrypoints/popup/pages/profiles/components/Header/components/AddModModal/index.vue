@@ -34,8 +34,9 @@ const currentTab = ref<typeof defaultTab>(defaultTab);
 const isOpen = ref(false);
 
 const bus = useEventBus(openAddModModalKey);
-bus.on(() => {
+bus.on(({ target }) => {
   isOpen.value = true;
+  currentTab.value = target;
 });
 </script>
 
@@ -49,6 +50,9 @@ bus.on(() => {
               variant="secondary"
               size="icon-sm"
               :class="className"
+              @click="() => {
+                currentTab = defaultTab
+              }"
             >
               <i class="i-lucide-plus size-4" />
             </Button>

@@ -47,6 +47,7 @@ export default antfu(
         {
           ignore: [
             "i-lucide-*",
+            "toaster",
           ],
         },
       ],

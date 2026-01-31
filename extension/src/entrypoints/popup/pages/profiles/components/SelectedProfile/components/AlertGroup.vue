@@ -83,7 +83,7 @@ const bus = useEventBus(openAddModModalKey);
           Ignore warning
         </Button>
         <ButtonGroupSeparator />
-        <Button size="sm" variant="secondary" @click="bus.emit()">
+        <Button size="sm" variant="secondary" @click="bus.emit({ target: 'conditions' })">
           <i class="i-lucide-plus size-4" />
           Add a condition
         </Button>

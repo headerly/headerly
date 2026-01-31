@@ -61,11 +61,13 @@ const undoAndRedoButtonGroup = [
   {
     key: "undo",
     icon: "i-lucide-undo-2",
-    tooltip: <>
-      Undo
-      <Kbd class="mr-1">{getModKey()}</Kbd>
-      <Kbd>Z</Kbd>
-             </>,
+    tooltip: (
+      <p>
+        Undo
+        <Kbd class="mr-1">{getModKey()}</Kbd>
+        <Kbd>Z</Kbd>
+      </p>
+    ),
     get disabled() {
       return !profilesStore.canUndo;
     },
@@ -74,12 +76,14 @@ const undoAndRedoButtonGroup = [
   {
     key: "redo",
     icon: "i-lucide-redo-2",
-    tooltip: <>
-      Redo
-      <Kbd class="mr-1">{getModKey()}</Kbd>
-      <Kbd class="mr-1">Shift</Kbd>
-      <Kbd>Z</Kbd>
-             </>,
+    tooltip: (
+      <p>
+        Redo
+        <Kbd class="mr-1">{getModKey()}</Kbd>
+        <Kbd class="mr-1">Shift</Kbd>
+        <Kbd>Z</Kbd>
+      </p>
+    ),
     get disabled() {
       return !profilesStore.canRedo;
     },
@@ -91,10 +95,7 @@ const undoAndRedoButtonGroup = [
 <template>
   <header
     :class="cn(
-      `
-        flex items-center justify-between gap-1 bg-primary-foreground py-1 pr-1
-        pl-2
-      `,
+      `flex items-center justify-between gap-1 border-b py-1 pr-1 pl-2`,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"
