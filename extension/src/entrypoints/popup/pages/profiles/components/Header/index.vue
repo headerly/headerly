@@ -114,7 +114,7 @@ const undoAndRedoButtonGroup = [
         }"
       >
         <span
-          class="max-w-50 overflow-hidden overflow-ellipsis whitespace-nowrap"
+          class="max-w-50 truncate"
         >
           {{ profilesStore.selectedProfile.name }}</span>
       </Button>

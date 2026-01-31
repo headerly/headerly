@@ -58,10 +58,7 @@ const isDEV = import.meta.env.DEV;
           variant="secondary"
           size="icon-sm"
           :class="cn(
-            `
-              mx-2
-              [anchor-name:--anchor-sidebar-menu]
-            `,
+            `mx-2 [anchor-name:--anchor-sidebar-menu]`,
             settingsStore.powerOn || 'opacity-60',
           )"
         >

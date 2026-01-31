@@ -21,7 +21,7 @@ const forwarded = useForwardProps(delegatedProps);
     `, props.class)"
   >
     <slot>
-      <Plus class="h-4 w-4" />
+      <Plus class="size-4" />
     </slot>
   </NumberFieldIncrement>
 </template>

@@ -87,8 +87,7 @@ function renderShortcutHint(index: number) {
     <div
       v-auto-animate
       class="
-        flex flex-col gap-1 overflow-y-auto px-2 py-1.25
-        [scrollbar-width:none]
+        flex flex-col gap-1 overflow-y-auto px-2 py-1.25 [scrollbar-width:none]
       "
     >
       <div

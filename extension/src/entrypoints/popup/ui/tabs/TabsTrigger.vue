@@ -26,7 +26,8 @@ const forwardedProps = useForwardProps(delegatedProps);
         focus-visible:outline-ring
         disabled:pointer-events-none disabled:opacity-50
         data-[state=active]:bg-background data-[state=active]:shadow-sm
-        dark:text-muted-foreground dark:data-[state=active]:border-input
+        dark:text-muted-foreground
+        dark:data-[state=active]:border-input
         dark:data-[state=active]:bg-input/30
         dark:data-[state=active]:text-foreground
         [&_i]:pointer-events-none [&_i]:shrink-0

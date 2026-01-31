@@ -62,7 +62,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
             hover:bg-secondary
           "
         >
-          <X class="h-4 w-4" />
+          <X class="size-4" />
           <span class="sr-only">Close</span>
         </DialogClose>
       </DialogContent>

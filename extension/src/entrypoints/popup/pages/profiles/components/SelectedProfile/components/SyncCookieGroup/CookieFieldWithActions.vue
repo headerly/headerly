@@ -179,7 +179,7 @@ async function refreshCookie() {
             >
               <div
                 v-if="isPending"
-                class="h-4 w-20 animate-pulse rounded bg-muted"
+                class="h-4 w-20 animate-pulse rounded-sm bg-muted"
               />
               <SelectValue
                 v-else

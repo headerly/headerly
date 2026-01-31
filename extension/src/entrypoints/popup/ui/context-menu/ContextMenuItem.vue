@@ -42,7 +42,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
         [&_i]:pointer-events-none [&_i]:shrink-0
         [&_svg:not([class*=\'size-\'])]:size-4
         [&_svg:not([class*=\'text-\'])]:text-muted-foreground
-        data-[variant=destructive]:*:[i]:!text-destructive-foreground
+        data-[variant=destructive]:*:[i]:text-destructive-foreground!
       `,
       props.class,
     )"

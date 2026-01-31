@@ -8,8 +8,8 @@ const { name } = defineProps<{
   <fieldset
     v-auto-animate
     class="
-      grid w-full grid-flow-row auto-rows-max grid-cols-1 gap-6 rounded border
-      p-3 pt-2 pb-4
+      grid w-full grid-flow-row auto-rows-max grid-cols-1 gap-6 rounded-sm
+      border p-3 pt-2 pb-4
     "
   >
     <legend

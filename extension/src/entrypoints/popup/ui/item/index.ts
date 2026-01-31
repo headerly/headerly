@@ -18,7 +18,8 @@ export const itemVariants = cva(
     text-sm transition-colors duration-100 outline-none
     focus-visible:border-ring focus-visible:ring-[3px]
     focus-visible:ring-ring/50
-    [a]:transition-colors [a]:hover:bg-accent/50
+    [a]:transition-colors
+    [a]:hover:bg-accent/50
   `,
   {
     variants: {
