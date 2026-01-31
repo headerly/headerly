@@ -7,7 +7,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
@@ -58,6 +57,7 @@ function InfoTooltip({ description }: { description: string }) {
     >
       <Fieldset
         v-for="setting in settings"
+        :id="setting.anchor"
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
         class="gap-y-4 border bg-primary-foreground p-4 text-base"
@@ -79,7 +79,6 @@ function InfoTooltip({ description }: { description: string }) {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Options</SelectLabel>
                           <SelectItem v-for="option in field.options" :key="option.value" :value="option.value">
                             {{ option.label }}
                           </SelectItem>
