@@ -42,7 +42,7 @@ export default antfu(
     },
     rules: {
       ...tailwind.configs.recommended!.rules,
-      "better-tailwindcss/no-unregistered-classes": [
+      "better-tailwindcss/no-unknown-classes": [
         "error",
         {
           ignore: [

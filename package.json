@@ -23,14 +23,6 @@
     "lint:fix": "eslint . --fix --max-warnings 0",
     "typecheck": "pnpm --recursive --sequential run typecheck"
   },
-  "dependencies": {
-    "@egoist/tailwindcss-icons": "catalog:",
-    "@tailwindcss/typography": "catalog:",
-    "@vue/tsconfig": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:",
-    "tw-animate-css": "catalog:"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@commitlint/cli": "catalog:",
@@ -41,7 +33,6 @@
     "eslint-plugin-better-tailwindcss": "catalog:",
     "lefthook": "catalog:",
     "tailwindcss": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "vue-tsc": "catalog:"
   }
