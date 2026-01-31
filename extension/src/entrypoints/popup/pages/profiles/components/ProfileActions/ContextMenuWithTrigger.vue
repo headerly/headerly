@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/type";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import {
@@ -13,7 +14,8 @@ import {
 import { computed, useTemplateRef } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
-import { useProfileActions } from "./actions";
+import { transformIdsToActions } from "./actions";
+import PriorityDialog from "./PriorityDialog.vue";
 
 const props = defineProps<{
   profile: Profile;
@@ -22,17 +24,17 @@ const props = defineProps<{
 const profilesStore = useProfilesStore();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
-const actions = useProfileActions();
-const commentsDialogRef = useTemplateRef("commentsDialogRef");
-
-const actionGroups = [
-  ["toggle", "duplicate", "delete", "comments", "copyJson", "copyId"],
+const actionIdGroups = [
+  ["toggle", "duplicate", "delete", "comments", "rulePriority"],
+  "separator",
+  ["copyJson", "copyId"],
+  "separator",
   ["moveUp", "moveDown"],
-];
+] as const satisfies (ActionKey[] | "separator")[];
+const actionGroups = transformIdsToActions(actionIdGroups);
 
-function getAction(id: string) {
-  return actions.find(a => a.id === id);
-}
+const commentsDialogRef = useTemplateRef("commentsDialogRef");
+const priorityDialogRef = useTemplateRef("priorityDialogRef");
 </script>
 
 <template>
@@ -47,27 +49,33 @@ function getAction(id: string) {
       <ContextMenuLabel class="max-w-36 truncate">
         {{ profile.name }}
       </ContextMenuLabel>
-      <template v-for="(group, index) in actionGroups" :key="index">
-        <ContextMenuSeparator v-if="index > 0" />
-        <ContextMenuGroup>
-          <template v-for="id in group" :key="id">
-            <ContextMenuItem
-              v-if="getAction(id)"
-              :disabled="getAction(id)?.disabled?.(profile)"
-              :class="cn(
-                getAction(id)?.variant === 'destructive' && 'text-destructive!',
-              )"
-              @click="getAction(id)?.onClick(profile, { openComments: () => commentsDialogRef?.open() })"
-            >
-              {{ getAction(id)?.label(profile) }}
-            </ContextMenuItem>
-          </template>
+      <template v-for="(actionsOrSeparator, index) in actionGroups" :key="index">
+        <ContextMenuSeparator v-if="actionsOrSeparator === 'separator'" />
+        <ContextMenuGroup v-else>
+          <ContextMenuItem
+            v-for="action in actionsOrSeparator"
+            :key="action.id"
+            :disabled="action.disabled?.(profile)"
+            :class="cn(
+              action.variant === 'destructive' && 'text-destructive!',
+            )"
+            @click="action.onClick(profile, {
+              openComments: () => commentsDialogRef?.open(),
+              openPriority: () => priorityDialogRef?.open(),
+            })"
+          >
+            {{ action.label(profile) }}
+          </ContextMenuItem>
         </ContextMenuGroup>
       </template>
     </ContextMenuContent>
     <CommentsDialog
       ref="commentsDialogRef"
       v-model="profile.comments"
+    />
+    <PriorityDialog
+      ref="priorityDialogRef"
+      v-model="profile.priority"
     />
   </ContextMenu>
 </template>

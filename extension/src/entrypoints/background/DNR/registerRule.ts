@@ -96,7 +96,7 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     const rule = {
       id: await getNewRuleId(),
-      priority: 1,
+      priority: profile.priority ?? 1,
       condition,
       action,
     } as const satisfies Browser.declarativeNetRequest.Rule;

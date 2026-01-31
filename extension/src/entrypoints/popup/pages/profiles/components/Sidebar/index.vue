@@ -102,7 +102,7 @@ const isDEV = import.meta.env.DEV;
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem @click="openInFullscreen">
-              Expand to Full Tab
+              Expand to full tab
             </DropdownMenuItem>
             <DropdownMenuItem
               @click="() => {

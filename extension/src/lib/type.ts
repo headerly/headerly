@@ -87,6 +87,8 @@ export interface Profile {
   responseHeaderModGroups: HeaderModGroup[];
   syncCookieGroups: SyncCookieGroup[];
   filters: Filter;
+  /** Range: 1 to 2^31 - 1, default: 1 */
+  priority?: number;
   id: UUID;
   name: string;
   enabled: boolean;

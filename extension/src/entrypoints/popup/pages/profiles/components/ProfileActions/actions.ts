@@ -28,13 +28,13 @@ export async function copyProfile(profile: Profile) {
   toast.success("Profile copied to clipboard.");
 }
 
-export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "copyJson" | "copyId" | "moveUp" | "moveDown";
+export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "copyJson" | "copyId" | "moveUp" | "moveDown";
 
 export interface ProfileActionItem {
   id: ActionKey;
   label: (profile: Profile) => string;
   icon?: (profile: Profile) => string;
-  onClick: (profile: Profile, options?: { openComments?: () => void }) => void;
+  onClick: (profile: Profile, options?: { openComments?: () => void; openPriority?: () => void }) => void;
   disabled?: (profile: Profile) => boolean;
   variant?: "default" | "destructive";
 }
@@ -65,7 +65,13 @@ export function useProfileActions() {
     {
       id: "comments",
       label: p => (p.comments.length > 0 ? "Edit comments" : "Add comments"),
-      onClick: (_p, opts) => opts?.openComments?.(),
+      onClick: (_, opts) => opts?.openComments?.(),
+    },
+    {
+      id: "rulePriority",
+      label: p => `Priority: ${p.priority ?? 1}`,
+      icon: () => "i-lucide-arrow-up-z-a",
+      onClick: (_, opts) => opts?.openPriority?.(),
     },
     {
       id: "copyJson",
@@ -93,3 +99,14 @@ export function useProfileActions() {
 
   return actions;
 };
+
+export function transformIdsToActions(actionIds: (ActionKey[] | "separator")[]) {
+  const actions = useProfileActions();
+  const id2ActionMap = new Map(actions.map(a => [a.id, a]));
+
+  const actionGroups = actionIds.map(group =>
+    group === "separator" ? "separator" : group.map(id => id2ActionMap.get(id)!),
+  );
+
+  return actionGroups;
+}

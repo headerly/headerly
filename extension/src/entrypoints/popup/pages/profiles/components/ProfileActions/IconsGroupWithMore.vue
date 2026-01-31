@@ -6,6 +6,7 @@ import { Button } from "#/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -18,7 +19,8 @@ import {
 } from "#/ui/tooltip";
 import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
-import { useProfileActions } from "./actions";
+import { transformIdsToActions, useProfileActions } from "./actions";
+import PriorityDialog from "./PriorityDialog.vue";
 
 const profile = defineModel<Profile>("profile", {
   required: true,
@@ -29,18 +31,16 @@ const mainActionIds = ["toggle", "delete"] as const satisfies ActionKey[];
 const mainActions = actions.filter(action => mainActionIds.includes(action.id));
 
 const moreActionIdGroups = [
-  ["duplicate", "comments"],
+  ["duplicate", "comments", "rulePriority"],
   "separator",
   ["copyJson", "copyId"],
   "separator",
   ["moveUp", "moveDown"],
 ] as const satisfies (ActionKey[] | "separator")[];
-const id2ActionMap = new Map(actions.map(action => [action.id, action]));
-const moreActionGroups = moreActionIdGroups.map(group =>
-  group === "separator" ? "separator" : group.map(id => id2ActionMap.get(id)!),
-);
+const moreActionGroups = transformIdsToActions(moreActionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
+const priorityDialogRef = useTemplateRef("priorityDialogRef");
 </script>
 
 <template>
@@ -58,7 +58,10 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
               ),
             )"
             :disabled="action.disabled?.(profile)"
-            @click="action.onClick(profile, { openComments: () => commentsDialogRef?.open() })"
+            @click="action.onClick(profile, {
+              openComments: () => commentsDialogRef?.open(),
+              openPriority: () => priorityDialogRef?.open(),
+            })"
           >
             <i
               class="size-4"
@@ -90,22 +93,24 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
       >
         <template v-for="(actionsOrSeparator, index) in moreActionGroups" :key="index">
           <DropdownMenuSeparator v-if="actionsOrSeparator === 'separator'" />
-          <template
-            v-for="action in actionsOrSeparator"
+          <DropdownMenuGroup
             v-else
-            :key="action.id"
           >
             <DropdownMenuItem
-              v-if="action"
+              v-for="action in actionsOrSeparator"
+              :key="action.id"
               :disabled="action.disabled?.(profile)"
               :class="cn(
                 action.variant === 'destructive' && `text-destructive!`,
               )"
-              @click="action.onClick(profile, { openComments: () => commentsDialogRef?.open() })"
+              @click="action.onClick(profile, {
+                openComments: () => commentsDialogRef?.open(),
+                openPriority: () => priorityDialogRef?.open(),
+              })"
             >
               <span>{{ action.label(profile) }}</span>
             </DropdownMenuItem>
-          </template>
+          </DropdownMenuGroup>
         </template>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -113,6 +118,10 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
     <CommentsDialog
       ref="commentsDialogRef"
       v-model="profile.comments"
+    />
+    <PriorityDialog
+      ref="priorityDialogRef"
+      v-model="profile.priority"
     />
   </div>
 </template>

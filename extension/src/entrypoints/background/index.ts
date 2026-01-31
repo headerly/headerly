@@ -74,7 +74,7 @@ export default defineBackground({
   },
 });
 
-const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups"] as const satisfies (keyof Profile)[];
+const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups", "priority"] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
 
