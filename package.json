@@ -2,7 +2,7 @@
   "name": "headerly",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.28.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/headerly/headerly.git"
@@ -28,7 +28,6 @@
     "@tailwindcss/typography": "catalog:",
     "@vue/tsconfig": "catalog:",
     "clsx": "catalog:",
-    "daisyui": "catalog:",
     "tailwind-merge": "catalog:",
     "tw-animate-css": "catalog:"
   },

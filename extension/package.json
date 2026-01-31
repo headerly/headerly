@@ -55,7 +55,6 @@
     "@vitest/browser-playwright": "catalog:",
     "@wxt-dev/auto-icons": "catalog:",
     "baseline-browser-mapping": "catalog:",
-    "daisyui": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "lefthook": "catalog:",
