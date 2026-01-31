@@ -45,17 +45,20 @@ const { index } = defineProps<{
   index: number;
 }>();
 
-function useCookiesQuery(domain: MaybeRefOrGetter<string>) {
+function useCookiesQuery(domainComplex: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ["cookies", domain],
+    queryKey: ["cookies", domainComplex],
     queryFn: async () => {
-      const cookies = await browser.cookies.getAll({ domain: toValue(domain) });
+      const domain = toValue(domainComplex);
+      if (domain.trim() === "") {
+        return [];
+      }
+      const cookies = await browser.cookies.getAll({ domain });
 
       return cookies.filter(
-        cookie => cookie.domain === toValue(domain) || cookie.domain === `.${toValue(domain)}`,
+        cookie => cookie.domain === domain || cookie.domain === `.${domain}`,
       ).map(cookie => pick(cookie, ["name", "value", "path", "domain"]));
     },
-    enabled: Boolean(toValue(domain)),
   });
 }
 
