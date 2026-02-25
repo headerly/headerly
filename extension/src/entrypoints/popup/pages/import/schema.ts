@@ -68,6 +68,13 @@ const domainsFilterSchema = z.object({
   items: z.array(groupItemWithValueSchema),
 });
 
+const resourceTypesFilterSchema = groupItemWithoutIdSchema.extend({
+  value: z.array(resourceTypeSchema),
+});
+const requestMethodsFilterSchema = groupItemWithoutIdSchema.extend({
+  value: z.array(requestMethodSchema),
+});
+
 const domainTypeFilterSchema = z.object({
   enabled: z.boolean(),
   value: domainTypeValueSchema,
@@ -86,10 +93,10 @@ const filterSchema = z.object({
   excludedInitiatorDomains: domainsFilterSchema.optional(),
   requestDomains: domainsFilterSchema.optional(),
   excludedRequestDomains: domainsFilterSchema.optional(),
-  resourceTypes: z.array(resourceTypeSchema).optional(),
-  excludedResourceTypes: z.array(resourceTypeSchema).optional(),
-  requestMethods: z.array(requestMethodSchema).optional(),
-  excludedRequestMethods: z.array(requestMethodSchema).optional(),
+  resourceTypes: z.array(resourceTypesFilterSchema).optional(),
+  excludedResourceTypes: z.array(resourceTypesFilterSchema).optional(),
+  requestMethods: z.array(requestMethodsFilterSchema).optional(),
+  excludedRequestMethods: z.array(requestMethodsFilterSchema).optional(),
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });

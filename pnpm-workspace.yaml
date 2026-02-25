@@ -24,10 +24,9 @@ catalog:
   "@vitejs/plugin-vue": ^6.0.3
   "@vitejs/plugin-vue-jsx": ^5.1.3
   "@vitest/browser-playwright": ^4.0.18
-  "@vueuse/core": ^14.2.0
+  "@vueuse/core": "catalog:"
   "@webext-core/messaging": ^2.3.0
   "@wxt-dev/auto-icons": ^1.1.0
-  # baseline-browser-mapping needs to be updated every two months.
   baseline-browser-mapping: ^2.9.19
   class-variance-authority: 0.7.1
   clsx: 2.1.1
@@ -37,12 +36,11 @@ catalog:
   eslint: ^9.39.2
   eslint-plugin-better-tailwindcss: ^4.0.2
   lefthook: ^2.0.16
-  lucide-vue-next: 0.562.0
-  # oxc-minify is only used to suppress warnings.
+  lucide-vue-next: "catalog:"
   oxc-minify: ^0.111.0
   pinia: ^3.0.4
   playwright: ^1.58.1
-  reka-ui: ^2.5.1
+  reka-ui: "catalog:"
   tailwind-merge: 3.4.0
   tailwindcss: ^4.1.18
   ts-pattern: ^5.9.0
@@ -52,6 +50,7 @@ catalog:
   unplugin-turbo-console: ^2.3.0
   unplugin-vue-router: ^0.19.2
   vee-validate: ^4.15.1
+  vite: ^7.3.1
   vite-plugin-vue-devtools: ^8.0.5
   vitepress: 2.0.0-alpha.15
   vitest: ^4.0.18
@@ -63,17 +62,16 @@ catalog:
   vue-tsc: ^3.2.4
   wxt: ^0.20.13
   zod: ^4.3.6
-  vite: ^7.3.1
 
 catalogMode: prefer
 
 ignoreWorkspaceRootCheck: true
+
+overrides:
+  vite: "catalog:"
 
 shellEmulator: true
 
 trustPolicy: no-downgrade
 
 trustPolicyIgnoreAfter: 1440
-
-overrides:
-  vite: "catalog:"

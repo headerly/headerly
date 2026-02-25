@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { UrlOrRegexFilter } from "@/lib/type";
+import type { UrlOrRegexFilterItem } from "@/lib/type";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
-const list = defineModel<UrlOrRegexFilter[]>({
+const list = defineModel<UrlOrRegexFilterItem[]>({
   required: true,
 });
 
@@ -169,7 +169,7 @@ const canUseCurrentUrl = computed(() => {
           </Tooltip>
         </TooltipProvider>
         <Button
-          variant="ghost"
+          variant="secondary"
           size="icon-xs"
           class="text-destructive!"
           @click="() => {

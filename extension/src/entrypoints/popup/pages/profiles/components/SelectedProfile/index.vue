@@ -31,7 +31,7 @@ const hasAnyFilters = computed(() => {
         "resourceTypes",
         "excludedResourceTypes",
         (k) => {
-          return (filters[k]?.length ?? 0) > 0;
+          return filters[k]?.some(item => item.enabled) ?? false;
         },
       )
       .with(

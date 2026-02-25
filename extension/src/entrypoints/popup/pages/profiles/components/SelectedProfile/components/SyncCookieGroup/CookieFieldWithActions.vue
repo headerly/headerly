@@ -241,7 +241,7 @@ async function refreshCookie() {
         </Tooltip>
       </TooltipProvider>
       <Button
-        variant="ghost"
+        variant="secondary"
         size="icon-xs"
         class="text-destructive!"
         @click="() => {

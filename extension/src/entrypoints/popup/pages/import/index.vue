@@ -61,6 +61,22 @@ function addIdsToProfile(profileData: ProfileWithoutIds) {
     })),
     filters: {
       ...profileData.filters,
+      resourceTypes: profileData.filters.resourceTypes?.map(item => ({
+        ...item,
+        id: crypto.randomUUID(),
+      })),
+      excludedResourceTypes: profileData.filters.excludedResourceTypes?.map(item => ({
+        ...item,
+        id: crypto.randomUUID(),
+      })),
+      requestMethods: profileData.filters.requestMethods?.map(item => ({
+        ...item,
+        id: crypto.randomUUID(),
+      })),
+      excludedRequestMethods: profileData.filters.excludedRequestMethods?.map(item => ({
+        ...item,
+        id: crypto.randomUUID(),
+      })),
       urlFilter: profileData.filters.urlFilter?.map(item => ({
         ...item,
         id: crypto.randomUUID(),

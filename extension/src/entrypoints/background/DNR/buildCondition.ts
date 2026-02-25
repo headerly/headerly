@@ -17,15 +17,19 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
     match(key)
       .with("resourceTypes", "excludedResourceTypes", (k) => {
-        const value = profile.filters[k];
-        if (value && value.length > 0) {
-          condition[k] = value;
+        const enabledItems = profile.filters[k]
+          ?.filter(item => item.enabled)
+          .flatMap(item => item.value);
+        if (enabledItems && enabledItems.length > 0) {
+          condition[k] = enabledItems;
         }
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
-        const value = profile.filters[k];
-        if (value && value.length > 0) {
-          condition[k] = value;
+        const enabledItems = profile.filters[k]
+          ?.filter(item => item.enabled)
+          .flatMap(item => item.value);
+        if (enabledItems && enabledItems.length > 0) {
+          condition[k] = enabledItems;
         }
       })
       .with("urlFilter", "regexFilter", (k) => {

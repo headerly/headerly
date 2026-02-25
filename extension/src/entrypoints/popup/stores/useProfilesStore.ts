@@ -41,9 +41,9 @@ export const useProfilesStore = defineStore("profiles", () => {
     profileId2ErrorMessageRecordPromise,
     profileId2RelatedRuleIdRecordPromise,
   ]).then(() => ready.value = true);
-  const { ref: manager } = useProfileManagerStorage(managerResolve);
-  const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage(profileId2ErrorMessageRecordResolve);
-  const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage(profileId2RelatedRuleIdRecordResolve);
+  const { ref: manager } = useProfileManagerStorage({ onReady: managerResolve });
+  const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
+  const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
   const settingsStore = useSettingsStore();
 

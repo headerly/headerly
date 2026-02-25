@@ -1,20 +1,28 @@
 <script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
-import type { Filter } from "@/lib/type";
-import Fieldset from "#/components/group/Fieldset.vue";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Label } from "#/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
-import { difference, inRange } from "es-toolkit";
+import type { GroupItem } from "@/lib/type";
+import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
+import Group from "#/components/group/Group.vue";
+import GroupActions from "#/components/group/GroupActions.vue";
+import Button from "#/ui/button/Button.vue";
+import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { computed } from "vue";
-import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
-const model = defineModel<NonNullable<Filter[T]>>({
+// Define specific item types
+type ResourceTypeItem = GroupItem & {
+  value: `${Browser.declarativeNetRequest.ResourceType}`[];
+};
+
+type RequestMethodItem = GroupItem & {
+  value: `${Browser.declarativeNetRequest.RequestMethod}`[];
+};
+
+// Use conditional types to get the correct item type
+type FilterItemType<K extends T>
+  = K extends "resourceTypes" | "excludedResourceTypes" ? ResourceTypeItem
+    : K extends "requestMethods" | "excludedRequestMethods" ? RequestMethodItem
+      : never;
+
+const list = defineModel<FilterItemType<T>[]>({
   required: true,
 });
 
@@ -28,7 +36,6 @@ const nameMap = {
   requestMethods: "Request Methods",
   excludedRequestMethods: "Excluded Request Methods",
 };
-const profilesStore = useProfilesStore();
 
 interface ResourceTypeOption {
   value: `${Browser.declarativeNetRequest.ResourceType}`;
@@ -36,21 +43,21 @@ interface ResourceTypeOption {
 }
 
 const resourceTypeOptions = [
-  { value: "main_frame", label: "Main Frame" },
-  { value: "sub_frame", label: "Sub Frame" },
-  { value: "stylesheet", label: "Stylesheet" },
-  { value: "script", label: "Script" },
-  { value: "image", label: "Image" },
-  { value: "font", label: "Font" },
-  { value: "object", label: "Object" },
-  { value: "xmlhttprequest", label: "XMLHttpRequest" },
-  { value: "ping", label: "Ping" },
   { value: "csp_report", label: "CSP Report" },
+  { value: "font", label: "Font" },
+  { value: "image", label: "Image" },
+  { value: "main_frame", label: "Main Frame" },
   { value: "media", label: "Media" },
+  { value: "object", label: "Object" },
+  { value: "other", label: "Other" },
+  { value: "ping", label: "Ping" },
+  { value: "script", label: "Script" },
+  { value: "stylesheet", label: "Stylesheet" },
+  { value: "sub_frame", label: "Sub Frame" },
+  { value: "webbundle", label: "WebBundle" },
   { value: "websocket", label: "WebSocket" },
   { value: "webtransport", label: "WebTransport" },
-  { value: "webbundle", label: "WebBundle" },
-  { value: "other", label: "Other" },
+  { value: "xmlhttprequest", label: "XMLHttpRequest" },
 ] as const satisfies ResourceTypeOption[];
 
 interface RequestMethodOption {
@@ -64,10 +71,10 @@ const requestMethodsOptions = [
   { value: "get", label: "GET" },
   { value: "head", label: "HEAD" },
   { value: "options", label: "OPTIONS" },
+  { value: "other", label: "OTHER" },
   { value: "patch", label: "PATCH" },
   { value: "post", label: "POST" },
   { value: "put", label: "PUT" },
-  { value: "other", label: "OTHER" },
 ] as const satisfies RequestMethodOption[];
 
 const optionsMap = {
@@ -79,80 +86,65 @@ const optionsMap = {
 
 const options = computed(() => optionsMap[type]);
 
-const indeterminate = computed(() => {
-  const selectedCount = model.value.length;
-  return inRange(selectedCount, 1, options.value.length);
-});
+// Convert available options to MultiSelect options
+const multiSelectOptions = computed(() =>
+  options.value.map(option => ({
+    value: option.value,
+    label: option.label,
+    disabled: false,
+  })),
+);
 
-const checked = computed(() => {
-  return difference(
-    options.value.map(option => option.value),
-    model.value,
-  ).length === 0;
-});
+function deleteGroup() {
+  list.value = list.value.filter(item => !item.enabled);
+}
+
+function newField() {
+  const newItem = {
+    id: crypto.randomUUID(),
+    enabled: false,
+    comments: "",
+    value: [],
+  } as unknown as FilterItemType<T>;
+
+  list.value.push(newItem);
+}
 </script>
 
 <template>
-  <Fieldset
-    :name="nameMap[type]"
-  >
-    <template #main>
-      <div class="grid grid-cols-3 gap-y-2">
-        <div
-          v-for="option in options"
-          :key="option.value"
-          class="flex items-center gap-2"
-        >
-          <Checkbox
-            :id="option.value"
-            :checked="model.includes(option.value)"
-            @update:checked="(checked: boolean) => {
-              if (checked) {
-                model = [...model, option.value] as NonNullable<Filter[T]>;
-              } else {
-                model = model.filter(v => v !== option.value) as NonNullable<Filter[T]>;
-              }
-            }"
-          />
-          <Label :for="option.value" class="font-normal">{{ option.label }}</Label>
-        </div>
-      </div>
-    </template>
-    <template #name-before>
-      <Checkbox
-        :checked
-        :indeterminate
-        @update:checked="
-          (checked: boolean) => {
-            if (checked) {
-              model = options.map(option => option.value) as NonNullable<Filter[T]>;
-            } else {
-              model = [];
-            }
-          }
-        "
+  <Group v-model:list="list" :name="nameMap[type]" type="radio">
+    <template #name-after>
+      <GroupActions
+        v-model:list="list"
+        @delete-group="deleteGroup"
+        @new-field="newField"
       />
     </template>
-    <template #name-after>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              variant="secondary"
-              size="icon-xs"
-              class="text-destructive!"
-              @click="() => {
-                delete profilesStore.selectedProfile.filters[type];
-              }"
-            >
-              <i class="i-lucide-x size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            Delete this condition
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <template #item="{ index }">
+      <MultiSelect
+        v-if="list[index]"
+        v-model="list[index].value"
+        :options="multiSelectOptions"
+        :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
+      />
+      <div class="ml-1 flex gap-0.5">
+        <Button
+          variant="secondary"
+          size="icon-xs"
+          class="text-destructive!"
+          @click="() => {
+            list.splice(index, 1);
+          }"
+        >
+          <span class="sr-only">Delete this header mod</span>
+          <i class="i-lucide-x size-4" />
+        </Button>
+        <ActionsDropdown
+          v-model:list="list"
+          v-model:field="list[index]!"
+          :index
+        />
+      </div>
     </template>
-  </Fieldset>
+  </Group>
 </template>

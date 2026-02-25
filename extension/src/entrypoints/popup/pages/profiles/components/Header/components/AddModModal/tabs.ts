@@ -235,7 +235,14 @@ export const tabs: Tab[] = [
         title: "Request Methods",
         description: "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
         action: () => {
-          profilesStore.selectedProfile.filters.requestMethods = Object.values(browser.declarativeNetRequest.RequestMethod);
+          profilesStore.selectedProfile.filters.requestMethods = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              comments: "",
+              value: ["get"], // Default to GET method
+            },
+          ];
         },
         get disabled() {
           return Boolean(profilesStore.selectedProfile.filters.requestMethods);
@@ -245,7 +252,14 @@ export const tabs: Tab[] = [
         title: "Excluded Request Methods",
         description: "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
         action: () => {
-          profilesStore.selectedProfile.filters.excludedRequestMethods = Object.values(browser.declarativeNetRequest.RequestMethod);
+          profilesStore.selectedProfile.filters.excludedRequestMethods = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              comments: "",
+              value: ["get"], // Default to GET method
+            },
+          ];
         },
         get disabled() {
           return Boolean(profilesStore.selectedProfile.filters.excludedRequestMethods);
@@ -255,7 +269,14 @@ export const tabs: Tab[] = [
         title: "Resource Types",
         description: "List of resource types which the rule can match. An empty list is not allowed.",
         action: () => {
-          profilesStore.selectedProfile.filters.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+          profilesStore.selectedProfile.filters.resourceTypes = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              comments: "",
+              value: ["main_frame"], // Default to main_frame
+            },
+          ];
         },
         get disabled() {
           return Boolean(profilesStore.selectedProfile.filters.resourceTypes);
@@ -265,7 +286,14 @@ export const tabs: Tab[] = [
         title: "Excluded Resource Types",
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         action: () => {
-          profilesStore.selectedProfile.filters.excludedResourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+          profilesStore.selectedProfile.filters.excludedResourceTypes = [
+            {
+              id: crypto.randomUUID(),
+              enabled: true,
+              comments: "",
+              value: ["main_frame"], // Default to main_frame
+            },
+          ];
         },
         get disabled() {
           return Boolean(profilesStore.selectedProfile.filters.excludedResourceTypes);
