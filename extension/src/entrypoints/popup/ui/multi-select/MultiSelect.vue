@@ -184,7 +184,7 @@ function removeTagByValue(value: string) {
           v-if="!hideClearAllButton && modelValue.length"
           type="button"
           class="
-            absolute end-0 top-0 flex size-9 items-center justify-center
+            absolute inset-e-0 top-0 flex size-9 items-center justify-center
             rounded-md border border-transparent text-muted-foreground/80
             transition-[color,box-shadow] outline-none
             hover:text-foreground

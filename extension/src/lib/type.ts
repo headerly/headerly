@@ -16,7 +16,7 @@ interface AppendOrSetMod extends BaseMod {
   value: string;
 }
 
-export interface RemoveMod extends BaseMod {
+interface RemoveMod extends BaseMod {
   operation: "remove";
 }
 

@@ -12,7 +12,7 @@ const props = defineProps<{
     data-slot="item-description"
     :class="cn(
       `
-        line-clamp-2 text-sm leading-normal font-normal text-balance
+        line-clamp-2 text-sm/normal font-normal text-balance
         text-muted-foreground
       `,
       `

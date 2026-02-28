@@ -43,7 +43,7 @@ function getRectClass(index: number) {
   return cn(
     `
       stroke-gray-400/30 transition-all duration-100 ease-in-out
-      [&:not(:hover)]:duration-1000
+      not-[&:hover]:duration-1000
     `,
     hoveredSquare.value === index ? "fill-gray-300/30" : "fill-transparent",
     props.squaresClassName,

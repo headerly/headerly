@@ -39,7 +39,7 @@ function handleAnchorClick(anchor: string) {
     <div
       class="
         flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow-1 before:bg-border
+        before:h-0.5 before:w-full before:grow before:bg-border
         before:content-['']
       "
     />

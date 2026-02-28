@@ -32,7 +32,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       data-slot="dropdown-menu-content"
       v-bind="{ ...$attrs, ...forwarded }"
       :class="cn(`
-        z-50 max-h-(--reka-dropdown-menu-content-available-height) min-w-[8rem]
+        z-50 max-h-(--reka-dropdown-menu-content-available-height) min-w-32
         origin-(--reka-dropdown-menu-content-transform-origin) overflow-x-hidden
         overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground
         shadow-md

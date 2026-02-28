@@ -43,8 +43,8 @@ export const itemVariants = cva(
 export const itemMediaVariants = cva(
   `
     flex shrink-0 items-center justify-center gap-2
-    group-has-[[data-slot=item-description]]/item:translate-y-0.5
-    group-has-[[data-slot=item-description]]/item:self-start
+    group-has-data-[slot=item-description]/item:translate-y-0.5
+    group-has-data-[slot=item-description]/item:self-start
     [&_i]:pointer-events-none
   `,
   {
