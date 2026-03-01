@@ -1,10 +1,11 @@
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
-import type { UUID } from "node:crypto";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
-import type { HeaderMod, Profile, ProfileManager, SyncCookie } from "./type";
+import type { HeaderMod, Profile, SyncCookie } from "./schema";
+import type { ProfileManager } from "./types";
 import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
 import { useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
+import { uuidv7 } from "uuidv7";
 import { toRaw } from "vue";
 
 interface UseBrowserStorageOptions<T> {
@@ -70,7 +71,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: Us
 
 export function createSyncCookie(overrides?: Partial<SyncCookie>) {
   return {
-    id: crypto.randomUUID(),
+    id: uuidv7(),
     enabled: true,
     domain: "",
     name: "",
@@ -83,7 +84,7 @@ export function createSyncCookie(overrides?: Partial<SyncCookie>) {
 
 export function createMod(overrides?: Partial<HeaderMod>) {
   return {
-    id: crypto.randomUUID(),
+    id: uuidv7(),
     enabled: true,
     name: "",
     operation: "set" as const,
@@ -95,12 +96,12 @@ export function createMod(overrides?: Partial<HeaderMod>) {
 
 export function createProfile(overrides?: Partial<Profile>) {
   return {
-    id: crypto.randomUUID(),
+    id: uuidv7(),
     name: "New Profile 1",
     enabled: true,
     emoji: "📃",
     requestHeaderModGroups: [{
-      id: crypto.randomUUID(),
+      id: uuidv7(),
       type: "checkbox",
       items: [createMod()],
     }],
@@ -128,12 +129,12 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
   return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, options);
 }
 
-export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<UUID, number>>) {
-  return useBrowserStorage<Record<UUID, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
+export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
+  return useBrowserStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
 }
 
-export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<UUID, string>>) {
-  return useBrowserStorage<Record<UUID, string>>("local:profileId2ErrorMessageRecord", {}, options);
+export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<string, string>>) {
+  return useBrowserStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
 }
 
 export function usePowerOnStorage() {

@@ -1,3 +1,4 @@
+import { uuidv7 } from "uuidv7";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 interface Tab {
@@ -83,7 +84,7 @@ export const tabs: Tab[] = [
           const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.urlFilter = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               value: hostname ? `||${hostname}/` : "",
               comments: "",
@@ -102,7 +103,7 @@ export const tabs: Tab[] = [
         action: () => {
           profilesStore.selectedProfile.filters.regexFilter = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               value: "",
               comments: "",
@@ -124,7 +125,7 @@ export const tabs: Tab[] = [
             type: "checkbox",
             items: [
               {
-                id: crypto.randomUUID(),
+                id: uuidv7(),
                 enabled: true,
                 value: hostname,
                 comments: "",
@@ -146,7 +147,7 @@ export const tabs: Tab[] = [
             type: "checkbox",
             items: [
               {
-                id: crypto.randomUUID(),
+                id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
                 comments: "",
@@ -196,7 +197,7 @@ export const tabs: Tab[] = [
             type: "checkbox",
             items: [
               {
-                id: crypto.randomUUID(),
+                id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
                 comments: "",
@@ -218,7 +219,7 @@ export const tabs: Tab[] = [
             type: "checkbox",
             items: [
               {
-                id: crypto.randomUUID(),
+                id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
                 comments: "",
@@ -237,7 +238,7 @@ export const tabs: Tab[] = [
         action: () => {
           profilesStore.selectedProfile.filters.requestMethods = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               comments: "",
               value: ["get"], // Default to GET method
@@ -254,7 +255,7 @@ export const tabs: Tab[] = [
         action: () => {
           profilesStore.selectedProfile.filters.excludedRequestMethods = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               comments: "",
               value: ["get"], // Default to GET method
@@ -271,7 +272,7 @@ export const tabs: Tab[] = [
         action: () => {
           profilesStore.selectedProfile.filters.resourceTypes = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               comments: "",
               value: ["main_frame"], // Default to main_frame
@@ -288,7 +289,7 @@ export const tabs: Tab[] = [
         action: () => {
           profilesStore.selectedProfile.filters.excludedResourceTypes = [
             {
-              id: crypto.randomUUID(),
+              id: uuidv7(),
               enabled: true,
               comments: "",
               value: ["main_frame"], // Default to main_frame

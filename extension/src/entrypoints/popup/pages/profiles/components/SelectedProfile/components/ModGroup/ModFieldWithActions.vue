@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { ActionType, HeaderMod, HeaderModOperation } from "@/lib/type";
+import type { HeaderMod } from "@/lib/schema";
+import type { ActionType, HeaderModOperation } from "@/lib/types";
+
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Button } from "#/ui/button";
 import {

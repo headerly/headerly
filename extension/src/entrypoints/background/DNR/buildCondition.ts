@@ -64,9 +64,6 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
           condition[k] = value.value;
         }
       })
-      .with("tabIds", () => {
-        // Developing
-      })
       .exhaustive();
   });
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import type { Profile } from "@/lib/type";
+import type { Profile } from "@/lib/schema";
 
 import { match } from "ts-pattern";
 import { computed } from "vue";
@@ -43,7 +43,7 @@ const hasAnyFilters = computed(() => {
           return filters[k]?.items.some(f => Boolean(f.value)) ?? false;
         },
       )
-      .with("domainType", "isUrlFilterCaseSensitive", "tabIds", (k) => {
+      .with("domainType", "isUrlFilterCaseSensitive", (k) => {
         return Boolean(filters[k]);
       })
       .exhaustive();

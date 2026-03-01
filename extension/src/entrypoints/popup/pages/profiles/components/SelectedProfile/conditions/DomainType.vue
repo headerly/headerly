@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Filter } from "@/lib/type";
+import type { Filter } from "@/lib/schema";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";

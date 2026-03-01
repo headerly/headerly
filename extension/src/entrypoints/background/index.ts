@@ -1,4 +1,5 @@
-import type { Profile, ProfileManager } from "@/lib/type";
+import type { Profile } from "@/lib/schema";
+import type { ProfileManager } from "@/lib/types";
 import { isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";

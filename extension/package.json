@@ -32,6 +32,7 @@
     "tailwind-merge": "catalog:",
     "ts-pattern": "catalog:",
     "type-fest": "catalog:",
+    "uuidv7": "catalog:",
     "vee-validate": "catalog:",
     "vue": "catalog:",
     "vue-codemirror6": "catalog:",

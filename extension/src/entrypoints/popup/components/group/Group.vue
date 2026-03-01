@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends GroupItem">
-import type { GroupItem, GroupType } from "@/lib/type";
+import type { GroupItem, GroupType } from "@/lib/schema";
 import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";

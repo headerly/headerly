@@ -1,4 +1,3 @@
-import type { UUID } from "node:crypto";
 import type { ProfileChanges } from "../index";
 import type { UpdateProfileErrorMessageOptions, UpdateProfileRelatedRuleIdOptions } from "../message";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
@@ -18,10 +17,10 @@ export async function updateRules(changes: ProfileChanges) {
 
   const allResults = [...deleteResults, ...updateResults];
 
-  const profileId2ErrorRecord: Record<UUID, string> = {};
-  const deleteErrorMessageIds: UUID[] = [];
-  const profileId2RelatedRuleIdRecord: Record<UUID, number> = {};
-  const deleteRelatedRuleIds: UUID[] = [];
+  const profileId2ErrorRecord: Record<string, string> = {};
+  const deleteErrorMessageIds: string[] = [];
+  const profileId2RelatedRuleIdRecord: Record<string, number> = {};
+  const deleteRelatedRuleIds: string[] = [];
   for (const result of allResults) {
     if (result.status !== "fulfilled") {
       continue;
@@ -53,7 +52,7 @@ export async function updateRules(changes: ProfileChanges) {
 
 interface RuleUpdateResult {
   success: boolean;
-  profileId: UUID;
+  profileId: string;
   error?: unknown;
   deleteRuleId?: number;
   newRuleId?: number;

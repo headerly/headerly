@@ -141,6 +141,9 @@ catalogs:
     unplugin-vue-router:
       specifier: ^0.19.2
       version: 0.19.2
+    uuidv7:
+      specifier: ^1.1.0
+      version: 1.1.0
     vee-validate:
       specifier: ^4.15.1
       version: 4.15.1
@@ -288,6 +291,9 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.4.4
+      uuidv7:
+        specifier: 'catalog:'
+        version: 1.1.0
       vee-validate:
         specifier: 'catalog:'
         version: 4.15.1(vue@3.5.29(typescript@5.9.3))
@@ -5270,6 +5276,10 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+
+  uuidv7@1.1.0:
+    resolution: {integrity: sha512-2VNnOC0+XQlwogChUDzy6pe8GQEys9QFZBGOh54l6qVfwoCUwwRvk7rDTgaIsRgsF5GFa5oiNg8LqXE3jofBBg==}
     hasBin: true
 
   valibot@1.2.0:
@@ -11003,6 +11013,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   uuid@8.3.2: {}
+
+  uuidv7@1.1.0: {}
 
   valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:

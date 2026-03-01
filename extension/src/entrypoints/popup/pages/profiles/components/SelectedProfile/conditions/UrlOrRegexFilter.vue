@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { UrlOrRegexFilterItem } from "@/lib/type";
+import type { UrlOrRegexFilterItem } from "@/lib/schema";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useQuery } from "@tanstack/vue-query";
+import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
@@ -92,7 +93,7 @@ function deleteGroup() {
 
 function newField() {
   list.value.push({
-    id: crypto.randomUUID(),
+    id: uuidv7(),
     enabled: false,
     value: "",
     comments: "",

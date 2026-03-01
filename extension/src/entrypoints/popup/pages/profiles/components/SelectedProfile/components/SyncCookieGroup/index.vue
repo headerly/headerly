@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SyncCookieGroup } from "@/lib/type";
+import type { SyncCookieGroup } from "@/lib/schema";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";

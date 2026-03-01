@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeaderMod } from "@/lib/type";
+import type { HeaderMod } from "@/lib/schema";
 import { Button } from "#/ui/button";
 import { Input } from "#/ui/input";
 import {

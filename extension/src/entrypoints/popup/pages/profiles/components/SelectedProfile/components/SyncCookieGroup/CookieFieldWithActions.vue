@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MaybeRefOrGetter } from "vue";
-import type { SyncCookie } from "@/lib/type";
+import type { SyncCookie } from "@/lib/schema";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Alert, AlertDescription } from "#/ui/alert";
 import { Button } from "#/ui/button";

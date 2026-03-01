@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ProfileWithoutIds } from "./schema";
-import type { Profile } from "@/lib/type";
 import { Button } from "#/ui/button";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -11,7 +9,7 @@ import CodeMirror from "vue-codemirror6";
 import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { profileWithoutIdsJsonSchema, profileWithoutIdsZodSchema } from "./schema";
+import { addProfileIds, profileWithoutIdsJsonSchema, profileWithoutIdsZodSchema } from "@/lib/schema";
 
 const userInput = ref("");
 const lang = json();
@@ -38,93 +36,6 @@ const extensions = computed(() => {
   ].filter(Boolean);
 });
 
-function addIdsToProfile(profileData: ProfileWithoutIds) {
-  return {
-    ...profileData,
-    id: crypto.randomUUID(),
-    syncCookieGroups: [],
-    requestHeaderModGroups: profileData.requestHeaderModGroups.map(group => ({
-      ...group,
-      id: crypto.randomUUID(),
-      items: group.items.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-    })),
-    responseHeaderModGroups: profileData.responseHeaderModGroups.map(group => ({
-      ...group,
-      id: crypto.randomUUID(),
-      items: group.items.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-    })),
-    filters: {
-      ...profileData.filters,
-      resourceTypes: profileData.filters.resourceTypes?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      excludedResourceTypes: profileData.filters.excludedResourceTypes?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      requestMethods: profileData.filters.requestMethods?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      excludedRequestMethods: profileData.filters.excludedRequestMethods?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      urlFilter: profileData.filters.urlFilter?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      regexFilter: profileData.filters.regexFilter?.map(item => ({
-        ...item,
-        id: crypto.randomUUID(),
-      })),
-      initiatorDomains: profileData.filters.initiatorDomains
-        ? {
-            ...profileData.filters.initiatorDomains,
-            items: profileData.filters.initiatorDomains.items.map(item => ({
-              ...item,
-              id: crypto.randomUUID(),
-            })),
-          }
-        : undefined,
-      excludedInitiatorDomains: profileData.filters.excludedInitiatorDomains
-        ? {
-            ...profileData.filters.excludedInitiatorDomains,
-            items: profileData.filters.excludedInitiatorDomains.items.map(item => ({
-              ...item,
-              id: crypto.randomUUID(),
-            })),
-          }
-        : undefined,
-      requestDomains: profileData.filters.requestDomains
-        ? {
-            ...profileData.filters.requestDomains,
-            items: profileData.filters.requestDomains.items.map(item => ({
-              ...item,
-              id: crypto.randomUUID(),
-            })),
-          }
-        : undefined,
-      excludedRequestDomains: profileData.filters.excludedRequestDomains
-        ? {
-            ...profileData.filters.excludedRequestDomains,
-            items: profileData.filters.excludedRequestDomains.items.map(item => ({
-              ...item,
-              id: crypto.randomUUID(),
-            })),
-          }
-        : undefined,
-    },
-  } satisfies Profile;
-}
-
 const profilesStore = useProfilesStore();
 const router = useRouter();
 async function confirmImport() {
@@ -133,7 +44,7 @@ async function confirmImport() {
   if (!result.success) {
     return;
   }
-  const profileWithIds = addIdsToProfile(result.data);
+  const profileWithIds = addProfileIds(result.data);
   profilesStore.addProfile(profileWithIds);
   toast.success("Profile imported successfully!");
   await router.push("/profiles");

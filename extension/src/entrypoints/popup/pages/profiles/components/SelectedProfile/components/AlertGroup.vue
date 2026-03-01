@@ -8,6 +8,7 @@ import {
 import { Button } from "#/ui/button";
 import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
 import { useEventBus } from "@vueuse/core";
+import { uuidv7 } from "uuidv7";
 
 import { computed } from "vue";
 import { openAddModModalKey } from "../../Header/components/AddModModal/open";
@@ -20,7 +21,7 @@ const profilesStore = useProfilesStore();
 
 function ignoreWarning() {
   profilesStore.selectedProfile.filters.urlFilter = [
-    { id: crypto.randomUUID(), enabled: true, value: "*", comments: "" },
+    { id: uuidv7(), enabled: true, value: "*", comments: "" },
   ];
 }
 

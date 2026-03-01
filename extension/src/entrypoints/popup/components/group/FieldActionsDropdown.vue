@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends GroupItem">
-import type { GroupItem } from "@/lib/type";
+import type { GroupItem } from "@/lib/schema";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
 import { head } from "es-toolkit";
+import { uuidv7 } from "uuidv7";
 import { ref, useTemplateRef } from "vue";
 
 const list = defineModel<T[]>("list", {
@@ -31,7 +32,7 @@ const moreActions = [
     key: "duplicate",
     label: "Duplicate",
     onClick: () => {
-      const newField = { ...field.value, id: crypto.randomUUID() };
+      const newField = { ...field.value, id: uuidv7() };
       list.value.splice(index + 1, 0, newField);
     },
   },

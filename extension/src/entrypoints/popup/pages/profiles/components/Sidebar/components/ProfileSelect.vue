@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import type { UUID } from "node:crypto";
 import { Button } from "#/ui/button";
 import { Kbd } from "#/ui/kbd";
 import {
@@ -19,7 +18,7 @@ const profilesStore = useProfilesStore();
 
 // Vue cannot guarantee the order of refs,
 // and must use id map management to ensure access to the correct element.
-const profileRefs = ref<Map<UUID, HTMLDivElement>>(new Map());
+const profileRefs = ref<Map<string, HTMLDivElement>>(new Map());
 
 onMounted(() => scrollToEnabledProfile("instant"));
 

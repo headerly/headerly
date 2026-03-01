@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
-import type { Profile } from "@/lib/type";
+import type { Profile } from "@/lib/schema";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {

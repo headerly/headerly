@@ -1,14 +1,13 @@
-import type { UUID } from "node:crypto";
 import { defineExtensionMessaging } from "@webext-core/messaging";
 
 export interface UpdateProfileErrorMessageOptions {
-  upsertRecord?: Record<UUID, string>;
-  deleteIds?: UUID[];
+  upsertRecord?: Record<string, string>;
+  deleteIds?: string[];
 }
 
 export interface UpdateProfileRelatedRuleIdOptions {
-  upsertRecord?: Record<UUID, number>;
-  deleteIds?: UUID[];
+  upsertRecord?: Record<string, number>;
+  deleteIds?: string[];
 }
 
 interface ProtocolMap {

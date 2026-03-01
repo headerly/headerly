@@ -1,9 +1,10 @@
-import type { UUID } from "node:crypto";
 import type { Entries } from "type-fest";
-import type { ActionType, GroupType, HeaderModGroup, Profile } from "@/lib/type";
+import type { GroupType, HeaderModGroup, Profile } from "@/lib/schema";
+import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
+import { uuidv7 } from "uuidv7";
 import { computed, ref, toRaw, watch } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
@@ -26,7 +27,7 @@ export function findHeaderModGroups(profile: Profile, type: ActionType) {
     : profile.responseHeaderModGroups;
 }
 
-export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: UUID): HeaderModGroup | undefined {
+export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: string): HeaderModGroup | undefined {
   const groups = findHeaderModGroups(profile, type);
   return groups.find(g => g.id === groupId);
 }
@@ -96,7 +97,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = (profile ?? newProfile).id;
   }
 
-  function duplicateProfile(profileId?: UUID) {
+  function duplicateProfile(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
     if (!targetProfile)
@@ -106,7 +107,7 @@ export const useProfilesStore = defineStore("profiles", () => {
       // If `toValue` is not used here, some keys in the object will be `proxy`.
       // Putting `proxy` into chrome.storage will cause the array to become its object representation(For example: `[1]` => `{0: 1}`).
       ...toRaw(targetProfile),
-      id: crypto.randomUUID(),
+      id: uuidv7(),
       name: targetProfile.name.startsWith("[Duplicated]") ? targetProfile.name : `[Duplicated] ${targetProfile.name}`,
     };
     const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
@@ -114,7 +115,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = newProfile.id;
   }
 
-  function deleteProfile(profileId?: UUID) {
+  function deleteProfile(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
 
     // IMPORTANT: Ensure that there is at least one profile in the storage.
@@ -143,7 +144,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function toggleProfileEnabled(profileId?: UUID) {
+  function toggleProfileEnabled(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
     if (targetProfile) {
@@ -151,7 +152,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function moveProfileUp(profileId?: UUID) {
+  function moveProfileUp(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
 
@@ -164,7 +165,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.profiles.splice(currentIndex - 1, 0, targetProfile);
   }
 
-  function moveProfileDown(profileId?: UUID) {
+  function moveProfileDown(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
 
@@ -177,13 +178,13 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.profiles.splice(currentIndex + 1, 0, targetProfile);
   }
 
-  function canMoveProfileUp(profileId?: UUID) {
+  function canMoveProfileUp(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     return currentIndex > 0;
   }
 
-  function canMoveProfileDown(profileId?: UUID) {
+  function canMoveProfileDown(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     return currentIndex !== -1 && currentIndex < manager.value.profiles.length - 1;
@@ -193,7 +194,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     const groups = findHeaderModGroups(selectedProfile.value, type);
     const mod = createMod();
     const newGroup = {
-      id: crypto.randomUUID(),
+      id: uuidv7(),
       type: groupType,
       items: [mod],
     } as const satisfies HeaderModGroup;
@@ -203,7 +204,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   function addSyncCookieGroup() {
     const cookie = createSyncCookie();
     selectedProfile.value.syncCookieGroups.push({
-      id: crypto.randomUUID(),
+      id: uuidv7(),
       type: "checkbox",
       items: [cookie],
     });

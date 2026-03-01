@@ -1,6 +1,7 @@
-import type { Profile } from "@/lib/type";
+import type { Profile } from "@/lib/schema";
 import { toast } from "vue-sonner";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { stripProfileIds } from "@/lib/schema";
 
 export async function copyProfileId(profile: Profile) {
   await navigator.clipboard.writeText(profile.id);
@@ -8,23 +9,9 @@ export async function copyProfileId(profile: Profile) {
 }
 
 export async function copyProfile(profile: Profile) {
-  const cleanedProfile = {
-    ...profile,
-    // Contains private information; export prohibited.
-    syncCookieGroups: undefined,
-    filters: {
-      ...profile.filters,
-      // It cannot maintain consistency across devices,
-      // so there's no point in exporting it.
-      tabIds: undefined,
-    },
-  };
-
-  const profileString = JSON.stringify(cleanedProfile, null, 2);
-  // Manually deleting UUIDs from each Profile is too tedious,
-  // so here we'll use regular expressions to delete all lines containing "id".
-  const profileStringWithoutUUID = profileString.replace(/^\s*"id": ".*?",?\n/gm, "");
-  await navigator.clipboard.writeText(profileStringWithoutUUID);
+  const profileWithoutId = stripProfileIds(profile);
+  const profileStringWithoutId = JSON.stringify(profileWithoutId, null, 2);
+  await navigator.clipboard.writeText(profileStringWithoutId);
   toast.success("Profile copied to clipboard.");
 }
 

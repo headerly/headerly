@@ -1,10 +1,11 @@
 <script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
-import type { GroupItem } from "@/lib/type";
+import type { GroupItem } from "@/lib/schema";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import Button from "#/ui/button/Button.vue";
 import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
+import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 
 // Define specific item types
@@ -101,7 +102,7 @@ function deleteGroup() {
 
 function newField() {
   const newItem = {
-    id: crypto.randomUUID(),
+    id: uuidv7(),
     enabled: false,
     comments: "",
     value: [],
