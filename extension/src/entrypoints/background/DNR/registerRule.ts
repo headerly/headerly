@@ -4,7 +4,7 @@ import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordSt
 import { sendMessage } from "../message";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
-import { logReceivingEndDoesNotExistOtherError, updateBadge } from "./util";
+import { logReceivingEndDoesNotExistOtherError, updateBadgeCount } from "./util";
 
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
@@ -46,7 +46,7 @@ export async function updateRules(changes: ProfileChanges) {
       upsertRecord: profileId2ErrorRecord,
       deleteIds: deleteErrorMessageIds,
     }),
-    updateBadge(),
+    updateBadgeCount(),
   ]);
 }
 

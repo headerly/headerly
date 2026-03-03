@@ -6,7 +6,7 @@ export function logReceivingEndDoesNotExistOtherError(error: unknown): boolean {
   return result;
 }
 
-export async function updateBadge() {
+export async function updateBadgeCount() {
   const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
   const registeredRuleCount = registeredRules.length;
   if (registeredRuleCount > 0) {
