@@ -4,6 +4,7 @@ import { isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
+import { updateBadge } from "./DNR/util";
 import { onMessage } from "./message";
 
 const lastProfilesStorageItem = storage.defineItem<Profile[]>(
@@ -26,6 +27,9 @@ export default defineBackground({
     profileManagerItem.watch((manager) => {
       onProfileManagerChange(manager);
     });
+
+    browser.runtime.onStartup.addListener(updateBadge);
+    browser.runtime.onInstalled.addListener(updateBadge);
 
     onMessage("reinitializeAllRules", async () => {
       const powerOn = await powerOnItem.getValue();
