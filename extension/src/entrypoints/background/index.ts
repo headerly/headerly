@@ -4,7 +4,7 @@ import { isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
-import { updateBadge } from "./DNR/util";
+import { updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
 
 const lastProfilesStorageItem = storage.defineItem<Profile[]>(
@@ -28,8 +28,8 @@ export default defineBackground({
       onProfileManagerChange(manager);
     });
 
-    browser.runtime.onStartup.addListener(updateBadge);
-    browser.runtime.onInstalled.addListener(updateBadge);
+    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
+    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
 
     onMessage("reinitializeAllRules", async () => {
       const powerOn = await powerOnItem.getValue();
@@ -154,4 +154,13 @@ function setIconAndBadgeForDisabled() {
       const imageData = context.getImageData(0, 0, SIZE, SIZE);
       browser.action.setIcon({ imageData });
     });
+}
+
+async function updateBadgeWhenRestarted() {
+  const powerOn = await usePowerOnStorage().item.getValue();
+  if (powerOn) {
+    await updateBadgeCount();
+  } else {
+    setIconAndBadgeForDisabled();
+  }
 }
