@@ -15,7 +15,7 @@ export async function copyProfile(profile: Profile) {
   toast.success("Profile copied to clipboard.");
 }
 
-export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "copyJson" | "copyId" | "moveUp" | "moveDown";
+export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "copyJson" | "copyId";
 
 export interface ProfileActionItem {
   id: ActionKey;
@@ -69,18 +69,6 @@ export function useProfileActions() {
       id: "copyId",
       label: () => "Copy ID",
       onClick: p => copyProfileId(p),
-    },
-    {
-      id: "moveUp",
-      label: () => "Move up",
-      onClick: p => profilesStore.moveProfileUp(p.id),
-      disabled: p => !profilesStore.canMoveProfileUp(p.id),
-    },
-    {
-      id: "moveDown",
-      label: () => "Move down",
-      onClick: p => profilesStore.moveProfileDown(p.id),
-      disabled: p => !profilesStore.canMoveProfileDown(p.id),
     },
   ] satisfies ProfileActionItem[];
 

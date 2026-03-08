@@ -34,8 +34,6 @@ const moreActionIdGroups = [
   ["duplicate", "comments", "rulePriority"],
   "separator",
   ["copyJson", "copyId"],
-  "separator",
-  ["moveUp", "moveDown"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const moreActionGroups = transformIdsToActions(moreActionIdGroups);
 
@@ -57,7 +55,6 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
                 'bg-primary! text-primary-foreground!'
               ),
             )"
-            :disabled="action.disabled?.(profile)"
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
@@ -99,7 +96,6 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             <DropdownMenuItem
               v-for="action in actionsOrSeparator"
               :key="action.id"
-              :disabled="action.disabled?.(profile)"
               :class="cn(
                 action.variant === 'destructive' && `text-destructive!`,
               )"

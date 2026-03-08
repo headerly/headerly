@@ -28,8 +28,6 @@ const actionIdGroups = [
   ["toggle", "duplicate", "delete", "comments", "rulePriority"],
   "separator",
   ["copyJson", "copyId"],
-  "separator",
-  ["moveUp", "moveDown"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const actionGroups = transformIdsToActions(actionIdGroups);
 
@@ -55,7 +53,6 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
           <ContextMenuItem
             v-for="action in actionsOrSeparator"
             :key="action.id"
-            :disabled="action.disabled?.(profile)"
             :class="cn(
               action.variant === 'destructive' && 'text-destructive!',
             )"
