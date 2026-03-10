@@ -113,14 +113,14 @@ const undoAndRedoButtonGroup = [
         }"
       >
         <span
-          class="max-w-50 truncate"
+          class="max-w-45 min-w-5 truncate"
         >
           {{ profilesStore.selectedProfile.name }}</span>
       </Button>
       <div v-else class="flex gap-1.5">
         <Input
-          v-model="profileNameInput"
-          :class="cn('max-w-xs text-base', profileNameInput.length === 0 && `
+          v-model.trim="profileNameInput"
+          :class="cn('max-w-45 text-base', profileNameInput.length === 0 && `
             border-destructive
           `)"
           required

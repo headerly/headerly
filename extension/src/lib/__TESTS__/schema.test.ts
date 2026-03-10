@@ -9,6 +9,7 @@ import {
 
 describe("profile ID Management", () => {
   const mockProfile: Profile = {
+    type: "dynamic",
     id: "550e8400-e29b-41d4-a716-446655440000",
     name: "Test Profile",
     enabled: true,
@@ -437,6 +438,7 @@ describe("profile ID Management", () => {
 describe("edge cases", () => {
   it("should handle profile with empty arrays", () => {
     const emptyProfile: Profile = {
+      type: "dynamic",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Empty Profile",
       enabled: false,
@@ -460,6 +462,7 @@ describe("edge cases", () => {
 
   it("should handle profile with minimal data", () => {
     const minimalProfile: Profile = {
+      type: "dynamic",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Minimal Profile",
       enabled: true,

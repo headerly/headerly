@@ -130,12 +130,16 @@ const filterSchema = z.object({
 });
 export type Filter = z.infer<typeof filterSchema>;
 
+const ruleTypeSchema = z.enum(["dynamic", "session"]);
+export type RuleType = z.infer<typeof ruleTypeSchema>;
+
 const profileSchema = z.object({
   id: uuidSchema,
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
   comments: z.string(),
+  type: ruleTypeSchema,
   priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema),
   responseHeaderModGroups: z.array(headerModGroupSchema),
