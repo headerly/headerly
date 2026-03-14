@@ -4,9 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import turboConsole from "unplugin-turbo-console/vite";
-import vueRouter from "unplugin-vue-router/vite";
-
 import vueDevtools from "vite-plugin-vue-devtools";
+import vueRouter from "vue-router/vite";
 import { defineConfig } from "wxt";
 
 // See https://wxt.dev/api/config.html

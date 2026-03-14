@@ -4,8 +4,7 @@
     "jsx": "preserve",
     "jsxImportSource": "vue",
     "types": [
-      "unplugin-turbo-console/client",
-      "unplugin-vue-router/client"
+      "unplugin-turbo-console/client"
     ],
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
@@ -16,6 +15,10 @@
     "esModuleInterop": true
   },
   "vueCompilerOptions": {
-    "checkUnknownDirectives": true
+    "checkUnknownDirectives": true,
+    "plugins": [
+      "vue-router/volar/sfc-route-blocks",
+      "vue-router/volar/sfc-typed-router"
+    ]
   }
 }

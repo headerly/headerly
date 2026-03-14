@@ -61,7 +61,6 @@
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:",
     "unplugin-turbo-console": "catalog:",
-    "unplugin-vue-router": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",
     "vitest": "catalog:",
     "vitest-browser-vue": "catalog:",
