@@ -112,7 +112,7 @@ function scrollToCategory(categoryLabel: string) {
           </div>
           <div
             ref="parentRef"
-            class="flex-1 overflow-y-auto pb-2"
+            class="w-full flex-1 overflow-y-auto pb-2"
           >
             <div
               class="relative pb-2"
@@ -140,7 +140,7 @@ function scrollToCategory(categoryLabel: string) {
 
                 <div
                   v-else-if="virtualItems[virtualRow.index]?.type === 'emoji'"
-                  class="grid grid-cols-7 place-items-center gap-1"
+                  class="grid grid-cols-7 place-items-center"
                 >
                   <Button
                     v-for="emoji in virtualItems[virtualRow.index]?.emojis"
