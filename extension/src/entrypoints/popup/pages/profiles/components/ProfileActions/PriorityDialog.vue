@@ -58,24 +58,17 @@ defineExpose({
             When multiple rules match a single request, the system executes
             the rule with the higher weight as a priority.
           </p>
-          <p>
-            This mechanism
-            allows for precise exception handling against global policies
-            by configuring higher-priority rules.
-          </p>
         </DialogDescription>
       </DialogHeader>
       <div
-        class="
-          grid justify-items-center gap-2 py-2
-          sm:justify-items-start
-        "
+        class="grid w-full justify-items-start gap-2 py-2"
       >
         <NumberField
           id="priority"
           v-model="priorityInput"
           :min="1"
           :max="INT32_MAX"
+          class="w-full"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
