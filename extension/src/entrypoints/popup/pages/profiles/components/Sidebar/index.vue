@@ -12,13 +12,14 @@ import {
 } from "#/ui/dropdown-menu";
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
-
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+
+import { defineAsyncComponent, ref } from "vue";
 import { sendMessage } from "@/entrypoints/background/message";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
@@ -30,8 +31,12 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
+// 延迟加载 ImportProfileModal 组件
+const ImportProfileModal = defineAsyncComponent(() => import("./components/ImportProfileModal.vue"));
+
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
+const importModalOpen = ref(false);
 
 function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
@@ -79,10 +84,8 @@ const isDEV = import.meta.env.DEV;
               </DropdownMenuShortcut>
             </DropdownMenuItem>
           </ProfileManage>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/import">
-              Import profile
-            </RouterLink>
+          <DropdownMenuItem @click="importModalOpen = true">
+            Import profile
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -158,5 +161,7 @@ const isDEV = import.meta.env.DEV;
         </Tooltip>
       </TooltipProvider>
     </div>
+
+    <ImportProfileModal v-model:open="importModalOpen" />
   </aside>
 </template>
