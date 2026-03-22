@@ -10,6 +10,7 @@ import {
 } from "#/ui/dialog";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { useDark } from "@vueuse/core";
 import { jsonSchema } from "codemirror-json-schema";
 import { computed, ref, useTemplateRef } from "vue";
@@ -29,6 +30,24 @@ const dark = useDark();
 
 // Only accept array of profiles with at least one profile
 const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
+const profilesArrayJsonSchema = z.toJSONSchema(profilesWithoutIdArraySchema);
+
+type JSONSchema7 = Parameters<typeof jsonSchema>[0];
+const extensions = computed(() => {
+  return [
+    jsonSchema(profilesArrayJsonSchema as JSONSchema7),
+    indentationMarkers(),
+    dark.value && oneDark,
+  ].filter(Boolean);
+});
+
+const profilesStore = useProfilesStore();
+const fileInputRef = useTemplateRef("fileInputRef");
+
+function formatJson() {
+  const parsed = JSON.parse(userInput.value);
+  userInput.value = JSON.stringify(parsed, null, 2);
+}
 
 const validJson = computed(() => {
   try {
@@ -40,63 +59,15 @@ const validJson = computed(() => {
   }
 });
 
-const importInfo = computed(() => {
-  try {
-    const parsed = JSON.parse(userInput.value);
-    const result = profilesWithoutIdArraySchema.safeParse(parsed);
-
-    if (!result.success) {
-      return null;
-    }
-
-    return {
-      count: result.data.length,
-    };
-  } catch {
-    return null;
-  }
-});
-
-// Create JSON schema for CodeMirror validation
-const profilesArrayJsonSchema = z.toJSONSchema(profilesWithoutIdArraySchema);
-
-type JSONSchema7 = Parameters<typeof jsonSchema>[0];
-const extensions = computed(() => {
-  return [
-    jsonSchema(profilesArrayJsonSchema as JSONSchema7),
-    dark.value && oneDark,
-  ].filter(Boolean);
-});
-
-const profilesStore = useProfilesStore();
-const fileInputRef = useTemplateRef("fileInputRef");
-
-function formatJson() {
-  try {
-    const parsed = JSON.parse(userInput.value);
-    userInput.value = JSON.stringify(parsed, null, 2);
-    toast.success("JSON formatted successfully");
-  } catch {
-    toast.error("Invalid JSON format");
-  }
-}
-
 async function confirmImport() {
   try {
     const parsed = JSON.parse(userInput.value);
     const result = profilesWithoutIdArraySchema.safeParse(parsed);
 
     if (!result.success) {
-      // Check if it's an empty array specifically
-      if (Array.isArray(parsed) && parsed.length === 0) {
-        toast.error("Import failed: Cannot import empty profile list");
-      } else {
-        toast.error("Import failed: Invalid profile data format");
-      }
       return;
     }
 
-    // Import all profiles
     for (const profileData of result.data) {
       const profileWithIds = addProfileIds(profileData);
       profilesStore.addProfile(profileWithIds);
@@ -123,11 +94,6 @@ function handleFileChange(event: Event) {
     return;
   }
 
-  if (!file.name.endsWith(".json")) {
-    toast.error("Please select a JSON file");
-    return;
-  }
-
   const reader = new FileReader();
   reader.onload = (e) => {
     const content = e.target?.result as string;
@@ -141,7 +107,6 @@ function handleFileChange(event: Event) {
 
   reader.readAsText(file);
 
-  // Clear the input
   target.value = "";
 }
 
@@ -155,7 +120,7 @@ function handleClose() {
   <Dialog v-model:open="open">
     <DialogContent
       class="
-        flex max-h-[80vh] flex-col
+        flex flex-col
         sm:max-w-2xl
       "
     >
@@ -170,15 +135,9 @@ function handleClose() {
           <CodeMirror
             id="json-input"
             v-model="userInput"
+            autofocus
             class="
-              h-50 overflow-auto rounded-md border border-input bg-transparent
-              text-base shadow-xs transition-[color,box-shadow] outline-none
-              focus-within:border-ring focus-within:ring-[3px]
-              focus-within:ring-ring/50
-              aria-invalid:border-destructive aria-invalid:ring-destructive/20
-              md:text-sm
-              dark:bg-input/30
-              dark:aria-invalid:ring-destructive/40
+              h-70 overflow-auto rounded-md text-base shadow-xs outline-none
             "
             :lang
             :dark
@@ -210,12 +169,7 @@ function handleClose() {
           :disabled="!validJson"
           @click="confirmImport"
         >
-          <template v-if="importInfo">
-            Import {{ importInfo.count }} Profile{{ importInfo.count !== 1 ? 's' : '' }}
-          </template>
-          <template v-else>
-            Import Profiles
-          </template>
+          Confirm Import
         </Button>
 
         <!-- Hidden file input -->
@@ -230,3 +184,13 @@ function handleClose() {
     </DialogContent>
   </Dialog>
 </template>
+
+<style>
+@reference "tailwindcss";
+.cm-editor {
+  @apply h-full
+}
+.cm-scroller {
+    @apply font-mono!;
+  }
+</style>

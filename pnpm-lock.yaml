@@ -39,6 +39,9 @@ catalogs:
     '@iconify-json/lucide':
       specifier: ^1.2.95
       version: 1.2.95
+    '@replit/codemirror-indentation-markers':
+      specifier: ^6.5.3
+      version: 6.5.3
     '@tailwindcss/typography':
       specifier: 0.5.19
       version: 0.5.19
@@ -252,6 +255,9 @@ importers:
       '@formkit/auto-animate':
         specifier: 'catalog:'
         version: 0.9.0
+      '@replit/codemirror-indentation-markers':
+        specifier: 'catalog:'
+        version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)
       '@tanstack/vue-query':
         specifier: 'catalog:'
         version: 5.92.9(vue@3.5.29(typescript@5.9.3))
@@ -278,7 +284,7 @@ importers:
         version: 6.0.2
       codemirror-json-schema:
         specifier: 'catalog:'
-        version: 0.8.1(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/state@6.5.2)(@codemirror/view@6.38.8)(@lezer/common@1.3.0)
+        version: 0.8.1(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)(@lezer/common@1.3.0)
       es-toolkit:
         specifier: 'catalog:'
         version: 1.44.0
@@ -314,7 +320,7 @@ importers:
         version: 3.5.29(typescript@5.9.3)
       vue-codemirror6:
         specifier: 'catalog:'
-        version: 1.4.2(@codemirror/autocomplete@6.20.0)(@codemirror/commands@6.10.0)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/view@6.38.8)(codemirror@6.0.2)(style-mod@4.1.3)(vue@3.5.29(typescript@5.9.3))
+        version: 1.4.2(@codemirror/autocomplete@6.20.0)(@codemirror/commands@6.10.0)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)(codemirror@6.0.2)(style-mod@4.1.3)(vue@3.5.29(typescript@5.9.3))
       vue-router:
         specifier: 'catalog:'
         version: 5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
@@ -743,11 +749,14 @@ packages:
   '@codemirror/state@6.5.2':
     resolution: {integrity: sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==}
 
+  '@codemirror/state@6.6.0':
+    resolution: {integrity: sha512-4nbvra5R5EtiCzr9BTHiTLc+MLXK2QGiAVYMyi8PkQd3SR+6ixar/Q/01Fa21TBIDOZXgeWV4WppsQolSreAPQ==}
+
   '@codemirror/theme-one-dark@6.1.3':
     resolution: {integrity: sha512-NzBdIvEJmx6fjeremiGp3t/okrLPYT0d9orIc7AFun8oZcRk58aejkqhv6spnz4MLAevrKNPMQYXEWMg4s+sKA==}
 
-  '@codemirror/view@6.38.8':
-    resolution: {integrity: sha512-XcE9fcnkHCbWkjeKyi0lllwXmBLtyYb5dt89dJyx23I9+LSh5vZDIuk7OLG4VM1lgrXZQcY6cxyZyk5WVPRv/A==}
+  '@codemirror/view@6.40.0':
+    resolution: {integrity: sha512-WA0zdU7xfF10+5I3HhUUq3kqOx3KjqmtQ9lqZjfK7jtYk4G72YW9rezcSywpaUMCWOMlq+6E0pO1IWg1TNIhtg==}
 
   '@commitlint/cli@20.4.2':
     resolution: {integrity: sha512-YjYSX2yj/WsVoxh9mNiymfFS2ADbg2EK4+1WAsMuckwKMCqJ5PDG0CJU/8GvmHWcv4VRB2V02KqSiecRksWqZQ==}
@@ -1590,6 +1599,13 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@replit/codemirror-indentation-markers@6.5.3':
+    resolution: {integrity: sha512-hL5Sfvw3C1vgg7GolLe/uxX5T3tmgOA3ZzqlMv47zjU1ON51pzNWiVbS22oh6crYhtVhv8b3gdXwoYp++2ilHw==}
+    peerDependencies:
+      '@codemirror/language': ^6.0.0
+      '@codemirror/state': ^6.0.0
+      '@codemirror/view': ^6.0.0
 
   '@rolldown/binding-android-arm64@1.0.0-rc.9':
     resolution: {integrity: sha512-lcJL0bN5hpgJfSIz/8PIf02irmyL43P+j1pTCfbD1DbLkmGRuFIA4DD3B3ZOvGqG0XiVvRznbKtN0COQVaKUTg==}
@@ -6210,14 +6226,14 @@ snapshots:
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       '@lezer/common': 1.3.0
 
   '@codemirror/commands@6.10.0':
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       '@lezer/common': 1.3.0
 
   '@codemirror/lang-json@6.0.2':
@@ -6239,7 +6255,7 @@ snapshots:
   '@codemirror/language@6.11.3':
     dependencies:
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       '@lezer/common': 1.3.0
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.3
@@ -6248,16 +6264,20 @@ snapshots:
   '@codemirror/lint@6.9.2':
     dependencies:
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       crelt: 1.0.6
 
   '@codemirror/search@6.5.11':
     dependencies:
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       crelt: 1.0.6
 
   '@codemirror/state@6.5.2':
+    dependencies:
+      '@marijn/find-cluster-break': 1.0.2
+
+  '@codemirror/state@6.6.0':
     dependencies:
       '@marijn/find-cluster-break': 1.0.2
 
@@ -6265,12 +6285,12 @@ snapshots:
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       '@lezer/highlight': 1.2.3
 
-  '@codemirror/view@6.38.8':
+  '@codemirror/view@6.40.0':
     dependencies:
-      '@codemirror/state': 6.5.2
+      '@codemirror/state': 6.6.0
       crelt: 1.0.6
       style-mod: 4.1.3
       w3c-keyname: 2.2.8
@@ -6950,6 +6970,12 @@ snapshots:
       config-chain: 1.1.13
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@replit/codemirror-indentation-markers@6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.40.0
 
   '@rolldown/binding-android-arm64@1.0.0-rc.9':
     optional: true
@@ -8204,12 +8230,12 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  codemirror-json-schema@0.8.1(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/state@6.5.2)(@codemirror/view@6.38.8)(@lezer/common@1.3.0):
+  codemirror-json-schema@0.8.1(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)(@lezer/common@1.3.0):
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/lint': 6.9.2
-      '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.40.0
       '@lezer/common': 1.3.0
       '@sagold/json-pointer': 5.1.2
       '@shikijs/markdown-it': 1.29.2
@@ -8231,7 +8257,7 @@ snapshots:
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
       '@lezer/common': 1.3.0
       '@lezer/highlight': 1.2.3
       json5: 2.2.3
@@ -8246,7 +8272,7 @@ snapshots:
       '@codemirror/lint': 6.9.2
       '@codemirror/search': 6.5.11
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/view': 6.40.0
 
   color-convert@2.0.1:
     dependencies:
@@ -11244,15 +11270,15 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-codemirror6@1.4.2(@codemirror/autocomplete@6.20.0)(@codemirror/commands@6.10.0)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.5.2)(@codemirror/view@6.38.8)(codemirror@6.0.2)(style-mod@4.1.3)(vue@3.5.29(typescript@5.9.3)):
+  vue-codemirror6@1.4.2(@codemirror/autocomplete@6.20.0)(@codemirror/commands@6.10.0)(@codemirror/language@6.11.3)(@codemirror/lint@6.9.2)(@codemirror/search@6.5.11)(@codemirror/state@6.6.0)(@codemirror/view@6.40.0)(codemirror@6.0.2)(style-mod@4.1.3)(vue@3.5.29(typescript@5.9.3)):
     dependencies:
       '@codemirror/autocomplete': 6.20.0
       '@codemirror/commands': 6.10.0
       '@codemirror/language': 6.11.3
       '@codemirror/lint': 6.9.2
       '@codemirror/search': 6.5.11
-      '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.8
+      '@codemirror/state': 6.6.0
+      '@codemirror/view': 6.40.0
       codemirror: 6.0.2
       style-mod: 4.1.3
       vue: 3.5.29(typescript@5.9.3)
