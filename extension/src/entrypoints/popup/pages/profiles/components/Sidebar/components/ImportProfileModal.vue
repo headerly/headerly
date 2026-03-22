@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import JsonEditor from "#/components/JsonEditor.vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -8,13 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "#/ui/dialog";
-import { json, jsonParseLinter } from "@codemirror/lang-json";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { indentationMarkers } from "@replit/codemirror-indentation-markers";
-import { useDark } from "@vueuse/core";
-import { jsonSchema } from "codemirror-json-schema";
 import { computed, ref, useTemplateRef } from "vue";
-import CodeMirror from "vue-codemirror6";
 import { toast } from "vue-sonner";
 import { z } from "zod";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -23,23 +18,9 @@ import { addProfileIds, profileWithoutIdsZodSchema } from "@/lib/schema";
 const open = defineModel<boolean>("open", { required: true });
 
 const userInput = ref("");
-const lang = json();
-const linter = jsonParseLinter();
-
-const dark = useDark();
 
 // Only accept array of profiles with at least one profile
 const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
-const profilesArrayJsonSchema = z.toJSONSchema(profilesWithoutIdArraySchema);
-
-type JSONSchema7 = Parameters<typeof jsonSchema>[0];
-const extensions = computed(() => {
-  return [
-    jsonSchema(profilesArrayJsonSchema as JSONSchema7),
-    indentationMarkers(),
-    dark.value && oneDark,
-  ].filter(Boolean);
-});
 
 const profilesStore = useProfilesStore();
 const fileInputRef = useTemplateRef("fileInputRef");
@@ -131,22 +112,7 @@ function handleClose() {
       </DialogHeader>
 
       <div class="flex min-h-0 flex-1 flex-col gap-3">
-        <div class="flex-1">
-          <CodeMirror
-            id="json-input"
-            v-model="userInput"
-            autofocus
-            class="
-              h-70 overflow-auto rounded-md text-base shadow-xs outline-none
-            "
-            :lang
-            :dark
-            :linter
-            basic
-            wrap
-            :extensions
-          />
-        </div>
+        <JsonEditor v-model="userInput" height="280px" />
       </div>
 
       <DialogFooter class="flex flex-row justify-end gap-2">
@@ -184,13 +150,3 @@ function handleClose() {
     </DialogContent>
   </Dialog>
 </template>
-
-<style>
-@reference "tailwindcss";
-.cm-editor {
-  @apply h-full
-}
-.cm-scroller {
-    @apply font-mono!;
-  }
-</style>
