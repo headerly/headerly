@@ -15,6 +15,7 @@ catalog:
   "@fontsource-variable/jetbrains-mono": ^5.2.8
   "@formkit/auto-animate": ^0.9.0
   "@iconify-json/lucide": ^1.2.95
+  "@replit/codemirror-indentation-markers": ^6.5.3
   "@tailwindcss/typography": 0.5.19
   "@tailwindcss/vite": ^4.2.1
   "@tanstack/vue-query": ^5.92.9
@@ -63,7 +64,7 @@ catalog:
   vue-router: ^5.0.3
   vue-sonner: 2.0.9
   vue-tsc: ^3.2.5
-  wxt: ^0.20.18
+  wxt: ^0.20.20
   zod: ^4.3.6
 
 catalogMode: prefer

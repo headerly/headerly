@@ -12,26 +12,30 @@ import {
 } from "#/ui/dropdown-menu";
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
-
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+
+import { defineAsyncComponent, ref } from "vue";
 import { sendMessage } from "@/entrypoints/background/message";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
-import ProfileSelect from "./components/ProfileSelect.vue";
+import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
+const ImportProfileModal = defineAsyncComponent(() => import("./components/ImportProfileModal.vue"));
+
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
+const importModalOpen = ref(false);
 
 function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
@@ -79,10 +83,8 @@ const isDEV = import.meta.env.DEV;
               </DropdownMenuShortcut>
             </DropdownMenuItem>
           </ProfileManage>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/import">
-              Import profile
-            </RouterLink>
+          <DropdownMenuItem @click="importModalOpen = true">
+            Import profiles
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -131,7 +133,7 @@ const isDEV = import.meta.env.DEV;
         settingsStore.powerOn || `opacity-60`,
       )"
     >
-      <ProfileSelect />
+      <ProfileSwitcher />
     </div>
 
     <div
@@ -158,5 +160,7 @@ const isDEV = import.meta.env.DEV;
         </Tooltip>
       </TooltipProvider>
     </div>
+
+    <ImportProfileModal v-model:open="importModalOpen" />
   </aside>
 </template>

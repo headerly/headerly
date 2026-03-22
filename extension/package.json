@@ -17,6 +17,7 @@
     "@codemirror/lang-json": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@formkit/auto-animate": "catalog:",
+    "@replit/codemirror-indentation-markers": "catalog:",
     "@tanstack/vue-query": "catalog:",
     "@tanstack/vue-virtual": "catalog:",
     "@vueuse/core": "catalog:",

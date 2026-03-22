@@ -10,7 +10,7 @@ export async function copyProfileId(profile: Profile) {
 
 export async function copyProfile(profile: Profile) {
   const profileWithoutId = stripProfileIds(profile);
-  const profileStringWithoutId = JSON.stringify(profileWithoutId, null, 2);
+  const profileStringWithoutId = JSON.stringify([profileWithoutId], null, 2);
   await navigator.clipboard.writeText(profileStringWithoutId);
   toast.success("Profile copied to clipboard.");
 }
