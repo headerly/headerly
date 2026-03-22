@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "vue",
+    "rootDir": ".",
     "types": [
       "unplugin-turbo-console/client"
     ],
