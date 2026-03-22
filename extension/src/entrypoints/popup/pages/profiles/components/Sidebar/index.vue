@@ -25,7 +25,7 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
-import ProfileSelect from "./components/ProfileSelect.vue";
+import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -85,7 +85,12 @@ const isDEV = import.meta.env.DEV;
             </DropdownMenuItem>
           </ProfileManage>
           <DropdownMenuItem @click="importModalOpen = true">
-            Import profile
+            Import profiles
+          </DropdownMenuItem>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/export">
+              Export profiles
+            </RouterLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -134,7 +139,7 @@ const isDEV = import.meta.env.DEV;
         settingsStore.powerOn || `opacity-60`,
       )"
     >
-      <ProfileSelect />
+      <ProfileSwitcher />
     </div>
 
     <div
