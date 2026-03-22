@@ -31,7 +31,6 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-// 延迟加载 ImportProfileModal 组件
 const ImportProfileModal = defineAsyncComponent(() => import("./components/ImportProfileModal.vue"));
 
 const profilesStore = useProfilesStore();
@@ -86,11 +85,6 @@ const isDEV = import.meta.env.DEV;
           </ProfileManage>
           <DropdownMenuItem @click="importModalOpen = true">
             Import profiles
-          </DropdownMenuItem>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/export">
-              Export profiles
-            </RouterLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
