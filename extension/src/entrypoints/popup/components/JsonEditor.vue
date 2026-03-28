@@ -37,9 +37,7 @@ const extensions = computed(() => {
 
 <template>
   <CodeMirror
-    id="json-input"
     v-model="model"
-    autofocus
     class="overflow-auto text-base shadow-xs outline-none"
     :lang
     :dark
