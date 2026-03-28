@@ -10,6 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "#/ui/dialog";
+import {
+  DropdownMenuItem,
+} from "#/ui/dropdown-menu";
 import { Input } from "#/ui/input";
 import {
   Select,
@@ -257,19 +260,12 @@ async function refreshCookie() {
         :index
       >
         <template #buttons-before>
-          <li>
-            <button
-              class="
-                flex
-                disabled:pointer-events-none disabled:opacity-60
-              "
-              :disabled="!field.value"
-              @click="() => isCookieDialogOpen = true"
-            >
-              <i class="i-lucide-eye-off size-4" />
-              View Cookie
-            </button>
-          </li>
+          <DropdownMenuItem
+            :disabled="!field.value"
+            @click="() => isCookieDialogOpen = true"
+          >
+            View Cookie
+          </DropdownMenuItem>
         </template>
       </ActionsDropdown>
     </div>
@@ -289,10 +285,10 @@ async function refreshCookie() {
       </Alert>
 
       <Textarea
+        v-model="field.value"
         class="mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
         placeholder="Comments"
         disabled
-        :value="field.value"
       />
     </DialogContent>
   </Dialog>
