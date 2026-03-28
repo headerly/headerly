@@ -4,66 +4,66 @@ packages:
   - packages/*
 
 catalog:
-  "@antfu/eslint-config": ^7.6.1
+  "@antfu/eslint-config": ^7.7.3
   "@codemirror/lang-json": ^6.0.2
   "@codemirror/theme-one-dark": ^6.1.3
-  "@commitlint/cli": ^20.4.2
-  "@commitlint/config-conventional": ^20.4.2
-  "@commitlint/types": ^20.4.0
+  "@commitlint/cli": ^20.5.0
+  "@commitlint/config-conventional": ^20.5.0
+  "@commitlint/types": ^20.5.0
   "@egoist/tailwindcss-icons": 1.9.0
   "@fontsource-variable/inter": ^5.2.8
   "@fontsource-variable/jetbrains-mono": ^5.2.8
   "@formkit/auto-animate": ^0.9.0
-  "@iconify-json/lucide": ^1.2.95
+  "@iconify-json/lucide": ^1.2.100
   "@replit/codemirror-indentation-markers": ^6.5.3
   "@tailwindcss/typography": 0.5.19
-  "@tailwindcss/vite": ^4.2.1
-  "@tanstack/vue-query": ^5.92.9
-  "@tanstack/vue-virtual": ^3.13.19
+  "@tailwindcss/vite": ^4.2.2
+  "@tanstack/vue-query": ^5.95.2
+  "@tanstack/vue-virtual": ^3.13.23
   "@total-typescript/ts-reset": ^0.6.1
-  "@types/node": ^24.11.0
+  "@types/node": ^25.5.0
   "@types/sortablejs": ^1.15.9
-  "@vitejs/plugin-vue": ^6.0.4
-  "@vitejs/plugin-vue-jsx": ^5.1.4
-  "@vitest/browser-playwright": ^4.0.18
+  "@vitejs/plugin-vue": ^6.0.5
+  "@vitejs/plugin-vue-jsx": ^5.1.5
+  "@vitest/browser-playwright": ^4.1.2
   "@vueuse/core": ^14.2.1
   "@vueuse/integrations": ^14.2.1
   "@webext-core/messaging": ^2.3.0
   "@wxt-dev/auto-icons": ^1.1.1
-  baseline-browser-mapping: ^2.10.0
+  baseline-browser-mapping: ^2.10.11
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   codemirror: ^6.0.2
   codemirror-json-schema: ^0.8.1
-  es-toolkit: ^1.44.0
-  eslint: ^10.0.2
-  eslint-plugin-better-tailwindcss: ^4.3.1
-  lefthook: ^2.1.1
-  lucide-vue-next: ^0.575.0
-  oxc-minify: ^0.115.0
+  es-toolkit: ^1.45.1
+  eslint: ^10.1.0
+  eslint-plugin-better-tailwindcss: ^4.3.2
+  lefthook: ^2.1.4
+  lucide-vue-next: ^1.0.0
+  oxc-minify: ^0.121.0
   pinia: ^3.0.4
   playwright: ^1.58.2
-  reka-ui: ^2.8.2
+  reka-ui: ^2.9.2
   sortablejs: ^1.15.7
   tailwind-merge: 3.4.0
-  tailwindcss: ^4.2.1
+  tailwindcss: ^4.2.2
   ts-pattern: ^5.9.0
   tw-animate-css: ^1.4.0
-  type-fest: ^5.4.4
-  typescript: ^5.9.3
+  type-fest: ^5.5.0
+  typescript: ^6.0.2
   unplugin-turbo-console: ^2.3.0
-  uuidv7: ^1.1.0
+  uuidv7: ^1.2.1
   vee-validate: ^4.15.1
-  vite: ^8.0.0
-  vite-plugin-vue-devtools: ^8.0.6
+  vite: ^8.0.3
+  vite-plugin-vue-devtools: ^8.1.1
   vitepress: 2.0.0-alpha.15
-  vitest: ^4.0.18
-  vitest-browser-vue: ^2.0.2
-  vue: ^3.5.29
-  vue-codemirror6: ^1.4.2
-  vue-router: ^5.0.3
+  vitest: ^4.1.2
+  vitest-browser-vue: ^2.1.0
+  vue: ^3.5.31
+  vue-codemirror6: ^1.4.3
+  vue-router: ^5.0.4
   vue-sonner: 2.0.9
-  vue-tsc: ^3.2.5
+  vue-tsc: ^3.2.6
   wxt: ^0.20.20
   zod: ^4.3.6
 
