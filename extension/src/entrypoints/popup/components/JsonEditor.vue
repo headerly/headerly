@@ -4,7 +4,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { useDark } from "@vueuse/core";
 import { jsonSchema } from "codemirror-json-schema";
-import { computed } from "vue";
+import { computed, onErrorCaptured } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { z } from "zod";
 import { profileWithoutIdsZodSchema } from "@/lib/schema";
@@ -32,6 +32,18 @@ const extensions = computed(() => {
     indentationMarkers(),
     dark.value && oneDark,
   ].filter(Boolean);
+});
+
+onErrorCaptured((error, instance, errorInfo) => {
+  console.error("JsonEditor Error Captured:", {
+    error,
+    message: error.message,
+    stack: error.stack,
+    instance,
+    errorInfo,
+  });
+
+  return false; // Don't Propagate the error
 });
 </script>
 
