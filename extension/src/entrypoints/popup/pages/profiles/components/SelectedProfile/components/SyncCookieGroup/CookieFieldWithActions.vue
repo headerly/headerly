@@ -85,7 +85,7 @@ const cookieOptions = computed(() => {
   const options = cookies.value?.map(createOption) ?? [];
   const currentKey = getCookieKey(field.value);
 
-  if (field.value.name && !options.find(option => option.value === currentKey)) {
+  if (field.value.name && !options.some(option => option.value === currentKey)) {
     options.push({
       ...createOption(field.value),
       isMissing: true,
