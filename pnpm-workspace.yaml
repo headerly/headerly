@@ -21,7 +21,7 @@ catalog:
   "@tanstack/vue-query": ^5.95.2
   "@tanstack/vue-virtual": ^3.13.23
   "@total-typescript/ts-reset": ^0.6.1
-  "@types/node": ^25.5.0
+  "@types/node": ^24.12.0
   "@types/sortablejs": ^1.15.9
   "@vitejs/plugin-vue": ^6.0.5
   "@vitejs/plugin-vue-jsx": ^5.1.5
