@@ -32,6 +32,15 @@ function formatJson() {
 
 const validJson = computed(() => {
   try {
+    JSON.parse(userInput.value);
+    return true;
+  } catch {
+    return false;
+  }
+});
+
+const validJsonSchema = computed(() => {
+  try {
     const parsed = JSON.parse(userInput.value);
     const result = profilesWithoutIdArraySchema.safeParse(parsed);
     return result.success;
@@ -132,7 +141,7 @@ function handleClose() {
           Load from File
         </Button>
         <Button
-          :disabled="!validJson"
+          :disabled="!validJsonSchema"
           @click="confirmImport"
         >
           Confirm Import
