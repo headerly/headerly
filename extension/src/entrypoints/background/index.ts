@@ -27,9 +27,7 @@ export default defineBackground({
     profileManagerItem.watch((manager) => {
       onProfileManagerChange(manager);
     });
-
-    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
-    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
+    updateBadgeWhenRestarted();
 
     onMessage("reinitializeAllRules", async () => {
       const powerOn = await powerOnItem.getValue();
