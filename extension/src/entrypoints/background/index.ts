@@ -27,7 +27,12 @@ export default defineBackground({
     profileManagerItem.watch((manager) => {
       onProfileManagerChange(manager);
     });
+
+    // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
     updateBadgeWhenRestarted();
+    // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
+    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
+    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
 
     onMessage("reinitializeAllRules", async () => {
       const powerOn = await powerOnItem.getValue();
