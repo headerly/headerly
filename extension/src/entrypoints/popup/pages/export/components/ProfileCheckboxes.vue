@@ -16,6 +16,10 @@ const model = defineModel<Profile[]>({
   required: true,
 });
 
+const emit = defineEmits<{
+  (e: "change", profiles: Profile[]): void;
+}>();
+
 const profilesStore = useProfilesStore();
 
 const allChecked = computed({
@@ -29,7 +33,9 @@ const allChecked = computed({
     return "indeterminate";
   },
   set(value) {
-    model.value = value === true ? profilesStore.manager.profiles : [];
+    const newProfiles = value === true ? profilesStore.manager.profiles : [];
+    model.value = newProfiles;
+    emit("change", newProfiles);
   },
 });
 
@@ -38,13 +44,14 @@ function isSelected(profile: Profile) {
 }
 
 function toggleProfile(profile: Profile, checked: unknown) {
+  let newProfiles: Profile[];
   if (checked === true) {
-    if (!isSelected(profile)) {
-      model.value = [...model.value, profile];
-    }
+    newProfiles = isSelected(profile) ? model.value : [...model.value, profile];
   } else {
-    model.value = model.value.filter(p => p.id !== profile.id);
+    newProfiles = model.value.filter(p => p.id !== profile.id);
   }
+  model.value = newProfiles;
+  emit("change", newProfiles);
 }
 </script>
 

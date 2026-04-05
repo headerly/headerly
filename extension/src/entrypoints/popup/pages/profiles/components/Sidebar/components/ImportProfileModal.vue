@@ -9,9 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "#/ui/dialog";
-import { computed, ref, useTemplateRef } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 import { z } from "zod";
+import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addProfileIds, profileWithoutIdsZodSchema } from "@/lib/schema";
 
@@ -25,29 +26,11 @@ const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
 const profilesStore = useProfilesStore();
 const fileInputRef = useTemplateRef("fileInputRef");
 
-function formatJson() {
-  const parsed = JSON.parse(userInput.value);
-  userInput.value = JSON.stringify(parsed, null, 2);
+const { validJson, validJsonSchema, formatJson } = useJsonValidation(userInput);
+
+function handleFormatJson() {
+  userInput.value = formatJson();
 }
-
-const validJson = computed(() => {
-  try {
-    JSON.parse(userInput.value);
-    return true;
-  } catch {
-    return false;
-  }
-});
-
-const validJsonSchema = computed(() => {
-  try {
-    const parsed = JSON.parse(userInput.value);
-    const result = profilesWithoutIdArraySchema.safeParse(parsed);
-    return result.success;
-  } catch {
-    return false;
-  }
-});
 
 async function confirmImport() {
   try {
@@ -133,7 +116,7 @@ function handleClose() {
         <Button
           variant="outline"
           :disabled="!validJson"
-          @click="formatJson"
+          @click="handleFormatJson"
         >
           Beautify
         </Button>

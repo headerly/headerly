@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
 import { Button } from "#/ui/button";
-import { computed, ref, watch } from "vue";
+import { ref } from "vue";
 import { toast } from "vue-sonner";
+import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { stripProfileIds } from "@/lib/schema";
@@ -13,24 +14,14 @@ const profilesStore = useProfilesStore();
 
 const selectedProfiles = ref<Profile[]>([]);
 
-const editedJson = ref<string | null>(null);
+const jsonPreview = ref("");
 
-const jsonPreview = computed({
-  get() {
-    if (editedJson.value !== null) {
-      return editedJson.value;
-    }
-    const strippedProfiles = selectedProfiles.value.map(stripProfileIds);
-    return JSON.stringify(strippedProfiles, null, 2);
-  },
-  set(value: string) {
-    editedJson.value = value;
-  },
-});
+function handleSelectionChange(profiles: Profile[]) {
+  const strippedProfiles = profiles.map(stripProfileIds);
+  jsonPreview.value = JSON.stringify(strippedProfiles, null, 2);
+}
 
-watch(selectedProfiles, () => {
-  editedJson.value = null;
-}, { deep: true });
+const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview);
 
 async function handleCopyJson() {
   await navigator.clipboard.writeText(jsonPreview.value);
@@ -77,7 +68,7 @@ async function handleDownloadJson() {
           before:content-['']
         "
       />
-      <ProfileCheckboxes v-model="selectedProfiles" />
+      <ProfileCheckboxes v-model="selectedProfiles" @change="handleSelectionChange" />
     </aside>
     <header
       class="col-start-2 row-start-1 flex items-center justify-between px-2"
@@ -92,7 +83,16 @@ async function handleDownloadJson() {
         <Button
           size="sm"
           variant="secondary"
-          :disabled="selectedProfiles.length === 0"
+          :disabled="!validJson"
+          @click="jsonPreview = formatJson()"
+        >
+          <i class="i-lucide-braces" />
+          Beautify
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          :disabled="!validJsonSchema"
           @click="handleDownloadJson"
         >
           <i class="i-lucide-hard-drive-download" />
@@ -100,7 +100,7 @@ async function handleDownloadJson() {
         </Button>
         <Button
           size="sm"
-          :disabled="selectedProfiles.length === 0"
+          :disabled="!validJsonSchema"
           @click="handleCopyJson"
         >
           <i class="i-lucide-copy" />
