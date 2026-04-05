@@ -23,6 +23,7 @@
     "@vueuse/core": "catalog:",
     "@vueuse/integrations": "catalog:",
     "@webext-core/messaging": "catalog:",
+    "async-mutex": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "codemirror": "catalog:",

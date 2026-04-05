@@ -1,27 +1,29 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { useVModel } from "@vueuse/core";
 import { cn } from "@/lib/utils";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   defaultValue?: string;
   modelValue?: string;
+  modelModifiers?: { lazy?: boolean; trim?: boolean };
   class?: HTMLAttributes["class"];
-}>();
+}>(), {
+  modelModifiers: () => ({}),
+});
 
 const emits = defineEmits<{
   (e: "update:modelValue", payload: string): void;
 }>();
 
-const modelValue = useVModel(props, "modelValue", emits, {
-  passive: true,
-  defaultValue: props.defaultValue,
-});
+function emitUpdate(event: Event) {
+  const value = (event.target as HTMLInputElement).value;
+  emits("update:modelValue", props.modelModifiers.trim ? value.trim() : value);
+}
 </script>
 
 <template>
   <input
-    v-model="modelValue"
+    :value="modelValue ?? defaultValue"
     data-slot="input"
     :class="cn(
       `
@@ -45,5 +47,7 @@ const modelValue = useVModel(props, "modelValue", emits, {
       `,
       props.class,
     )"
+    @input="!modelModifiers.lazy && emitUpdate($event)"
+    @change="modelModifiers.lazy && emitUpdate($event)"
   >
 </template>

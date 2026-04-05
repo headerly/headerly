@@ -84,12 +84,13 @@ const nextOperation = computed(() => {
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
-              v-model.trim.lazy="field.name"
+              :model-value="field.name"
               placeholder="Name"
               class="
                 w-full text-base
                 placeholder:italic
               "
+              @change="field.name = field.name.trim()"
             />
           </ComboboxAnchor>
 

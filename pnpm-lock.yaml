@@ -84,6 +84,9 @@ catalogs:
     '@wxt-dev/auto-icons':
       specifier: ^1.1.1
       version: 1.1.1
+    async-mutex:
+      specifier: ^0.5.0
+      version: 0.5.0
     baseline-browser-mapping:
       specifier: ^2.10.11
       version: 2.10.12
@@ -273,6 +276,9 @@ importers:
       '@webext-core/messaging':
         specifier: 'catalog:'
         version: 2.3.0
+      async-mutex:
+        specifier: 'catalog:'
+        version: 0.5.0
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1

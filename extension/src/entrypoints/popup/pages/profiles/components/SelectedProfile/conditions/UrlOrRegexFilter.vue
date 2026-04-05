@@ -139,7 +139,7 @@ const canUseCurrentUrl = computed(() => {
     </template>
     <template #item="{ index }">
       <Input
-        v-model="list[index]!.value"
+        v-model.trim.lazy="list[index]!.value"
         type="text"
         placeholder="|https://example.com/"
         class="

@@ -1,5 +1,5 @@
 import type { Profile } from "@/lib/schema";
-import type { ProfileManager } from "@/lib/types";
+import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
@@ -19,13 +19,34 @@ export default defineBackground({
   main() {
     const { item: powerOnItem } = usePowerOnStorage();
     const { item: profileManagerItem } = useProfileManagerStorage();
+    // Serialize all DNR rule operations to prevent concurrent access.
+    const mutex = new Mutex();
     // `storage.watch` must be registered synchronously at the top level of the service worker;
     // asynchronous registration will cause the service worker to lose events while in an inactive state.
     powerOnItem.watch((powerOn) => {
-      onPowerOnChange(powerOn);
+      mutex.runExclusive(async () => {
+        if (powerOn) {
+          await treatAllProfilesAsCreated();
+          browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
+        } else {
+          await unregisterAllRules();
+          lastProfilesStorageItem.setValue([]);
+          setIconAndBadgeForDisabled();
+        }
+      });
     });
     profileManagerItem.watch((manager) => {
-      onProfileManagerChange(manager);
+      mutex.runExclusive(async () => {
+        if (await powerOnItem.getValue()) {
+          const lastProfiles = await lastProfilesStorageItem.getValue();
+          const changes = diffProfiles(lastProfiles, manager.profiles);
+          if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
+            return;
+          }
+          lastProfilesStorageItem.setValue(manager.profiles);
+          await updateRules(changes);
+        }
+      });
     });
 
     // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
@@ -34,39 +55,19 @@ export default defineBackground({
     browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
     browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
 
-    onMessage("reinitializeAllRules", async () => {
-      const powerOn = await powerOnItem.getValue();
-      if (powerOn) {
-        await unregisterAllRules();
-        await treatAllProfilesAsCreated();
-      } else {
-        await unregisterAllRules();
-        lastProfilesStorageItem.setValue([]);
-      }
-    });
-
-    async function onPowerOnChange(powerOn: boolean) {
-      if (powerOn) {
-        await treatAllProfilesAsCreated();
-        browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
-      } else {
-        await unregisterAllRules();
-        lastProfilesStorageItem.setValue([]);
-        setIconAndBadgeForDisabled();
-      }
-    };
-
-    async function onProfileManagerChange(manager: ProfileManager) {
-      if (await powerOnItem.getValue()) {
-        const lastProfiles = await lastProfilesStorageItem.getValue();
-        const changes = diffProfiles(lastProfiles, manager.profiles);
-        if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
-          return;
+    // Manually Recover from a Failure
+    onMessage("reinitializeAllRules", () => {
+      mutex.runExclusive(async () => {
+        const powerOn = await powerOnItem.getValue();
+        if (powerOn) {
+          await unregisterAllRules();
+          await treatAllProfilesAsCreated();
+        } else {
+          await unregisterAllRules();
+          lastProfilesStorageItem.setValue([]);
         }
-        lastProfilesStorageItem.setValue(manager.profiles);
-        await updateRules(changes);
-      }
-    };
+      });
+    });
 
     async function treatAllProfilesAsCreated() {
       const manager = await profileManagerItem.getValue();

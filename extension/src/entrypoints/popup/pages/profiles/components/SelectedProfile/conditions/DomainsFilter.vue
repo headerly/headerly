@@ -146,7 +146,7 @@ const canUseCurrentUrl = computed(() => {
     </template>
     <template #item="{ index }">
       <Input
-        v-model="domainsFilter.items[index]!.value"
+        v-model.trim.lazy="domainsFilter.items[index]!.value"
         placeholder="example.com"
         class="
           text-base
