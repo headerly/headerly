@@ -27,11 +27,6 @@ export function findHeaderModGroups(profile: Profile, type: ActionType) {
     : profile.responseHeaderModGroups;
 }
 
-export function findHeaderModGroup(profile: Profile, type: ActionType, groupId: string): HeaderModGroup | undefined {
-  const groups = findHeaderModGroups(profile, type);
-  return groups.find(g => g.id === groupId);
-}
-
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
   const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
