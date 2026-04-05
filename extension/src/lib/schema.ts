@@ -16,7 +16,7 @@ const groupItemWithValueSchema = groupItemSchema.extend({
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
 
-const resourceTypeSchema = z.enum([
+export const RESOURCE_TYPES = [
   "main_frame",
   "sub_frame",
   "stylesheet",
@@ -32,9 +32,10 @@ const resourceTypeSchema = z.enum([
   "webtransport",
   "webbundle",
   "other",
-]);
+] as const satisfies `${Browser.declarativeNetRequest.ResourceType}`[];
+const resourceTypeSchema = z.enum(RESOURCE_TYPES);
 
-const requestMethodSchema = z.enum([
+export const REQUEST_METHODS = [
   "connect",
   "delete",
   "get",
@@ -44,9 +45,24 @@ const requestMethodSchema = z.enum([
   "post",
   "put",
   "other",
-]);
+] as const satisfies `${Browser.declarativeNetRequest.RequestMethod}`[];
+const requestMethodSchema = z.enum(REQUEST_METHODS);
 
-const domainTypeValueSchema = z.enum(["firstParty", "thirdParty"]);
+export const RULE_ACTION_TYPES = [
+  "block",
+  "redirect",
+  "allow",
+  "upgradeScheme",
+  "modifyHeaders",
+  "allowAllRequests",
+] as const satisfies `${Browser.declarativeNetRequest.RuleActionType}`[];
+const ruleActionTypeSchema = z.enum(RULE_ACTION_TYPES);
+
+export const DOMAIN_TYPES = [
+  "firstParty",
+  "thirdParty",
+] as const satisfies `${Browser.declarativeNetRequest.DomainType}`[];
+const domainTypeValueSchema = z.enum(DOMAIN_TYPES);
 
 const removeOperationSchema = groupItemSchema.extend({
   name: z.string(),
@@ -139,7 +155,8 @@ const profileSchema = z.object({
   enabled: z.boolean(),
   emoji: z.string(),
   comments: z.string(),
-  type: ruleTypeSchema,
+  ruleScope: ruleTypeSchema,
+  ruleActionType: ruleActionTypeSchema,
   priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema),
   responseHeaderModGroups: z.array(headerModGroupSchema),

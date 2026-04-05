@@ -100,7 +100,8 @@ export function createProfile(overrides?: Partial<Profile>) {
     name: "New Profile 1",
     enabled: true,
     emoji: "📃",
-    type: "dynamic",
+    ruleScope: "dynamic",
+    ruleActionType: "modifyHeaders",
     requestHeaderModGroups: [{
       id: uuidv7(),
       type: "checkbox",

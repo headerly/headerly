@@ -1,15 +1,33 @@
-import type { Profile } from "../schema";
-import { describe, expect, it } from "vitest";
+import type { DOMAIN_TYPES, Profile, REQUEST_METHODS, RESOURCE_TYPES, RULE_ACTION_TYPES } from "../schema";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import {
   addProfileIds,
-
   profileWithoutIdsZodSchema,
   stripProfileIds,
 } from "../schema";
 
+describe("schema enum constants", () => {
+  it("matches Browser.declarativeNetRequest.ResourceType", () => {
+    expectTypeOf<typeof RESOURCE_TYPES[number]>().toEqualTypeOf<`${Browser.declarativeNetRequest.ResourceType}`>();
+  });
+
+  it("matches Browser.declarativeNetRequest.RequestMethod", () => {
+    expectTypeOf<typeof REQUEST_METHODS[number]>().toEqualTypeOf<`${Browser.declarativeNetRequest.RequestMethod}`>();
+  });
+
+  it("matches Browser.declarativeNetRequest.RuleActionType", () => {
+    expectTypeOf<typeof RULE_ACTION_TYPES[number]>().toEqualTypeOf<`${Browser.declarativeNetRequest.RuleActionType}`>();
+  });
+
+  it("matches Browser.declarativeNetRequest.DomainType", () => {
+    expectTypeOf<typeof DOMAIN_TYPES[number]>().toEqualTypeOf<`${Browser.declarativeNetRequest.DomainType}`>();
+  });
+});
+
 describe("profile ID Management", () => {
   const mockProfile: Profile = {
-    type: "dynamic",
+    ruleScope: "dynamic",
+    ruleActionType: "modifyHeaders",
     id: "550e8400-e29b-41d4-a716-446655440000",
     name: "Test Profile",
     enabled: true,
@@ -438,7 +456,8 @@ describe("profile ID Management", () => {
 describe("edge cases", () => {
   it("should handle profile with empty arrays", () => {
     const emptyProfile: Profile = {
-      type: "dynamic",
+      ruleScope: "dynamic",
+      ruleActionType: "modifyHeaders",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Empty Profile",
       enabled: false,
@@ -462,7 +481,8 @@ describe("edge cases", () => {
 
   it("should handle profile with minimal data", () => {
     const minimalProfile: Profile = {
-      type: "dynamic",
+      ruleScope: "dynamic",
+      ruleActionType: "modifyHeaders",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Minimal Profile",
       enabled: true,
