@@ -8,7 +8,8 @@ import { uuidv7 } from "uuidv7";
 import { computed, ref, toRaw, watch } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
-import { createMod, createProfile, createSyncCookie, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
+import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
+import { createMod, createProfile, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
 
 function getProfileIcon() {
@@ -186,7 +187,13 @@ export const useProfilesStore = defineStore("profiles", () => {
   }
 
   function addModGroup(type: ActionType, groupType: GroupType) {
-    const groups = findHeaderModGroups(selectedProfile.value, type);
+    const profile = selectedProfile.value;
+    if (type === "request") {
+      profile.requestHeaderModGroups ??= [];
+    } else {
+      profile.responseHeaderModGroups ??= [];
+    }
+    const groups = findHeaderModGroups(profile, type)!;
     const mod = createMod();
     const newGroup = {
       id: uuidv7(),
@@ -198,6 +205,7 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function addSyncCookieGroup() {
     const cookie = createSyncCookie();
+    selectedProfile.value.syncCookieGroups ??= [];
     selectedProfile.value.syncCookieGroups.push({
       id: uuidv7(),
       type: "checkbox",

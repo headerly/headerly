@@ -216,17 +216,17 @@ describe("profile ID Management", () => {
       const result = stripProfileIds(mockProfile);
 
       // Check header mod groups
-      expect(result.requestHeaderModGroups[0]).not.toHaveProperty("id");
-      expect(result.requestHeaderModGroups[0]!.items[0]).not.toHaveProperty("id");
-      expect(result.requestHeaderModGroups[0]!.items[1]).not.toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]).not.toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]!.items[0]).not.toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]!.items[1]).not.toHaveProperty("id");
 
       // Check response header mod groups
-      expect(result.responseHeaderModGroups[0]).not.toHaveProperty("id");
-      expect(result.responseHeaderModGroups[0]!.items[0]).not.toHaveProperty("id");
+      expect(result.responseHeaderModGroups![0]).not.toHaveProperty("id");
+      expect(result.responseHeaderModGroups![0]!.items[0]).not.toHaveProperty("id");
 
       // Check sync cookie groups
-      expect(result.syncCookieGroups[0]).not.toHaveProperty("id");
-      expect(result.syncCookieGroups[0]!.items[0]).not.toHaveProperty("id");
+      expect(result.syncCookieGroups![0]).not.toHaveProperty("id");
+      expect(result.syncCookieGroups![0]!.items[0]).not.toHaveProperty("id");
 
       // Check filters - all id fields should be removed
       expect(result.filters.urlFilter?.[0]).not.toHaveProperty("id");
@@ -249,15 +249,15 @@ describe("profile ID Management", () => {
       const result = stripProfileIds(mockProfile);
 
       // Check that non-id fields are preserved
-      expect(result.requestHeaderModGroups[0]!.type).toBe("checkbox");
-      expect(result.requestHeaderModGroups[0]!.items[0]!.name).toBe("X-Custom-Header");
-      expect(result.requestHeaderModGroups[0]!.items[0]!.operation).toBe("set");
-      if (result.requestHeaderModGroups[0]!.items[0]!.operation !== "remove") {
-        expect(result.requestHeaderModGroups[0]!.items[0]!.value).toBe("test-value");
+      expect(result.requestHeaderModGroups![0]!.type).toBe("checkbox");
+      expect(result.requestHeaderModGroups![0]!.items[0]!.name).toBe("X-Custom-Header");
+      expect(result.requestHeaderModGroups![0]!.items[0]!.operation).toBe("set");
+      if (result.requestHeaderModGroups![0]!.items[0]!.operation !== "remove") {
+        expect(result.requestHeaderModGroups![0]!.items[0]!.value).toBe("test-value");
       }
 
-      expect(result.syncCookieGroups[0]!.items[0]!.domain).toBe("example.com");
-      expect(result.syncCookieGroups[0]!.items[0]!.name).toBe("test-cookie");
+      expect(result.syncCookieGroups![0]!.items[0]!.domain).toBe("example.com");
+      expect(result.syncCookieGroups![0]!.items[0]!.name).toBe("test-cookie");
 
       // Check all filter fields are preserved (except ids)
       expect(result.filters.urlFilter![0]!.value).toBe("https://example.com/*");
@@ -296,17 +296,17 @@ describe("profile ID Management", () => {
       const result = addProfileIds(profileWithoutIds);
 
       // Check header mod groups have new ids
-      expect(result.requestHeaderModGroups[0]).toHaveProperty("id");
-      expect(result.requestHeaderModGroups[0]!.items[0]).toHaveProperty("id");
-      expect(result.requestHeaderModGroups[0]!.items[1]).toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]).toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]!.items[0]).toHaveProperty("id");
+      expect(result.requestHeaderModGroups![0]!.items[1]).toHaveProperty("id");
 
       // Check response header mod groups have new ids
-      expect(result.responseHeaderModGroups[0]).toHaveProperty("id");
-      expect(result.responseHeaderModGroups[0]!.items[0]).toHaveProperty("id");
+      expect(result.responseHeaderModGroups![0]).toHaveProperty("id");
+      expect(result.responseHeaderModGroups![0]!.items[0]).toHaveProperty("id");
 
       // Check sync cookie groups have new ids
-      expect(result.syncCookieGroups[0]).toHaveProperty("id");
-      expect(result.syncCookieGroups[0]!.items[0]).toHaveProperty("id");
+      expect(result.syncCookieGroups![0]).toHaveProperty("id");
+      expect(result.syncCookieGroups![0]!.items[0]).toHaveProperty("id");
 
       // Check filters - all items that should have ids now have them
       expect(result.filters.urlFilter![0]).toHaveProperty("id");
@@ -322,8 +322,8 @@ describe("profile ID Management", () => {
 
       // Verify all ids are valid UUIDs
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      expect(result.requestHeaderModGroups[0]!.id).toMatch(uuidRegex);
-      expect(result.requestHeaderModGroups[0]!.items[0]!.id).toMatch(uuidRegex);
+      expect(result.requestHeaderModGroups![0]!.id).toMatch(uuidRegex);
+      expect(result.requestHeaderModGroups![0]!.items[0]!.id).toMatch(uuidRegex);
       expect(result.filters.urlFilter![0]!.id).toMatch(uuidRegex);
       expect(result.filters.regexFilter![0]!.id).toMatch(uuidRegex);
       expect(result.filters.initiatorDomains!.items[0]!.id).toMatch(uuidRegex);
@@ -337,8 +337,8 @@ describe("profile ID Management", () => {
 
       // New ids should be different from original
       expect(result.id).not.toBe(mockProfile.id);
-      expect(result.requestHeaderModGroups[0]!.id).not.toBe(mockProfile.requestHeaderModGroups[0]!.id);
-      expect(result.requestHeaderModGroups[0]!.items[0]!.id).not.toBe(mockProfile.requestHeaderModGroups[0]!.items[0]!.id);
+      expect(result.requestHeaderModGroups![0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.id);
+      expect(result.requestHeaderModGroups![0]!.items[0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.id);
     });
   });
 
@@ -427,12 +427,12 @@ describe("profile ID Management", () => {
     expect(restoredProfile.priority).toBe(mockProfile.priority);
 
     // Compare nested structures (excluding ids)
-    expect(restoredProfile.requestHeaderModGroups[0]!.type).toBe(mockProfile.requestHeaderModGroups[0]!.type);
-    expect(restoredProfile.requestHeaderModGroups[0]!.items[0]!.name).toBe(mockProfile.requestHeaderModGroups[0]!.items[0]!.name);
-    expect(restoredProfile.requestHeaderModGroups[0]!.items[0]!.operation).toBe(mockProfile.requestHeaderModGroups[0]!.items[0]!.operation);
+    expect(restoredProfile.requestHeaderModGroups![0]!.type).toBe(mockProfile.requestHeaderModGroups![0]!.type);
+    expect(restoredProfile.requestHeaderModGroups![0]!.items[0]!.name).toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.name);
+    expect(restoredProfile.requestHeaderModGroups![0]!.items[0]!.operation).toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.operation);
 
-    expect(restoredProfile.syncCookieGroups[0]!.items[0]!.domain).toBe(mockProfile.syncCookieGroups[0]!.items[0]!.domain);
-    expect(restoredProfile.syncCookieGroups[0]!.items[0]!.name).toBe(mockProfile.syncCookieGroups[0]!.items[0]!.name);
+    expect(restoredProfile.syncCookieGroups![0]!.items[0]!.domain).toBe(mockProfile.syncCookieGroups![0]!.items[0]!.domain);
+    expect(restoredProfile.syncCookieGroups![0]!.items[0]!.name).toBe(mockProfile.syncCookieGroups![0]!.items[0]!.name);
   });
 
   it("should handle multiple round trips", () => {
@@ -446,7 +446,7 @@ describe("profile ID Management", () => {
 
     // Data should remain consistent
     expect(currentProfile.name).toBe(mockProfile.name);
-    expect(currentProfile.requestHeaderModGroups[0]!.items[0]!.name).toBe(mockProfile.requestHeaderModGroups[0]!.items[0]!.name);
+    expect(currentProfile.requestHeaderModGroups![0]!.items[0]!.name).toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.name);
 
     // But ids should be different
     expect(currentProfile.id).not.toBe(mockProfile.id);

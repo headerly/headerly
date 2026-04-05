@@ -1,12 +1,11 @@
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
-import type { HeaderMod, Profile, SyncCookie } from "./schema";
 import type { ProfileManager } from "./types";
 import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
 import { useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
-import { uuidv7 } from "uuidv7";
 import { toRaw } from "vue";
+import { createProfile } from "./utils";
 
 interface UseBrowserStorageOptions<T> {
   onReady?: (value: T) => void;
@@ -69,53 +68,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: Us
   };
 }
 
-export function createSyncCookie(overrides?: Partial<SyncCookie>) {
-  return {
-    id: uuidv7(),
-    enabled: true,
-    domain: "",
-    name: "",
-    value: "",
-    path: "/",
-    comments: "",
-    ...(overrides ?? {}),
-  } as const satisfies SyncCookie;
-}
-
-export function createMod(overrides?: Partial<HeaderMod>) {
-  return {
-    id: uuidv7(),
-    enabled: true,
-    name: "",
-    operation: "set" as const,
-    value: "",
-    comments: "",
-    ...(overrides ?? {}),
-  } as const satisfies HeaderMod;
-}
-
-export function createProfile(overrides?: Partial<Profile>) {
-  return {
-    id: uuidv7(),
-    name: "New Profile 1",
-    enabled: true,
-    emoji: "📃",
-    ruleScope: "dynamic",
-    ruleActionType: "modifyHeaders",
-    requestHeaderModGroups: [{
-      id: uuidv7(),
-      type: "checkbox",
-      items: [createMod()],
-    }],
-    responseHeaderModGroups: [],
-    syncCookieGroups: [],
-    filters: {},
-    comments: "",
-    ...(overrides ?? {}),
-  } as const satisfies Profile;
-}
-
-export function createDefaultProfileManager() {
+function createDefaultProfileManager() {
   const profile = createProfile();
   return {
     profiles: [profile],

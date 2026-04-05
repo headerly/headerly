@@ -3,7 +3,7 @@ import type { SyncCookieGroup } from "@/lib/schema";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { createSyncCookie } from "@/lib/storage";
+import { createSyncCookie } from "@/lib/utils";
 import CookieFieldWithActions from "./CookieFieldWithActions.vue";
 
 const group = defineModel<SyncCookieGroup>({
@@ -20,11 +20,11 @@ function addNewField() {
 }
 
 function deleteGroup() {
-  const index = profilesStore.selectedProfile.syncCookieGroups.findIndex(
+  const index = profilesStore.selectedProfile.syncCookieGroups?.findIndex(
     _group => _group.id === group.value.id,
   );
-  if (index !== -1) {
-    profilesStore.selectedProfile.syncCookieGroups.splice(index, 1);
+  if (index !== undefined && index !== -1) {
+    profilesStore.selectedProfile.syncCookieGroups?.splice(index, 1);
   }
 }
 </script>

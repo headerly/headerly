@@ -51,13 +51,13 @@ const hasAnyFilters = computed(() => {
 });
 
 const empty = computed(() => {
-  const noMods = profilesStore.selectedProfile.requestHeaderModGroups.every(
+  const noMods = (profilesStore.selectedProfile.requestHeaderModGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && profilesStore.selectedProfile.responseHeaderModGroups.every(
+  && (profilesStore.selectedProfile.responseHeaderModGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && profilesStore.selectedProfile.syncCookieGroups.every(
+  && (profilesStore.selectedProfile.syncCookieGroups ?? []).every(
     group => group.items.length === 0,
   );
 
@@ -101,23 +101,29 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     </div>
     <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
       <AlertGroup :empty :has-any-filters />
-      <ModGroup
-        v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
-        :key="id"
-        v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
-        action-type="request"
-      />
-      <SyncCookieGroup
-        v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
-        :key="id"
-        v-model="profilesStore.selectedProfile.syncCookieGroups[index]!"
-      />
-      <ModGroup
-        v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
-        :key="id"
-        v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"
-        action-type="response"
-      />
+      <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
+        <ModGroup
+          v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
+          :key="id"
+          v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
+          action-type="request"
+        />
+      </template>
+      <template v-if="profilesStore.selectedProfile.syncCookieGroups">
+        <SyncCookieGroup
+          v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
+          :key="id"
+          v-model="profilesStore.selectedProfile.syncCookieGroups[index]!"
+        />
+      </template>
+      <template v-if="profilesStore.selectedProfile.responseHeaderModGroups">
+        <ModGroup
+          v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
+          :key="id"
+          v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"
+          action-type="response"
+        />
+      </template>
       <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
     </div>
   </div>

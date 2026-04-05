@@ -14,7 +14,7 @@ export function buildAction(profile: ProfileCoreData) {
 function buildRequestHeaders(profile: ProfileCoreData) {
   const requestHeaders: Browser.declarativeNetRequest.ModifyHeaderInfo[] = [];
 
-  for (const group of profile.requestHeaderModGroups) {
+  for (const group of profile.requestHeaderModGroups ?? []) {
     const enabledMods = group.items.filter(mod => mod.enabled);
     for (const mod of enabledMods) {
       if (mod.name.trim()) {
@@ -33,7 +33,7 @@ function buildRequestHeaders(profile: ProfileCoreData) {
   }
 
   // Process sync cookies as Cookie header appends
-  for (const group of profile.syncCookieGroups) {
+  for (const group of profile.syncCookieGroups ?? []) {
     const enabledCookies = group.items.filter(cookie => cookie.enabled);
     for (const cookie of enabledCookies) {
       if (cookie.name.trim() && cookie.value.trim()) {
@@ -52,7 +52,7 @@ function buildRequestHeaders(profile: ProfileCoreData) {
 function buildResponseHeaders(profile: ProfileCoreData) {
   const responseHeaders: Browser.declarativeNetRequest.ModifyHeaderInfo[] = [];
 
-  for (const group of profile.responseHeaderModGroups) {
+  for (const group of profile.responseHeaderModGroups ?? []) {
     const enabledMods = group.items.filter(mod => mod.enabled);
     for (const mod of enabledMods) {
       if (mod.name.trim()) {

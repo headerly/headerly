@@ -44,8 +44,8 @@ const searchResults = computed(() => {
     profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
     || profile.emoji.includes(searchKeyword.value)
     || profile.id.includes(searchKeyword.value)
-    || profile.requestHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod))
-    || profile.responseHeaderModGroups.some(({ items: mods }) => mods.some(matchHeaderMod)),
+    || profile.requestHeaderModGroups?.some(({ items: mods }) => mods.some(matchHeaderMod))
+    || profile.responseHeaderModGroups?.some(({ items: mods }) => mods.some(matchHeaderMod)),
   );
 });
 </script>

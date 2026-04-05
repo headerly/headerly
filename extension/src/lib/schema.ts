@@ -158,9 +158,9 @@ const profileSchema = z.object({
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
   priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
-  requestHeaderModGroups: z.array(headerModGroupSchema),
-  responseHeaderModGroups: z.array(headerModGroupSchema),
-  syncCookieGroups: z.array(syncCookieGroupSchema),
+  requestHeaderModGroups: z.array(headerModGroupSchema).optional(),
+  responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
+  syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
   filters: filterSchema,
 });
 export type Profile = z.infer<typeof profileSchema>;
@@ -206,9 +206,9 @@ const filterWithoutIdSchema = filterSchema.extend({
 });
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).extend({
-  requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema),
-  responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema),
-  syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema),
+  requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
+  responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
+  syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),
   filters: filterWithoutIdSchema,
 });
 
