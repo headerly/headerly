@@ -29,6 +29,8 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
         aria-invalid:border-destructive aria-invalid:ring-destructive/20
         data-[state=checked]:border-primary data-[state=checked]:bg-primary
         data-[state=checked]:text-primary-foreground
+        data-[state=indeterminate]:bg-primary
+        data-[state=indeterminate]:text-primary-foreground
         dark:aria-invalid:ring-destructive/40
       `,
          props.class)"

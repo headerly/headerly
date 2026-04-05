@@ -12,10 +12,12 @@ import {
 } from "#/ui/tooltip";
 import { cn, getModKey } from "@/lib/utils";
 
-const { profile, index, showShortcutHint = false } = defineProps<{
+const { profile, index, showShortcutHint = false, class: className } = defineProps<{
   profile: Profile;
   index: number;
   showShortcutHint?: boolean;
+  class?: string;
+  as?: string;
 }>();
 
 const emit = defineEmits<{
@@ -42,12 +44,14 @@ function renderShortcutHint(index: number) {
   <Button
     size="icon-sm"
     :variant="profilesStore.manager.selectedProfileId === profile.id ? 'default' : 'secondary'"
-    class="relative flex text-xl"
+    :class="cn('relative flex text-xl', className)"
+    :as
     @click="emit('click')"
   >
     <TooltipProvider ignore-non-keyboard-focus>
       <Tooltip>
         <TooltipTrigger as-child>
+          <slot />
           <span
             :class="cn({ 'opacity-30': !profile.enabled })"
           >
@@ -74,8 +78,10 @@ function renderShortcutHint(index: number) {
           />
           <i
             v-if="!profile.enabled"
-            class="
-              absolute right-0 bottom-0 i-lucide-pause size-4 -translate-1/2
+            :class="
+              cn(`
+                absolute right-0 bottom-0 i-lucide-pause size-4 -translate-1/2
+              `)
             "
           />
         </TooltipTrigger>

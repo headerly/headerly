@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from "vue";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
@@ -8,13 +9,15 @@ import { computed, onErrorCaptured } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { z } from "zod";
 import { profileWithoutIdsZodSchema } from "@/lib/schema";
+import { cn } from "@/lib/utils";
 
 const model = defineModel<string>({ required: true });
 
-const { readonly = false, height = "100%", width = "100%" } = defineProps<{
+const { readonly = false, height = "100%", width = "100%", class: className } = defineProps<{
   readonly?: boolean;
   height?: string;
   width?: string;
+  class?: HTMLAttributes["class"];
 }>();
 
 const lang = json();
@@ -50,7 +53,7 @@ onErrorCaptured((error, instance, errorInfo) => {
 <template>
   <CodeMirror
     v-model="model"
-    class="overflow-auto text-base shadow-xs outline-none"
+    :class="cn('overflow-auto text-base shadow-xs outline-none', className)"
     :lang
     :dark
     :linter

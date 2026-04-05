@@ -62,7 +62,7 @@ const isDEV = import.meta.env.DEV;
           variant="secondary"
           size="icon-sm"
           :class="cn(
-            `mx-2 [anchor-name:--anchor-sidebar-menu]`,
+            `mx-2`,
             settingsStore.powerOn || 'opacity-60',
           )"
         >
@@ -85,6 +85,11 @@ const isDEV = import.meta.env.DEV;
           </ProfileManage>
           <DropdownMenuItem @click="importModalOpen = true">
             Import profiles
+          </DropdownMenuItem>
+          <DropdownMenuItem as-child>
+            <RouterLink to="/export">
+              Export profiles
+            </RouterLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
