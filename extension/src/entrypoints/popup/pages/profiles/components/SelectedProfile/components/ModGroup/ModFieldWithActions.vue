@@ -85,7 +85,7 @@ const nextOperation = computed(() => {
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
-              v-model="field.name"
+              v-model.trim.lazy="field.name"
               placeholder="Name"
               class="
                 w-full text-base

@@ -96,7 +96,7 @@ const cookieOptions = computed(() => {
 });
 
 function handleDomainChange(e: Event) {
-  const userInput = (e.target as HTMLInputElement).value;
+  const userInput = (e.target as HTMLInputElement).value.trim();
   try {
     const url = new URL(userInput);
     field.value.domain = url.hostname;
