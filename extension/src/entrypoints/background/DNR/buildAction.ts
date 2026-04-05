@@ -19,9 +19,7 @@ function buildRequestHeaders(profile: ProfileCoreData) {
     for (const mod of enabledMods) {
       if (mod.name.trim()) {
         const headerInfo = {
-          // `toLowerCase()` is only for compatibility with older browsers.
-          // https://issues.chromium.org/issues/449152902 was fixed on 2025-10-31.
-          header: mod.name.trim().toLowerCase(),
+          header: mod.name.trim(),
           operation: mod.operation,
         } satisfies Browser.declarativeNetRequest.ModifyHeaderInfo;
 
