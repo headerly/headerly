@@ -13,7 +13,6 @@ import {
   ComboboxViewport,
 } from "#/ui/combobox";
 import { Input } from "#/ui/input";
-import { Label } from "#/ui/label";
 import {
   Tooltip,
   TooltipContent,
@@ -72,7 +71,7 @@ const nextOperation = computed(() => {
 
 <template>
   <div class="flex flex-1 items-center justify-between gap-1">
-    <Label class="flex flex-1">
+    <div class="flex flex-1">
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
         <Combobox
@@ -106,7 +105,7 @@ const nextOperation = computed(() => {
             </ComboboxViewport>
           </ComboboxList>
         </Combobox>
-        <Label v-if="field.operation !== 'remove'" class="flex-1">
+        <div v-if="field.operation !== 'remove'" class="flex-1">
           <Input
             v-model.trim.lazy="field.value"
             type="text"
@@ -116,9 +115,9 @@ const nextOperation = computed(() => {
               placeholder:italic
             "
           />
-        </Label>
+        </div>
       </div>
-    </Label>
+    </div>
     <div class="flex items-center gap-0.5">
       <TooltipProvider>
         <Tooltip>

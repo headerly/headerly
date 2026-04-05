@@ -33,7 +33,6 @@ const modelValue = useVModel(props, "modelValue", emits, {
         placeholder:text-muted-foreground
         disabled:pointer-events-none disabled:cursor-not-allowed
         disabled:opacity-50
-        md:text-sm
         dark:bg-input/30
       `,
       `
