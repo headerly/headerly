@@ -78,22 +78,21 @@ function toggleProfile(profile: Profile, checked: unknown) {
     <div
       v-for="(profile, index) in profilesStore.manager.profiles"
       :key="profile.id"
-      class="relative"
+      class="relative cursor-pointer"
+      @click="toggleProfile(profile, !isSelected(profile))"
     >
       <ProfileOption
         :index
         :profile
         as="div"
-      >
-        <Checkbox
-          :model-value="isSelected(profile)"
-          class="
-            absolute top-1/2 left-1/2 z-20 -translate-1/2 border-2
-            border-accent-foreground bg-secondary/50 shadow-sm
-          "
-          @update:model-value="toggleProfile(profile, $event)"
-        />
-      </ProfileOption>
+      />
+      <Checkbox
+        :model-value="isSelected(profile)"
+        class="
+          pointer-events-none absolute top-1/2 left-1/2 z-20 -translate-1/2
+          border-2 border-accent-foreground bg-secondary/50 shadow-sm
+        "
+      />
     </div>
   </div>
 </template>
