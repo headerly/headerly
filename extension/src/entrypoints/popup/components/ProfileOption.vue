@@ -51,7 +51,7 @@ function renderShortcutHint(index: number) {
     <TooltipProvider ignore-non-keyboard-focus>
       <Tooltip>
         <TooltipTrigger as-child>
-          <div class="relative flex size-full">
+          <div class="relative flex size-full items-center justify-center">
             <slot />
             <span
               :class="cn({ 'opacity-30': !profile.enabled })"
