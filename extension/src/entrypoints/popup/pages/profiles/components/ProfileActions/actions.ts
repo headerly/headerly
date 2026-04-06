@@ -1,4 +1,5 @@
 import type { Profile } from "@/lib/schema";
+import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { stripProfileIds } from "@/lib/schema";
@@ -28,6 +29,7 @@ export interface ProfileActionItem {
 
 export function useProfileActions() {
   const profilesStore = useProfilesStore();
+  const router = useRouter();
 
   const actions = [
     {
@@ -62,8 +64,9 @@ export function useProfileActions() {
     },
     {
       id: "copyJson",
-      label: () => "Copy to JSON",
-      onClick: p => copyProfile(p),
+      label: () => "Export to JSON",
+      icon: () => "i-lucide-arrow-up-to-line",
+      onClick: p => router.push(`/export/${p.id}`),
     },
     {
       id: "copyId",

@@ -11,16 +11,24 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { computed } from "vue";
+import { useScrollToProfile } from "@/composables/useScrollToProfile";
 
 const model = defineModel<Profile[]>({
   required: true,
 });
+
+const { scrollTargetIdOnMounted } = defineProps<{
+  scrollTargetIdOnMounted?: string | undefined;
+}>();
 
 const emit = defineEmits<{
   (e: "change", profiles: Profile[]): void;
 }>();
 
 const profilesStore = useProfilesStore();
+const { setRef } = useScrollToProfile({
+  scrollTargetIdOnMounted,
+});
 
 const allChecked = computed({
   get() {
@@ -85,6 +93,7 @@ function toggleProfile(profile: Profile, checked: unknown) {
     <div
       v-for="(profile, index) in profilesStore.manager.profiles"
       :key="profile.id"
+      :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
       class="relative cursor-pointer"
       @click="toggleProfile(profile, !isSelected(profile))"
     >

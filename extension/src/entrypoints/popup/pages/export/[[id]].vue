@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
 import { Button } from "#/ui/button";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { toast } from "vue-sonner";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
@@ -11,10 +12,25 @@ import { cn } from "@/lib/utils";
 import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
 
 const profilesStore = useProfilesStore();
+const route = useRoute();
 
 const selectedProfiles = ref<Profile[]>([]);
 
 const jsonPreview = ref("");
+
+// Auto-select profile from route param
+watch(() => profilesStore.ready, (ready) => {
+  if (!ready)
+    return;
+  const id = route.params.id;
+  if (!id)
+    return;
+  const profile = profilesStore.manager.profiles.find(p => p.id === id);
+  if (profile) {
+    selectedProfiles.value = [profile];
+    handleSelectionChange([profile]);
+  }
+}, { immediate: true });
 
 function handleSelectionChange(profiles: Profile[]) {
   const strippedProfiles = profiles.map(stripProfileIds);
@@ -68,7 +84,7 @@ async function handleDownloadJson() {
           before:content-['']
         "
       />
-      <ProfileCheckboxes v-model="selectedProfiles" @change="handleSelectionChange" />
+      <ProfileCheckboxes v-model="selectedProfiles" :scroll-target-id-on-mounted="route.params.id" @change="handleSelectionChange" />
     </aside>
     <header
       class="col-start-2 row-start-1 flex items-center justify-between px-2"

@@ -2,36 +2,28 @@
 import ProfileOption from "#/components/ProfileOption.vue";
 import { useEventListener } from "@vueuse/core";
 import { useSortable } from "@vueuse/integrations/useSortable";
-import { onMounted, ref, useTemplateRef, watch } from "vue";
+import { useTemplateRef, watch } from "vue";
+import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 
+import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import ContextMenuWithTrigger from "../../ProfileActions/ContextMenuWithTrigger.vue";
 
 const profilesStore = useProfilesStore();
 
-// Vue cannot guarantee the order of refs,
-// and must use id map management to ensure access to the correct element.
-const profileRefs = ref<Map<string, HTMLDivElement>>(new Map());
-
-onMounted(() => scrollToEnabledProfile("instant"));
+const {
+  setRef,
+  scrollToProfile,
+} = useScrollToProfile({
+  scrollTargetIdOnMounted: profilesStore.manager.selectedProfileId,
+});
 
 watch(
   () => profilesStore.manager.selectedProfileId,
-  () => scrollToEnabledProfile("smooth"),
+  () => scrollToProfile(profilesStore.manager.selectedProfileId, "smooth"),
   // Wait for DOM to be updated, otherwise the latest DOM element cannot be accessed.
   { flush: "post" },
 );
-
-function scrollToEnabledProfile(behavior: ScrollBehavior) {
-  const target = profileRefs.value.get(profilesStore.manager.selectedProfileId);
-  if (target) {
-    target.scrollIntoView({
-      behavior,
-      block: "end",
-    });
-  }
-}
 
 const settingsStore = useSettingsStore();
 function handleSwitchProfileShortcut(event: KeyboardEvent) {
@@ -78,13 +70,7 @@ useSortable(listContainer, profilesStore.manager.profiles, {
     <div
       v-for="(profile, index) in profilesStore.manager.profiles"
       :key="profile.id"
-      :ref="(el) => {
-        if (el === null) {
-          profileRefs.delete(profile.id);
-        } else {
-          profileRefs.set(profile.id, el as HTMLDivElement);
-        }
-      }"
+      :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
     >
       <ContextMenuWithTrigger :profile>
         <ProfileOption
