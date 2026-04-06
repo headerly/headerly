@@ -3,7 +3,7 @@ import type { SyncCookieGroup } from "@/lib/schema";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { createSyncCookie } from "@/lib/utils";
+import { addItemToGroup, createSyncCookie } from "@/lib/utils";
 import CookieFieldWithActions from "./CookieFieldWithActions.vue";
 
 const group = defineModel<SyncCookieGroup>({
@@ -13,10 +13,8 @@ const group = defineModel<SyncCookieGroup>({
 const profilesStore = useProfilesStore();
 
 function addNewField() {
-  const newCookie = createSyncCookie({
-    enabled: group.value.type === "checkbox",
-  });
-  group.value.items.push(newCookie);
+  const newCookie = createSyncCookie();
+  addItemToGroup(group.value.items, newCookie, group.value.type);
 }
 
 function deleteGroup() {

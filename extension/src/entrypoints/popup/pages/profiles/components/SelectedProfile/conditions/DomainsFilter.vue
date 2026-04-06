@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { addItemToGroup } from "@/lib/utils";
 
 const domainsFilter = defineModel<DomainsFilter>({
   required: true,
@@ -97,12 +98,13 @@ function deleteGroup() {
 }
 
 function newField() {
-  domainsFilter.value.items.push({
+  const item = {
     id: uuidv7(),
-    enabled: false,
+    enabled: true,
     value: "",
     comments: "",
-  });
+  };
+  addItemToGroup(domainsFilter.value.items, item, domainsFilter.value.type);
 }
 
 function useCurrentUrlQuery() {

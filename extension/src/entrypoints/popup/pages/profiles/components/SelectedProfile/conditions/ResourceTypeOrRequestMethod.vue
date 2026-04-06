@@ -7,6 +7,7 @@ import Button from "#/ui/button/Button.vue";
 import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
+import { addItemToGroup } from "@/lib/utils";
 
 // Define specific item types
 type ResourceTypeItem = GroupItem & {
@@ -103,12 +104,12 @@ function deleteGroup() {
 function newField() {
   const newItem = {
     id: uuidv7(),
-    enabled: false,
+    enabled: true,
     comments: "",
     value: [],
   } as unknown as FilterItemType<T>;
 
-  list.value.push(newItem);
+  addItemToGroup(list.value, newItem, "radio");
 }
 </script>
 
