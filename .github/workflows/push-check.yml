@@ -1,4 +1,4 @@
-name: Lint & TypeCheck
+name: Lint & TypeCheck & Unit Tests
 permissions:
   contents: read
 on:
@@ -25,3 +25,6 @@ jobs:
 
       - name: TypeCheck
         run: pnpm run typecheck
+
+      - name: Unit Tests
+        run: pnpm run test
