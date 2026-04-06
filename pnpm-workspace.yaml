@@ -48,6 +48,7 @@ catalog:
   eslint-plugin-better-tailwindcss: ^4.3.2
   lefthook: ^2.1.4
   lucide-vue-next: ^1.0.0
+  motion-v: ^2.2.0
   oxc-minify: ^0.121.0
   pinia: ^3.0.4
   playwright: ^1.58.2

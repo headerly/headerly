@@ -31,6 +31,7 @@
     "codemirror-json-schema": "catalog:",
     "es-toolkit": "catalog:",
     "lucide-vue-next": "catalog:",
+    "motion-v": "catalog:",
     "pinia": "catalog:",
     "reka-ui": "catalog:",
     "sortablejs": "catalog:",

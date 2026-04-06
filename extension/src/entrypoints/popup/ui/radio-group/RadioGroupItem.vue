@@ -3,6 +3,7 @@ import type { RadioGroupItemProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
 import { CircleIcon } from "lucide-vue-next";
+import { AnimatePresence, motion } from "motion-v";
 import {
   RadioGroupIndicator,
   RadioGroupItem,
@@ -19,6 +20,7 @@ const forwardedProps = useForwardProps(delegatedProps);
 
 <template>
   <RadioGroupItem
+    v-slot="{ checked }"
     data-slot="radio-group-item"
     v-bind="forwardedProps"
     :class="
@@ -38,14 +40,27 @@ const forwardedProps = useForwardProps(delegatedProps);
     "
   >
     <RadioGroupIndicator
+      force-mount
       data-slot="radio-group-indicator"
       class="relative flex items-center justify-center"
     >
-      <slot>
-        <CircleIcon
-          class="absolute top-1/2 left-1/2 size-2 -translate-1/2 fill-primary"
-        />
-      </slot>
+      <AnimatePresence>
+        <motion.span
+          v-if="checked"
+          key="indicator"
+          class="absolute inset-0 flex items-center justify-center"
+          :initial="{ scale: 0, opacity: 0 }"
+          :animate="{ scale: 1, opacity: 1 }"
+          :exit="{ scale: 0, opacity: 0 }"
+          :transition="{ duration: 0.15 }"
+        >
+          <slot>
+            <CircleIcon
+              class="size-2 fill-primary"
+            />
+          </slot>
+        </motion.span>
+      </AnimatePresence>
     </RadioGroupIndicator>
   </RadioGroupItem>
 </template>

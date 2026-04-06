@@ -3,6 +3,7 @@ import type { CheckboxRootEmits, CheckboxRootProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
 import { Check, Minus } from "lucide-vue-next";
+import { AnimatePresence, motion } from "motion-v";
 import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from "reka-ui";
 import { cn } from "@/lib/utils";
 
@@ -36,15 +37,30 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
          props.class)"
   >
     <CheckboxIndicator
+      force-mount
       data-slot="checkbox-indicator"
-      class="grid place-content-center text-current transition-none"
+      class="grid place-content-center text-current"
     >
-      <slot v-bind="slotProps">
-        <Check v-if="slotProps.modelValue === true" class="size-3.5" />
-        <Minus
-          v-else-if="slotProps.modelValue === 'indeterminate'" class="size-3.5"
-        />
-      </slot>
+      <AnimatePresence>
+        <motion.span
+          v-if="slotProps.modelValue === true || slotProps.modelValue === 'indeterminate'"
+          key="indicator"
+          class="grid place-content-center"
+          :initial="{ scale: 0, opacity: 0 }"
+          :animate="{ scale: 1, opacity: 1 }"
+          :exit="{ scale: 0, opacity: 0 }"
+          :transition="{ duration: 0.15 }"
+        >
+          <slot v-bind="slotProps">
+            <Check v-if="slotProps.modelValue === true" class="size-3.5" />
+            <Minus
+              v-else-if="slotProps.modelValue === 'indeterminate'" class="
+                size-3.5
+              "
+            />
+          </slot>
+        </motion.span>
+      </AnimatePresence>
     </CheckboxIndicator>
   </CheckboxRoot>
 </template>
