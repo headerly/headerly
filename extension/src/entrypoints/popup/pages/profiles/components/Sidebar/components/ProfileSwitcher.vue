@@ -63,6 +63,7 @@ useSortable(listContainer, profilesStore.manager.profiles, {
 <template>
   <div
     ref="listContainer"
+    v-auto-animate
     class="
       flex flex-col gap-1 overflow-y-auto px-2 py-1.25 [scrollbar-width:none]
     "
@@ -78,6 +79,7 @@ useSortable(listContainer, profilesStore.manager.profiles, {
           :profile
           :show-shortcut-hint="true"
           @click="profilesStore.manager.selectedProfileId = profile.id"
+          @mousedown.middle.prevent="profilesStore.deleteProfile(profile.id)"
         />
       </ContextMenuWithTrigger>
     </div>
