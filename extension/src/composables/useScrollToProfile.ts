@@ -13,7 +13,7 @@ export function useScrollToProfile(options: UseScrollToProfileOptions = {}) {
   function scrollToProfile(profileId: string, behavior: ScrollBehavior) {
     const target = profileRefs.value.get(profileId);
     if (target) {
-      target.scrollIntoView({ behavior, block: "end" });
+      target.scrollIntoView({ behavior, block: "center" });
     }
   }
 
