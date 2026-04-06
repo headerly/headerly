@@ -1,7 +1,7 @@
 pre-commit:
   commands:
     lint:
-      glob: "*.{ts,vue}"
+      glob: "*.{ts,vue,yaml}"
       run: "pnpm exec eslint --fix {staged_files}"
       stage_fixed: true
     typecheck:
