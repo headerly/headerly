@@ -14,8 +14,7 @@ const { name } = defineProps<{
   >
     <legend
       class="
-        -mb-1 flex items-center justify-between gap-2 py-2 text-base
-        font-semibold
+        -mb-1 flex items-center justify-between gap-2 py-2 text-base font-medium
       "
     >
       <slot name="name-before" />

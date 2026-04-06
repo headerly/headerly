@@ -16,6 +16,7 @@
   "dependencies": {
     "@codemirror/lang-json": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
+    "@fontsource-variable/roboto-mono": "catalog:",
     "@formkit/auto-animate": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",
     "@tanstack/vue-query": "catalog:",
@@ -47,7 +48,6 @@
   "devDependencies": {
     "@egoist/tailwindcss-icons": "catalog:",
     "@fontsource-variable/inter": "catalog:",
-    "@fontsource-variable/jetbrains-mono": "catalog:",
     "@iconify-json/lucide": "catalog:",
     "@tailwindcss/typography": "catalog:",
     "@tailwindcss/vite": "catalog:",

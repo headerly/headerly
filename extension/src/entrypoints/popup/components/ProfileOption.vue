@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { computed } from "vue";
 import { cn, getModKey } from "@/lib/utils";
 
 const { profile, index, showShortcutHint = false, class: className } = defineProps<{
@@ -38,13 +39,15 @@ function renderShortcutHint(index: number) {
     </span>
   );
 }
+
+const isSelected = computed(() => profilesStore.manager.selectedProfileId === profile.id);
 </script>
 
 <template>
   <Button
     size="icon-sm"
-    :variant="profilesStore.manager.selectedProfileId === profile.id ? 'default' : 'secondary'"
-    :class="cn('relative flex text-xl select-none', className)"
+    :variant="isSelected ? 'default' : 'secondary'"
+    :class="cn('relative flex text-xl select-none', isSelected && 'bg-brand!', className)"
     :as
     @click="emit('click')"
   >

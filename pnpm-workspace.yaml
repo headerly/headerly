@@ -19,7 +19,7 @@ catalog:
   "@commitlint/types": ^20.5.0
   "@egoist/tailwindcss-icons": 1.9.0
   "@fontsource-variable/inter": ^5.2.8
-  "@fontsource-variable/jetbrains-mono": ^5.2.8
+  '@fontsource-variable/roboto-mono': ^5.2.8
   "@formkit/auto-animate": ^0.9.0
   "@iconify-json/lucide": ^1.2.100
   "@replit/codemirror-indentation-markers": ^6.5.3

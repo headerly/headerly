@@ -6,10 +6,11 @@
 
 @theme {
   --font-sans: "Inter Variable", sans-serif;
-  --font-mono: "JetBrains Mono Variable", monospace;
+  --font-mono: "Roboto Mono Variable", monospace;
 };
 
 :root {
+  --brand: oklch(0.6574 0.1988 33.8);
   --border: oklch(0.922 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -45,7 +46,7 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.1752 0.0063 236.98);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -82,6 +83,7 @@
 
 @theme inline {
   --animate-meteor-effect: meteor 5s linear infinite;
+  --color-brand: var(--brand);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

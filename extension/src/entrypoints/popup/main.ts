@@ -8,7 +8,7 @@ import { router } from "./router";
 
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
-import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/roboto-mono";
 import "./index.css";
 
 createApp(App)

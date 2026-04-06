@@ -106,7 +106,7 @@ const undoAndRedoButtonGroup = [
       <Button
         v-if="!profileNameEditing"
         variant="ghost"
-        class="flex items-center gap-1 px-1.5 text-base"
+        class="flex items-center gap-1 px-1.5 text-base font-semibold"
         @click="() => {
           profileNameInput = profilesStore.selectedProfile.name
           profileNameEditing = true
