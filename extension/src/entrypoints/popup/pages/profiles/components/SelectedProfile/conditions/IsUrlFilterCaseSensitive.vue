@@ -54,7 +54,6 @@ const radioValue = computed({
             <Button
               variant="secondary"
               size="icon-xs"
-              class="text-destructive!"
               @click="() => {
                 delete profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive
               }"

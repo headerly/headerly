@@ -133,7 +133,6 @@ function newField() {
         <Button
           variant="secondary"
           size="icon-xs"
-          class="text-destructive!"
           @click="() => {
             list.splice(index, 1);
           }"

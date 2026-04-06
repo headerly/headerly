@@ -178,7 +178,6 @@ const canUseCurrentUrl = computed(() => {
         <Button
           variant="secondary"
           size="icon-xs"
-          class="text-destructive!"
           @click="() => {
             domainsFilter.items.splice(index, 1);
           }"

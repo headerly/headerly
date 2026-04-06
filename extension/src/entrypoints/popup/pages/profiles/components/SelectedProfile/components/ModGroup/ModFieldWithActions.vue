@@ -149,7 +149,6 @@ const nextOperation = computed(() => {
       <Button
         size="icon-xs"
         variant="secondary"
-        class="text-destructive!"
         @click="() => {
           list.splice(index, 1);
         }"

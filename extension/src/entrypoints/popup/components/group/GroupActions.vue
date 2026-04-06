@@ -82,7 +82,6 @@ function transferGroupType() {
           <Button
             size="icon-xs"
             variant="secondary"
-            class="text-destructive!"
             @click="emit('deleteGroup')"
           >
             <i class="i-lucide-x size-4" />
