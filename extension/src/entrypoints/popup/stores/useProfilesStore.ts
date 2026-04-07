@@ -17,9 +17,10 @@ function getProfileIcon() {
   if (settingsStore.autoAssignEmoji === false) {
     return "📃";
   }
-  return settingsStore.randomEmojiCategory === "all"
-    ? allEmojis[round(random(allEmojis.length))]
-    : emoji[settingsStore.randomEmojiCategory][round(random(emoji[settingsStore.randomEmojiCategory].length))];
+  const pool = settingsStore.randomEmojiCategory === "all"
+    ? allEmojis
+    : emoji[settingsStore.randomEmojiCategory];
+  return pool[round(random(pool.length - 1))];
 }
 
 export function findHeaderModGroups(profile: Profile, type: ActionType) {
