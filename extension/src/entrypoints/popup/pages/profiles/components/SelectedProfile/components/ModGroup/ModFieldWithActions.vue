@@ -75,7 +75,6 @@ const nextOperation = computed(() => {
       <slot name="field-before" />
       <div class="flex flex-1 gap-1">
         <Combobox
-          v-model:search-term="field.name"
           :model-value="field.name"
           class="flex-1"
           @update:model-value="(val) => {
@@ -84,13 +83,12 @@ const nextOperation = computed(() => {
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
-              :model-value="field.name"
+              v-model="field.name"
               placeholder="Name"
               class="
                 w-full text-base
                 placeholder:italic
               "
-              @change="field.name = field.name.trim()"
             />
           </ComboboxAnchor>
 

@@ -2,7 +2,7 @@ import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { ProfileManager } from "./types";
 import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
-import { useStorageAsync } from "@vueuse/core";
+import { useDebounceFn, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 import { createProfile } from "./utils";
@@ -20,15 +20,21 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: Us
     migrations: options?.migrations,
   });
 
+  // Writing to `chrome.storage` is an asynchronous operation;
+  // performing a large number of writes within a short timeframe will lead to conflicts!
+  const setValue = useDebounceFn((value: T) => {
+    // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
+    // We need to store the original array in the proxy.
+    // Note that this will still be broken if only some of the keys on the object are proxies!
+    item.setValue(toRaw(value));
+  }, 500);
+
   const ref = useStorageAsync<T>(
     key,
     initialValue,
     {
       setItem(_, value) {
-        // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
-        // We need to store the original array in the proxy.
-        // Note that this will still be broken if only some of the keys on the object are proxies!
-        return item.setValue(toRaw(value as T));
+        return setValue(value as T);
       },
       getItem() {
         return item.getValue();
