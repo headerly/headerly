@@ -41,7 +41,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       data-slot="checkbox-indicator"
       class="grid place-content-center text-current"
     >
-      <AnimatePresence>
+      <AnimatePresence :initial="false">
         <motion.span
           v-if="slotProps.modelValue === true || slotProps.modelValue === 'indeterminate'"
           key="indicator"

@@ -44,7 +44,7 @@ const forwardedProps = useForwardProps(delegatedProps);
       data-slot="radio-group-indicator"
       class="relative flex items-center justify-center"
     >
-      <AnimatePresence>
+      <AnimatePresence :initial="false">
         <motion.span
           v-if="checked"
           key="indicator"
