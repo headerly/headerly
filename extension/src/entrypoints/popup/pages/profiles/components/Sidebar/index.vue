@@ -156,6 +156,7 @@ const isDEV = import.meta.env.DEV;
             <Label class="size-8">
               <Switch
                 v-model="settingsStore.powerOn"
+                class="data-[state=checked]:bg-brand!"
               />
             </Label>
           </TooltipTrigger>

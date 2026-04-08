@@ -50,7 +50,6 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             variant="secondary"
             size="icon-sm"
             :class="cn(
-              action.variant === 'destructive' && 'text-destructive!',
               action.id === 'toggle' && !profile.enabled && (
                 'bg-primary! text-primary-foreground!'
               ),

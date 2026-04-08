@@ -48,6 +48,7 @@ bus.on(({ target }) => {
           <DialogTrigger as-child>
             <Button
               variant="secondary"
+              class="text-brand!"
               size="icon-sm"
               :class="className"
               @click="() => {
