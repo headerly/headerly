@@ -90,7 +90,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
           whitespace-pre-wrap
         "
       >
-        No data, please add any mods or filters first.
+        No data, please add any actions or conditions first.
       </p>
       <InteractiveGridPattern
         class="
