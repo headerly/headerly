@@ -2,7 +2,7 @@
 import type { Profile } from "@/lib/schema";
 import { Button } from "#/ui/button";
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { toast } from "vue-sonner";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
@@ -19,11 +19,8 @@ const selectedProfiles = ref<Profile[]>([]);
 const jsonPreview = ref("");
 
 // Auto-select profile from route param
-watch(() => profilesStore.ready, (ready) => {
+watch(() => [profilesStore.ready, route.params.id] as const, ([ready, id]) => {
   if (!ready)
-    return;
-  const id = route.params.id;
-  if (!id)
     return;
   const profile = profilesStore.manager.profiles.find(p => p.id === id);
   if (profile) {
@@ -32,7 +29,17 @@ watch(() => profilesStore.ready, (ready) => {
   }
 }, { immediate: true });
 
+// Reset selected profiles to empty
+onBeforeRouteLeave(() => {
+  selectedProfiles.value = [];
+  handleSelectionChange([]);
+});
+
 function handleSelectionChange(profiles: Profile[]) {
+  if (profiles.length === 0) {
+    jsonPreview.value = "";
+    return;
+  }
   const strippedProfiles = profiles.map(stripProfileIds);
   jsonPreview.value = JSON.stringify(strippedProfiles, null, 2);
 }
