@@ -6,9 +6,14 @@ import { nextTick, watch } from "vue";
 interface UseSortableAndAutoAnimateOptions<T> {
   listContainer: Readonly<ShallowRef<HTMLElement | null>>;
   list: T[];
+  handle?: string;
 }
 export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateOptions<T>) {
   let enableAutoAnimate: ((enabled: boolean) => void) | undefined;
+
+  function setSortingState(isSorting: boolean) {
+    options.listContainer.value?.toggleAttribute("data-sorting", isSorting);
+  }
 
   watch(options.listContainer, (element) => {
     if (!element) {
@@ -27,6 +32,8 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
 
   useSortable(options.listContainer, options.list, {
     animation: 250,
+    handle: options.handle,
+    ghostClass: "sortable-ghost",
     // The transform of sorting animations creates a new stacking context,
     // which may cause the currently dragged item to be covered by its sibling elements.
     chosenClass: "z-10",
@@ -43,11 +50,13 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
       }
     },
     onStart: () => {
+      setSortingState(true);
       enableAutoAnimate?.(false);
     },
     onEnd: async () => {
       // Re-enable auto-animate after the DOM has been updated with the new order.
       await nextTick();
+      setSortingState(false);
       enableAutoAnimate?.(true);
     },
   });

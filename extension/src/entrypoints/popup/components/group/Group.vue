@@ -5,8 +5,10 @@ import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
+import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import Fieldset from "./Fieldset.vue";
+import SortableItem from "./SortableItem.vue";
 
 const list = defineModel<T[]>("list", {
   required: true,
@@ -31,6 +33,14 @@ const checkedState = computed(() => {
     .with(["radio", P.not("none")], () => true)
     .otherwise(() => false);
   return result;
+});
+
+const listContainer = useTemplateRef<HTMLElement>("listContainer");
+
+useSortableAndAutoAnimate({
+  listContainer,
+  list: list.value,
+  handle: "[data-sort-handle]",
 });
 </script>
 
@@ -67,7 +77,7 @@ const checkedState = computed(() => {
     </template>
     <template #main>
       <div
-        v-auto-animate
+        ref="listContainer"
         class="flex flex-col gap-1.5"
       >
         <template v-if="type !== 'radio'">
@@ -75,7 +85,7 @@ const checkedState = computed(() => {
             v-for="item, index in list"
             :key="item.id"
           >
-            <div class="flex flex-1 items-center justify-between gap-1">
+            <SortableItem>
               <Checkbox
                 v-if="type === 'checkbox'"
                 :model-value="item.enabled"
@@ -85,7 +95,7 @@ const checkedState = computed(() => {
               <div class="flex flex-1 items-center">
                 <slot :index name="item" />
               </div>
-            </div>
+            </SortableItem>
           </div>
         </template>
         <template v-else>
@@ -102,7 +112,7 @@ const checkedState = computed(() => {
               v-for="item, index in list"
               :key="item.id"
             >
-              <div class="flex flex-1 items-center justify-between gap-1">
+              <SortableItem>
                 <RadioGroupItem
                   :value="item.id"
                   class="mr-1"
@@ -110,7 +120,7 @@ const checkedState = computed(() => {
                 <div class="flex flex-1 items-center">
                   <slot :index name="item" />
                 </div>
-              </div>
+              </SortableItem>
             </div>
           </RadioGroup>
         </template>

@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
-import { head } from "es-toolkit";
 import { uuidv7 } from "uuidv7";
 import { ref, useTemplateRef } from "vue";
 
@@ -41,29 +40,6 @@ const moreActions = [
     label: "Comments",
     onClick: () => commentsDialogRef.value?.open(),
   },
-  { divider: true, key: "divider" },
-  {
-    key: "moveUp",
-    label: "Move up",
-    get disabled() {
-      return index === 0;
-    },
-    onClick: () => {
-      const fieldToMove = head(list.value.splice(index, 1));
-      list.value.splice(index - 1, 0, fieldToMove!);
-    },
-  },
-  {
-    key: "moveDown",
-    label: "Move down",
-    get disabled() {
-      return index === list.value.length - 1;
-    },
-    onClick: () => {
-      const fieldToMove = head(list.value.splice(index, 1));
-      list.value.splice(index + 1, 0, fieldToMove!);
-    },
-  },
 ];
 
 const comments = ref(field.value.comments || "");
@@ -83,10 +59,7 @@ const comments = ref(field.value.comments || "");
         v-if="$slots['buttons-before']"
       />
       <template v-for="action in moreActions" :key="action.key">
-        <DropdownMenuSeparator v-if="action.divider" />
         <DropdownMenuItem
-          v-else
-          :disabled="action.disabled"
           @click="action.onClick"
         >
           <span>{{ action.label }}</span>
