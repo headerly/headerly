@@ -37,7 +37,8 @@ export default antfu(
     },
     settings: {
       "better-tailwindcss": {
-        entryPoint: "./extension/src/entrypoints/popup/index.css",
+        cwd: "./extension",
+        entryPoint: "./src/entrypoints/popup/index.css",
       },
     },
     rules: {
