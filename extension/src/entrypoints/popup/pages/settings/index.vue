@@ -88,10 +88,6 @@ function InfoTooltip({ description }: { description: string }) {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <InfoTooltip
-                      v-if="'description' in field && field.description"
-                      :description="field.description"
-                    />
                   </div>
                 </Label>
               </div>

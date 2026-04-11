@@ -5,7 +5,7 @@ import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { uuidv7 } from "uuidv7";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
@@ -44,7 +44,6 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
-  const settingsStore = useSettingsStore();
 
   onMessage("unregisterAllRules", () => {
     profileId2ErrorMessageRecord.value = {};
@@ -71,14 +70,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   });
 
-  // Enforce single-switch mode by disabling other profiles when selectedProfileId changes.
-  watch(() => manager.value.selectedProfileId, () => {
-    if (settingsStore.switchMode === "single") {
-      manager.value.profiles.forEach((profile) => {
-        profile.enabled = profile.id === manager.value.selectedProfileId;
-      });
-    }
-  });
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);
 

@@ -6,7 +6,6 @@ import {
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
-  useSwitchModeStorage,
 } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", () => {
@@ -17,7 +16,6 @@ export const useSettingsStore = defineStore("settings", () => {
     powerOn: usePowerOnStorage(),
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),
-    switchMode: useSwitchModeStorage(),
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
   } as const;
 

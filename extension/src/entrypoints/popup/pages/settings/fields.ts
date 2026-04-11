@@ -1,7 +1,6 @@
 import type { BasicColorSchema } from "@vueuse/core";
+import type { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { categories } from "@/entrypoints/popup/constants/emoji";
-import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 
 interface BaseSettingField {
   label: string;
@@ -29,8 +28,6 @@ interface SettingGroup {
   anchorIcon: string;
 }
 
-const profilesStore = useProfilesStore();
-const settingsStore = useSettingsStore();
 export const settings = [
   {
     fieldsetTitle: "Appearance",
@@ -65,26 +62,6 @@ export const settings = [
     anchor: "profiles",
     anchorIcon: "i-lucide-code-xml",
     fields: [
-      {
-        type: "select",
-        label: "Switch mode",
-        options: [
-          { label: "Multiple", value: "multiple" },
-          { label: "Single", value: "single" },
-        ],
-        description: "In single mode, you can enable only one profile at a time, and switching profiles automatically enables the one you select.",
-        key: "switchMode",
-        onChange: () => {
-          if (settingsStore.switchMode === "single") {
-            profilesStore.selectedProfile.enabled = true;
-            profilesStore.manager.profiles.forEach((profile) => {
-              if (profile.id !== profilesStore.selectedProfile.id) {
-                profile.enabled = false;
-              }
-            });
-          }
-        },
-      },
       {
         type: "checkbox",
         label: "Use native DNR resource type behavior",
