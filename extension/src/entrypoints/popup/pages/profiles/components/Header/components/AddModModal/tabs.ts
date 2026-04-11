@@ -36,24 +36,14 @@ export const tabs: Tab[] = [
     icon: "i-lucide-cross",
     items: [
       {
-        title: "Modify HTTP Request Header (Checkbox)",
+        title: "Modify HTTP Request Header",
         description: "Set, remove, or append HTTP request headers.",
         action: () => profilesStore.addModGroup("request", "checkbox"),
       },
       {
-        title: "Modify HTTP Request Header (Radio)",
-        description: "Set, remove, or append HTTP request headers.",
-        action: () => profilesStore.addModGroup("request", "radio"),
-      },
-      {
-        title: "Modify HTTP Response Header (Checkbox)",
+        title: "Modify HTTP Response Header",
         description: "Set, remove, or append HTTP response headers.",
         action: () => profilesStore.addModGroup("response", "checkbox"),
-      },
-      {
-        title: "Modify HTTP Response Header (Radio)",
-        description: "Set, remove, or append HTTP response headers.",
-        action: () => profilesStore.addModGroup("response", "radio"),
       },
       {
         title: "Cookie Sync to Request Header",
