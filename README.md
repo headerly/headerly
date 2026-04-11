@@ -19,3 +19,8 @@ As an open-source project, Headerly provides a clean, user-friendly experience w
 ## Privacy Guarantee
 
 Your privacy is our priority. Because Headerly strictly utilizes the `declarativeNetRequest` API, the browser handles all network modifications internally based on predefined rules. The extension itself has no capability to intercept, read, or analyze your sensitive data, request payloads, or response bodies.
+
+## Contribution
+Please make sure to read the [Contributing Guide](.github/CONTRIBUTING.md) before making a pull request.
+
+This includes instructions on how to setup development environment, test extensions, and build the final product.
