@@ -8,7 +8,10 @@ interface BuildConditionOptions {
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
 
-  if (!profile.filters.resourceTypes && !profile.filters.excludedResourceTypes && !options.nativeResourceTypeBehavior) {
+  const hasResourceTypes = profile.filters.resourceTypes?.some(item => item.enabled && item.value.length > 0);
+  const hasExcludedResourceTypes = profile.filters.excludedResourceTypes?.some(item => item.enabled && item.value.length > 0);
+
+  if (!hasResourceTypes && !hasExcludedResourceTypes && !options.nativeResourceTypeBehavior) {
     // If no resource types are specified, match all types.
     // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
     condition.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
@@ -33,6 +36,13 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         }
       })
       .with("urlFilter", "regexFilter", (k) => {
+        // A DNR rule cannot have both urlFilter and regexFilter.
+        // If both are present, regexFilter takes precedence.
+        const hasEnabledRegex = profile.filters.regexFilter?.some(f => f.enabled && f.value.trim());
+        if (k === "urlFilter" && hasEnabledRegex) {
+          return;
+        }
+
         const enabledFilter = profile.filters[k]?.find(f => f.enabled);
         if (enabledFilter && enabledFilter.value.trim()) {
           condition[k] = enabledFilter.value.trim();
