@@ -8,6 +8,7 @@ import { uuidv7 } from "uuidv7";
 import { computed, ref, toRaw, watch } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
+import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { createMod, createProfile, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
@@ -100,13 +101,13 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (!targetProfile)
       return;
 
-    const newProfile = {
-      // If `toValue` is not used here, some keys in the object will be `proxy`.
-      // Putting `proxy` into chrome.storage will cause the array to become its object representation(For example: `[1]` => `{0: 1}`).
-      ...toRaw(targetProfile),
-      id: uuidv7(),
+    // If `toValue` is not used here, some keys in the object will be `proxy`.
+    // Putting `proxy` into chrome.storage will cause the array to become its object representation(For example: `[1]` => `{0: 1}`).
+    // Using `stripProfileIds` and `addProfileIds` ensures deep cloning and generation of fresh UUIDs for nested arrays.
+    const newProfile = addProfileIds({
+      ...stripProfileIds(toRaw(targetProfile)),
       name: targetProfile.name.startsWith("[Duplicated]") ? targetProfile.name : `[Duplicated] ${targetProfile.name}`,
-    };
+    });
     const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
     manager.value.selectedProfileId = newProfile.id;
