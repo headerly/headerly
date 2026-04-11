@@ -7,13 +7,6 @@ import { uuidv7 } from "uuidv7";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-const macRegex = /Macintosh;/;
-export function getModKey() {
-  const isMac = navigator.userAgent.match(macRegex);
-  return isMac ? "⌘" : "Ctrl";
-}
-
 export function createSyncCookie(overrides?: Partial<SyncCookie>) {
   return {
     id: uuidv7(),

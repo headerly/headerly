@@ -4,7 +4,6 @@ import { Button } from "#/ui/button";
 import {
   Input,
 } from "#/ui/input";
-import { Kbd } from "#/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +14,7 @@ import { useEventListener } from "@vueuse/core";
 import { ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn, getModKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
 import EmojiPicker from "./components/EmojiPicker.vue";
@@ -38,10 +37,6 @@ function handleEditProfileName() {
 const settingsStore = useSettingsStore();
 
 useEventListener(window, "keydown", (event: KeyboardEvent) => {
-  if (!settingsStore.enableUndoAndRedoShortcut) {
-    return;
-  }
-
   if (document.activeElement?.matches("input, textarea")) {
     return;
   }
@@ -63,8 +58,6 @@ const undoAndRedoButtonGroup = [
     tooltip: (
       <p>
         Undo
-        <Kbd class="mr-1">{getModKey()}</Kbd>
-        <Kbd>Z</Kbd>
       </p>
     ),
     get disabled() {
@@ -78,9 +71,6 @@ const undoAndRedoButtonGroup = [
     tooltip: (
       <p>
         Redo
-        <Kbd class="mr-1">{getModKey()}</Kbd>
-        <Kbd class="mr-1">Shift</Kbd>
-        <Kbd>Z</Kbd>
       </p>
     ),
     get disabled() {

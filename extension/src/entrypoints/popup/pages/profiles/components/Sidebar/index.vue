@@ -7,7 +7,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
 import { Label } from "#/ui/label";
@@ -22,7 +21,7 @@ import {
 import { defineAsyncComponent, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn, getModKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
@@ -69,9 +68,6 @@ const isDEV = import.meta.env.DEV;
           <ProfileManage>
             <DropdownMenuItem @select.prevent>
               Search profile
-              <DropdownMenuShortcut v-if="settingsStore.enableMetaKSearch">
-                {{ `${getModKey()}+K` }}
-              </DropdownMenuShortcut>
             </DropdownMenuItem>
           </ProfileManage>
           <DropdownMenuItem @click="importModalOpen = true">

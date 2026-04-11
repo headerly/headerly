@@ -6,7 +6,6 @@ import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
-import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import ContextMenuWithTrigger from "../../ProfileActions/ContextMenuWithTrigger.vue";
 
 const profilesStore = useProfilesStore();
@@ -25,11 +24,7 @@ watch(
   { flush: "post" },
 );
 
-const settingsStore = useSettingsStore();
 function handleSwitchProfileShortcut(event: KeyboardEvent) {
-  if (!settingsStore.enableMetaNumberShortcut) {
-    return;
-  }
   if ((event.ctrlKey || event.metaKey) && event.key >= "1" && event.key <= "9") {
     event.preventDefault();
     const index = Number(event.key) - 1;

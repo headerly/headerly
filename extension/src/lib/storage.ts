@@ -110,22 +110,6 @@ export function useRandomEmojiCategoryStorage() {
   return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "foodDrink");
 }
 
-export function useEnableMetaNumberShortcutStorage() {
-  return useBrowserStorage<boolean>("local:enableCtrlNumberShortcut", true);
-}
-
-export function useEnableMetaKSearchStorage() {
-  return useBrowserStorage<boolean>("local:enableCtrlKSearch", true);
-}
-
-export function useEnableUndoAndRedoShortcutStorage() {
-  return useBrowserStorage<boolean>("local:enableUndoAndRedoShortcut", true);
-}
-
-export function useDisplayNumberBadgeStorage() {
-  return useBrowserStorage<boolean>("local:displayNumberBadge", false);
-}
-
 export function useSwitchModeStorage() {
   return useBrowserStorage<"multiple" | "single">("local:switchMode", "multiple");
 }

@@ -1,9 +1,7 @@
 <script setup lang="tsx">
 import type { Profile } from "@/lib/schema";
 import { useProfilesStore } from "#/stores/useProfilesStore";
-import { useSettingsStore } from "#/stores/useSettingsStore";
 import { Button } from "#/ui/button";
-import { Kbd } from "#/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -11,9 +9,9 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { computed } from "vue";
-import { cn, getModKey } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
-const { profile, index, showShortcutHint = false, class: className } = defineProps<{
+const { profile, class: className } = defineProps<{
   profile: Profile;
   index: number;
   showShortcutHint?: boolean;
@@ -25,20 +23,7 @@ const emit = defineEmits<{
   (e: "click"): void;
 }>();
 
-const settingsStore = useSettingsStore();
 const profilesStore = useProfilesStore();
-
-function renderShortcutHint(index: number) {
-  if (!showShortcutHint || !settingsStore.enableMetaNumberShortcut || index >= 9) {
-    return null;
-  }
-  return (
-    <span>
-      <Kbd class="mr-1">{getModKey()}</Kbd>
-      <Kbd>{String(index + 1)}</Kbd>
-    </span>
-  );
-}
 
 const isSelected = computed(() => profilesStore.manager.selectedProfileId === profile.id);
 </script>
@@ -91,7 +76,7 @@ const isSelected = computed(() => profilesStore.manager.selectedProfileId === pr
           </div>
         </TooltipTrigger>
         <TooltipContent side="right">
-          <p>{{ profile.name }} <component :is="renderShortcutHint(index)" /></p>
+          <p>{{ profile.name }}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

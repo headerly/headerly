@@ -3,10 +3,6 @@ import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
   useAutoAssignEmojiStorage,
-  useDisplayNumberBadgeStorage,
-  useEnableMetaKSearchStorage,
-  useEnableMetaNumberShortcutStorage,
-  useEnableUndoAndRedoShortcutStorage,
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
@@ -21,10 +17,6 @@ export const useSettingsStore = defineStore("settings", () => {
     powerOn: usePowerOnStorage(),
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),
-    displayNumberBadge: useDisplayNumberBadgeStorage(),
-    enableMetaNumberShortcut: useEnableMetaNumberShortcutStorage(),
-    enableMetaKSearch: useEnableMetaKSearchStorage(),
-    enableUndoAndRedoShortcut: useEnableUndoAndRedoShortcutStorage(),
     switchMode: useSwitchModeStorage(),
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
   } as const;

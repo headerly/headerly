@@ -9,25 +9,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "#/ui/sheet";
-import { useEventListener } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 
 const profilesStore = useProfilesStore();
-const settingsStore = useSettingsStore();
 const open = ref(false);
-function handleSearchShortcut(event: KeyboardEvent) {
-  if (!settingsStore.enableMetaKSearch) {
-    return;
-  }
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-    event.preventDefault();
-    open.value = !open.value;
-  }
-}
-
-useEventListener(window, "keydown", handleSearchShortcut);
 
 const searchKeyword = ref("");
 
