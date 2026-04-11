@@ -2,22 +2,20 @@
 
 ## Introduction
 
-[WIP] Still a long way from phase 1. Unavailable, this will not be released until the first phase of development is complete.
+Headerly is a powerful and reliable browser extension designed for managing HTTP request and response headers. It aims to be a full replacement for ModHeader, allowing developers and users to quickly set, append, or remove headers and easily customize web traffic.
 
-WARNING: This repository will force push arbitrarily before reaching 1.0.0
+As an open-source project, Headerly provides a clean, user-friendly experience without injecting ads into your webpages.
 
-Headerly is a browser extension for managing HTTP request headers. It aims to be a full replacement for ModHeader and is open source and reliable — it won’t insert ads into your pages.
+## Key Features
 
-## Plan
+- **DNR API Integration:** Powered by Chrome's modern Declarative Net Request (DNR) API for fast and efficient network request modifications.
+- **Privacy First:** Headerly does *not* use the older `webRequest` API. This means the extension cannot read or access the actual content/body of your requests and responses, ensuring your privacy is guaranteed.
+- **Intuitive UI:** A popup interface similar to ModHeader that allows for easy profile management.
+- **Flexible Configuration:** Support for using radio or checkbox modes within a single profile to manage different header rules, with configurable default modes.
+- **Rich Filtering:** Apply rules conditionally based on URL matching, Regex, domains, resource types, and request methods.
+- **Cookie Synchronization:** Sync specific cookies across different requests (requires additional cookies permission).
+- **Undo/Redo Support:** Safely edit profiles with full undo/redo capabilities to revert unwanted changes.
 
-### Phase 1 (v1.0.0)
+## Privacy Guarantee
 
-- [x]  (core) Connect to DNR API
-- [x]  (UI) A popup interface similar to ModHeader
-- [x]  (UI) Support for using radio or checkbox modes within a single profile, with configurable default mode
-- [x]  (UI) Undo/redo support when editing profiles
-- [x]  (UI) Cookie sync feature (requires additional cookies permission request)
-- [ ]  (UI) Supports all types of filters in the DNR API
-- [ ]  Share profiles via URL query, with a companion standalone webpage for sharing (since `chrome-extension://` cannot be used on the internet)
-- [ ]  [Optional] Supports Google Analytics for usage statistics
-- [ ]  [Optional] Supports Sentry for error tracking
+Your privacy is our priority. Because Headerly strictly utilizes the `declarativeNetRequest` API, the browser handles all network modifications internally based on predefined rules. The extension itself has no capability to intercept, read, or analyze your sensitive data, request payloads, or response bodies.
