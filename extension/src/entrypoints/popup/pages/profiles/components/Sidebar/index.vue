@@ -40,14 +40,6 @@ function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
 }
 
-async function clearDnrRules() {
-  const rules = await browser.declarativeNetRequest.getDynamicRules();
-  const ruleIds = rules.map(rule => rule.id);
-  await browser.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: ruleIds,
-  });
-}
-
 const isDEV = import.meta.env.DEV;
 </script>
 
@@ -109,9 +101,6 @@ const isDEV = import.meta.env.DEV;
           <DropdownMenuGroup>
             <DropdownMenuItem @click="openInFullscreen">
               Expand to full tab
-            </DropdownMenuItem>
-            <DropdownMenuItem class="text-destructive!" @click="clearDnrRules">
-              Clear DNR rules
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </template>
