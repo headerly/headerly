@@ -11,7 +11,7 @@ const config: UserConfig = {
         "build",
         "chore",
         "ci",
-        "website",
+        "docs",
         "feat",
         "fix",
         "perf",

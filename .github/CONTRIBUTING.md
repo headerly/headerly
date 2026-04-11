@@ -22,7 +22,7 @@ Hi! We're Really excited that you are interested in contributing to Headerly. Be
 - Commit messages must be matched by the following regex, see [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for more information.
 
 ```txt
-/^(build|chore|ci|website|feat|fix|perf|refactor|revert|style|test)(\(.+\))?: .{1,100}/
+/^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?: .{1,100}/
 ```
 
 ## Development Setup
@@ -85,19 +85,4 @@ pnpm run test:e2e:dev
 
 ```bash
 pnpm -w run lint:fix
-```
-
-You may see a message saying "These CSS classes should be sorted", please ignore it.
-
-This project integrates biome (linter and formatter) in git hook, which will trigger automatic fix of this error when committing, then you need to use `git commit --amend`.
-
-### Publish
-
-This repository uses Github Action by default to automatically generate changelog from commit messages and publish new version to Chrome Web Store.
-
-To trigger manually, use the following command:
-
-```bash
-NEW_VERSION=X.X.X # Such as 1.1.1
-git commit --allow-empty -m "chore: release $NEW_VERSION" -m "Release-As: $NEW_VERSION"
 ```
