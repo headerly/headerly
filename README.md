@@ -17,7 +17,7 @@ As an open-source project, Headerly provides a clean, user-friendly experience w
 
 ## Privacy Guarantee
 
-Your privacy is our priority. For header modification, Headerly relies on the `declarativeNetRequest` API, so the browser handles those network changes internally based on predefined rules. This means Headerly cannot inspect or analyze request payloads or response bodies as part of its header modification features. For cookie synchronization, Headerly can access specific cookie values only if you explicitly grant the optional `cookies` permission.
+Your privacy is our priority. Because Headerly strictly utilizes the `declarativeNetRequest` API, the browser handles all network modifications internally based on predefined rules. The extension itself has no capability to intercept, read, or analyze your sensitive data, request payloads, or response bodies.
 
 ## Contribution
 
