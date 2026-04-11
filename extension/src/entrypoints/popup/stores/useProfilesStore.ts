@@ -5,7 +5,7 @@ import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { uuidv7 } from "uuidv7";
-import { computed, ref, toRaw, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
@@ -101,13 +101,8 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (!targetProfile)
       return;
 
-    // If `toValue` is not used here, some keys in the object will be `proxy`.
-    // Putting `proxy` into chrome.storage will cause the array to become its object representation(For example: `[1]` => `{0: 1}`).
     // Using `stripProfileIds` and `addProfileIds` ensures deep cloning and generation of fresh UUIDs for nested arrays.
-    const newProfile = addProfileIds({
-      ...stripProfileIds(toRaw(targetProfile)),
-      name: targetProfile.name.startsWith("[Duplicated]") ? targetProfile.name : `[Duplicated] ${targetProfile.name}`,
-    });
+    const newProfile = addProfileIds(stripProfileIds(targetProfile));
     const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
     manager.value.selectedProfileId = newProfile.id;
