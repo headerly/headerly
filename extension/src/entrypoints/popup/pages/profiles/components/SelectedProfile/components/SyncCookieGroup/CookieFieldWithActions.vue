@@ -230,7 +230,7 @@ async function refreshCookie() {
         <Tooltip>
           <TooltipTrigger as-child>
             <Button
-              :variant="refreshButtonDisabled ? 'outline' : 'default'"
+              :variant="refreshButtonDisabled ? 'secondary' : 'default'"
               size="icon-xs"
               :disabled="refreshButtonDisabled"
               @click="refreshCookie"

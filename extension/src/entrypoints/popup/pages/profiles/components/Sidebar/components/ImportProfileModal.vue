@@ -114,7 +114,7 @@ function handleClose() {
           </Button>
         </DialogClose>
         <Button
-          variant="outline"
+          variant="secondary"
           :disabled="!validJson"
           @click="handleFormatJson"
         >

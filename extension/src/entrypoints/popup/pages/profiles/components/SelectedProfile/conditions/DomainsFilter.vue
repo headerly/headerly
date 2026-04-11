@@ -160,7 +160,7 @@ const canUseCurrentUrl = computed(() => {
           <Tooltip>
             <TooltipTrigger as-child>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="icon-xs"
                 :disabled="!canUseCurrentUrl"
                 @click="() => {
