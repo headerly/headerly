@@ -34,6 +34,7 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
     animation: 250,
     handle: options.handle,
     ghostClass: "sortable-ghost",
+    watchElement: true,
     // The transform of sorting animations creates a new stacking context,
     // which may cause the currently dragged item to be covered by its sibling elements.
     chosenClass: "z-10",

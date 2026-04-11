@@ -76,11 +76,24 @@ useSortableAndAutoAnimate({
       <slot name="name-after" />
     </template>
     <template #main>
-      <div
-        ref="listContainer"
-        class="flex flex-col gap-1.5"
+      <component
+        :is="type === 'radio' ? RadioGroup : 'div'"
+        v-bind="type === 'radio'
+          ? {
+            'as': 'div',
+            'modelValue': list.find(item => item.enabled)?.id,
+            'onUpdate:modelValue': (val: string) => {
+              list.forEach(item => {
+                item.enabled = item.id === val;
+              });
+            },
+          }
+          : {}"
       >
-        <template v-if="type !== 'radio'">
+        <div
+          ref="listContainer"
+          class="flex flex-col gap-1"
+        >
           <div
             v-for="item, index in list"
             :key="item.id"
@@ -92,39 +105,18 @@ useSortableAndAutoAnimate({
                 class="mr-1"
                 @update:model-value="(val) => item.enabled = val === true"
               />
+              <RadioGroupItem
+                v-else
+                :value="item.id"
+                class="mr-1"
+              />
               <div class="flex flex-1 items-center">
                 <slot :index name="item" />
               </div>
             </SortableItem>
           </div>
-        </template>
-        <template v-else>
-          <RadioGroup
-            class="flex flex-col gap-1"
-            :model-value="list.find(item => item.enabled)?.id"
-            @update:model-value="(val) => {
-              list.forEach(item => {
-                item.enabled = item.id === val;
-              });
-            }"
-          >
-            <div
-              v-for="item, index in list"
-              :key="item.id"
-            >
-              <SortableItem>
-                <RadioGroupItem
-                  :value="item.id"
-                  class="mr-1"
-                />
-                <div class="flex flex-1 items-center">
-                  <slot :index name="item" />
-                </div>
-              </SortableItem>
-            </div>
-          </RadioGroup>
-        </template>
-      </div>
+        </div>
+      </component>
     </template>
   </Fieldset>
 </template>
