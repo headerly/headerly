@@ -9,6 +9,7 @@ As an open-source project, Headerly provides a clean, user-friendly experience w
 <p align="center">
   <img src="./.github/social-preview.png" alt="GitHub Social Preview" width="480" />
 </p>
+
 ## Key Features
 
 - **DNR API Integration:** Powered by Chrome's modern Declarative Net Request (DNR) API for fast and efficient network request modifications.
