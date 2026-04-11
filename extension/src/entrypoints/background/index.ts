@@ -43,8 +43,8 @@ export default defineBackground({
           if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
             return;
           }
-          lastProfilesStorageItem.setValue(manager.profiles);
           await updateRules(changes);
+          lastProfilesStorageItem.setValue(manager.profiles);
         }
       });
     });
