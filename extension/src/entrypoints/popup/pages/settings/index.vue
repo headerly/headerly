@@ -1,5 +1,7 @@
 <script setup lang="tsx">
+import { sendMessage } from "##/background/message";
 import Fieldset from "#/components/group/Fieldset.vue";
+import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
 import {
@@ -16,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { toast } from "vue-sonner";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
@@ -28,7 +31,7 @@ function InfoTooltip({ description }: { description: string }) {
     <TooltipProvider delay-duration={200}>
       <Tooltip>
         <TooltipTrigger as-child>
-          <button>
+          <button class="flex items-center">
             <i class="i-lucide-circle-question-mark size-4 cursor-pointer" />
           </button>
         </TooltipTrigger>
@@ -110,6 +113,36 @@ function InfoTooltip({ description }: { description: string }) {
                 </Label>
               </div>
             </template>
+          </div>
+        </template>
+      </Fieldset>
+      <Fieldset
+        class="gap-y-4 border bg-primary-foreground p-4 text-base"
+        name="Troubleshooting"
+      >
+        <template #main>
+          <div class="flex gap-2">
+            <Button
+              variant="secondary"
+              class="flex items-center"
+              @click="async () => {
+                try {
+                  await sendMessage('reinitializeAllRules');
+                  toast.success('All profiles have been reinitialized. Please check if the issue is resolved. If not, please report this issue to us.');
+                } catch (error) {
+                  toast.error('Failed to reinitialize profiles. Please report this issue to us.');
+                }
+              }"
+            >
+              Reinitialize all profiles
+              <InfoTooltip description="If you find that the number of active profiles you defined is inconsistent with the number displayed in the extension popup badge, please click the button below." />
+            </Button>
+            <Button as-child>
+              <a href="https://github.com/headerly/headerly/issues/new?template=BUG_REPORT.yml">
+                <i class="i-lucide-github" />
+                Report an issue
+              </a>
+            </Button>
           </div>
         </template>
       </Fieldset>

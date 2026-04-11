@@ -43,7 +43,7 @@ const name = browser.runtime.getManifest().name;
           <h1
             class="relative z-50 mb-4 flex items-center gap-2 text-xl font-bold"
           >
-            {{ name }} © 2025
+            {{ name }} © 2026
             <span class="font-mono text-xs font-normal">
               v{{ version }}
             </span>

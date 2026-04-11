@@ -20,7 +20,6 @@ import {
 } from "#/ui/tooltip";
 
 import { defineAsyncComponent, ref } from "vue";
-import { sendMessage } from "@/entrypoints/background/message";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getModKey } from "@/lib/utils";
@@ -110,13 +109,6 @@ const isDEV = import.meta.env.DEV;
           <DropdownMenuGroup>
             <DropdownMenuItem @click="openInFullscreen">
               Expand to full tab
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              @click="() => {
-                sendMessage('reinitializeAllRules');
-              }"
-            >
-              Reinitialize DNR rules
             </DropdownMenuItem>
             <DropdownMenuItem class="text-destructive!" @click="clearDnrRules">
               Clear DNR rules

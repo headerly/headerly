@@ -12,7 +12,7 @@ import { defineConfig } from "wxt";
 export default defineConfig({
   manifest: {
     description: "Manage and customize HTTP request & response headers with ease. Quickly set, append, or remove headers.",
-    homepage_url: "https://headerly.dev",
+    homepage_url: "https://github.com/headerly/headerly",
     name: "Headerly",
     permissions: [
       "storage",

@@ -53,10 +53,10 @@ const bus = useEventBus(openAddModModalKey);
           href="https://github.com/headerly/headerly/issues"
         >
           <i class="i-lucide-github size-4" />
-          Report issue
+          Report an issue
         </Button>
         <ButtonGroupSeparator />
-        <Button
+        <!-- <Button
           size="sm"
           variant="secondary"
           as="a"
@@ -65,7 +65,7 @@ const bus = useEventBus(openAddModModalKey);
         >
           <i class="i-lucide-wrench size-4" />
           Troubleshoot
-        </Button>
+        </Button> -->
       </ButtonGroup>
     </AlertDescription>
   </Alert>
