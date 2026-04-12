@@ -1,7 +1,7 @@
 import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
-import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { usePowerOnStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileId2RuleScopeRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { updateBadgeCount } from "./DNR/util";
@@ -51,9 +51,16 @@ export default defineBackground({
 
     // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
     updateBadgeWhenRestarted();
+    disableOrphanedSessionProfiles();
     // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
-    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
-    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
+    browser.runtime.onStartup.addListener(() => {
+      updateBadgeWhenRestarted();
+      disableOrphanedSessionProfiles();
+    });
+    browser.runtime.onInstalled.addListener(() => {
+      updateBadgeWhenRestarted();
+      disableOrphanedSessionProfiles();
+    });
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
@@ -83,7 +90,7 @@ export default defineBackground({
   },
 });
 
-const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups", "priority"] as const satisfies (keyof Profile)[];
+const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups", "priority", "ruleScope"] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
 
@@ -167,4 +174,58 @@ async function updateBadgeWhenRestarted() {
   } else {
     setIconAndBadgeForDisabled();
   }
+}
+
+/**
+ * After browser restart or extension update, session rules are lost.
+ * Detect orphaned session-scoped profiles and disable them.
+ */
+async function disableOrphanedSessionProfiles() {
+  const { item: profileManagerItem } = useProfileManagerStorage();
+  const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
+  const { item: profileId2RuleScopeRecordItem } = useProfileId2RuleScopeRecordStorage();
+
+  const [sessionRules, ruleScopeRecord, ruleIdRecord, manager] = await Promise.all([
+    browser.declarativeNetRequest.getSessionRules(),
+    profileId2RuleScopeRecordItem.getValue(),
+    profileId2RelatedRuleIdRecordItem.getValue(),
+    profileManagerItem.getValue(),
+  ]);
+
+  const survivingSessionRuleIds = new Set(sessionRules.map(r => r.id));
+  const orphanedProfileIds: string[] = [];
+
+  for (const [profileId, scope] of Object.entries(ruleScopeRecord)) {
+    if (scope !== "session")
+      continue;
+    const ruleId = ruleIdRecord[profileId];
+    if (ruleId !== undefined && !survivingSessionRuleIds.has(ruleId)) {
+      orphanedProfileIds.push(profileId);
+    }
+  }
+
+  if (orphanedProfileIds.length === 0)
+    return;
+
+  // Disable orphaned session profiles and clean up records
+  let modified = false;
+  for (const profile of manager.profiles) {
+    if (orphanedProfileIds.includes(profile.id) && profile.enabled) {
+      profile.enabled = false;
+      modified = true;
+    }
+  }
+
+  const newRuleIdRecord = { ...ruleIdRecord };
+  const newRuleScopeRecord = { ...ruleScopeRecord };
+  for (const id of orphanedProfileIds) {
+    delete newRuleIdRecord[id];
+    delete newRuleScopeRecord[id];
+  }
+
+  await Promise.all([
+    modified ? profileManagerItem.setValue(manager) : undefined,
+    profileId2RelatedRuleIdRecordItem.setValue(newRuleIdRecord),
+    profileId2RuleScopeRecordItem.setValue(newRuleScopeRecord),
+  ]);
 }

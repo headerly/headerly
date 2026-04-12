@@ -1,6 +1,6 @@
 import type { ProfileChanges } from "../index";
-import type { UpdateProfileErrorMessageOptions, UpdateProfileRelatedRuleIdOptions } from "../message";
-import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
+import type { UpdateProfileErrorMessageOptions, UpdateProfileRelatedRuleIdOptions, UpdateProfileRuleScopeOptions } from "../message";
+import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileId2RuleScopeRecordStorage } from "@/lib/storage";
 import { sendMessage } from "../message";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
@@ -8,6 +8,7 @@ import { logReceivingEndDoesNotExistOtherError, updateBadgeCount } from "./util"
 
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
+const { item: profileId2RuleScopeRecordItem } = useProfileId2RuleScopeRecordStorage();
 
 export async function updateRules(changes: ProfileChanges) {
   const [deleteResults, updateResults] = await Promise.all([
@@ -21,15 +22,21 @@ export async function updateRules(changes: ProfileChanges) {
   const deleteErrorMessageIds: string[] = [];
   const profileId2RelatedRuleIdRecord: Record<string, number> = {};
   const deleteRelatedRuleIds: string[] = [];
+  const profileId2RuleScopeRecord: Record<string, "dynamic" | "session"> = {};
+  const deleteRuleScopeIds: string[] = [];
   for (const result of allResults) {
     if (result.status !== "fulfilled") {
       continue;
     }
     if (result.value.deleteRuleId) {
       deleteRelatedRuleIds.push(result.value.profileId);
+      deleteRuleScopeIds.push(result.value.profileId);
     }
     if (result.value.newRuleId) {
       profileId2RelatedRuleIdRecord[result.value.profileId] = result.value.newRuleId;
+    }
+    if (result.value.newRuleScope) {
+      profileId2RuleScopeRecord[result.value.profileId] = result.value.newRuleScope;
     }
     if (result.value.success) {
       deleteErrorMessageIds.push(result.value.profileId);
@@ -41,6 +48,10 @@ export async function updateRules(changes: ProfileChanges) {
     handleRegistrationRelatedRuleIdChange({
       upsertRecord: profileId2RelatedRuleIdRecord,
       deleteIds: deleteRelatedRuleIds,
+    }),
+    handleRegistrationRuleScopeChange({
+      upsertRecord: profileId2RuleScopeRecord,
+      deleteIds: deleteRuleScopeIds,
     }),
     handleRegistrationErrorMessageChange({
       upsertRecord: profileId2ErrorRecord,
@@ -56,16 +67,25 @@ interface RuleUpdateResult {
   error?: unknown;
   deleteRuleId?: number;
   newRuleId?: number;
+  newRuleScope?: "dynamic" | "session";
 };
+
+function updateRulesByScope(scope: "dynamic" | "session", options: Browser.declarativeNetRequest.UpdateRuleOptions) {
+  return scope === "session"
+    ? browser.declarativeNetRequest.updateSessionRules(options)
+    : browser.declarativeNetRequest.updateDynamicRules(options);
+}
 
 async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
   const results: Array<PromiseSettledResult<RuleUpdateResult>> = [];
 
   // Handle deleted profiles - only remove rules
+  const ruleScopeRecord = await profileId2RuleScopeRecordItem.getValue();
   for (const deletedProfile of changes.deleted) {
     const profileId2RelatedRuleIdRecord = await profileId2RelatedRuleIdRecordItem.getValue();
     const ruleId = profileId2RelatedRuleIdRecord[deletedProfile.id];
-    await browser.declarativeNetRequest.updateDynamicRules({
+    const scope = ruleScopeRecord[deletedProfile.id] ?? "dynamic";
+    await updateRulesByScope(scope, {
       removeRuleIds: ruleId ? [ruleId] : undefined,
     });
     results.push({
@@ -88,10 +108,12 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
   const profilesToRegister = [...changes.created, ...changes.modified];
   const { item: nativeResourceTypeBehaviorItem } = useNativeResourceTypeBehaviorStorage();
   const nativeResourceTypeBehavior = await nativeResourceTypeBehaviorItem.getValue();
+  const ruleScopeRecord = await profileId2RuleScopeRecordItem.getValue();
   for (const profile of profilesToRegister) {
     const condition = buildCondition(profile, { nativeResourceTypeBehavior });
     const action = buildAction(profile);
     const hasActions = action.requestHeaders?.length || action.responseHeaders?.length;
+    const newScope = profile.ruleScope;
 
     const rule = {
       id: await getNewRuleId(),
@@ -100,28 +122,37 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       action,
     } as const satisfies Browser.declarativeNetRequest.Rule;
 
-    // For modified profiles, remove old rule first
+    // For modified profiles, remove old rule first (may be in a different scope)
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = changes.modified.includes(profile)
-      ? record[profile.id]
-      : undefined;
+    const isModified = changes.modified.includes(profile);
+    const deleteRuleId = isModified ? record[profile.id] : undefined;
+    const oldScope = ruleScopeRecord[profile.id] ?? "dynamic";
 
-    const result = await browser.declarativeNetRequest.updateDynamicRules({
-      // If there are no actions, simply delete the rule(if exists).
-      removeRuleIds: deleteRuleId ? [deleteRuleId] : undefined,
-      addRules: hasActions ? [rule] : undefined,
-    }).then(async () => {
+    const result = await (async () => {
+      // If modified and scope changed, delete from old scope, add to new scope separately
+      if (deleteRuleId && oldScope !== newScope) {
+        await updateRulesByScope(oldScope, { removeRuleIds: [deleteRuleId] });
+        if (hasActions) {
+          await updateRulesByScope(newScope, { addRules: [rule] });
+        }
+      } else {
+        await updateRulesByScope(newScope, {
+          removeRuleIds: deleteRuleId ? [deleteRuleId] : undefined,
+          addRules: hasActions ? [rule] : undefined,
+        });
+      }
       return {
         success: true,
         profileId: profile.id,
         deleteRuleId: deleteRuleId && !hasActions ? deleteRuleId : undefined,
         newRuleId: hasActions ? rule.id : undefined,
+        newRuleScope: hasActions ? newScope : undefined,
       };
-    }).catch(async (error) => {
+    })().catch(async (error) => {
       const isUpdateOldRuleError = hasActions && deleteRuleId;
       // If updating the old rule failed, try to remove it again to avoid dangling rules.
       if (isUpdateOldRuleError) {
-        await browser.declarativeNetRequest.updateDynamicRules({
+        await updateRulesByScope(oldScope, {
           removeRuleIds: [deleteRuleId],
         });
       }
@@ -157,6 +188,24 @@ async function handleRegistrationRelatedRuleIdChange(options: UpdateProfileRelat
   }
 }
 
+async function handleRegistrationRuleScopeChange(options: UpdateProfileRuleScopeOptions) {
+  const { upsertRecord = {}, deleteIds = [] } = options;
+  try {
+    await sendMessage("updateProfileRuleScope", {
+      upsertRecord,
+      deleteIds,
+    });
+  } catch (error) {
+    logReceivingEndDoesNotExistOtherError(error);
+    const currentRecord = await profileId2RuleScopeRecordItem.getValue();
+    const newRecord = { ...currentRecord, ...upsertRecord };
+    for (const id of deleteIds) {
+      delete newRecord[id];
+    }
+    await profileId2RuleScopeRecordItem.setValue(newRecord);
+  }
+}
+
 async function handleRegistrationErrorMessageChange(options: UpdateProfileErrorMessageOptions) {
   const { upsertRecord = {}, deleteIds = [] } = options;
   try {
@@ -176,8 +225,11 @@ async function handleRegistrationErrorMessageChange(options: UpdateProfileErrorM
 }
 
 async function getNewRuleId() {
-  const existingRules = await browser.declarativeNetRequest.getDynamicRules();
-  const existingIds = existingRules.map(r => r.id);
+  const [dynamicRules, sessionRules] = await Promise.all([
+    browser.declarativeNetRequest.getDynamicRules(),
+    browser.declarativeNetRequest.getSessionRules(),
+  ]);
+  const existingIds = [...dynamicRules, ...sessionRules].map(r => r.id);
   return findMissingPositive(existingIds);
 }
 

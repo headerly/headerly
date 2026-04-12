@@ -16,13 +16,13 @@ export async function copyProfile(profile: Profile) {
   toast.success("Profile copied to clipboard.");
 }
 
-export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "copyJson" | "copyId";
+export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "ruleScope" | "copyJson" | "copyId";
 
 export interface ProfileActionItem {
   id: ActionKey;
   label: (profile: Profile) => string;
   icon?: (profile: Profile) => string;
-  onClick: (profile: Profile, options?: { openComments?: () => void; openPriority?: () => void }) => void;
+  onClick: (profile: Profile, options?: { openComments?: () => void; openPriority?: () => void; openRuleScope?: () => void }) => void;
   disabled?: (profile: Profile) => boolean;
   variant?: "default" | "destructive";
 }
@@ -41,7 +41,6 @@ export function useProfileActions() {
     {
       id: "duplicate",
       label: () => "Duplicate",
-      icon: () => "i-lucide-copy",
       onClick: p => profilesStore.duplicateProfile(p.id),
     },
     {
@@ -59,13 +58,16 @@ export function useProfileActions() {
     {
       id: "rulePriority",
       label: p => `Priority: ${p.priority ?? 1}`,
-      icon: () => "i-lucide-arrow-up-z-a",
       onClick: (_, opts) => opts?.openPriority?.(),
+    },
+    {
+      id: "ruleScope",
+      label: p => `Rule: ${p.ruleScope === "session" ? "Session" : "Dynamic"}`,
+      onClick: (_, opts) => opts?.openRuleScope?.(),
     },
     {
       id: "copyJson",
       label: () => "Export to JSON",
-      icon: () => "i-lucide-arrow-up-to-line",
       onClick: p => router.push(`/export/${p.id}`),
     },
     {

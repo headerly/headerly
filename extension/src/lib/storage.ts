@@ -98,6 +98,10 @@ export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInsta
   return useBrowserStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
 }
 
+export function useProfileId2RuleScopeRecordStorage(options?: UseStorageInstanceOptions<Record<string, "dynamic" | "session">>) {
+  return useBrowserStorage<Record<string, "dynamic" | "session">>("local:profileId2RuleScopeRecord", {}, options);
+}
+
 export function usePowerOnStorage() {
   return useBrowserStorage<boolean>("local:powerOn", true);
 }

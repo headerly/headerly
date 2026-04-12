@@ -9,7 +9,7 @@ import { computed, ref } from "vue";
 import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
-import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
+import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileId2RuleScopeRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { createMod, createProfile, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -34,20 +34,24 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
   const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
   const { promise: profileId2RelatedRuleIdRecordPromise, resolve: profileId2RelatedRuleIdRecordResolve } = Promise.withResolvers();
+  const { promise: profileId2RuleScopeRecordPromise, resolve: profileId2RuleScopeRecordResolve } = Promise.withResolvers();
   const ready = ref(false);
   Promise.all([
     managerPromise,
     profileId2ErrorMessageRecordPromise,
     profileId2RelatedRuleIdRecordPromise,
+    profileId2RuleScopeRecordPromise,
   ]).then(() => ready.value = true);
   const { ref: manager } = useProfileManagerStorage({ onReady: managerResolve });
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
+  const { ref: profileId2RuleScopeRecord } = useProfileId2RuleScopeRecordStorage({ onReady: profileId2RuleScopeRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
 
   onMessage("unregisterAllRules", () => {
     profileId2ErrorMessageRecord.value = {};
     profileId2RelatedRuleIdRecord.value = {};
+    profileId2RuleScopeRecord.value = {};
   });
 
   onMessage("updateProfileErrorMessage", (message) => {
@@ -67,6 +71,16 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
     for (const profileId of deleteIds) {
       delete profileId2RelatedRuleIdRecord.value[profileId];
+    }
+  });
+
+  onMessage("updateProfileRuleScope", (message) => {
+    const { upsertRecord: upsertRuleScopeMap = {}, deleteIds = [] } = message.data;
+    for (const [profileId, ruleScope] of Object.entries(upsertRuleScopeMap) as Entries<typeof upsertRuleScopeMap>) {
+      profileId2RuleScopeRecord.value[profileId] = ruleScope;
+    }
+    for (const profileId of deleteIds) {
+      delete profileId2RuleScopeRecord.value[profileId];
     }
   });
 
@@ -206,6 +220,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager,
     profileId2RelatedRuleIdRecord,
     profileId2ErrorMessageRecord,
+    profileId2RuleScopeRecord,
     canUndo,
     canRedo,
     ready,

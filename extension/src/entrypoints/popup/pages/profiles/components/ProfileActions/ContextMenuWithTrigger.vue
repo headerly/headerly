@@ -16,6 +16,7 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions } from "./actions";
 import PriorityDialog from "./PriorityDialog.vue";
+import RuleScopeDialog from "./RuleScopeDialog.vue";
 
 const props = defineProps<{
   profile: Profile;
@@ -25,7 +26,7 @@ const profilesStore = useProfilesStore();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
 const actionIdGroups = [
-  ["toggle", "duplicate", "delete", "comments", "rulePriority"],
+  ["toggle", "duplicate", "delete", "comments", "rulePriority", "ruleScope"],
   "separator",
   ["copyJson", "copyId"],
 ] as const satisfies (ActionKey[] | "separator")[];
@@ -33,6 +34,7 @@ const actionGroups = transformIdsToActions(actionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
+const ruleScopeDialogRef = useTemplateRef("ruleScopeDialogRef");
 </script>
 
 <template>
@@ -59,6 +61,7 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
+              openRuleScope: () => ruleScopeDialogRef?.open(),
             })"
           >
             {{ action.label(profile) }}
@@ -73,6 +76,10 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
     <PriorityDialog
       ref="priorityDialogRef"
       v-model="profile.priority"
+    />
+    <RuleScopeDialog
+      ref="ruleScopeDialogRef"
+      v-model:profile="profile"
     />
   </ContextMenu>
 </template>

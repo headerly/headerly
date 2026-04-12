@@ -10,9 +10,15 @@ export interface UpdateProfileRelatedRuleIdOptions {
   deleteIds?: string[];
 }
 
+export interface UpdateProfileRuleScopeOptions {
+  upsertRecord?: Record<string, "dynamic" | "session">;
+  deleteIds?: string[];
+}
+
 interface ProtocolMap {
   updateProfileErrorMessage: (options: UpdateProfileErrorMessageOptions) => void;
   updateProfileRelatedRuleId: (options: UpdateProfileRelatedRuleIdOptions) => void;
+  updateProfileRuleScope: (options: UpdateProfileRuleScopeOptions) => void;
   unregisterAllRules: () => void;
   reinitializeAllRules: () => void;
 }

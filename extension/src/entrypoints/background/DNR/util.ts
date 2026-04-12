@@ -7,12 +7,15 @@ export function logReceivingEndDoesNotExistOtherError(error: unknown): boolean {
 }
 
 export async function updateBadgeCount() {
-  const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
-  const registeredRuleCount = registeredRules.length;
+  const [dynamicRules, sessionRules] = await Promise.all([
+    browser.declarativeNetRequest.getDynamicRules(),
+    browser.declarativeNetRequest.getSessionRules(),
+  ]);
+  const registeredRuleCount = dynamicRules.length + sessionRules.length;
   if (registeredRuleCount > 0) {
     browser.action.setBadgeTextColor({ color: "white" });
     browser.action.setBadgeBackgroundColor({ color: "orange" });
-    browser.action.setBadgeText({ text: String(registeredRules.length) });
+    browser.action.setBadgeText({ text: String(registeredRuleCount) });
   } else {
     browser.action.setBadgeText({ text: "" });
   }

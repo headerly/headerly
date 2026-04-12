@@ -21,6 +21,7 @@ import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions, useProfileActions } from "./actions";
 import PriorityDialog from "./PriorityDialog.vue";
+import RuleScopeDialog from "./RuleScopeDialog.vue";
 
 const profile = defineModel<Profile>("profile", {
   required: true,
@@ -31,7 +32,7 @@ const mainActionIds = ["toggle", "delete"] as const satisfies ActionKey[];
 const mainActions = actions.filter(action => mainActionIds.includes(action.id));
 
 const moreActionIdGroups = [
-  ["duplicate", "comments", "rulePriority"],
+  ["duplicate", "comments", "rulePriority", "ruleScope"],
   "separator",
   ["copyJson", "copyId"],
 ] as const satisfies (ActionKey[] | "separator")[];
@@ -39,6 +40,7 @@ const moreActionGroups = transformIdsToActions(moreActionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
+const ruleScopeDialogRef = useTemplateRef("ruleScopeDialogRef");
 </script>
 
 <template>
@@ -57,6 +59,7 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
+              openRuleScope: () => ruleScopeDialogRef?.open(),
             })"
           >
             <i
@@ -101,6 +104,7 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
               @click="action.onClick(profile, {
                 openComments: () => commentsDialogRef?.open(),
                 openPriority: () => priorityDialogRef?.open(),
+                openRuleScope: () => ruleScopeDialogRef?.open(),
               })"
             >
               <span>{{ action.label(profile) }}</span>
@@ -117,6 +121,10 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
     <PriorityDialog
       ref="priorityDialogRef"
       v-model="profile.priority"
+    />
+    <RuleScopeDialog
+      ref="ruleScopeDialogRef"
+      v-model:profile="profile"
     />
   </div>
 </template>
