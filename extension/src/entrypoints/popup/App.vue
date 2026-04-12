@@ -8,7 +8,10 @@ const settingsStore = useSettingsStore();
 
 <template>
   <div
-    class="flex h-120 w-150 items-center justify-center outline-2"
+    class="
+      flex h-120 w-150 items-center justify-center
+      md:h-screen md:w-screen
+    "
   >
     <RouterView v-slot="{ Component }">
       <KeepAlive>
