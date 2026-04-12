@@ -98,6 +98,8 @@ export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInsta
   return useBrowserStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
 }
 
+// Because the Chrome DNR API uses two separate APIs for dynamic and session rules,
+// you must know which API a rule is currently registered with when deleting/updating it.
 export function useProfileId2RuleScopeRecordStorage(options?: UseStorageInstanceOptions<Record<string, "dynamic" | "session">>) {
   return useBrowserStorage<Record<string, "dynamic" | "session">>("local:profileId2RuleScopeRecord", {}, options);
 }
