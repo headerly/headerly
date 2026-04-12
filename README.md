@@ -6,9 +6,11 @@ Headerly is a powerful and reliable browser extension designed for managing HTTP
 
 As an open-source project, Headerly provides a clean, user-friendly experience without injecting ads into your webpages.
 
-<p align="center">
-  <img src="./.github/social-preview.png" alt="GitHub Social Preview" width="480" />
-</p>
+## Downloads
+
+- [Chrome Web Store](https://chromewebstore.google.com/detail/headerly/lmlapacaojgifapgjkbdkmaclkgcbhng)
+- [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/headerly/dhkjobinnldebfgpondcjlefklcapnha)
+
 
 ## Key Features
 
@@ -23,6 +25,11 @@ As an open-source project, Headerly provides a clean, user-friendly experience w
 ## Privacy Guarantee
 
 Your privacy is our priority. Because Headerly strictly utilizes the `declarativeNetRequest` API, the browser handles all network modifications internally based on predefined rules. The extension itself has no capability to intercept, read, or analyze your sensitive data, request payloads, or response bodies.
+
+## Screenshots
+
+![Headerly Screenshot](./.github/social-preview.png)
+
 
 ## Contribution
 
