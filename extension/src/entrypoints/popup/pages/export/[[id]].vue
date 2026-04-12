@@ -94,7 +94,9 @@ async function handleDownloadJson() {
       <ProfileCheckboxes v-model="selectedProfiles" :scroll-target-id-on-mounted="route.params.id" @change="handleSelectionChange" />
     </aside>
     <header
-      class="col-start-2 row-start-1 flex items-center justify-between px-2"
+      class="
+        col-start-2 row-start-1 flex items-center justify-between border-b px-2
+      "
     >
       <h1
         class="flex items-center gap-2 text-base font-semibold"

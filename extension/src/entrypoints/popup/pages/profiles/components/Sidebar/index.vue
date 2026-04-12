@@ -38,8 +38,6 @@ const importModalOpen = ref(false);
 function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
 }
-
-const isDEV = import.meta.env.DEV;
 </script>
 
 <template>
@@ -92,14 +90,12 @@ const isDEV = import.meta.env.DEV;
             </RouterLink>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <template v-if="isDEV">
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem @click="openInFullscreen">
-              Expand to full tab
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </template>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem @click="openInFullscreen">
+            Expand to full tab
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
     <div
