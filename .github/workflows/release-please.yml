@@ -1,0 +1,76 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.release.outputs['extension--tag_name'] }}
+      release_created: ${{ steps.release.outputs['extension--release_created'] }}
+
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Build extension
+        if: ${{ steps.release.outputs.release_created }}
+        run: pnpm install --frozen-lockfile && pnpm run zip
+
+      - name: Upload build artifact
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: extension-chrome
+          path: extension/.output/*-chrome.zip
+
+      - name: Upload Release Artifact
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ steps.release.outputs.tag_name }} ./extension/.output/*-chrome.zip
+
+  submit:
+    runs-on: ubuntu-latest
+    if: needs.release-please.outputs.release_created
+    needs: release-please
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: extension-chrome
+          path: extension/.output/chrome.zip
+
+      - name: Submit to stores
+        working-directory: ./extension
+        run: |
+          pnpm --filter extension exec wxt submit \
+            --chrome-zip ./.output/chrome.zip \
+            --edge-zip ./.output/chrome.zip \
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
