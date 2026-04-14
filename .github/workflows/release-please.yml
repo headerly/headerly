@@ -33,11 +33,9 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Build extension
-        if: ${{ steps.release.outputs.release_created }}
         run: pnpm install --frozen-lockfile && pnpm run zip
 
       - name: Upload build artifact
-        if: ${{ steps.release.outputs.release_created }}
         uses: actions/upload-artifact@v7
         with:
           name: extension-chrome
