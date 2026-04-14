@@ -150,7 +150,7 @@ const canUseCurrentUrl = computed(() => {
       <div
         class="
           flex flex-1 flex-col items-end gap-1
-          sm:flex-row
+          sm:flex-row sm:items-center
         "
       >
         <Input
@@ -159,10 +159,9 @@ const canUseCurrentUrl = computed(() => {
           class="
             w-full text-base
             placeholder:italic
-            sm:w-auto
           "
         />
-        <div class="ml-1 flex gap-0.5">
+        <div class="flex gap-0.5">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger as-child>

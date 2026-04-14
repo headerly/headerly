@@ -126,7 +126,7 @@ function newField() {
       <div
         class="
           flex flex-1 flex-col items-end gap-1
-          sm:flex-row
+          sm:flex-row sm:items-center
         "
       >
         <MultiSelect
@@ -139,7 +139,7 @@ function newField() {
           :options="multiSelectOptions"
           :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
         />
-        <div class="ml-1 flex gap-0.5">
+        <div class="flex gap-0.5">
           <Button
             variant="secondary"
             size="icon-xs"
