@@ -14,8 +14,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useEventBus, useEventListener, useMediaQuery } from "@vueuse/core";
+import { useEventBus, useEventListener } from "@vueuse/core";
 import { ref } from "vue";
+import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 
-const isCompact = useMediaQuery("(max-width: var(--breakpoint-sm))");
+const isCompact = useCompactScreen();
 const addModBus = useEventBus(openAddModModalKey);
 
 const profileNameEditing = ref(false);

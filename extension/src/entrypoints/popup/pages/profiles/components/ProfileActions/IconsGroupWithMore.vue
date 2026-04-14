@@ -17,8 +17,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useMediaQuery } from "@vueuse/core";
 import { useTemplateRef } from "vue";
+import { useCompactScreen } from "@/composables/useCompactScreen";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions, useProfileActions } from "./actions";
 import PriorityDialog from "./PriorityDialog.vue";
@@ -27,7 +27,7 @@ const profile = defineModel<Profile>("profile", {
   required: true,
 });
 
-const isCompact = useMediaQuery("(max-width: var(--breakpoint-sm))");
+const isCompact = useCompactScreen();
 
 const actions = useProfileActions();
 const mainActionIds = ["toggle", "delete"] as const satisfies ActionKey[];
