@@ -158,10 +158,20 @@ async function refreshCookie() {
 </script>
 
 <template>
-  <div class="flex flex-1 items-center justify-between gap-1">
-    <div class="flex flex-1 items-center gap-1">
+  <div
+    class="
+      flex flex-1 flex-col items-end justify-between gap-1
+      sm:flex-row sm:items-center
+    "
+  >
+    <div class="flex w-full flex-1 items-center gap-1">
       <slot name="field-before" />
-      <div class="grid flex-1 grid-cols-2 gap-1">
+      <div
+        class="
+          grid flex-1 grid-rows-2 gap-1
+          sm:grid-cols-2 sm:grid-rows-1
+        "
+      >
         <Input
           :model-value="field.domain"
           placeholder="Domain"
@@ -225,7 +235,7 @@ async function refreshCookie() {
         </div>
       </div>
     </div>
-    <div class="flex gap-1">
+    <div class="flex gap-0.5">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>

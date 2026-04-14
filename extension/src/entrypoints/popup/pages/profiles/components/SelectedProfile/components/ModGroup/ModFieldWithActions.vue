@@ -70,10 +70,20 @@ const nextOperation = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-1 items-center justify-between gap-1">
-    <div class="flex flex-1">
+  <div
+    class="
+      flex flex-1 flex-col items-end justify-between gap-1
+      sm:flex-row sm:items-center
+    "
+  >
+    <div class="flex w-full flex-1">
       <slot name="field-before" />
-      <div class="flex flex-1 gap-1">
+      <div
+        class="
+          grid flex-1 flex-col gap-1
+          sm:grid-cols-2 sm:grid-rows-1
+        "
+      >
         <Combobox
           :model-value="field.name"
           class="flex-1"

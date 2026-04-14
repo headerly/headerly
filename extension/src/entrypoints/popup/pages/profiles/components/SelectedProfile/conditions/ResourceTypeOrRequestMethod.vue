@@ -123,28 +123,39 @@ function newField() {
       />
     </template>
     <template #item="{ index }">
-      <MultiSelect
-        v-if="list[index]"
-        v-model="list[index].value"
-        :options="multiSelectOptions"
-        :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
-      />
-      <div class="ml-1 flex gap-0.5">
-        <Button
-          variant="secondary"
-          size="icon-xs"
-          @click="() => {
-            list.splice(index, 1);
-          }"
-        >
-          <span class="sr-only">Delete this header mod</span>
-          <i class="i-lucide-x size-4" />
-        </Button>
-        <ActionsDropdown
-          v-model:list="list"
-          v-model:field="list[index]!"
-          :index
+      <div
+        class="
+          flex flex-1 flex-col items-end gap-1
+          sm:flex-row
+        "
+      >
+        <MultiSelect
+          v-if="list[index]"
+          v-model="list[index].value"
+          class="
+            w-full
+            sm:w-auto
+          "
+          :options="multiSelectOptions"
+          :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
         />
+        <div class="ml-1 flex gap-0.5">
+          <Button
+            variant="secondary"
+            size="icon-xs"
+            @click="() => {
+              list.splice(index, 1);
+            }"
+          >
+            <span class="sr-only">Delete this header mod</span>
+            <i class="i-lucide-x size-4" />
+          </Button>
+          <ActionsDropdown
+            v-model:list="list"
+            v-model:field="list[index]!"
+            :index
+          />
+        </div>
       </div>
     </template>
   </Group>

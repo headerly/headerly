@@ -147,49 +147,57 @@ const canUseCurrentUrl = computed(() => {
       />
     </template>
     <template #item="{ index }">
-      <Input
-        v-model.trim.lazy="domainsFilter.items[index]!.value"
-        placeholder="example.com"
+      <div
         class="
-          text-base
-          placeholder:italic
+          flex flex-1 flex-col items-end gap-1
+          sm:flex-row
         "
-      />
-      <div class="ml-1 flex gap-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
-                variant="secondary"
-                size="icon-xs"
-                :disabled="!canUseCurrentUrl"
-                @click="() => {
-                  domainsFilter.items[index]!.value = currentUrl!.hostname;
-                }"
-              >
-                <i class="i-lucide-at-sign size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              Use the domain of the current tab
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <Button
-          variant="secondary"
-          size="icon-xs"
-          @click="() => {
-            domainsFilter.items.splice(index, 1);
-          }"
-        >
-          <span class="sr-only">Delete this domain</span>
-          <i class="i-lucide-x size-4" />
-        </Button>
-        <ActionsDropdown
-          v-model:list="domainsFilter.items"
-          v-model:field="domainsFilter.items[index]!"
-          :index
+      >
+        <Input
+          v-model.trim.lazy="domainsFilter.items[index]!.value"
+          placeholder="example.com"
+          class="
+            w-full text-base
+            placeholder:italic
+            sm:w-auto
+          "
         />
+        <div class="ml-1 flex gap-0.5">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button
+                  variant="secondary"
+                  size="icon-xs"
+                  :disabled="!canUseCurrentUrl"
+                  @click="() => {
+                    domainsFilter.items[index]!.value = currentUrl!.hostname;
+                  }"
+                >
+                  <i class="i-lucide-at-sign size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                Use the domain of the current tab
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Button
+            variant="secondary"
+            size="icon-xs"
+            @click="() => {
+              domainsFilter.items.splice(index, 1);
+            }"
+          >
+            <span class="sr-only">Delete this domain</span>
+            <i class="i-lucide-x size-4" />
+          </Button>
+          <ActionsDropdown
+            v-model:list="domainsFilter.items"
+            v-model:field="domainsFilter.items[index]!"
+            :index
+          />
+        </div>
       </div>
     </template>
   </Group>

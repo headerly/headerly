@@ -17,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { useMediaQuery } from "@vueuse/core";
 import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions, useProfileActions } from "./actions";
@@ -25,6 +26,8 @@ import PriorityDialog from "./PriorityDialog.vue";
 const profile = defineModel<Profile>("profile", {
   required: true,
 });
+
+const isCompact = useMediaQuery("(max-width: var(--breakpoint-sm))");
 
 const actions = useProfileActions();
 const mainActionIds = ["toggle", "delete"] as const satisfies ActionKey[];
@@ -37,41 +40,54 @@ const moreActionIdGroups = [
 ] as const satisfies (ActionKey[] | "separator")[];
 const moreActionGroups = transformIdsToActions(moreActionIdGroups);
 
+const compactActionIdGroups = [
+  ["toggle", "delete"],
+  "separator",
+  ...moreActionIdGroups,
+] as const satisfies (ActionKey[] | "separator")[];
+const compactActionGroups = transformIdsToActions(compactActionIdGroups);
+
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
 </script>
 
 <template>
   <div class="flex items-center gap-1">
-    <TooltipProvider v-for="action in mainActions" :key="action.id">
-      <Tooltip>
-        <TooltipTrigger as-child>
-          <Button
-            variant="secondary"
-            size="icon-sm"
-            :class="cn(
-              action.id === 'toggle' && !profile.enabled && (
-                'bg-primary! text-primary-foreground!'
-              ),
-            )"
-            @click="action.onClick(profile, {
-              openComments: () => commentsDialogRef?.open(),
-              openPriority: () => priorityDialogRef?.open(),
-            })"
-          >
-            <i
-              class="size-4"
-              :class="action.icon?.(profile)"
-            />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {{ action.label(profile) }}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <template v-if="!isCompact">
+      <TooltipProvider v-for="action in mainActions" :key="action.id">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button
+              variant="secondary"
+              size="icon-sm"
+              :class="cn(
+                action.id === 'toggle' && !profile.enabled && (
+                  'bg-primary! text-primary-foreground!'
+                ),
+              )"
+              @click="action.onClick(profile, {
+                openComments: () => commentsDialogRef?.open(),
+                openPriority: () => priorityDialogRef?.open(),
+              })"
+            >
+              <i
+                class="size-4"
+                :class="action.icon?.(profile)"
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {{ action.label(profile) }}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
-    <slot name="after-main" />
+      <slot name="after-main" />
+    </template>
+    <!-- Keep slot mounted on compact so dialogs/event buses stay active -->
+    <div v-else class="hidden">
+      <slot name="after-main" />
+    </div>
 
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
@@ -87,7 +103,11 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
         align="end"
         class="min-w-40"
       >
-        <template v-for="(actionsOrSeparator, index) in moreActionGroups" :key="index">
+        <template v-if="isCompact && $slots['compact-extra']">
+          <slot name="compact-extra" />
+          <DropdownMenuSeparator />
+        </template>
+        <template v-for="(actionsOrSeparator, index) in (isCompact ? compactActionGroups : moreActionGroups)" :key="index">
           <DropdownMenuSeparator v-if="actionsOrSeparator === 'separator'" />
           <DropdownMenuGroup
             v-else
