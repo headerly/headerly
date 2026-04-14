@@ -43,8 +43,8 @@ function handleRemove() {
     v-if="variant === 'default'"
     :value="item.label"
     :class="cn(`
-      relative inline-flex h-7 shrink-0 cursor-default items-center rounded-md
-      border bg-background ps-2 pe-7 pl-2 text-xs font-medium
+      relative inline-flex h-7 max-w-26 shrink-0 cursor-default items-center
+      rounded-md border bg-background ps-2 pe-7 pl-2 text-xs font-medium
       text-secondary-foreground transition-all
       hover:bg-background
       disabled:pointer-events-none disabled:cursor-not-allowed

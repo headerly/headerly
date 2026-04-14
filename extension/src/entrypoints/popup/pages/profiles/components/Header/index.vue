@@ -2,6 +2,10 @@
 import type { HTMLAttributes } from "vue";
 import { Button } from "#/ui/button";
 import {
+  DropdownMenuGroup,
+  DropdownMenuItem,
+} from "#/ui/dropdown-menu";
+import {
   Input,
 } from "#/ui/input";
 import {
@@ -10,13 +14,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useEventListener } from "@vueuse/core";
+import { useEventBus, useEventListener } from "@vueuse/core";
 import { ref } from "vue";
+import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
+import { openAddModModalKey } from "./components/AddModModal/open";
 import EmojiPicker from "./components/EmojiPicker.vue";
 
 const { class: className } = defineProps<{
@@ -24,6 +30,9 @@ const { class: className } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+
+const isCompact = useCompactScreen();
+const addModBus = useEventBus(openAddModModalKey);
 
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
@@ -128,27 +137,42 @@ const undoAndRedoButtonGroup = [
       </div>
     </div>
     <div class="flex items-center justify-between gap-1 p-1">
-      <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              variant="secondary"
-              size="icon-sm"
-              :disabled="btn.disabled"
-              @click="btn.onClick"
-            >
-              <i :class="cn(btn.icon, 'size-4')" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <component :is="btn.tooltip" />
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <template v-if="!isCompact">
+        <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Button
+                variant="secondary"
+                size="icon-sm"
+                :disabled="btn.disabled"
+                @click="btn.onClick"
+              >
+                <i :class="cn(btn.icon, 'size-4')" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <component :is="btn.tooltip" />
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </template>
 
       <IconsGroupWithMore :profile="profilesStore.selectedProfile">
         <template #after-main>
           <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
+        </template>
+        <template #compact-extra>
+          <DropdownMenuGroup>
+            <DropdownMenuItem :disabled="!profilesStore.canUndo" @click="profilesStore.undo">
+              <span>Undo</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem :disabled="!profilesStore.canRedo" @click="profilesStore.redo">
+              <span>Redo</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="addModBus.emit({ target: 'actions' })">
+              <span>Add action or condition</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </template>
       </IconsGroupWithMore>
     </div>

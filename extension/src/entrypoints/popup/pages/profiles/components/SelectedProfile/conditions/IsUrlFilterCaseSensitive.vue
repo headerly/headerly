@@ -2,7 +2,6 @@
 import type { Filter } from "@/lib/schema";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import {
@@ -43,9 +42,6 @@ const radioValue = computed({
           <Label for="off" class="font-normal">Off</Label>
         </div>
       </RadioGroup>
-    </template>
-    <template #name-before>
-      <Checkbox v-model:checked="model.enabled" />
     </template>
     <template #name-after>
       <TooltipProvider>

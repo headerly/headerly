@@ -140,52 +140,58 @@ const canUseCurrentUrl = computed(() => {
       />
     </template>
     <template #item="{ index }">
-      <Input
-        v-model.trim.lazy="list[index]!.value"
-        type="text"
-        placeholder="|https://example.com/"
+      <div
         class="
-          flex-1
-          placeholder:italic
+          flex flex-1 flex-col items-end gap-1
+          sm:flex-row
         "
-      />
-      <div class="ml-1 flex gap-0.5">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button
-                variant="secondary"
-                size="icon-xs"
-                :disabled="!canUseCurrentUrl"
-                @click="() => {
-                  list[index]!.value = filterType === 'urlFilter'
-                    // Metacharacters *+?()|
-                    ? `|${currentUrl!.href}|` : currentUrl!.href.replaceAll(/[-\\^$*+?()|.\[\]{}:]/g, '\\$&');
-                }"
-              >
-                <i class="i-lucide-at-sign size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              Use the URL of the current tab
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <Button
-          variant="secondary"
-          size="icon-xs"
-          @click="() => {
-            list.splice(index, 1);
-          }"
-        >
-          <span class="sr-only">Delete this header mod</span>
-          <i class="i-lucide-x size-4" />
-        </Button>
-        <ActionsDropdown
-          v-model:list="list"
-          v-model:field="list[index]!"
-          :index
+      >
+        <Input
+          v-model.trim.lazy="list[index]!.value"
+          placeholder="|https://example.com/"
+          class="
+            text-base
+            placeholder:italic
+          "
         />
+        <div class="ml-1 flex gap-0.5">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button
+                  variant="secondary"
+                  size="icon-xs"
+                  :disabled="!canUseCurrentUrl"
+                  @click="() => {
+                    list[index]!.value = filterType === 'urlFilter'
+                      // Metacharacters *+?()|
+                      ? `|${currentUrl!.href}|` : currentUrl!.href.replaceAll(/[-\\^$*+?()|.\[\]{}:]/g, '\\$&');
+                  }"
+                >
+                  <i class="i-lucide-at-sign size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                Use the URL of the current tab
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Button
+            variant="secondary"
+            size="icon-xs"
+            @click="() => {
+              list.splice(index, 1);
+            }"
+          >
+            <span class="sr-only">Delete this header mod</span>
+            <i class="i-lucide-x size-4" />
+          </Button>
+          <ActionsDropdown
+            v-model:list="list"
+            v-model:field="list[index]!"
+            :index
+          />
+        </div>
       </div>
     </template>
   </Group>
