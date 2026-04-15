@@ -99,6 +99,9 @@ const nextOperation = computed(() => {
                 w-full text-base
                 placeholder:italic
               "
+              @change="() => {
+                field.name = field.name.trim().toLocaleLowerCase();
+              }"
             />
           </ComboboxAnchor>
 
