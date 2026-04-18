@@ -1,4 +1,3 @@
-import type { Entries } from "type-fest";
 import type { GroupType, HeaderModGroup, Profile } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
@@ -6,7 +5,6 @@ import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
-import { onMessage } from "@/entrypoints/background/message";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
@@ -44,31 +42,6 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
-
-  onMessage("unregisterAllRules", () => {
-    profileId2ErrorMessageRecord.value = {};
-    profileId2RelatedRuleIdRecord.value = {};
-  });
-
-  onMessage("updateProfileErrorMessage", (message) => {
-    const { upsertRecord: upsertErrorMap = {}, deleteIds = [] } = message.data;
-    for (const [profileId, errorMessage] of Object.entries(upsertErrorMap) as Entries<typeof upsertErrorMap>) {
-      profileId2ErrorMessageRecord.value[profileId] = errorMessage;
-    }
-    for (const profileId of deleteIds) {
-      delete profileId2ErrorMessageRecord.value[profileId];
-    }
-  });
-
-  onMessage("updateProfileRelatedRuleId", (message) => {
-    const { upsertRecord: upsertRuleIdMap = {}, deleteIds = [] } = message.data;
-    for (const [profileId, relatedRuleId] of Object.entries(upsertRuleIdMap) as Entries<typeof upsertRuleIdMap>) {
-      profileId2RelatedRuleIdRecord.value[profileId] = relatedRuleId;
-    }
-    for (const profileId of deleteIds) {
-      delete profileId2RelatedRuleIdRecord.value[profileId];
-    }
-  });
 
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);

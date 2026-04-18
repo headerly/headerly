@@ -1,10 +1,8 @@
 import type { ProfileChanges } from "../index";
-import type { UpdateProfileErrorMessageOptions, UpdateProfileRelatedRuleIdOptions } from "../message";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
-import { sendMessage } from "../message";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
-import { logReceivingEndDoesNotExistOtherError, updateBadgeCount } from "./util";
+import { updateBadgeCount } from "./util";
 
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
@@ -139,40 +137,24 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
   return results;
 }
 
-async function handleRegistrationRelatedRuleIdChange(options: UpdateProfileRelatedRuleIdOptions) {
+async function handleRegistrationRelatedRuleIdChange(options: { upsertRecord?: Record<string, number>; deleteIds?: string[] }) {
   const { upsertRecord = {}, deleteIds = [] } = options;
-  try {
-    await sendMessage("updateProfileRelatedRuleId", {
-      upsertRecord,
-      deleteIds,
-    });
-  } catch (error) {
-    logReceivingEndDoesNotExistOtherError(error);
-    const currentRecord = await profileId2RelatedRuleIdRecordItem.getValue();
-    const newRecord = { ...currentRecord, ...upsertRecord };
-    for (const id of deleteIds) {
-      delete newRecord[id];
-    }
-    await profileId2RelatedRuleIdRecordItem.setValue(newRecord);
+  const currentRecord = await profileId2RelatedRuleIdRecordItem.getValue();
+  const newRecord = { ...currentRecord, ...upsertRecord };
+  for (const id of deleteIds) {
+    delete newRecord[id];
   }
+  await profileId2RelatedRuleIdRecordItem.setValue(newRecord);
 }
 
-async function handleRegistrationErrorMessageChange(options: UpdateProfileErrorMessageOptions) {
+async function handleRegistrationErrorMessageChange(options: { upsertRecord?: Record<string, string>; deleteIds?: string[] }) {
   const { upsertRecord = {}, deleteIds = [] } = options;
-  try {
-    await sendMessage("updateProfileErrorMessage", {
-      upsertRecord,
-      deleteIds,
-    });
-  } catch (error) {
-    logReceivingEndDoesNotExistOtherError(error);
-    const currentRecord = await profileId2ErrorMessageRecordItem.getValue();
-    const newRecord = { ...currentRecord, ...upsertRecord };
-    for (const id of deleteIds) {
-      delete newRecord[id];
-    }
-    await profileId2ErrorMessageRecordItem.setValue(newRecord);
+  const currentRecord = await profileId2ErrorMessageRecordItem.getValue();
+  const newRecord = { ...currentRecord, ...upsertRecord };
+  for (const id of deleteIds) {
+    delete newRecord[id];
   }
+  await profileId2ErrorMessageRecordItem.setValue(newRecord);
 }
 
 async function getNewRuleId() {
