@@ -45,3 +45,5 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 .rolldown
 dist
+
+CLAUDE.md
