@@ -62,7 +62,7 @@ export function useProfileActions() {
     },
     {
       id: "ruleScope",
-      label: p => `Rule: ${p.ruleScope === "session" ? "Session" : "Dynamic"}`,
+      label: p => `Scope: ${p.ruleScope === "session" ? "Session" : "Dynamic"}`,
       onClick: (_, opts) => opts?.openRuleScope?.(),
     },
     {
