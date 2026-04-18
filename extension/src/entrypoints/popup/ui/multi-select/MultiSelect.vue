@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "#/ui/popover";
+import { useWindowSize } from "@vueuse/core";
 import { LucideCheck, LucideX } from "lucide-vue-next";
 import {
   ComboboxInput,
@@ -20,7 +21,7 @@ import {
   TagsInputRoot,
   useFilter,
 } from "reka-ui";
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 import SelectableTag from "./SelectableTag.vue";
 
 interface Option {
@@ -49,7 +50,8 @@ const props = defineProps<MultiSelectProps>();
 
 const { contains } = useFilter({ sensitivity: "base" });
 
-const maxVisibleTags = ref(3);
+const { width } = useWindowSize();
+const maxVisibleTags = computed(() => Math.max(1, Math.floor((width.value - 100) / 200)));
 
 const filteredOptions = computed(() =>
   props.options.filter(option =>
@@ -120,8 +122,8 @@ function removeTagByValue(value: string) {
         v-model="selectedItems"
         delimiter=""
         class="
-          relative h-[36px] cursor-text rounded-md border border-input p-1
-          text-sm transition-[color,box-shadow] outline-none
+          relative h-9 cursor-text rounded-md border border-input p-1 text-sm
+          transition-[color,box-shadow] outline-none
           focus-within:border-ring focus-within:ring-[3px]
           focus-within:ring-ring/50
           has-disabled:pointer-events-none has-disabled:cursor-not-allowed
@@ -170,7 +172,7 @@ function removeTagByValue(value: string) {
             <TagsInputInput
               :placeholder="modelValue.length > 0 ? '' : props.placeholder || 'Select options'"
               class="
-                min-w-[120px] flex-1 bg-transparent px-2 py-1 outline-hidden
+                min-w-30 flex-1 bg-transparent px-2 py-1 outline-hidden
                 placeholder:text-muted-foreground/70
                 disabled:cursor-not-allowed
               "

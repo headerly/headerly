@@ -7,6 +7,8 @@
 @theme {
   --font-sans: "Inter Variable", sans-serif;
   --font-mono: "Roboto Mono Variable", monospace;
+  /* 600px is the width of the popup; anything smaller than this is considered mobile. */
+  --breakpoint-sm: 590px;
 };
 
 :root {

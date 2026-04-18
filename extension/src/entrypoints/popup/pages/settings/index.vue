@@ -134,7 +134,7 @@ function InfoTooltip({ description }: { description: string }) {
               <InfoTooltip description="If you find that the number of active profiles you defined is inconsistent with the number displayed in the extension popup badge, please click the button below." />
             </Button>
             <Button as-child>
-              <a href="https://github.com/headerly/headerly/issues/new?template=BUG_REPORT.yml">
+              <a target="_blank" href="https://github.com/headerly/headerly/issues/new?template=BUG_REPORT.yml">
                 <i class="i-lucide-github" />
                 Report an issue
               </a>
