@@ -56,7 +56,9 @@ export const RULE_ACTION_TYPES = [
   "modifyHeaders",
   "allowAllRequests",
 ] as const satisfies `${Browser.declarativeNetRequest.RuleActionType}`[];
+
 const ruleActionTypeSchema = z.enum(RULE_ACTION_TYPES);
+export type RuleActionType = z.infer<typeof ruleActionTypeSchema>;
 
 export const DOMAIN_TYPES = [
   "firstParty",

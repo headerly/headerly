@@ -1,4 +1,4 @@
-import type { GroupType, HeaderModGroup, Profile } from "@/lib/schema";
+import type { GroupType, HeaderModGroup, Profile, RuleActionType } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -50,13 +50,14 @@ export const useProfilesStore = defineStore("profiles", () => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
 
-  function addProfile(profile?: Profile) {
+  function addProfile(ruleActionType: RuleActionType) {
     const newProfile = createProfile({
       name: `New Profile ${manager.value.profiles.length + 1}`,
       emoji: getProfileIcon(),
+      ruleActionType,
     });
-    manager.value.profiles.push(profile ?? newProfile);
-    manager.value.selectedProfileId = (profile ?? newProfile).id;
+    manager.value.profiles.push(newProfile);
+    manager.value.selectedProfileId = newProfile.id;
   }
 
   function duplicateProfile(profileId?: string) {
@@ -78,9 +79,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     // IMPORTANT: Ensure that there is at least one profile in the storage.
     if (manager.value.profiles.length === 1) {
       const targetProfileIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
+      const targetProfile = manager.value.profiles[targetProfileIndex]!;
       // Don't using `Object.assign` to ensure reactivity.
       manager.value.profiles[targetProfileIndex] = createProfile({
-        id: manager.value.profiles[targetProfileIndex]!.id,
+        id: targetProfile.id,
+        ruleActionType: targetProfile.ruleActionType,
       });
       return;
     }
@@ -107,44 +110,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (targetProfile) {
       targetProfile.enabled = !targetProfile.enabled;
     }
-  }
-
-  function moveProfileUp(profileId?: string) {
-    const targetProfileId = profileId ?? manager.value.selectedProfileId;
-    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
-
-    // Can't move up if it's already the first profile
-    if (currentIndex <= 0)
-      return;
-
-    const targetProfile = manager.value.profiles[currentIndex]!;
-    manager.value.profiles.splice(currentIndex, 1);
-    manager.value.profiles.splice(currentIndex - 1, 0, targetProfile);
-  }
-
-  function moveProfileDown(profileId?: string) {
-    const targetProfileId = profileId ?? manager.value.selectedProfileId;
-    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
-
-    // Can't move down if it's already the last profile
-    if (currentIndex === -1 || currentIndex >= manager.value.profiles.length - 1)
-      return;
-
-    const targetProfile = manager.value.profiles[currentIndex]!;
-    manager.value.profiles.splice(currentIndex, 1);
-    manager.value.profiles.splice(currentIndex + 1, 0, targetProfile);
-  }
-
-  function canMoveProfileUp(profileId?: string) {
-    const targetProfileId = profileId ?? manager.value.selectedProfileId;
-    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
-    return currentIndex > 0;
-  }
-
-  function canMoveProfileDown(profileId?: string) {
-    const targetProfileId = profileId ?? manager.value.selectedProfileId;
-    const currentIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
-    return currentIndex !== -1 && currentIndex < manager.value.profiles.length - 1;
   }
 
   function addModGroup(type: ActionType, groupType: GroupType) {
@@ -189,10 +154,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     duplicateProfile,
     deleteProfile,
     toggleProfileEnabled,
-    moveProfileUp,
-    moveProfileDown,
-    canMoveProfileUp,
-    canMoveProfileDown,
     addModGroup,
     addSyncCookieGroup,
     undo,

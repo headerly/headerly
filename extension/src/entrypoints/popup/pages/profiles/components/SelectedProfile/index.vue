@@ -18,7 +18,7 @@ const { class: className } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
-const hasAnyFilters = computed(() => {
+const hasAnyNonEmptyFilters = computed(() => {
   const filters = profilesStore.selectedProfile.filters;
   return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
     return match(key)
@@ -61,8 +61,7 @@ const empty = computed(() => {
     group => group.items.length === 0,
   );
 
-  const noFilters = !hasAnyFilters.value;
-
+  const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
   return noMods && noFilters;
 },
 );
@@ -100,7 +99,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
       />
     </div>
     <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
-      <AlertGroup :empty :has-any-filters />
+      <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
       <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
         <ModGroup
           v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"

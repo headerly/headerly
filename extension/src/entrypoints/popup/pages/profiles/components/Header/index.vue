@@ -15,7 +15,8 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useEventBus, useEventListener } from "@vueuse/core";
-import { ref } from "vue";
+import { match } from "ts-pattern";
+import { computed, ref } from "vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
@@ -88,6 +89,12 @@ const undoAndRedoButtonGroup = [
     onClick: profilesStore.redo,
   },
 ] as const;
+
+const defaultTab = computed(() => {
+  return match(profilesStore.selectedProfile.ruleActionType)
+    .with("modifyHeaders", "redirect", () => "actions" as const)
+    .otherwise(() => "conditions" as const);
+});
 </script>
 
 <template>
@@ -159,7 +166,7 @@ const undoAndRedoButtonGroup = [
 
       <IconsGroupWithMore :profile="profilesStore.selectedProfile">
         <template #after-main>
-          <AddModModal tooltip-text="Add a new action or condition" default-tab="actions" />
+          <AddModModal tooltip-text="Add a new action or condition" :default-tab />
         </template>
         <template #compact-extra>
           <DropdownMenuGroup>

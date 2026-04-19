@@ -39,11 +39,17 @@ export const tabs: Tab[] = [
         title: "Modify HTTP Request Header",
         description: "Set, remove, or append HTTP request headers.",
         action: () => profilesStore.addModGroup("request", "checkbox"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        },
       },
       {
         title: "Modify HTTP Response Header",
         description: "Set, remove, or append HTTP response headers.",
         action: () => profilesStore.addModGroup("response", "checkbox"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        },
       },
       {
         title: "Cookie Sync to Request Header",
@@ -58,6 +64,9 @@ export const tabs: Tab[] = [
               profilesStore.addSyncCookieGroup();
             }
           }
+        },
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
         },
       },
     ],

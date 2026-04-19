@@ -25,9 +25,9 @@ const profilesStore = useProfilesStore();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
 const actionIdGroups = [
-  ["toggle", "duplicate", "delete", "comments", "rulePriority"],
+  ["toggle", "duplicate", "delete", "comments", "rulePriority", "ruleActionType"],
   "separator",
-  ["copyJson", "copyId"],
+  ["copyJson"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const actionGroups = transformIdsToActions(actionIdGroups);
 
