@@ -1,20 +1,6 @@
 import type { Profile } from "@/lib/schema";
 import { useRouter } from "vue-router";
-import { toast } from "vue-sonner";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { stripProfileIds } from "@/lib/schema";
-
-export async function copyProfileId(profile: Profile) {
-  await navigator.clipboard.writeText(profile.id);
-  toast.success("Profile ID copied to clipboard.");
-}
-
-export async function copyProfile(profile: Profile) {
-  const profileWithoutId = stripProfileIds(profile);
-  const profileStringWithoutId = JSON.stringify([profileWithoutId], null, 2);
-  await navigator.clipboard.writeText(profileStringWithoutId);
-  toast.success("Profile copied to clipboard.");
-}
 
 export type ActionKey
   = | "toggle"

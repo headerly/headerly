@@ -82,7 +82,7 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
 
 export function getRuleActionTypeLabel(type: RuleActionType) {
   const typeMap = {
-    modifyHeaders: "Modify header",
+    modifyHeaders: "Modify headers",
     block: "Block",
     allow: "Allow",
     upgradeScheme: "Upgrade scheme",

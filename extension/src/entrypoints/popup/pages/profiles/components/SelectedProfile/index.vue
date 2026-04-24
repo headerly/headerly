@@ -44,7 +44,7 @@ const hasAnyNonEmptyFilters = computed(() => {
         },
       )
       .with("domainType", "isUrlFilterCaseSensitive", (k) => {
-        return Boolean(filters[k]);
+        return Boolean(filters[k]?.enabled);
       })
       .exhaustive();
   });

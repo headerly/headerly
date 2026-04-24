@@ -18,7 +18,7 @@ const { description, class: className } = defineProps<{
   <TooltipProvider :delay-duration="200">
     <Tooltip>
       <TooltipTrigger as-child>
-        <button :class="cn('flex items-center', className)">
+        <button type="button" :class="cn('flex items-center', className)">
           <i
             class="
               i-lucide-circle-question-mark size-4 cursor-pointer
