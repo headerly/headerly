@@ -22,6 +22,7 @@ import {
 import { useEventBus } from "@vueuse/core";
 import { ref } from "vue";
 import { openAddModModalKey } from "./open";
+import TabList from "./TabList.vue";
 import { tabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
@@ -80,30 +81,11 @@ bus.on(({ target }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">
-          <div class="mt-2 flex max-h-[60vh] flex-col gap-1 overflow-y-auto">
-            <button
-              v-for="{ title, description, action, disabled } in tab.items"
-              :key="title"
-              :disabled
-              class="
-                flex w-full flex-col items-start rounded-md border p-3 text-left
-                text-sm transition-colors
-                hover:bg-accent
-                disabled:pointer-events-none disabled:opacity-50
-              "
-              @click="() => {
-                action()
-                isOpen = false
-              }"
-            >
-              <div class="font-semibold">
-                {{ title }}
-              </div>
-              <div class="text-xs text-muted-foreground">
-                {{ description }}
-              </div>
-            </button>
-          </div>
+          <TabList
+            :tab-value="tab.value"
+            :items="tab.items"
+            @close="isOpen = false"
+          />
         </TabsContent>
       </Tabs>
     </DialogContent>
