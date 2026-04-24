@@ -1,14 +1,30 @@
 import type { ProfileCoreData } from "..";
+import { match } from "ts-pattern";
 
 export function buildAction(profile: ProfileCoreData) {
-  const requestHeaders = buildRequestHeaders(profile);
-  const responseHeaders = buildResponseHeaders(profile);
-  const action = {
-    type: "modifyHeaders",
-    requestHeaders: requestHeaders.length > 0 ? requestHeaders : undefined,
-    responseHeaders: responseHeaders.length > 0 ? responseHeaders : undefined,
-  } as const satisfies Browser.declarativeNetRequest.RuleAction;
-  return action;
+  return match(profile.ruleActionType)
+    .with("block", "allow", "upgradeScheme", "allowAllRequests", (type) => {
+      return {
+        type,
+      } as const satisfies Browser.declarativeNetRequest.RuleAction;
+    })
+    .with("modifyHeaders", (type) => {
+      const requestHeaders = buildRequestHeaders(profile);
+      const responseHeaders = buildResponseHeaders(profile);
+      return {
+        type,
+        requestHeaders,
+        responseHeaders,
+      } as const satisfies Browser.declarativeNetRequest.RuleAction;
+    })
+    .with("redirect", (type) => {
+      return {
+        type,
+        // TODO: Next step implement support
+        redirect: {},
+      } as const satisfies Browser.declarativeNetRequest.RuleAction;
+    })
+    .exhaustive();
 }
 
 function buildRequestHeaders(profile: ProfileCoreData) {

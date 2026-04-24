@@ -1,7 +1,9 @@
 import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
+import { match, P } from "ts-pattern";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { buildAction } from "./DNR/buildAction";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { updateBadgeCount } from "./DNR/util";
@@ -83,7 +85,15 @@ export default defineBackground({
   },
 });
 
-const NEED_WATCH_KEYS = ["enabled", "requestHeaderModGroups", "responseHeaderModGroups", "filters", "syncCookieGroups", "priority"] as const satisfies (keyof Profile)[];
+const NEED_WATCH_KEYS = [
+  "enabled",
+  "requestHeaderModGroups",
+  "responseHeaderModGroups",
+  "filters",
+  "syncCookieGroups",
+  "priority",
+  "ruleActionType",
+] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
 
@@ -95,6 +105,14 @@ export interface ProfileChanges {
 
 function pickProfileFields(profile: Profile) {
   return pick(profile, CORE_KEYS);
+}
+
+function isNotEmptyModifyHeaderRule(profile: ProfileCoreData) {
+  const action = buildAction(profile);
+  return !(
+    action.type === "modifyHeaders"
+    && (action.requestHeaders.length === 0 && action.responseHeaders.length === 0)
+  );
 }
 
 function diffProfiles(
@@ -110,8 +128,11 @@ function diffProfiles(
 
   // Handle deleted profiles
   for (const oldProfile of oldProfiles) {
-    if (!newPickedProfileMap.has(oldProfile.id) && oldProfile.enabled) {
-      deleted.push(pickProfileFields(oldProfile));
+    const oldPickedProfile = oldPickedProfileMap.get(oldProfile.id)!;
+    if (!newPickedProfileMap.has(oldPickedProfile.id)
+      && oldPickedProfile.enabled
+      && isNotEmptyModifyHeaderRule(oldPickedProfile)) {
+      deleted.push(oldPickedProfile);
     }
   }
 
@@ -120,22 +141,24 @@ function diffProfiles(
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
 
-    if (!oldPickedProfile) {
-      if (newProfile.enabled) {
-        created.push(newPickedProfile);
-      }
-    } else {
-      const wasEnabled = oldPickedProfile.enabled;
-      const isEnabled = newPickedProfile.enabled;
+    const wasActive = Boolean(oldPickedProfile?.enabled && isNotEmptyModifyHeaderRule(oldPickedProfile));
+    const isActive = newPickedProfile.enabled && isNotEmptyModifyHeaderRule(newPickedProfile);
+    const isModified = Boolean(oldPickedProfile
+      && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS)));
 
-      if (wasEnabled && !isEnabled) {
-        deleted.push(newPickedProfile);
-      } else if (!wasEnabled && isEnabled) {
-        created.push(newPickedProfile);
-      } else if (isEnabled && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS))) {
+    match([wasActive, isActive, isModified])
+      .with([false, true, P._], () => created.push(newPickedProfile))
+      .with([true, false, P._], () => deleted.push(newPickedProfile))
+      .with([true, true, true], () => {
         modified.push(newPickedProfile);
-      }
-    }
+      })
+      .with([false, false, P._], () => {
+        // No need to do anything for inactive profiles, even if they are modified or created, since they don't generate any DNR rules.
+      })
+      .with([true, true, false], () => {
+        // No need to do anything if an active profile is modified but the fields that affect DNR rules are not changed.
+      })
+      .exhaustive();
   }
 
   return { deleted, modified, created };

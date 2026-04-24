@@ -89,7 +89,6 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
   for (const profile of profilesToRegister) {
     const condition = buildCondition(profile, { nativeResourceTypeBehavior });
     const action = buildAction(profile);
-    const hasActions = action.requestHeaders?.length || action.responseHeaders?.length;
 
     const rule = {
       id: await getNewRuleId(),
@@ -105,20 +104,17 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       : undefined;
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
-      // If there are no actions, simply delete the rule(if exists).
       removeRuleIds: deleteRuleId ? [deleteRuleId] : undefined,
-      addRules: hasActions ? [rule] : undefined,
-    }).then(async () => {
+      addRules: [rule],
+    }).then(() => {
       return {
         success: true,
         profileId: profile.id,
-        deleteRuleId: deleteRuleId && !hasActions ? deleteRuleId : undefined,
-        newRuleId: hasActions ? rule.id : undefined,
-      };
+        newRuleId: rule.id,
+      } as const;
     }).catch(async (error) => {
-      const isUpdateOldRuleError = hasActions && deleteRuleId;
       // If updating the old rule failed, try to remove it again to avoid dangling rules.
-      if (isUpdateOldRuleError) {
+      if (deleteRuleId) {
         await browser.declarativeNetRequest.updateDynamicRules({
           removeRuleIds: [deleteRuleId],
         });
@@ -126,9 +122,9 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       return {
         success: false,
         profileId: profile.id,
-        deleteRuleId: isUpdateOldRuleError ? deleteRuleId : undefined,
+        deleteRuleId,
         error,
-      };
+      } as const;
     });
 
     results.push({ status: "fulfilled", value: result });
