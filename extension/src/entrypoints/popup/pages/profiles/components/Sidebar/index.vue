@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import InfoTooltip from "#/components/InfoTooltip.vue";
+import Badge from "#/ui/badge/Badge.vue";
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,
@@ -14,8 +15,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
-import { Label } from "#/ui/label";
 
+import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
 import {
   Tooltip,
@@ -80,6 +81,9 @@ const ruleActionTypeDescriptions = {
         <DropdownMenuGroup>
           <DropdownMenuItem @click="profilesStore.addProfile(defaultRuleActionType)">
             Quick create
+            <InfoTooltip
+              description="The default rule action type can be changed in the submenu of New profile"
+            />
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
@@ -102,8 +106,13 @@ const ruleActionTypeDescriptions = {
                   />
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem @click="defaultRuleActionType = type">
+                  <DropdownMenuItem v-if="type !== defaultRuleActionType" @click="defaultRuleActionType = type">
                     Make as default
+                  </DropdownMenuItem>
+                  <DropdownMenuItem v-else>
+                    <Badge>
+                      Action type by default
+                    </Badge>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
