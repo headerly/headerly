@@ -29,6 +29,13 @@ function deleteGroup() {
   const index = groups.findIndex(_group => _group.id === group.value.id);
   if (index !== -1) {
     groups.splice(index, 1);
+    if (groups.length === 0) {
+      if (actionType === "request") {
+        delete profilesStore.selectedProfile.requestHeaderModGroups;
+      } else {
+        delete profilesStore.selectedProfile.responseHeaderModGroups;
+      }
+    }
   }
 }
 </script>
@@ -38,6 +45,7 @@ function deleteGroup() {
     v-model:list="group.items"
     :type="group.type"
     :name="actionType === 'request' ? 'Request Headers' : 'Response Headers'"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions

@@ -7,6 +7,7 @@ import Button from "#/ui/button/Button.vue";
 import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
+import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/utils";
 
 // Define specific item types
@@ -31,6 +32,8 @@ const list = defineModel<FilterItemType<T>[]>({
 const { type } = defineProps<{
   type: T;
 }>();
+
+const profilesStore = useProfilesStore();
 
 const nameMap = {
   resourceTypes: "Resource Types",
@@ -98,14 +101,13 @@ const multiSelectOptions = computed(() =>
 );
 
 function deleteGroup() {
-  list.value = list.value.filter(item => !item.enabled);
+  delete profilesStore.selectedProfile.filters[type];
 }
 
 function newField() {
   const newItem = {
     id: uuidv7(),
     enabled: true,
-    comments: "",
     value: [],
   } as unknown as FilterItemType<T>;
 
@@ -114,7 +116,12 @@ function newField() {
 </script>
 
 <template>
-  <Group v-model:list="list" :name="nameMap[type]" type="radio">
+  <Group
+    v-model:list="list"
+    :name="nameMap[type]"
+    type="radio"
+    @delete-empty-group="deleteGroup"
+  >
     <template #name-after>
       <GroupActions
         v-model:list="list"

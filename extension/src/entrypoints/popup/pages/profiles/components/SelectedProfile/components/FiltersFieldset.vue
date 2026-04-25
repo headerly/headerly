@@ -18,32 +18,32 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
     v-model="filters.isUrlFilterCaseSensitive"
   />
   <UrlOrRegexFilter
-    v-if="filters.urlFilter?.length"
+    v-if="filters.urlFilter"
     v-model="filters.urlFilter"
     filter-type="urlFilter"
   />
   <UrlOrRegexFilter
-    v-if="filters.regexFilter?.length"
+    v-if="filters.regexFilter"
     v-model="filters.regexFilter"
     filter-type="regexFilter"
   />
   <DomainsFilter
-    v-if="filters.requestDomains?.items.length"
+    v-if="filters.requestDomains"
     v-model="filters.requestDomains"
     filter-type="requestDomains"
   />
   <DomainsFilter
-    v-if="filters.excludedRequestDomains?.items.length"
+    v-if="filters.excludedRequestDomains"
     v-model="filters.excludedRequestDomains"
     filter-type="excludedRequestDomains"
   />
   <DomainsFilter
-    v-if="filters.initiatorDomains?.items.length"
+    v-if="filters.initiatorDomains"
     v-model="filters.initiatorDomains"
     filter-type="initiatorDomains"
   />
   <DomainsFilter
-    v-if="filters.excludedInitiatorDomains?.items.length"
+    v-if="filters.excludedInitiatorDomains"
     v-model="filters.excludedInitiatorDomains"
     filter-type="excludedInitiatorDomains"
   />

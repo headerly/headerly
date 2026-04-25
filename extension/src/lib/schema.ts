@@ -4,7 +4,7 @@ import { z } from "zod";
 const uuidSchema = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
   enabled: z.boolean(),
-  comments: z.string(),
+  comments: z.string().optional(),
   id: uuidSchema,
 });
 export type GroupItem = z.infer<typeof groupItemSchema>;
@@ -56,7 +56,9 @@ export const RULE_ACTION_TYPES = [
   "modifyHeaders",
   "allowAllRequests",
 ] as const satisfies `${Browser.declarativeNetRequest.RuleActionType}`[];
+
 const ruleActionTypeSchema = z.enum(RULE_ACTION_TYPES);
+export type RuleActionType = z.infer<typeof ruleActionTypeSchema>;
 
 export const DOMAIN_TYPES = [
   "firstParty",
@@ -154,7 +156,7 @@ const profileSchema = z.object({
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
-  comments: z.string(),
+  comments: z.string().optional(),
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
   priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),

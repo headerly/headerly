@@ -97,7 +97,6 @@ function newField() {
     id: uuidv7(),
     enabled: true,
     value: "",
-    comments: "",
   };
   addItemToGroup(list.value, item, "radio");
 }
@@ -130,6 +129,7 @@ const canUseCurrentUrl = computed(() => {
     v-model:list="list"
     :name="field[filterType].title"
     type="radio"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions

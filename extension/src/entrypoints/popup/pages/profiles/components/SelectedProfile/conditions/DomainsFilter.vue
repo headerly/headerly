@@ -102,7 +102,6 @@ function newField() {
     id: uuidv7(),
     enabled: true,
     value: "",
-    comments: "",
   };
   addItemToGroup(domainsFilter.value.items, item, domainsFilter.value.type);
 }
@@ -132,10 +131,10 @@ const canUseCurrentUrl = computed(() => {
 
 <template>
   <Group
-    v-if="domainsFilter.items.length"
     v-model:list="domainsFilter.items"
     :name="field[filterType].title"
     :type="domainsFilter.type"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions
