@@ -4,7 +4,6 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 interface Tab {
   label: string;
   value: "actions" | "conditions";
-  icon: string;
   items: {
     key: string;
     title: string;
@@ -34,7 +33,6 @@ export const tabs: Tab[] = [
   {
     label: "Actions",
     value: "actions",
-    icon: "i-lucide-cross",
     items: [
       {
         key: "modify-request-header",
@@ -69,7 +67,6 @@ export const tabs: Tab[] = [
   {
     label: "Conditions",
     value: "conditions",
-    icon: "i-lucide-list-filter-plus",
     items: [
       {
         key: "url-filter",

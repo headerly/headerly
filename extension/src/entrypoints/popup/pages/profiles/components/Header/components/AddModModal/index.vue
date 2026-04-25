@@ -76,7 +76,6 @@ bus.on(({ target }) => {
       <Tabs v-model="currentTab" class="w-full">
         <TabsList class="grid w-full grid-cols-2">
           <TabsTrigger v-for="tab in tabs" :key="tab.value" :value="tab.value">
-            <i :class="tab.icon" class="me-2 size-4" />
             {{ tab.label }}
           </TabsTrigger>
         </TabsList>
