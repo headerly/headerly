@@ -4,6 +4,7 @@ import { ref, useTemplateRef, watch } from "vue";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 
 interface Item {
+  key: string;
   title: string;
   description: string;
   action: () => void;
@@ -25,13 +26,13 @@ const savedOrder = useStorage<string[]>(orderStorageKey, []);
 const list = ref<Item[]>([]);
 
 function initList() {
-  const itemsMap = new Map(props.items.map(item => [item.title, item]));
+  const itemsMap = new Map(props.items.map(item => [item.key, item]));
   const newList: Item[] = [];
 
-  for (const title of savedOrder.value) {
-    if (itemsMap.has(title)) {
-      newList.push(itemsMap.get(title)!);
-      itemsMap.delete(title);
+  for (const key of savedOrder.value) {
+    if (itemsMap.has(key)) {
+      newList.push(itemsMap.get(key)!);
+      itemsMap.delete(key);
     }
   }
 
@@ -44,9 +45,12 @@ function initList() {
 
 initList();
 
-watch(list, (newList) => {
-  savedOrder.value = newList.map(item => item.title);
-}, { deep: true });
+watch(
+  () => list.value.map(item => item.key),
+  (keys) => {
+    savedOrder.value = keys;
+  },
+);
 
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 
@@ -65,7 +69,7 @@ useSortableAndAutoAnimate({
   >
     <div
       v-for="item in list"
-      :key="item.title"
+      :key="item.key"
       class="
         group flex w-full items-center rounded-md border bg-background text-left
         text-sm transition-colors
