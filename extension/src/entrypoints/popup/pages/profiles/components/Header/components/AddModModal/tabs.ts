@@ -4,8 +4,8 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 interface Tab {
   label: string;
   value: "actions" | "conditions";
-  icon: string;
   items: {
+    key: string;
     title: string;
     description: string;
     action: () => void;
@@ -33,9 +33,9 @@ export const tabs: Tab[] = [
   {
     label: "Actions",
     value: "actions",
-    icon: "i-lucide-cross",
     items: [
       {
+        key: "modify-request-header",
         title: "Modify HTTP Request Header",
         description: "Set, remove, or append HTTP request headers.",
         action: () => profilesStore.addModGroup("request", "checkbox"),
@@ -44,6 +44,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "modify-response-header",
         title: "Modify HTTP Response Header",
         description: "Set, remove, or append HTTP response headers.",
         action: () => profilesStore.addModGroup("response", "checkbox"),
@@ -52,6 +53,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "cookie-sync-request-header",
         title: "Cookie Sync to Request Header",
         description: "Sync cookies for a specific website to the request header (New permissions need to be granted).",
         action: async () => {
@@ -74,9 +76,9 @@ export const tabs: Tab[] = [
   {
     label: "Conditions",
     value: "conditions",
-    icon: "i-lucide-list-filter-plus",
     items: [
       {
+        key: "url-filter",
         title: "URL Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         action: async () => {
@@ -96,6 +98,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "regex-filter",
         title: "Regex Filter",
         description: "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
         action: () => {
@@ -114,6 +117,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "request-domains",
         title: "Request Domains",
         description: "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         action: async () => {
@@ -135,6 +139,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "excluded-request-domains",
         title: "Excluded Request Domains",
         description: "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         action: async () => {
@@ -166,6 +171,7 @@ export const tabs: Tab[] = [
       //   action: () => {},
       // },
       {
+        key: "domain-type",
         title: "Domain Type",
         description: "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
         action: () => {
@@ -179,11 +185,13 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "excluded-domain-type",
         title: "Excluded Domain Type",
         description: "Excludes requests based on whether the network request is first-party or third-party to the domain from which it originated. If omitted, all requests are accepted.",
         action: () => {},
       },
       {
+        key: "initiator-domains",
         title: "Initiator Domains",
         description: "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         action: async () => {
@@ -205,6 +213,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "excluded-initiator-domains",
         title: "Excluded Initiator Domains",
         description: "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
         action: async () => {
@@ -226,6 +235,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "request-methods",
         title: "Request Methods",
         description: "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
         action: () => {
@@ -242,6 +252,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "excluded-request-methods",
         title: "Excluded Request Methods",
         description: "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
         action: () => {
@@ -258,6 +269,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "resource-types",
         title: "Resource Types",
         description: "List of resource types which the rule can match. An empty list is not allowed.",
         action: () => {
@@ -274,6 +286,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "excluded-resource-types",
         title: "Excluded Resource Types",
         description: "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         action: () => {
@@ -290,6 +303,7 @@ export const tabs: Tab[] = [
         },
       },
       {
+        key: "url-regex-filter-case-sensitive",
         title: "Url & Regex Filter Case Sensitive",
         description: "Specifies whether the URL filter is case sensitive.",
         action: () => {
