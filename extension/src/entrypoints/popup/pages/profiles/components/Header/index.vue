@@ -20,7 +20,8 @@ import { computed, ref } from "vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/entrypoints/popup/ui/badge";
+import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
 import { openAddModModalKey } from "./components/AddModModal/open";
@@ -90,6 +91,11 @@ const undoAndRedoButtonGroup = [
   },
 ] as const;
 
+const actionTypeBadge = computed(() => ({
+  icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
+  label: getRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
+}));
+
 const defaultTab = computed(() => {
   return match(profilesStore.selectedProfile.ruleActionType)
     .with("modifyHeaders", "redirect", () => "actions" as const)
@@ -119,7 +125,7 @@ const defaultTab = computed(() => {
         }"
       >
         <span
-          class="max-w-45 min-w-5 truncate"
+          class="max-w-43 min-w-5 truncate"
         >
           {{ profilesStore.selectedProfile.name }}</span>
       </Button>
@@ -141,6 +147,50 @@ const defaultTab = computed(() => {
         >
           <i class="i-lucide-check-check size-4" />
         </Button>
+      </div>
+      <div v-if="!profileNameEditing" class="flex flex-wrap gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Badge variant="secondary">
+                <i class="i-lucide-layers-2" />
+                <span
+                  class="
+                    hidden
+                    md:inline
+                  "
+                >Priority: </span>
+                <span
+                  class="
+                    max-w-4 truncate
+                    md:max-w-none
+                  "
+                >{{ profilesStore.selectedProfile.priority ?? 1 }}</span>
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              Priority: {{ profilesStore.selectedProfile.priority ?? 1 }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Badge>
+                <i :class="actionTypeBadge.icon" />
+                <span
+                  class="
+                    hidden
+                    md:inline
+                  "
+                >{{ actionTypeBadge.label }}</span>
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {{ `Rule action type: ${actionTypeBadge.label}` }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
     <div class="flex items-center justify-between gap-1 p-1">

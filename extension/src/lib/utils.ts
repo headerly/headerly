@@ -91,3 +91,15 @@ export function getRuleActionTypeLabel(type: RuleActionType) {
   } as const;
   return typeMap[type];
 }
+
+export function getRuleActionTypeIcon(type: RuleActionType) {
+  const iconMap = {
+    modifyHeaders: "i-lucide-zap",
+    block: "i-lucide-ban",
+    allow: "i-lucide-shield-check",
+    upgradeScheme: "i-lucide-lock",
+    allowAllRequests: "i-lucide-shield",
+    redirect: "i-lucide-corner-right-down",
+  } as const;
+  return iconMap[type];
+}
