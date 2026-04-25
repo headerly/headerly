@@ -77,5 +77,17 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
       .exhaustive();
   });
 
+  // Always exclude the extension itself from its own rules to prevent lockout.
+  const extensionId = browser.runtime.id;
+  if (condition.excludedInitiatorDomains) {
+    if (!condition.excludedInitiatorDomains.includes(extensionId)) {
+      condition.excludedInitiatorDomains.push(extensionId);
+    }
+  } else if (!condition.initiatorDomains?.includes(extensionId)) {
+    // If initiatorDomains is set and includes extensionId, we don't want to exclude it.
+    // But if it's not set, we add it to excludedInitiatorDomains.
+    condition.excludedInitiatorDomains = [extensionId];
+  }
+
   return condition;
 }
