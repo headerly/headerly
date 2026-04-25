@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
 import { uuidv7 } from "uuidv7";
-import { ref, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
 
 const list = defineModel<T[]>("list", {
   required: true,
@@ -41,8 +41,6 @@ const moreActions = [
     onClick: () => commentsDialogRef.value?.open(),
   },
 ];
-
-const comments = ref(field.value.comments || "");
 </script>
 
 <template>
@@ -71,6 +69,6 @@ const comments = ref(field.value.comments || "");
   </DropdownMenu>
   <CommentsDialog
     ref="commentsDialogRef"
-    v-model="comments"
+    v-model="field.comments"
   />
 </template>

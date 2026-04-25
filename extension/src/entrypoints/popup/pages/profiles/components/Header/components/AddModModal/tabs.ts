@@ -39,12 +39,18 @@ export const tabs: Tab[] = [
         title: "Modify HTTP Request Header",
         description: "Set, remove, or append HTTP request headers.",
         action: () => profilesStore.addModGroup("request", "checkbox"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        },
       },
       {
         key: "modify-response-header",
         title: "Modify HTTP Response Header",
         description: "Set, remove, or append HTTP response headers.",
         action: () => profilesStore.addModGroup("response", "checkbox"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        },
       },
       {
         key: "cookie-sync-request-header",
@@ -60,6 +66,9 @@ export const tabs: Tab[] = [
               profilesStore.addSyncCookieGroup();
             }
           }
+        },
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
         },
       },
     ],
@@ -79,7 +88,6 @@ export const tabs: Tab[] = [
               id: uuidv7(),
               enabled: true,
               value: hostname ? `||${hostname}/` : "",
-              comments: "",
             },
           ];
         },
@@ -99,7 +107,6 @@ export const tabs: Tab[] = [
               id: uuidv7(),
               enabled: true,
               value: "",
-              comments: "",
             },
           ];
         },
@@ -122,7 +129,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname,
-                comments: "",
               },
             ],
           };
@@ -145,7 +151,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -198,7 +203,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -221,7 +225,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -240,7 +243,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["get"], // Default to GET method
             },
           ];
@@ -258,7 +260,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["get"], // Default to GET method
             },
           ];
@@ -276,7 +277,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["main_frame"], // Default to main_frame
             },
           ];
@@ -294,7 +294,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["main_frame"], // Default to main_frame
             },
           ];

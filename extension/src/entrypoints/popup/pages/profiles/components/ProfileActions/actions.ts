@@ -1,28 +1,25 @@
 import type { Profile } from "@/lib/schema";
 import { useRouter } from "vue-router";
-import { toast } from "vue-sonner";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { stripProfileIds } from "@/lib/schema";
 
-export async function copyProfileId(profile: Profile) {
-  await navigator.clipboard.writeText(profile.id);
-  toast.success("Profile ID copied to clipboard.");
-}
-
-export async function copyProfile(profile: Profile) {
-  const profileWithoutId = stripProfileIds(profile);
-  const profileStringWithoutId = JSON.stringify([profileWithoutId], null, 2);
-  await navigator.clipboard.writeText(profileStringWithoutId);
-  toast.success("Profile copied to clipboard.");
-}
-
-export type ActionKey = "toggle" | "delete" | "duplicate" | "comments" | "rulePriority" | "copyJson" | "copyId";
+export type ActionKey
+  = | "toggle"
+    | "delete"
+    | "duplicate"
+    | "comments"
+    | "rulePriority"
+    | "ruleActionType"
+    | "copyJson";
 
 export interface ProfileActionItem {
   id: ActionKey;
   label: (profile: Profile) => string;
   icon?: (profile: Profile) => string;
-  onClick: (profile: Profile, options?: { openComments?: () => void; openPriority?: () => void }) => void;
+  onClick: (profile: Profile, options?: {
+    openComments?: () => void;
+    openPriority?: () => void;
+    openChangeRuleActionType?: () => void;
+  }) => void;
   disabled?: (profile: Profile) => boolean;
   variant?: "default" | "destructive";
 }
@@ -53,25 +50,25 @@ export function useProfileActions() {
     },
     {
       id: "comments",
-      label: p => (p.comments.length > 0 ? "Edit comments" : "Add comments"),
+      label: () => "Comments",
       onClick: (_, opts) => opts?.openComments?.(),
     },
     {
       id: "rulePriority",
-      label: p => `Priority: ${p.priority ?? 1}`,
-      icon: () => "i-lucide-arrow-up-z-a",
+      label: () => `Priority`,
       onClick: (_, opts) => opts?.openPriority?.(),
+    },
+    {
+      id: "ruleActionType",
+      label: () => {
+        return "Rule action type";
+      },
+      onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
     },
     {
       id: "copyJson",
       label: () => "Export to JSON",
-      icon: () => "i-lucide-arrow-up-to-line",
       onClick: p => router.push(`/export/${p.id}`),
-    },
-    {
-      id: "copyId",
-      label: () => "Copy ID",
-      onClick: p => copyProfileId(p),
     },
   ] satisfies ProfileActionItem[];
 

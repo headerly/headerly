@@ -41,10 +41,7 @@ async function confirmImport() {
       return;
     }
 
-    for (const profileData of result.data) {
-      const profileWithIds = addProfileIds(profileData);
-      profilesStore.addProfile(profileWithIds);
-    }
+    profilesStore.manager.profiles.push(...result.data.map(addProfileIds));
 
     toast.success(`Successfully imported ${result.data.length} profile${result.data.length === 1 ? "" : "s"}!`);
     open.value = false;

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import type { RuleActionType } from "@/lib/schema";
+import InfoTooltip from "#/components/InfoTooltip.vue";
+import Badge from "#/ui/badge/Badge.vue";
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,
@@ -7,8 +10,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
+
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
 import {
@@ -17,11 +24,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-
+import { useStorage } from "@vueuse/core";
 import { defineAsyncComponent, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn } from "@/lib/utils";
+import { cn, getRuleActionTypeLabel } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
@@ -35,9 +42,21 @@ const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const importModalOpen = ref(false);
 
+const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
+
 function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
 }
+
+const ruleActionTypes = ["modifyHeaders", "block", "allow", "upgradeScheme", "allowAllRequests"] as const;
+const ruleActionTypeDescriptions = {
+  modifyHeaders: "Modify request/response headers from the network request",
+  block: "Block the network request",
+  allow: "Allow the network request. The request won't be intercepted if there is an allow rule which matches it",
+  upgradeScheme: "Upgrade the network request URL's scheme to HTTPS if the request is HTTP or FTP",
+  allowAllRequests: "Allow all requests within a frame hierarchy, including the frame request itself",
+  redirect: "Redirect the network request.",
+} as const;
 </script>
 
 <template>
@@ -60,22 +79,62 @@ function openInFullscreen() {
       </DropdownMenuTrigger>
       <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
         <DropdownMenuGroup>
-          <DropdownMenuItem @click="profilesStore.addProfile()">
-            New profile
+          <DropdownMenuItem @click="profilesStore.addProfile(defaultRuleActionType)">
+            Quick create
+            <InfoTooltip
+              description="The default rule action type can be changed in the submenu of New profile"
+            />
           </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              New profile
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent class="min-w-40">
+              <DropdownMenuSub
+                v-for="type in ruleActionTypes"
+                :key="type"
+              >
+                <DropdownMenuSubTrigger
+                  class="cursor-pointer"
+                  hide-arrow
+                  @click="profilesStore.addProfile(type)"
+                >
+                  {{ getRuleActionTypeLabel(type) }}
+                  <InfoTooltip
+                    :description="ruleActionTypeDescriptions[type]"
+                    class="ml-1"
+                  />
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem v-if="type !== defaultRuleActionType" @click="defaultRuleActionType = type">
+                    Make as default
+                  </DropdownMenuItem>
+                  <DropdownMenuItem v-else>
+                    <Badge>
+                      Action type by default
+                    </Badge>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <ProfileManage>
             <DropdownMenuItem @select.prevent>
               Search profile
             </DropdownMenuItem>
           </ProfileManage>
-          <DropdownMenuItem @click="importModalOpen = true">
-            Import profiles
-          </DropdownMenuItem>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/export">
-              Export profiles
-            </RouterLink>
-          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuGroup>
+            <DropdownMenuItem @click="importModalOpen = true">
+              Import profiles
+            </DropdownMenuItem>
+            <DropdownMenuItem as-child>
+              <RouterLink to="/export">
+                Export profiles
+              </RouterLink>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

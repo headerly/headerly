@@ -18,7 +18,7 @@ const { class: className } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
-const hasAnyFilters = computed(() => {
+const hasAnyNonEmptyFilters = computed(() => {
   const filters = profilesStore.selectedProfile.filters;
   return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
     return match(key)
@@ -40,11 +40,11 @@ const hasAnyFilters = computed(() => {
         "initiatorDomains",
         "excludedInitiatorDomains",
         (k) => {
-          return filters[k]?.items.some(f => Boolean(f.value)) ?? false;
+          return filters[k]?.items.some(f => Boolean(f.value.trim())) ?? false;
         },
       )
       .with("domainType", "isUrlFilterCaseSensitive", (k) => {
-        return Boolean(filters[k]);
+        return Boolean(filters[k]?.enabled);
       })
       .exhaustive();
   });
@@ -61,11 +61,9 @@ const empty = computed(() => {
     group => group.items.length === 0,
   );
 
-  const noFilters = !hasAnyFilters.value;
-
+  const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
   return noMods && noFilters;
-},
-);
+});
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
@@ -94,13 +92,13 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
       </p>
       <InteractiveGridPattern
         class="
-          inset-0 h-[150%] skew-y-12
+          inset-0 h-[200%] skew-y-12
           mask-[radial-gradient(350px_circle_at_center,white,transparent)]
         "
       />
     </div>
     <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
-      <AlertGroup :empty :has-any-filters />
+      <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
       <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
         <ModGroup
           v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"

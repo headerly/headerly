@@ -21,7 +21,7 @@ const profilesStore = useProfilesStore();
 
 function ignoreWarning() {
   profilesStore.selectedProfile.filters.urlFilter = [
-    { id: uuidv7(), enabled: true, value: "*", comments: "" },
+    { id: uuidv7(), enabled: true, value: "*" },
   ];
 }
 

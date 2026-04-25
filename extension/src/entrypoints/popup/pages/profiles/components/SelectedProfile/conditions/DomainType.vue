@@ -2,7 +2,6 @@
 import type { Filter } from "@/lib/schema";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import {
@@ -35,9 +34,6 @@ const profilesStore = useProfilesStore();
           <Label for="thirdParty" class="font-normal">Third Party</Label>
         </div>
       </RadioGroup>
-    </template>
-    <template #name-before>
-      <Checkbox v-model:checked="model.enabled" />
     </template>
     <template #name-after>
       <TooltipProvider>

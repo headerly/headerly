@@ -23,6 +23,9 @@ function deleteGroup() {
   );
   if (index !== undefined && index !== -1) {
     profilesStore.selectedProfile.syncCookieGroups?.splice(index, 1);
+    if (profilesStore.selectedProfile.syncCookieGroups?.length === 0) {
+      delete profilesStore.selectedProfile.syncCookieGroups;
+    }
   }
 }
 </script>
@@ -32,6 +35,7 @@ function deleteGroup() {
     v-model:list="group.items"
     :type="group.type"
     name="Sync Cookies"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions
