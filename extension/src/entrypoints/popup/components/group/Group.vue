@@ -5,7 +5,7 @@ import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { computed, useTemplateRef } from "vue";
+import { computed, useTemplateRef, watch } from "vue";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import Fieldset from "./Fieldset.vue";
 import SortableItem from "./SortableItem.vue";
@@ -18,6 +18,16 @@ const { name, type } = defineProps<{
   name: string;
   type?: GroupType;
 }>();
+
+const emit = defineEmits<{
+  (e: "deleteEmptyGroup"): void;
+}>();
+
+watch(() => list.value.length, (newLength) => {
+  if (newLength === 0) {
+    emit("deleteEmptyGroup");
+  }
+});
 
 const checkedState = computed(() => {
   const enabledCount = list.value.filter(item => item.enabled).length;
