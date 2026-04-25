@@ -1,6 +1,11 @@
 import type { ProfileCoreData } from "..";
 import { match } from "ts-pattern";
 
+/**
+ * Builds the DNR rule action from the profile. Note that it doesn't guarantee the resulting action
+ * won't cause errors during registration. The issue where both arrays are empty for `modifyHeaders`
+ * is already handled in `diffProfiles`.
+ */
 export function buildAction(profile: ProfileCoreData) {
   return match(profile.ruleActionType)
     .with("block", "allow", "upgradeScheme", "allowAllRequests", (type) => {

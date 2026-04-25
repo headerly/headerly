@@ -40,7 +40,7 @@ const hasAnyNonEmptyFilters = computed(() => {
         "initiatorDomains",
         "excludedInitiatorDomains",
         (k) => {
-          return filters[k]?.items.some(f => Boolean(f.value)) ?? false;
+          return filters[k]?.items.some(f => Boolean(f.value.trim())) ?? false;
         },
       )
       .with("domainType", "isUrlFilterCaseSensitive", (k) => {
@@ -63,8 +63,7 @@ const empty = computed(() => {
 
   const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
   return noMods && noFilters;
-},
-);
+});
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
