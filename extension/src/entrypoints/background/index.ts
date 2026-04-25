@@ -77,7 +77,7 @@ export default defineBackground({
       const changes = {
         deleted: [],
         modified: [],
-        created: manager.profiles.filter(p => p.enabled).map(pickProfileFields),
+        created: manager.profiles.filter(p => p.enabled && isNotEmptyModifyHeaderRule(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
       lastProfilesStorageItem.setValue(manager.profiles);
