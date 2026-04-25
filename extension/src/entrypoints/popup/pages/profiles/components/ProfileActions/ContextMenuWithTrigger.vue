@@ -15,6 +15,7 @@ import { computed, useTemplateRef } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions } from "./actions";
+import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 
 const props = defineProps<{
@@ -33,6 +34,7 @@ const actionGroups = transformIdsToActions(actionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
+const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
 </script>
 
 <template>
@@ -59,6 +61,7 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
+              openChangeRuleActionType: () => changeTypeDialogRef?.open(),
             })"
           >
             {{ action.label(profile) }}
@@ -73,6 +76,10 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
     <PriorityDialog
       ref="priorityDialogRef"
       v-model="profile.priority"
+    />
+    <ChangeTypeDialog
+      ref="changeTypeDialogRef"
+      v-model:rule-action-type="profile.ruleActionType"
     />
   </ContextMenu>
 </template>
