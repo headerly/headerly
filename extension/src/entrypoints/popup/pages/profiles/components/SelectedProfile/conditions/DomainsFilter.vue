@@ -102,7 +102,6 @@ function newField() {
     id: uuidv7(),
     enabled: true,
     value: "",
-    comments: "",
   };
   addItemToGroup(domainsFilter.value.items, item, domainsFilter.value.type);
 }

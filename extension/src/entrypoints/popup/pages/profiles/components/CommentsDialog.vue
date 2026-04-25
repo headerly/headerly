@@ -13,15 +13,13 @@ import { Label } from "#/ui/label";
 import { Textarea } from "#/ui/textarea";
 import { ref } from "vue";
 
-const comments = defineModel<string>({
-  required: true,
-});
+const comments = defineModel<string>();
 
 const openState = ref(false);
-const commentsInput = ref(comments.value);
+const commentsInput = ref(comments.value ?? "");
 
 function open() {
-  commentsInput.value = comments.value;
+  commentsInput.value = comments.value ?? "";
   openState.value = true;
 }
 

@@ -487,7 +487,6 @@ describe("edge cases", () => {
       name: "Minimal Profile",
       enabled: true,
       emoji: "⚡",
-      comments: "",
       requestHeaderModGroups: [],
       responseHeaderModGroups: [],
       syncCookieGroups: [],

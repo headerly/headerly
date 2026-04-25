@@ -97,7 +97,6 @@ function newField() {
     id: uuidv7(),
     enabled: true,
     value: "",
-    comments: "",
   };
   addItemToGroup(list.value, item, "radio");
 }

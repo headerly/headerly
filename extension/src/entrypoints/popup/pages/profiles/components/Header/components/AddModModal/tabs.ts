@@ -86,7 +86,6 @@ export const tabs: Tab[] = [
               id: uuidv7(),
               enabled: true,
               value: hostname ? `||${hostname}/` : "",
-              comments: "",
             },
           ];
         },
@@ -105,7 +104,6 @@ export const tabs: Tab[] = [
               id: uuidv7(),
               enabled: true,
               value: "",
-              comments: "",
             },
           ];
         },
@@ -127,7 +125,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname,
-                comments: "",
               },
             ],
           };
@@ -149,7 +146,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -199,7 +195,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -221,7 +216,6 @@ export const tabs: Tab[] = [
                 id: uuidv7(),
                 enabled: true,
                 value: hostname ? `||${hostname}/` : "",
-                comments: "",
               },
             ],
           };
@@ -239,7 +233,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["get"], // Default to GET method
             },
           ];
@@ -256,7 +249,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["get"], // Default to GET method
             },
           ];
@@ -273,7 +265,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["main_frame"], // Default to main_frame
             },
           ];
@@ -290,7 +281,6 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              comments: "",
               value: ["main_frame"], // Default to main_frame
             },
           ];

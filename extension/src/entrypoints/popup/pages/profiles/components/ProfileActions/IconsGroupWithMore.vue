@@ -82,7 +82,6 @@ function handleChangeType() {
       id: uuidv7(),
       enabled: true,
       value: "",
-      comments: "",
     }];
   }
 }

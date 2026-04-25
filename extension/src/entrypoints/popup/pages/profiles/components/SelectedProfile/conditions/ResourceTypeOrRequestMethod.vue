@@ -108,7 +108,6 @@ function newField() {
   const newItem = {
     id: uuidv7(),
     enabled: true,
-    comments: "",
     value: [],
   } as unknown as FilterItemType<T>;
 
