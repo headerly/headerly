@@ -1,6 +1,7 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import { sendMessage } from "##/background/message";
 import Fieldset from "#/components/group/Fieldset.vue";
+import InfoTooltip from "#/components/InfoTooltip.vue";
 import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
@@ -12,12 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
+
 import { toast } from "vue-sonner";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
@@ -25,23 +21,6 @@ import Sidebar from "./components/Sidebar.vue";
 import { settings } from "./fields";
 
 const settingsStore = useSettingsStore();
-
-function InfoTooltip({ description }: { description: string }) {
-  return (
-    <TooltipProvider delay-duration={200}>
-      <Tooltip>
-        <TooltipTrigger as-child>
-          <button class="flex items-center">
-            <i class="i-lucide-circle-question-mark size-4 cursor-pointer" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="top" class="w-80">
-          {description}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 </script>
 
 <template>

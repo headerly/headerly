@@ -132,10 +132,10 @@ const canUseCurrentUrl = computed(() => {
 
 <template>
   <Group
-    v-if="domainsFilter.items.length"
     v-model:list="domainsFilter.items"
     :name="field[filterType].title"
     :type="domainsFilter.type"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions

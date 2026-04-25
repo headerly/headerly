@@ -130,6 +130,7 @@ const canUseCurrentUrl = computed(() => {
     v-model:list="list"
     :name="field[filterType].title"
     type="radio"
+    @delete-empty-group="deleteGroup"
   >
     <template #name-after>
       <GroupActions

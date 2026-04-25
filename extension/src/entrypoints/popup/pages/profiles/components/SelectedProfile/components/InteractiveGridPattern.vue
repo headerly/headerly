@@ -14,7 +14,7 @@ interface InteractiveGridPatternProps {
 const props = withDefaults(defineProps<InteractiveGridPatternProps>(), {
   width: 40,
   height: 40,
-  squares: () => [24, 24],
+  squares: () => [40, 40],
 });
 
 const horizontal = computed(() => props.squares[0]);

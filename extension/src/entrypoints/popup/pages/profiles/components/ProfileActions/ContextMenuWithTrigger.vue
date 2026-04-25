@@ -11,10 +11,13 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "#/ui/context-menu";
+import { match } from "ts-pattern";
+import { uuidv7 } from "uuidv7";
 import { computed, useTemplateRef } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { cn } from "@/lib/utils";
+import { cn, createMod } from "@/lib/utils";
 import { transformIdsToActions } from "./actions";
+import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 
 const props = defineProps<{
@@ -25,14 +28,48 @@ const profilesStore = useProfilesStore();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
 const actionIdGroups = [
-  ["toggle", "duplicate", "delete", "comments", "rulePriority"],
+  ["toggle", "duplicate", "delete", "comments", "rulePriority", "ruleActionType"],
   "separator",
-  ["copyJson", "copyId"],
+  ["copyJson"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const actionGroups = transformIdsToActions(actionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
+const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
+
+function handleChangeType() {
+  const p = profile.value;
+  match(p.ruleActionType)
+    .with("block", "allow", "upgradeScheme", "allowAllRequests", () => {
+      delete p.requestHeaderModGroups;
+      delete p.responseHeaderModGroups;
+      delete p.syncCookieGroups;
+    })
+    .with("modifyHeaders", () => {
+      p.requestHeaderModGroups ??= [{
+        id: uuidv7(),
+        type: "checkbox",
+        items: [createMod()],
+      }];
+    })
+    .with("redirect", () => {
+      delete p.requestHeaderModGroups;
+      delete p.responseHeaderModGroups;
+      delete p.syncCookieGroups;
+    })
+    .exhaustive();
+
+  // Ensure there is at least one filter
+  if (Object.keys(p.filters).length === 0) {
+    p.filters.urlFilter = [{
+      id: uuidv7(),
+      enabled: true,
+      value: "",
+      comments: "",
+    }];
+  }
+}
 </script>
 
 <template>
@@ -59,6 +96,7 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
+              openChangeRuleActionType: () => changeTypeDialogRef?.open(),
             })"
           >
             {{ action.label(profile) }}
@@ -73,6 +111,11 @@ const priorityDialogRef = useTemplateRef("priorityDialogRef");
     <PriorityDialog
       ref="priorityDialogRef"
       v-model="profile.priority"
+    />
+    <ChangeTypeDialog
+      ref="changeTypeDialogRef"
+      v-model:rule-action-type="profile.ruleActionType"
+      @changed="handleChangeType"
     />
   </ContextMenu>
 </template>
