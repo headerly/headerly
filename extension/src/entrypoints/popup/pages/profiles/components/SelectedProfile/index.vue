@@ -92,7 +92,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
       </p>
       <InteractiveGridPattern
         class="
-          inset-0 h-[150%] skew-y-12
+          inset-0 h-[200%] skew-y-12
           mask-[radial-gradient(350px_circle_at_center,white,transparent)]
         "
       />
