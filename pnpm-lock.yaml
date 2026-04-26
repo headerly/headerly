@@ -57,6 +57,9 @@ catalogs:
     '@total-typescript/ts-reset':
       specifier: ^0.6.1
       version: 0.6.1
+    '@tsconfig/node24':
+      specifier: ^24.0.4
+      version: 24.0.4
     '@types/node':
       specifier: ^24.12.0
       version: 24.12.2
@@ -215,6 +218,9 @@ importers:
       '@commitlint/types':
         specifier: 'catalog:'
         version: 20.5.0
+      '@tsconfig/node24':
+        specifier: 'catalog:'
+        version: 24.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.2
@@ -1896,6 +1902,9 @@ packages:
 
   '@total-typescript/ts-reset@0.6.1':
     resolution: {integrity: sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg==}
+
+  '@tsconfig/node24@24.0.4':
+    resolution: {integrity: sha512-2A933l5P5oCbv6qSxHs7ckKwobs8BDAe9SJ/Xr2Hy+nDlwmLE1GhFh/g/vXGRZWgxBg9nX/5piDtHR9Dkw/XuA==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -6789,6 +6798,8 @@ snapshots:
       vue: 3.5.33(typescript@6.0.3)
 
   '@total-typescript/ts-reset@0.6.1': {}
+
+  '@tsconfig/node24@24.0.4': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:

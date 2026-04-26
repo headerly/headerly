@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "postinstall": "wxt prepare",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --build"
   },
   "dependencies": {
     "@codemirror/lang-json": "catalog:",
