@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/headerly/headerly/compare/v1.1.0...v1.2.0) (2026-04-26)
+
+
+### Features
+
+* add a tooltip description for the quick create feature ([106f22f](https://github.com/headerly/headerly/commit/106f22f78460b4e9d74be15ae9abbe86a96f613d))
+* add drag-and-drop sorting to actions and conditions in modal ([#18](https://github.com/headerly/headerly/issues/18)) ([eaa2bbd](https://github.com/headerly/headerly/commit/eaa2bbd0353e601f7dfbfd6c8ccff6ced463c313))
+* supports "block", "allow", "upgrade schema", and "allow all requests" functions ([#17](https://github.com/headerly/headerly/issues/17)) ([62155ca](https://github.com/headerly/headerly/commit/62155ca7569bed0ffe23d1320bd0026d91079ce7))
+
+
+### Bug Fixes
+
+* always exclude the extension itself from its own rules to prevent lockout ([48df6d1](https://github.com/headerly/headerly/commit/48df6d1d110518da551cc88e539e08c64f42da62))
+* hide badge tooltip content on medium screens for better responsiveness ([40a4d7c](https://github.com/headerly/headerly/commit/40a4d7caf95c638616488161291046c4ee1aa76c))
+* unable to register modifyHeaders profile ([3fbc40d](https://github.com/headerly/headerly/commit/3fbc40d2298bdde85ac2da849e4b05ece46a8b25))
+
 ## [1.1.0](https://github.com/headerly/headerly/compare/v1.0.0...v1.1.0) (2026-04-15)
 
 
