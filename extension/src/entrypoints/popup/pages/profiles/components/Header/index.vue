@@ -168,7 +168,7 @@ const defaultTab = computed(() => {
                 >{{ profilesStore.selectedProfile.priority ?? 1 }}</span>
               </Badge>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="bottom" class="md:hidden">
               Priority: {{ profilesStore.selectedProfile.priority ?? 1 }}
             </TooltipContent>
           </Tooltip>
@@ -186,7 +186,7 @@ const defaultTab = computed(() => {
                 >{{ actionTypeBadge.label }}</span>
               </Badge>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="bottom" class="md:hidden">
               {{ `Rule action type: ${actionTypeBadge.label}` }}
             </TooltipContent>
           </Tooltip>
