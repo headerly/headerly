@@ -18,8 +18,8 @@ export function buildAction(profile: ProfileCoreData) {
       const responseHeaders = buildResponseHeaders(profile);
       return {
         type,
-        requestHeaders,
-        responseHeaders,
+        requestHeaders: requestHeaders.length > 0 ? requestHeaders : undefined,
+        responseHeaders: responseHeaders.length > 0 ? responseHeaders : undefined,
       } as const satisfies Browser.declarativeNetRequest.RuleAction;
     })
     .with("redirect", (type) => {

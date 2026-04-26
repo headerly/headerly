@@ -27,7 +27,7 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: Us
     // We need to store the original array in the proxy.
     // Note that this will still be broken if only some of the keys on the object are proxies!
     item.setValue(toRaw(value));
-  }, 100);
+  }, 200);
 
   const ref = useStorageAsync<T>(
     key,

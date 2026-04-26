@@ -111,7 +111,7 @@ function isNotEmptyModifyHeaderRule(profile: ProfileCoreData) {
   const action = buildAction(profile);
   return !(
     action.type === "modifyHeaders"
-    && (action.requestHeaders.length === 0 && action.responseHeaders.length === 0)
+    && (action.requestHeaders?.length === 0 && action.responseHeaders?.length === 0)
   );
 }
 
