@@ -1,0 +1,37 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleDetection": "force",
+    "libReplacement": false,
+    "rootDir": ".",
+    "types": [
+      "unplugin-turbo-console/client"
+    ],
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "./src/**/*",
+    "./src/**/*.vue",
+    "./.wxt/wxt.d.ts"
+  ],
+  "exclude": ["src/**/__TESTS__/*", "./.output"],
+
+  "vueCompilerOptions": {
+    "checkUnknownDirectives": true,
+    "plugins": [
+      "vue-router/volar/sfc-route-blocks",
+      "vue-router/volar/sfc-typed-router"
+    ]
+  }
+}
