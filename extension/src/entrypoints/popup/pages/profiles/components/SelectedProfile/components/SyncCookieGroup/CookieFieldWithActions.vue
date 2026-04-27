@@ -101,7 +101,7 @@ function handleDomainChange(e: Event) {
     const url = new URL(userInput);
     field.value.domain = url.hostname;
   } catch {
-    field.value.domain = (e.target as HTMLInputElement).value;
+    field.value.domain = userInput;
   }
   field.value.name = "";
   field.value.value = "";
@@ -111,7 +111,7 @@ function handleDomainChange(e: Event) {
 const isCookieDialogOpen = ref(false);
 
 const disabled = computed(() => {
-  return (cookies.value?.length ?? 0) === 0 || isPending.value;
+  return cookieOptions.value.length === 0;
 });
 
 function updateCookie(newKey: string) {
@@ -184,7 +184,7 @@ async function refreshCookie() {
         <div class="relative">
           <Select
             :model-value="getCookieKey(field)"
-            :disabled="disabled || isPending"
+            :disabled="disabled"
             @update:model-value="(v) => updateCookie(v)"
           >
             <SelectTrigger
