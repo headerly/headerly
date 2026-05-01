@@ -101,7 +101,7 @@ function handleDomainChange(e: Event) {
     const url = new URL(userInput);
     field.value.domain = url.hostname;
   } catch {
-    field.value.domain = (e.target as HTMLInputElement).value;
+    field.value.domain = userInput;
   }
   field.value.name = "";
   field.value.value = "";
