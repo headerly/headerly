@@ -108,10 +108,11 @@ function pickProfileFields(profile: Profile) {
 }
 
 function isNotEmptyModifyHeaderRule(profile: ProfileCoreData) {
+  // `buildAction` converts header arrays with `headers.length === 0` to `undefined`.
   const action = buildAction(profile);
   return !(
     action.type === "modifyHeaders"
-    && (action.requestHeaders?.length === 0 && action.responseHeaders?.length === 0)
+    && (action.requestHeaders === undefined && action.responseHeaders === undefined)
   );
 }
 
@@ -140,7 +141,6 @@ function diffProfiles(
   for (const newProfile of newProfiles) {
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
-
     const wasActive = Boolean(oldPickedProfile?.enabled && isNotEmptyModifyHeaderRule(oldPickedProfile));
     const isActive = newPickedProfile.enabled && isNotEmptyModifyHeaderRule(newPickedProfile);
     const isModified = Boolean(oldPickedProfile
