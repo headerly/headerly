@@ -32,12 +32,27 @@ function handleFormatJson() {
   userInput.value = formatJson();
 }
 
+async function ensureCookiesPermission() {
+  const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
+  if (hasCookiesPermission) {
+    return true;
+  }
+
+  return browser.permissions.request({ permissions: ["cookies"] });
+}
+
 async function confirmImport() {
   try {
     const parsed = JSON.parse(userInput.value);
     const result = profilesWithoutIdArraySchema.safeParse(parsed);
 
     if (!result.success) {
+      return;
+    }
+
+    const hasSyncCookieGroups = result.data.some(profile => Boolean(profile.syncCookieGroups?.length));
+    if (hasSyncCookieGroups && !await ensureCookiesPermission()) {
+      toast.error("Import cancelled: cookies permission is required for cookie sync profiles");
       return;
     }
 
