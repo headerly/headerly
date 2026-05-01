@@ -69,12 +69,12 @@ useSortableAndAutoAnimate({
       mt-2 flex max-h-[60vh] flex-col gap-1 overflow-y-auto
     "
   >
-    <div
+    <button
       v-for="item in list"
       :key="item.key"
       class="
-        group flex w-full items-center rounded-md border bg-background px-2
-        text-left text-sm transition-colors
+        group flex w-full cursor-pointer items-center rounded-md border
+        bg-background px-2 text-left text-sm transition-colors
         hover:bg-accent
         [[data-sorting]_&:not(.sortable-chosen)]:bg-background!
       "
@@ -109,6 +109,6 @@ useSortableAndAutoAnimate({
       >
         <i class="i-lucide-grip-vertical size-4" />
       </div>
-    </div>
+    </button>
   </div>
 </template>
