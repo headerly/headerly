@@ -113,7 +113,7 @@ Type-safe messaging between background and popup (`extension/src/entrypoints/bac
 
 ### Important Constraints
 
-- **Node version:** Must use >=24.12.0 (see `package.json` engines field)
+- **Node version:** Must use >=24.15.0 (see `package.json` engines field)
 - **Storage writes:** Debounced to avoid conflicts - never write in tight loops
 - **Service worker:** `storage.watch` must be registered synchronously at top level
 - **E2E testing:** Always use production builds and `headless=new` mode
