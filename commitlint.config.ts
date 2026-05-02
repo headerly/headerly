@@ -21,6 +21,7 @@ const config: UserConfig = {
         "test",
       ],
     ],
+    "body-max-line-length": [RuleConfigSeverity.Disabled],
     "header-max-length": [RuleConfigSeverity.Error, "always", 100],
   },
 };

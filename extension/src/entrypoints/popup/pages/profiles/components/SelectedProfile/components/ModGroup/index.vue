@@ -4,7 +4,7 @@ import type { ActionType } from "@/lib/types";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups, useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, createMod } from "@/lib/utils";
+import { addItemToGroup, createHeaderMod } from "@/lib/utils";
 import ModField from "./ModFieldWithActions.vue";
 
 const group = defineModel<HeaderModGroup>({
@@ -18,7 +18,7 @@ const { actionType } = defineProps<{
 const profilesStore = useProfilesStore();
 
 function addNewField() {
-  const mod = createMod();
+  const mod = createHeaderMod();
   addItemToGroup(group.value.items, mod, group.value.type);
 }
 

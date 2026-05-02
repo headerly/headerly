@@ -7,6 +7,12 @@ import { updateBadgeCount } from "./util";
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
 
+/**
+ * Intentionally registers DNR rules one by one instead of batching them.
+ * A single invalid rule should not cause every other rule in the batch to fail,
+ * and per-rule registration is what lets us associate an error message with the
+ * specific profile/rule that caused it.
+ */
 export async function updateRules(changes: ProfileChanges) {
   const [deleteResults, updateResults] = await Promise.all([
     deleteRules({ deleted: changes.deleted }),

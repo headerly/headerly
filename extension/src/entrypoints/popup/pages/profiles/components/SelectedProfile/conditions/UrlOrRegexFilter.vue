@@ -3,6 +3,7 @@ import type { UrlOrRegexFilterItem } from "@/lib/schema";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
+import { useCurrentTabUrl } from "#/composables/useCurrentTabUrl";
 import { Button } from "#/ui/button";
 import { Input } from "#/ui/input";
 import {
@@ -11,9 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useQuery } from "@tanstack/vue-query";
 import { uuidv7 } from "uuidv7";
-import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/utils";
 
@@ -101,27 +100,7 @@ function newField() {
   addItemToGroup(list.value, item, "radio");
 }
 
-function useCurrentUrlQuery() {
-  return useQuery({
-    queryKey: ["current-tab-url"],
-    queryFn: async () => {
-      const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
-      if (!currentTab?.url) {
-        return null;
-      };
-      return new URL(currentTab.url);
-    },
-  });
-}
-
-const { data: currentUrl, isPending } = useCurrentUrlQuery();
-
-const canUseCurrentUrl = computed(() => {
-  if (isPending.value || !currentUrl.value) {
-    return false;
-  }
-  return currentUrl.value.protocol === "http:" || currentUrl.value.protocol === "https:";
-});
+const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 </script>
 
 <template>

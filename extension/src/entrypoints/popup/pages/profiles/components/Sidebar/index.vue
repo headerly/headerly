@@ -48,14 +48,21 @@ function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
 }
 
-const ruleActionTypes = ["modifyHeaders", "block", "allow", "upgradeScheme", "allowAllRequests"] as const;
+const ruleActionTypes = [
+  "modifyHeaders",
+  "block",
+  "allow",
+  "upgradeScheme",
+  "allowAllRequests",
+  "redirect",
+] as const satisfies RuleActionType[];
 const ruleActionTypeDescriptions = {
   modifyHeaders: "Modify request/response headers from the network request",
   block: "Block the network request",
   allow: "Allow the network request. The request won't be intercepted if there is an allow rule which matches it",
   upgradeScheme: "Upgrade the network request URL's scheme to HTTPS if the request is HTTP or FTP",
   allowAllRequests: "Allow all requests within a frame hierarchy, including the frame request itself",
-  redirect: "Redirect the network request.",
+  redirect: "Redirect the network request",
 } as const;
 </script>
 

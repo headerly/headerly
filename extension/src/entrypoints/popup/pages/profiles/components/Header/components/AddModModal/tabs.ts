@@ -71,6 +71,16 @@ export const tabs: Tab[] = [
           return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
         },
       },
+      {
+        key: "simple-redirect-url",
+        title: "Simple redirect URL",
+        description: "Redirect matched requests to a specific URL.",
+        action: () => profilesStore.addRedirectUrlGroup(),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectUrlGroup?.length);
+        },
+      },
     ],
   },
   {

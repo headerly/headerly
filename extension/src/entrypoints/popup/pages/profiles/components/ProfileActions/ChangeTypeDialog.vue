@@ -37,8 +37,14 @@ function open() {
   openState.value = true;
 }
 
-// TODO: "redirect" should be added as an option when the type is supported
-const options = (["modifyHeaders", "block", "allow", "upgradeScheme", "allowAllRequests"] as const).map(value => ({
+const options = ([
+  "modifyHeaders",
+  "redirect",
+  "block",
+  "allow",
+  "upgradeScheme",
+  "allowAllRequests",
+] as const satisfies RuleActionType[]).map(value => ({
   value,
   label: getRuleActionTypeLabel(value),
 }));

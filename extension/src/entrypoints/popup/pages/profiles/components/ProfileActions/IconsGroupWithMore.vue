@@ -21,7 +21,7 @@ import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useTemplateRef } from "vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
-import { cn, createMod } from "@/lib/utils";
+import { cn, createHeaderMod, createRedirectUrl } from "@/lib/utils";
 import { transformIdsToActions, useProfileActions } from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
@@ -61,18 +61,23 @@ function handleChangeType() {
       delete p.requestHeaderModGroups;
       delete p.responseHeaderModGroups;
       delete p.syncCookieGroups;
+      delete p.redirectUrlGroup;
     })
     .with("modifyHeaders", () => {
+      delete p.redirectUrlGroup;
       p.requestHeaderModGroups ??= [{
         id: uuidv7(),
         type: "checkbox",
-        items: [createMod()],
+        items: [createHeaderMod()],
       }];
     })
     .with("redirect", () => {
       delete p.requestHeaderModGroups;
       delete p.responseHeaderModGroups;
       delete p.syncCookieGroups;
+      if (!p.redirectUrlGroup?.length) {
+        p.redirectUrlGroup = [createRedirectUrl()];
+      }
     })
     .exhaustive();
 

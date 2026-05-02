@@ -8,7 +8,7 @@ import { computed, ref } from "vue";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createMod, createProfile, createSyncCookie } from "@/lib/utils";
+import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
 
 function getProfileIcon() {
@@ -120,7 +120,7 @@ export const useProfilesStore = defineStore("profiles", () => {
       profile.responseHeaderModGroups ??= [];
     }
     const groups = findHeaderModGroups(profile, type)!;
-    const mod = createMod();
+    const mod = createHeaderMod();
     const newGroup = {
       id: uuidv7(),
       type: groupType,
@@ -137,6 +137,12 @@ export const useProfilesStore = defineStore("profiles", () => {
       type: "checkbox",
       items: [cookie],
     });
+  }
+
+  function addRedirectUrlGroup() {
+    if (!selectedProfile.value.redirectUrlGroup?.length) {
+      selectedProfile.value.redirectUrlGroup = [createRedirectUrl()];
+    }
   }
 
   return {
@@ -156,6 +162,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     toggleProfileEnabled,
     addModGroup,
     addSyncCookieGroup,
+    addRedirectUrlGroup,
     undo,
     redo,
   };
