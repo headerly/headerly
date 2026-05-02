@@ -13,8 +13,8 @@ const groupItemWithValueSchema = groupItemSchema.extend({
   value: z.string(),
 });
 
-const redirectUrlGroupSchema = groupItemWithValueSchema;
-export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupSchema>;
+const redirectUrlGroupItemSchema = groupItemWithValueSchema;
+export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
@@ -166,7 +166,7 @@ const profileSchema = z.object({
   requestHeaderModGroups: z.array(headerModGroupSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
-  redirectUrlGroup: z.array(redirectUrlGroupSchema).optional(),
+  redirectUrlGroup: z.array(redirectUrlGroupItemSchema).optional(),
   filters: filterSchema,
 });
 export type Profile = z.infer<typeof profileSchema>;
@@ -189,7 +189,7 @@ const syncCookieGroupWithoutIdSchema = syncCookieGroupSchema.omit({ id: true }).
   items: z.array(syncCookieWithoutIdSchema),
 });
 
-const redirectUrlGroupWithoutIdSchema = redirectUrlGroupSchema.omit({ id: true });
+const redirectUrlGroupItemWithoutIdSchema = redirectUrlGroupItemSchema.omit({ id: true });
 
 const urlOrRegexFilterWithoutIdSchema = urlOrRegexFilterSchema.omit({ id: true });
 
@@ -217,7 +217,7 @@ export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).exten
   requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),
-  redirectUrlGroup: z.array(redirectUrlGroupWithoutIdSchema).optional(),
+  redirectUrlGroup: z.array(redirectUrlGroupItemWithoutIdSchema).optional(),
   filters: filterWithoutIdSchema,
 });
 
