@@ -61,9 +61,7 @@ const empty = computed(() => {
   && (profilesStore.selectedProfile.syncCookieGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && (profilesStore.selectedProfile.redirectUrlGroup ?? []).every(
-    item => item.value.trim() === "",
-  );
+  && (profilesStore.selectedProfile.redirectUrlGroup ?? []).length === 0;
 
   const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
   return noActions && noFilters;
