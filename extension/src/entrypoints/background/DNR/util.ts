@@ -17,3 +17,22 @@ export async function updateBadgeCount() {
     browser.action.setBadgeText({ text: "" });
   }
 }
+
+export function setIconAndBadgeForDisabled() {
+  browser.action.setBadgeTextColor({ color: "white" });
+  browser.action.setBadgeBackgroundColor({ color: "gray" });
+  browser.action.setBadgeText({ text: "❚❚" });
+  const SIZE = 32;
+  const iconPath = `/${browser.runtime.getManifest().icons![SIZE]!}`;
+  fetch(iconPath)
+    .then(response => response.blob())
+    .then(blob => createImageBitmap(blob))
+    .then((imageBitmap) => {
+      const canvas = new OffscreenCanvas(SIZE, SIZE);
+      const context = canvas.getContext("2d")!;
+      context.filter = "grayscale(100%)";
+      context.drawImage(imageBitmap, 0, 0);
+      const imageData = context.getImageData(0, 0, SIZE, SIZE);
+      browser.action.setIcon({ imageData });
+    });
+}

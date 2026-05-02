@@ -1,5 +1,5 @@
 import type { ClassValue } from "clsx";
-import type { GroupItem, GroupType, HeaderMod, Profile, RuleActionType, SyncCookie } from "./schema";
+import type { GroupItem, GroupType, HeaderMod, Profile, RedirectUrlGroupItem, RuleActionType, SyncCookie } from "./schema";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
@@ -20,7 +20,7 @@ export function createSyncCookie(overrides?: Partial<SyncCookie>) {
   } as const satisfies SyncCookie;
 }
 
-export function createMod(overrides?: Partial<HeaderMod>) {
+export function createHeaderMod(overrides?: Partial<HeaderMod>) {
   return {
     id: uuidv7(),
     enabled: true,
@@ -29,6 +29,15 @@ export function createMod(overrides?: Partial<HeaderMod>) {
     value: "",
     ...(overrides ?? {}),
   } as const satisfies HeaderMod;
+}
+
+export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
+  return {
+    id: uuidv7(),
+    enabled: true,
+    value: "",
+    ...(overrides ?? {}),
+  } as const satisfies RedirectUrlGroupItem;
 }
 
 export function createProfile(overrides?: Partial<Profile>) {
@@ -53,11 +62,12 @@ export function createProfile(overrides?: Partial<Profile>) {
         requestHeaderModGroups: [{
           id: uuidv7(),
           type: "checkbox",
-          items: [createMod()],
+          items: [createHeaderMod()],
         }],
       }))
-      // TODO: the "redirect" action type is not fully implemented yet, so we return an empty object for now. We will need to update this part once we have a clear structure for the redirect action type.
-      .with("redirect", () => ({}))
+      .with("redirect", () => ({
+        redirectUrlGroup: [createRedirectUrl()],
+      }))
       .otherwise(() => ({}))),
     ...overrides,
   } as const satisfies Profile;

@@ -11,6 +11,7 @@ import AlertGroup from "./components/AlertGroup.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
 import ModGroup from "./components/ModGroup/index.vue";
+import RedirectUrlGroup from "./components/ModGroup/RedirectUrlGroup.vue";
 import SyncCookieGroup from "./components/SyncCookieGroup/index.vue";
 
 const { class: className } = defineProps<{
@@ -23,7 +24,7 @@ const hasAnyNonEmptyFilters = computed(() => {
   return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
     return match(key)
       .with("urlFilter", "regexFilter", (k) => {
-        return filters[k]?.some(f => Boolean(f.value)) ?? false;
+        return filters[k]?.some(f => Boolean(f.value) && f.enabled) ?? false;
       })
       .with(
         "requestMethods",
@@ -31,7 +32,7 @@ const hasAnyNonEmptyFilters = computed(() => {
         "resourceTypes",
         "excludedResourceTypes",
         (k) => {
-          return filters[k]?.some(item => item.enabled) ?? false;
+          return filters[k]?.some(f => f.enabled && f.value.length > 0) ?? false;
         },
       )
       .with(
@@ -40,7 +41,7 @@ const hasAnyNonEmptyFilters = computed(() => {
         "initiatorDomains",
         "excludedInitiatorDomains",
         (k) => {
-          return filters[k]?.items.some(f => Boolean(f.value.trim())) ?? false;
+          return filters[k]?.items.some(f => Boolean(f.value.trim()) && f.enabled) ?? false;
         },
       )
       .with("domainType", "isUrlFilterCaseSensitive", (k) => {
@@ -51,7 +52,7 @@ const hasAnyNonEmptyFilters = computed(() => {
 });
 
 const empty = computed(() => {
-  const noMods = (profilesStore.selectedProfile.requestHeaderModGroups ?? []).every(
+  const noActions = (profilesStore.selectedProfile.requestHeaderModGroups ?? []).every(
     group => group.items.length === 0,
   )
   && (profilesStore.selectedProfile.responseHeaderModGroups ?? []).every(
@@ -59,10 +60,13 @@ const empty = computed(() => {
   )
   && (profilesStore.selectedProfile.syncCookieGroups ?? []).every(
     group => group.items.length === 0,
+  )
+  && (profilesStore.selectedProfile.redirectUrlGroup ?? []).every(
+    item => item.value.trim() === "",
   );
 
   const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
-  return noMods && noFilters;
+  return noActions && noFilters;
 });
 
 const settingsStore = useSettingsStore();
@@ -99,6 +103,10 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
     </div>
     <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
       <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
+      <RedirectUrlGroup
+        v-if="profilesStore.selectedProfile.redirectUrlGroup"
+        v-model="profilesStore.selectedProfile.redirectUrlGroup"
+      />
       <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
         <ModGroup
           v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"

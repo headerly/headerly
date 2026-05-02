@@ -23,16 +23,25 @@ export function buildAction(profile: ProfileCoreData) {
       } as const satisfies Browser.declarativeNetRequest.RuleAction;
     })
     .with("redirect", (type) => {
+      const redirectUrl = buildRedirectUrl(profile);
       return {
         type,
-        // TODO: Next step implement support
-        redirect: {},
+        redirect: { url: redirectUrl },
       } as const satisfies Browser.declarativeNetRequest.RuleAction;
     })
     .exhaustive();
 }
 
-function buildRequestHeaders(profile: ProfileCoreData) {
+export function buildRedirectUrl(profile: ProfileCoreData) {
+  const trimmed = profile.redirectUrlGroup
+    ?.find(item => item.enabled)
+    ?.value
+    .trim();
+    // An empty string is not a valid redirect URL and will cause an error during rule registration, so we convert it to `undefined` to let DNR treat it as if the redirectUrlGroup is not set.
+  return trimmed || undefined;
+}
+
+export function buildRequestHeaders(profile: ProfileCoreData) {
   const requestHeaders: Browser.declarativeNetRequest.ModifyHeaderInfo[] = [];
 
   for (const group of profile.requestHeaderModGroups ?? []) {
@@ -70,7 +79,7 @@ function buildRequestHeaders(profile: ProfileCoreData) {
   return requestHeaders;
 }
 
-function buildResponseHeaders(profile: ProfileCoreData) {
+export function buildResponseHeaders(profile: ProfileCoreData) {
   const responseHeaders: Browser.declarativeNetRequest.ModifyHeaderInfo[] = [];
 
   for (const group of profile.responseHeaderModGroups ?? []) {

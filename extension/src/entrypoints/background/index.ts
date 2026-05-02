@@ -6,7 +6,7 @@ import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { buildAction } from "./DNR/buildAction";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
-import { updateBadgeCount } from "./DNR/util";
+import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
 
 const lastProfilesStorageItem = storage.defineItem<Profile[]>(
@@ -77,7 +77,7 @@ export default defineBackground({
       const changes = {
         deleted: [],
         modified: [],
-        created: manager.profiles.filter(p => p.enabled && isNotEmptyModifyHeaderRule(p)).map(pickProfileFields),
+        created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
       lastProfilesStorageItem.setValue(manager.profiles);
@@ -91,6 +91,7 @@ const NEED_WATCH_KEYS = [
   "responseHeaderModGroups",
   "filters",
   "syncCookieGroups",
+  "redirectUrlGroup",
   "priority",
   "ruleActionType",
 ] as const satisfies (keyof Profile)[];
@@ -107,13 +108,17 @@ function pickProfileFields(profile: Profile) {
   return pick(profile, CORE_KEYS);
 }
 
-function isNotEmptyModifyHeaderRule(profile: ProfileCoreData) {
+function hasNonBlankActionFormValues(profile: ProfileCoreData): boolean {
   // `buildAction` converts header arrays with `headers.length === 0` to `undefined`.
   const action = buildAction(profile);
-  return !(
-    action.type === "modifyHeaders"
-    && (action.requestHeaders === undefined && action.responseHeaders === undefined)
-  );
+  return match(action)
+    .with({ type: "modifyHeaders" }, ({ requestHeaders, responseHeaders }) => {
+      return requestHeaders !== undefined || responseHeaders !== undefined;
+    })
+    .with({ type: "redirect" }, ({ redirect }) => {
+      return redirect.url !== undefined;
+    })
+    .otherwise(() => true);
 }
 
 function diffProfiles(
@@ -132,7 +137,7 @@ function diffProfiles(
     const oldPickedProfile = oldPickedProfileMap.get(oldProfile.id)!;
     if (!newPickedProfileMap.has(oldPickedProfile.id)
       && oldPickedProfile.enabled
-      && isNotEmptyModifyHeaderRule(oldPickedProfile)) {
+      && hasNonBlankActionFormValues(oldPickedProfile)) {
       deleted.push(oldPickedProfile);
     }
   }
@@ -141,8 +146,8 @@ function diffProfiles(
   for (const newProfile of newProfiles) {
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
-    const wasActive = Boolean(oldPickedProfile?.enabled && isNotEmptyModifyHeaderRule(oldPickedProfile));
-    const isActive = newPickedProfile.enabled && isNotEmptyModifyHeaderRule(newPickedProfile);
+    const wasActive = Boolean(oldPickedProfile?.enabled && hasNonBlankActionFormValues(oldPickedProfile));
+    const isActive = newPickedProfile.enabled && hasNonBlankActionFormValues(newPickedProfile);
     const isModified = Boolean(oldPickedProfile
       && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS)));
 
@@ -162,25 +167,6 @@ function diffProfiles(
   }
 
   return { deleted, modified, created };
-}
-
-function setIconAndBadgeForDisabled() {
-  browser.action.setBadgeTextColor({ color: "white" });
-  browser.action.setBadgeBackgroundColor({ color: "gray" });
-  browser.action.setBadgeText({ text: "❚❚" });
-  const SIZE = 32;
-  const iconPath = `/${browser.runtime.getManifest().icons![SIZE]!}`;
-  fetch(iconPath)
-    .then(response => response.blob())
-    .then(blob => createImageBitmap(blob))
-    .then((imageBitmap) => {
-      const canvas = new OffscreenCanvas(SIZE, SIZE);
-      const context = canvas.getContext("2d")!;
-      context.filter = "grayscale(100%)";
-      context.drawImage(imageBitmap, 0, 0);
-      const imageData = context.getImageData(0, 0, SIZE, SIZE);
-      browser.action.setIcon({ imageData });
-    });
 }
 
 async function updateBadgeWhenRestarted() {

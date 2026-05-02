@@ -51,12 +51,14 @@ function transferGroupType() {
         <TooltipContent
           :collision-padding="20"
           side="top"
-          class="prose prose-sm max-h-40 max-w-lg overflow-y-auto"
+          class="prose prose-sm max-w-lg"
         >
-          <p v-if="typeof description === 'string'">
+          <template v-if="typeof description === 'string'">
             {{ description }}
-          </p>
-          <component :is="description" v-else />
+          </template>
+          <div v-else class="max-h-40 overflow-y-auto">
+            <component :is="description" />
+          </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

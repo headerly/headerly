@@ -26,8 +26,8 @@ function ignoreWarning() {
 }
 
 const showGlobalRuleWarning = computed(() => {
-  const hasRule = Boolean(profilesStore.profileId2RelatedRuleIdRecord[profilesStore.selectedProfile.id]);
-  return !hasAnyFilters && !empty && hasRule;
+  const hasRegisteredRule = Boolean(profilesStore.profileId2RelatedRuleIdRecord[profilesStore.selectedProfile.id]);
+  return !hasAnyFilters && !empty && hasRegisteredRule;
 });
 
 const bus = useEventBus(openAddModModalKey);
@@ -55,17 +55,6 @@ const bus = useEventBus(openAddModModalKey);
           <i class="i-lucide-github size-4" />
           Report an issue
         </Button>
-        <ButtonGroupSeparator />
-        <!-- <Button
-          size="sm"
-          variant="secondary"
-          as="a"
-          target="_blank"
-          href="https://headerly.dev/docs"
-        >
-          <i class="i-lucide-wrench size-4" />
-          Troubleshoot
-        </Button> -->
       </ButtonGroup>
     </AlertDescription>
   </Alert>

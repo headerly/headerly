@@ -90,6 +90,14 @@ describe("profile ID Management", () => {
         ],
       },
     ],
+    redirectUrlGroup: [
+      {
+        id: "550e8400-e29b-41d4-a716-446655440018",
+        enabled: true,
+        comments: "Redirect URL",
+        value: "https://redirect.example.com/",
+      },
+    ],
     filters: {
       urlFilter: [
         {
@@ -228,6 +236,9 @@ describe("profile ID Management", () => {
       expect(result.syncCookieGroups![0]).not.toHaveProperty("id");
       expect(result.syncCookieGroups![0]!.items[0]).not.toHaveProperty("id");
 
+      // Check redirect URL group
+      expect(result.redirectUrlGroup![0]).not.toHaveProperty("id");
+
       // Check filters - all id fields should be removed
       expect(result.filters.urlFilter?.[0]).not.toHaveProperty("id");
       expect(result.filters.regexFilter?.[0]).not.toHaveProperty("id");
@@ -258,6 +269,7 @@ describe("profile ID Management", () => {
 
       expect(result.syncCookieGroups![0]!.items[0]!.domain).toBe("example.com");
       expect(result.syncCookieGroups![0]!.items[0]!.name).toBe("test-cookie");
+      expect(result.redirectUrlGroup![0]!.value).toBe("https://redirect.example.com/");
 
       // Check all filter fields are preserved (except ids)
       expect(result.filters.urlFilter![0]!.value).toBe("https://example.com/*");
@@ -308,6 +320,9 @@ describe("profile ID Management", () => {
       expect(result.syncCookieGroups![0]).toHaveProperty("id");
       expect(result.syncCookieGroups![0]!.items[0]).toHaveProperty("id");
 
+      // Check redirect URL group has new ids
+      expect(result.redirectUrlGroup![0]).toHaveProperty("id");
+
       // Check filters - all items that should have ids now have them
       expect(result.filters.urlFilter![0]).toHaveProperty("id");
       expect(result.filters.regexFilter![0]).toHaveProperty("id");
@@ -329,6 +344,7 @@ describe("profile ID Management", () => {
       expect(result.filters.initiatorDomains!.items[0]!.id).toMatch(uuidRegex);
       expect(result.filters.resourceTypes![0]!.id).toMatch(uuidRegex);
       expect(result.filters.requestMethods![0]!.id).toMatch(uuidRegex);
+      expect(result.redirectUrlGroup![0]!.id).toMatch(uuidRegex);
     });
 
     it("should generate different ids from original", () => {
@@ -339,6 +355,7 @@ describe("profile ID Management", () => {
       expect(result.id).not.toBe(mockProfile.id);
       expect(result.requestHeaderModGroups![0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.id);
       expect(result.requestHeaderModGroups![0]!.items[0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.id);
+      expect(result.redirectUrlGroup![0]!.id).not.toBe(mockProfile.redirectUrlGroup![0]!.id);
     });
   });
 
@@ -433,6 +450,7 @@ describe("profile ID Management", () => {
 
     expect(restoredProfile.syncCookieGroups![0]!.items[0]!.domain).toBe(mockProfile.syncCookieGroups![0]!.items[0]!.domain);
     expect(restoredProfile.syncCookieGroups![0]!.items[0]!.name).toBe(mockProfile.syncCookieGroups![0]!.items[0]!.name);
+    expect(restoredProfile.redirectUrlGroup![0]!.value).toBe(mockProfile.redirectUrlGroup![0]!.value);
   });
 
   it("should handle multiple round trips", () => {
@@ -466,6 +484,7 @@ describe("edge cases", () => {
       requestHeaderModGroups: [],
       responseHeaderModGroups: [],
       syncCookieGroups: [],
+      redirectUrlGroup: [],
       filters: {},
     };
 
@@ -477,6 +496,7 @@ describe("edge cases", () => {
     expect(restored.requestHeaderModGroups).toEqual([]);
     expect(restored.responseHeaderModGroups).toEqual([]);
     expect(restored.syncCookieGroups).toEqual([]);
+    expect(restored.redirectUrlGroup).toEqual([]);
   });
 
   it("should handle profile with minimal data", () => {
@@ -490,6 +510,7 @@ describe("edge cases", () => {
       requestHeaderModGroups: [],
       responseHeaderModGroups: [],
       syncCookieGroups: [],
+      redirectUrlGroup: [],
       filters: {},
     };
 
