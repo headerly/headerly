@@ -2,19 +2,12 @@ import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { lastProfilesStorageItem, usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { buildAction } from "./DNR/buildAction";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
-
-const lastProfilesStorageItem = storage.defineItem<Profile[]>(
-  "local:lastProfiles",
-  {
-    fallback: [],
-  },
-);
 
 export default defineBackground({
   type: "module",

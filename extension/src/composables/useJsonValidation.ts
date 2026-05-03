@@ -1,9 +1,6 @@
 import type { Ref } from "vue";
 import { computed } from "vue";
-import { z } from "zod";
-import { profileWithoutIdsZodSchema } from "@/lib/schema";
-
-const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
+import { profileExchangeZodSchema } from "@/lib/schema";
 
 export function useJsonValidation(json: Ref<string>) {
   const validJson = computed(() => {
@@ -18,7 +15,7 @@ export function useJsonValidation(json: Ref<string>) {
   const validJsonSchema = computed(() => {
     try {
       const parsed = JSON.parse(json.value);
-      return profilesWithoutIdArraySchema.safeParse(parsed).success;
+      return profileExchangeZodSchema.safeParse(parsed).success;
     } catch {
       return false;
     }

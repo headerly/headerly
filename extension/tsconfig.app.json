@@ -25,7 +25,7 @@
     "./src/**/*.vue",
     "./.wxt/wxt.d.ts"
   ],
-  "exclude": ["src/**/__TESTS__/*", "./.output"],
+  "exclude": ["./.output"],
 
   "vueCompilerOptions": {
     "checkUnknownDirectives": true,

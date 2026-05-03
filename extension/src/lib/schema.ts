@@ -1,5 +1,6 @@
 import { uuidv7 } from "uuidv7";
 import { z } from "zod";
+import { PROFILE_LATEST_VERSION } from "./const";
 
 const uuidSchema = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
@@ -223,7 +224,15 @@ export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).exten
 
 export type ProfileWithoutIds = z.infer<typeof profileWithoutIdsZodSchema>;
 
-export const profileWithoutIdsJsonSchema = z.toJSONSchema(profileWithoutIdsZodSchema);
+const profilesWithoutIdsArrayZodSchema = z.array(profileWithoutIdsZodSchema).min(1);
+
+export const profileExchangeZodSchema = z.object({
+  version: z.literal(PROFILE_LATEST_VERSION),
+  profiles: profilesWithoutIdsArrayZodSchema,
+});
+export type ProfileExchange = z.infer<typeof profileExchangeZodSchema>;
+
+export const profileExchangeJsonSchema = z.toJSONSchema(profileExchangeZodSchema);
 
 /**
  * Strip all id fields from profile
@@ -231,6 +240,13 @@ export const profileWithoutIdsJsonSchema = z.toJSONSchema(profileWithoutIdsZodSc
  */
 export function stripProfileIds(profile: Profile) {
   return profileWithoutIdsZodSchema.parse(profile);
+}
+
+export function createProfileExchange(profiles: Profile[]): ProfileExchange {
+  return profileExchangeZodSchema.parse({
+    version: PROFILE_LATEST_VERSION,
+    profiles: profiles.map(stripProfileIds),
+  });
 }
 
 /**

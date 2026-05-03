@@ -1,0 +1,1 @@
+export const PROFILE_LATEST_VERSION = 1;
