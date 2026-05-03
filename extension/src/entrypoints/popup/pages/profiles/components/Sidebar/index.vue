@@ -86,7 +86,7 @@ const ruleActionTypeDescriptions = {
       </DropdownMenuTrigger>
       <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
         <DropdownMenuGroup>
-          <DropdownMenuItem @click="profilesStore.addProfile(defaultRuleActionType)">
+          <DropdownMenuItem class="gap-1" @click="profilesStore.addProfile(defaultRuleActionType)">
             Quick create
             <InfoTooltip
               description="The default rule action type can be changed in the submenu of New profile"
