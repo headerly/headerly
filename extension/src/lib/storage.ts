@@ -1,6 +1,5 @@
 import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
-import type { Profile } from "./schema";
 import type { ProfileManager } from "./types";
 import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
 import { useDebounceFn, useStorageAsync } from "@vueuse/core";
@@ -96,20 +95,6 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
     ...options,
   });
 }
-
-/**
- * Used only in the background page to store the previously applied profiles,
- * so the corresponding DNR rules can be correctly revoked after a profile is deleted or modified.
- * This data is not rendered on any page, so it does not need to be wrapped in `reactive`.
- * This data is not read or written frequently, so it does not need `useDebounceFn` debouncing.
- */
-export const lastProfilesStorageItem = storage.defineItem<Profile[]>(
-  "local:lastProfiles",
-  {
-    version: PROFILE_LATEST_VERSION,
-    fallback: [],
-  },
-);
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
   return useBrowserStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);

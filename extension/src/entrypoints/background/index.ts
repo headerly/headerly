@@ -2,7 +2,7 @@ import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { lastProfilesStorageItem, usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { buildAction } from "./DNR/buildAction";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
@@ -25,21 +25,18 @@ export default defineBackground({
           browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
         } else {
           await unregisterAllRules();
-          lastProfilesStorageItem.setValue([]);
           setIconAndBadgeForDisabled();
         }
       });
     });
-    profileManagerItem.watch((manager) => {
+    profileManagerItem.watch(({ profiles: newProfiles }, { profiles: oldProfiles }) => {
       mutex.runExclusive(async () => {
         if (await powerOnItem.getValue()) {
-          const lastProfiles = await lastProfilesStorageItem.getValue();
-          const changes = diffProfiles(lastProfiles, manager.profiles);
+          const changes = diffProfiles(oldProfiles, newProfiles);
           if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
             return;
           }
           await updateRules(changes);
-          lastProfilesStorageItem.setValue(manager.profiles);
         }
       });
     });
@@ -59,7 +56,6 @@ export default defineBackground({
           await treatAllProfilesAsCreated();
         } else {
           await unregisterAllRules();
-          lastProfilesStorageItem.setValue([]);
         }
       });
     });
@@ -73,7 +69,6 @@ export default defineBackground({
         created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
-      lastProfilesStorageItem.setValue(manager.profiles);
     }
   },
 });
