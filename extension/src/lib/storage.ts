@@ -5,7 +5,10 @@ import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
 import { useDebounceFn, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
+import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./utils";
+
+export { PROFILE_LATEST_VERSION } from "./const";
 
 interface UseBrowserStorageOptions<T> {
   onReady?: (value: T) => void;
@@ -87,7 +90,10 @@ const defaultProfileManager = createDefaultProfileManager();
 type UseStorageInstanceOptions<T> = Pick<UseBrowserStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, options);
+  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, {
+    version: PROFILE_LATEST_VERSION,
+    ...options,
+  });
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {

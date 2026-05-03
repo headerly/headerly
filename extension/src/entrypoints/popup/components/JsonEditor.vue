@@ -7,8 +7,7 @@ import { useDark } from "@vueuse/core";
 import { jsonSchema } from "codemirror-json-schema";
 import { computed, onErrorCaptured } from "vue";
 import CodeMirror from "vue-codemirror6";
-import { z } from "zod";
-import { profileWithoutIdsZodSchema } from "@/lib/schema";
+import { profileExchangeJsonSchema } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 const model = defineModel<string>({ required: true });
@@ -23,15 +22,11 @@ const { readonly = false, height = "100%", width = "100%", class: className } = 
 const lang = json();
 const linter = jsonParseLinter();
 
-// Only accept array of profiles with at least one profile
-const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
-const profilesArrayJsonSchema = z.toJSONSchema(profilesWithoutIdArraySchema);
-
-type JSONSchema7 = Parameters<typeof jsonSchema>[0];
 const dark = useDark();
 const extensions = computed(() => {
   return [
-    jsonSchema(profilesArrayJsonSchema as JSONSchema7),
+    // @ts-expect-error https://github.com/colinhacks/zod/discussions/5936
+    jsonSchema(profileExchangeJsonSchema),
     indentationMarkers(),
     dark.value && oneDark,
   ].filter(Boolean);

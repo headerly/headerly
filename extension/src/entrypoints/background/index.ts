@@ -9,13 +9,6 @@ import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
 
-const lastProfilesStorageItem = storage.defineItem<Profile[]>(
-  "local:lastProfiles",
-  {
-    fallback: [],
-  },
-);
-
 export default defineBackground({
   type: "module",
   main() {
@@ -32,21 +25,18 @@ export default defineBackground({
           browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
         } else {
           await unregisterAllRules();
-          lastProfilesStorageItem.setValue([]);
           setIconAndBadgeForDisabled();
         }
       });
     });
-    profileManagerItem.watch((manager) => {
+    profileManagerItem.watch(({ profiles: newProfiles }, { profiles: oldProfiles }) => {
       mutex.runExclusive(async () => {
         if (await powerOnItem.getValue()) {
-          const lastProfiles = await lastProfilesStorageItem.getValue();
-          const changes = diffProfiles(lastProfiles, manager.profiles);
+          const changes = diffProfiles(oldProfiles, newProfiles);
           if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
             return;
           }
           await updateRules(changes);
-          lastProfilesStorageItem.setValue(manager.profiles);
         }
       });
     });
@@ -66,7 +56,6 @@ export default defineBackground({
           await treatAllProfilesAsCreated();
         } else {
           await unregisterAllRules();
-          lastProfilesStorageItem.setValue([]);
         }
       });
     });
@@ -80,7 +69,6 @@ export default defineBackground({
         created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
-      lastProfilesStorageItem.setValue(manager.profiles);
     }
   },
 });

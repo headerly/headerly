@@ -1,7 +1,10 @@
 import type { DOMAIN_TYPES, Profile, REQUEST_METHODS, RESOURCE_TYPES, RULE_ACTION_TYPES } from "../schema";
 import { describe, expect, expectTypeOf, it } from "vitest";
+import { PROFILE_LATEST_VERSION } from "../const";
 import {
   addProfileIds,
+  createProfileExchange,
+  profileExchangeZodSchema,
   profileWithoutIdsZodSchema,
   stripProfileIds,
 } from "../schema";
@@ -284,6 +287,35 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedRequestMethods![0]!.value).toEqual(["delete", "patch"]);
       expect(result.filters.domainType!.value).toBe("firstParty");
       expect(result.filters.isUrlFilterCaseSensitive!.value).toBe(true);
+    });
+  });
+
+  describe("profile import/export", () => {
+    it("should export profiles with latest version outside profile data", () => {
+      const result = createProfileExchange([mockProfile]);
+
+      expect(result.version).toBe(PROFILE_LATEST_VERSION);
+      expect(result.profiles).toHaveLength(1);
+      expect(result.profiles[0]).not.toHaveProperty("id");
+      expect(result.profiles[0]).not.toHaveProperty("version");
+      expect(() => profileExchangeZodSchema.parse(result)).not.toThrow();
+    });
+
+    it("should reject export payloads with mismatched version", () => {
+      const exported = createProfileExchange([mockProfile]);
+
+      expect(profileExchangeZodSchema.safeParse({
+        ...exported,
+        version: PROFILE_LATEST_VERSION + 1,
+      }).success).toBe(false);
+    });
+
+    it("should require the versioned export payload shape", () => {
+      const exported = createProfileExchange([mockProfile]);
+      const legacyProfiles = exported.profiles;
+
+      expect(profileExchangeZodSchema.safeParse(exported).success).toBe(true);
+      expect(profileExchangeZodSchema.safeParse(legacyProfiles).success).toBe(false);
     });
   });
 

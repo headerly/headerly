@@ -48,7 +48,7 @@ Headerly is a Chrome/Edge extension built with WXT framework that manages HTTP r
 
 **Storage Layer** (`extension/src/lib/storage.ts`)
 - Uses WXT's `storage.defineItem()` for type-safe chrome.storage access
-- Debounces writes (100ms) to avoid conflicts in multi-tab scenarios
+- Debounces writes (200ms) to avoid conflicts in multi-tab scenarios
 - Provides both reactive refs (for popup) and direct item access (for background)
 - Manages: profiles, settings, error messages, rule ID mappings
 
@@ -79,7 +79,7 @@ Type-safe messaging between background and popup (`extension/src/entrypoints/bac
 
 **Rule Update Flow**
 1. Profile storage changes trigger background watch
-2. `diffProfiles()` computes changes (created/modified/deleted)
+2. `diffProfiles()` computes changes (created/modified/deleted) from the old and new profile values passed by `item.watch()`
 3. Mutex-serialized `updateRules()` applies changes
 4. Error/status updates sent to popup via messages
 5. Badge count updated

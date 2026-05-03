@@ -7,7 +7,7 @@ import { toast } from "vue-sonner";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { stripProfileIds } from "@/lib/schema";
+import { createProfileExchange } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
 
@@ -40,8 +40,7 @@ function handleSelectionChange(profiles: Profile[]) {
     jsonPreview.value = "";
     return;
   }
-  const strippedProfiles = profiles.map(stripProfileIds);
-  jsonPreview.value = JSON.stringify(strippedProfiles, null, 2);
+  jsonPreview.value = JSON.stringify(createProfileExchange(profiles), null, 2);
 }
 
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview);

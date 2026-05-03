@@ -11,17 +11,13 @@ import {
 } from "#/ui/dialog";
 import { ref, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
-import { z } from "zod";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addProfileIds, profileWithoutIdsZodSchema } from "@/lib/schema";
+import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
 
 const open = defineModel<boolean>("open", { required: true });
 
 const userInput = ref("");
-
-// Only accept array of profiles with at least one profile
-const profilesWithoutIdArraySchema = z.array(profileWithoutIdsZodSchema).min(1);
 
 const profilesStore = useProfilesStore();
 const fileInputRef = useTemplateRef("fileInputRef");
@@ -44,21 +40,22 @@ async function ensureCookiesPermission() {
 async function confirmImport() {
   try {
     const parsed = JSON.parse(userInput.value);
-    const result = profilesWithoutIdArraySchema.safeParse(parsed);
+    const result = profileExchangeZodSchema.safeParse(parsed);
 
     if (!result.success) {
       return;
     }
 
-    const hasSyncCookieGroups = result.data.some(profile => Boolean(profile.syncCookieGroups?.length));
+    const { profiles } = result.data;
+    const hasSyncCookieGroups = profiles.some(profile => Boolean(profile.syncCookieGroups?.length));
     if (hasSyncCookieGroups && !await ensureCookiesPermission()) {
       toast.error("Import cancelled: cookies permission is required for cookie sync profiles");
       return;
     }
 
-    profilesStore.manager.profiles.push(...result.data.map(addProfileIds));
+    profilesStore.manager.profiles.push(...profiles.map(addProfileIds));
 
-    toast.success(`Successfully imported ${result.data.length} profile${result.data.length === 1 ? "" : "s"}!`);
+    toast.success(`Successfully imported ${profiles.length} profile${profiles.length === 1 ? "" : "s"}!`);
     open.value = false;
     userInput.value = "";
   } catch (error) {
