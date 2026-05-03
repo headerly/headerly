@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/headerly/headerly/compare/v1.2.0...v1.3.0) (2026-05-03)
+
+
+### Features
+
+* add version field to profile import/export JSON schema ([#25](https://github.com/headerly/headerly/issues/25)) ([ca32e86](https://github.com/headerly/headerly/commit/ca32e86c104ba121b31c44b25c4e136a74b0442b))
+
 ## [1.2.0](https://github.com/headerly/headerly/compare/v1.1.0...v1.2.0) (2026-05-02)
 
 
