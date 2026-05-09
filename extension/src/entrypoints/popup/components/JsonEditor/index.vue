@@ -9,7 +9,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { useDark } from "@vueuse/core";
 import { jsonSchema } from "codemirror-json-schema";
-import { computed, createApp, h, ref } from "vue";
+import { computed, createApp, h } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { profileExchangeJsonSchema } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,6 @@ const linter = jsonParseLinter();
 
 function createJsonSearchPanel(view: EditorView) {
   const dom = document.createElement("div");
-  const updateVersion = ref(0);
   const app = createApp({
     render: () => h(JsonSearchPanel, {
       view,
@@ -48,9 +47,6 @@ function createJsonSearchPanel(view: EditorView) {
     top: true,
     mount() {
       app.mount(dom);
-    },
-    update() {
-      updateVersion.value += 1;
     },
     destroy() {
       app.unmount();
