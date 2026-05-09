@@ -125,23 +125,26 @@ const ruleActionTypeDescriptions = {
               </DropdownMenuSub>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-          <ProfileManage>
-            <DropdownMenuItem @select.prevent>
-              Search profile
-            </DropdownMenuItem>
-          </ProfileManage>
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            <DropdownMenuItem @click="importModalOpen = true">
-              Import profiles
-            </DropdownMenuItem>
-            <DropdownMenuItem as-child>
-              <RouterLink to="/export">
-                Export profiles
-              </RouterLink>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              Profiles
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <ProfileManage>
+                <DropdownMenuItem @select.prevent>
+                  Search
+                </DropdownMenuItem>
+              </ProfileManage>
+              <DropdownMenuItem @click="importModalOpen = true">
+                Import
+              </DropdownMenuItem>
+              <DropdownMenuItem as-child>
+                <RouterLink to="/export">
+                  Export
+                </RouterLink>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
@@ -150,16 +153,28 @@ const ruleActionTypeDescriptions = {
               Settings
             </RouterLink>
           </DropdownMenuItem>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/about">
-              About
-            </RouterLink>
-          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              Resources
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem as-child>
+                <a href="https://github.com/headerly/headerly" target="_blank">
+                  GitHub
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem as-child>
+                <a href="https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md" target="_blank">
+                  Changelog
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem @click="openInFullscreen">
-            Expand to full tab
+            Open in tab
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
