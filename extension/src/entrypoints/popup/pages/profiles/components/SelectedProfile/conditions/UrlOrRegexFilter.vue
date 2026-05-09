@@ -1,5 +1,6 @@
 <script setup lang="tsx">
 import type { UrlOrRegexFilterItem } from "@/lib/schema";
+import { uuidv7 } from "uuidv7";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -12,7 +13,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { uuidv7 } from "uuidv7";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/utils";
 

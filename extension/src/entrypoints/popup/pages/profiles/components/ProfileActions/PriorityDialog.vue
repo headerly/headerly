@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref } from "vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -16,7 +17,6 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from "#/ui/number-field";
-import { computed, ref } from "vue";
 
 const priority = defineModel<number>({
   default: 1,

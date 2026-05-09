@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useVirtualizer } from "@tanstack/vue-virtual";
+import { computed, useTemplateRef } from "vue";
 import { Button } from "#/ui/button";
 import {
   Popover,
@@ -11,8 +13,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useVirtualizer } from "@tanstack/vue-virtual";
-import { computed, useTemplateRef } from "vue";
 import { emojisWithCategory } from "@/entrypoints/popup/constants/emoji";
 import { cn } from "@/lib/utils";
 

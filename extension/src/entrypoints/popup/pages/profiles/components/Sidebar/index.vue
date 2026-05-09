@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
+import { useStorage } from "@vueuse/core";
+import { defineAsyncComponent, ref } from "vue";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import Badge from "#/ui/badge/Badge.vue";
+
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,
@@ -15,7 +18,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
-
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
 import {
@@ -24,8 +26,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useStorage } from "@vueuse/core";
-import { defineAsyncComponent, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getRuleActionTypeLabel } from "@/lib/utils";

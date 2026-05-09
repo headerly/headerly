@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
+import { computed } from "vue";
 import ProfileOption from "#/components/ProfileOption.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { Button } from "#/ui/button";
@@ -10,7 +11,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { computed } from "vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 
 const model = defineModel<Profile[]>({

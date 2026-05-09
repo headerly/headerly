@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useEventBus } from "@vueuse/core";
+import { uuidv7 } from "uuidv7";
+import { computed } from "vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import {
   Alert,
@@ -6,11 +9,8 @@ import {
   AlertTitle,
 } from "#/ui/alert";
 import { Button } from "#/ui/button";
-import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
-import { useEventBus } from "@vueuse/core";
-import { uuidv7 } from "uuidv7";
 
-import { computed } from "vue";
+import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
 import { openAddModModalKey } from "../../Header/components/AddModModal/open";
 
 const { empty, hasAnyFilters } = defineProps<{

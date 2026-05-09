@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/schema";
+import { useQuery } from "@tanstack/vue-query";
+import { pick, sortBy } from "es-toolkit";
+import { computed, ref, toValue } from "vue";
+import { toast } from "vue-sonner";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Alert, AlertDescription } from "#/ui/alert";
 import { Button } from "#/ui/button";
@@ -30,10 +34,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useQuery } from "@tanstack/vue-query";
-import { pick, sortBy } from "es-toolkit";
-import { computed, ref, toValue } from "vue";
-import { toast } from "vue-sonner";
 import { cn } from "@/lib/utils";
 
 const list = defineModel<SyncCookie[]>("list", {

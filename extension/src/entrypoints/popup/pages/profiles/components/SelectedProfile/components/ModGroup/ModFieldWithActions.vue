@@ -2,6 +2,7 @@
 import type { HeaderMod } from "@/lib/schema";
 import type { ActionType, HeaderModOperation } from "@/lib/types";
 
+import { computed } from "vue";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Button } from "#/ui/button";
 import {
@@ -19,7 +20,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { computed } from "vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,

@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
 import type { GroupItem } from "@/lib/schema";
+import { uuidv7 } from "uuidv7";
+import { computed } from "vue";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import Button from "#/ui/button/Button.vue";
 import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
-import { uuidv7 } from "uuidv7";
-import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/utils";
 

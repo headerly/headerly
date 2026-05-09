@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RuleActionType } from "@/lib/schema";
+import { ref } from "vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -18,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import { ref } from "vue";
 import { getRuleActionTypeLabel } from "@/lib/utils";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {

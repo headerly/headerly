@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/schema";
-import { Checkbox } from "#/ui/checkbox";
-import { Label } from "#/ui/label";
-import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
+import { Checkbox } from "#/ui/checkbox";
+import { Label } from "#/ui/label";
+import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import Fieldset from "./Fieldset.vue";
 import SortableItem from "./SortableItem.vue";

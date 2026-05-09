@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useEventBus } from "@vueuse/core";
+import { ref } from "vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -19,8 +21,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useEventBus } from "@vueuse/core";
-import { ref } from "vue";
 import { openAddModModalKey } from "./open";
 import TabList from "./TabList.vue";
 import { tabs } from "./tabs";

@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
 import { sendMessage } from "##/background/message";
 import Fieldset from "#/components/group/Fieldset.vue";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
 import { Label } from "#/ui/label";
+
 import {
   Select,
   SelectContent,
@@ -13,8 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-
-import { toast } from "vue-sonner";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";

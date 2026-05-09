@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/schema";
+import { uuidv7 } from "uuidv7";
+import { useTemplateRef } from "vue";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -9,8 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
-import { uuidv7 } from "uuidv7";
-import { useTemplateRef } from "vue";
 
 const list = defineModel<T[]>("list", {
   required: true,
