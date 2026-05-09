@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { toast } from "vue-sonner";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Label } from "#/ui/label";
-import { ref, watch } from "vue";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
-import { toast } from "vue-sonner";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "#/ui/dropdown-menu";
 import { useJsonValidation } from "@/composables/useJsonValidation";
-import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
+import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { createProfileExchange } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -34,13 +38,6 @@ watch(() => [profilesStore.ready, route.params.id] as const, ([ready, id]) => {
   }
 }, { immediate: true });
 
-// Reset selected profiles to empty
-onBeforeRouteLeave(() => {
-  selectedProfiles.value = [];
-  exportCookieValue.value = false;
-  handleSelectionChange([]);
-});
-
 function handleSelectionChange(profiles: Profile[]) {
   selectedProfiles.value = profiles;
   updateJsonPreview();
@@ -62,6 +59,7 @@ function updateJsonPreview() {
       }
     }
   }
+
   jsonPreview.value = JSON.stringify(profileExchange, null, 2);
 }
 
@@ -130,6 +128,32 @@ async function handleDownloadJson() {
         Export Profiles
       </h1>
       <div class="flex justify-end space-x-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="secondary"
+            >
+              <i class="i-lucide-settings size-4" />
+              <span class="sr-only">Export settings</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" :collision-padding="8">
+            <DropdownMenuCheckboxItem
+              v-model="exportCookieValue"
+              class="min-w-52 justify-between gap-3"
+            >
+              <span>Export cookie value</span>
+              <span
+                @click.stop
+                @pointerdown.stop
+              >
+                <InfoTooltip description="Do not share cookies casually. They may expose private information or login credentials." />
+              </span>
+            </DropdownMenuCheckboxItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button
           size="sm"
           variant="secondary"
@@ -164,26 +188,18 @@ async function handleDownloadJson() {
       "
     >
       <div class="flex flex-1 flex-col">
-        <div
-          class="sticky top-0 z-10 flex items-center gap-2 bg-background p-2"
-        >
-          <Label class="flex items-center gap-2 text-sm font-normal">
-            <Checkbox v-model="exportCookieValue" />
-            Export cookie value
-          </Label>
-          <InfoTooltip description="Do not share cookies casually. They may expose private information or login credentials." />
-        </div>
         <div class="flex h-full flex-1 flex-col space-y-2">
           <JsonEditor
             v-model="jsonPreview"
             class="flex-1"
             height="100%"
+            search-panel-sticky-top="2.25rem"
           />
         </div>
         <p
           class="
-            sticky bottom-0 flex items-center gap-2 bg-background p-2 text-sm
-            text-warning
+            sticky bottom-0 flex items-center gap-2 bg-background px-2 py-1
+            text-sm text-warning
           "
         >
           <i class="i-lucide-alert-triangle size-4" />

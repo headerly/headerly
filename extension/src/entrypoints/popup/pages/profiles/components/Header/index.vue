@@ -1,5 +1,8 @@
 <script setup lang="tsx">
 import type { HTMLAttributes } from "vue";
+import { useEventBus, useEventListener } from "@vueuse/core";
+import { match } from "ts-pattern";
+import { computed, ref } from "vue";
 import { Button } from "#/ui/button";
 import {
   DropdownMenuGroup,
@@ -14,9 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useEventBus, useEventListener } from "@vueuse/core";
-import { match } from "ts-pattern";
-import { computed, ref } from "vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";

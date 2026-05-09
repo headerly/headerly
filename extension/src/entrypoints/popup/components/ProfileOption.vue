@@ -1,5 +1,6 @@
 <script setup lang="tsx">
 import type { Profile } from "@/lib/schema";
+import { computed } from "vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { Button } from "#/ui/button";
 import {
@@ -8,7 +9,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { computed } from "vue";
 import { cn } from "@/lib/utils";
 
 const { profile, class: className } = defineProps<{

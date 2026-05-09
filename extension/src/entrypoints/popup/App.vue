@@ -15,11 +15,7 @@ const isPopup = browser.extension.getViews({ type: "popup" }).includes(window);
       h-120 w-150
     `)"
   >
-    <RouterView v-slot="{ Component }">
-      <KeepAlive>
-        <component :is="Component" />
-      </KeepAlive>
-    </RouterView>
+    <RouterView />
     <Toaster
       :theme="settingsStore.theme === 'auto' ? 'system' : settingsStore.theme"
       rich-colors

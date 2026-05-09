@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
+import { computed, useTemplateRef } from "vue";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import {
   ContextMenu,
@@ -11,7 +12,6 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "#/ui/context-menu";
-import { computed, useTemplateRef } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 import { transformIdsToActions } from "./actions";

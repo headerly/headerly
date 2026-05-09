@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -11,7 +12,6 @@ import {
 } from "#/ui/dialog";
 import { Label } from "#/ui/label";
 import { Textarea } from "#/ui/textarea";
-import { ref } from "vue";
 
 const comments = defineModel<string>();
 

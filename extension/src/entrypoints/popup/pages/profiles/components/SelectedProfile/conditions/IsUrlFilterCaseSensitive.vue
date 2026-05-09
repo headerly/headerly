@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/schema";
+import { computed } from "vue";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
 import { Label } from "#/ui/label";
@@ -10,7 +11,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({

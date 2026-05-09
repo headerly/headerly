@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
+import { match } from "ts-pattern";
+import { uuidv7 } from "uuidv7";
+import { useTemplateRef } from "vue";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -17,9 +20,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { match } from "ts-pattern";
-import { uuidv7 } from "uuidv7";
-import { useTemplateRef } from "vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { cn, createHeaderMod, createRedirectUrl } from "@/lib/utils";
 import { transformIdsToActions, useProfileActions } from "./actions";

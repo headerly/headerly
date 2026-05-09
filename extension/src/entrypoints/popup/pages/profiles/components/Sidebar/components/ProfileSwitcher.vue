@@ -1,7 +1,7 @@
 <script setup lang="tsx">
-import ProfileOption from "#/components/ProfileOption.vue";
 import { useEventListener } from "@vueuse/core";
 import { useTemplateRef, watch } from "vue";
+import ProfileOption from "#/components/ProfileOption.vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";

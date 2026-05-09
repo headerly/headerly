@@ -1,4 +1,14 @@
 <script setup lang="tsx">
+import { useWindowSize } from "@vueuse/core";
+import { LucideCheck, LucideX } from "lucide-vue-next";
+import {
+  ComboboxInput,
+  ComboboxRoot,
+  TagsInputInput,
+  TagsInputRoot,
+  useFilter,
+} from "reka-ui";
+import { computed, watch } from "vue";
 import {
   ComboboxAnchor,
   ComboboxEmpty,
@@ -12,16 +22,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "#/ui/popover";
-import { useWindowSize } from "@vueuse/core";
-import { LucideCheck, LucideX } from "lucide-vue-next";
-import {
-  ComboboxInput,
-  ComboboxRoot,
-  TagsInputInput,
-  TagsInputRoot,
-  useFilter,
-} from "reka-ui";
-import { computed, watch } from "vue";
 import SelectableTag from "./SelectableTag.vue";
 
 interface Option {

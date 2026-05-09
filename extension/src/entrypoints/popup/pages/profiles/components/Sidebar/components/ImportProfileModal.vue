@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import JsonEditor from "#/components/JsonEditor.vue";
+import { ref, useTemplateRef } from "vue";
+import { toast } from "vue-sonner";
+import JsonEditor from "#/components/JsonEditor/index.vue";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -9,8 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "#/ui/dialog";
-import { ref, useTemplateRef } from "vue";
-import { toast } from "vue-sonner";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";

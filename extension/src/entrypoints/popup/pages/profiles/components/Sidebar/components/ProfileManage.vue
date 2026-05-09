@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HeaderMod } from "@/lib/schema";
+import { computed, ref } from "vue";
 import { Button } from "#/ui/button";
 import { Input } from "#/ui/input";
 import {
@@ -9,7 +10,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "#/ui/sheet";
-import { computed, ref } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const profilesStore = useProfilesStore();
