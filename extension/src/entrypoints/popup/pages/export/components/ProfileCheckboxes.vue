@@ -85,7 +85,7 @@ function toggleProfile(profile: Profile, checked: unknown) {
             />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="right" class="z-100">
           {{ allChecked === false || allChecked === "indeterminate" ? 'Select all' : 'Unselect all' }}
         </TooltipContent>
       </Tooltip>

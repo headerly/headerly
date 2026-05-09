@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import InfoTooltip from "#/components/InfoTooltip.vue";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Label } from "#/ui/label";
 import { ref, watch } from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { toast } from "vue-sonner";
+import { Button } from "#/ui/button";
 import { useJsonValidation } from "@/composables/useJsonValidation";
-import JsonEditor from "@/entrypoints/popup/components/JsonEditor.vue";
+import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { createProfileExchange } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -18,8 +15,6 @@ const profilesStore = useProfilesStore();
 const route = useRoute();
 
 const selectedProfiles = ref<Profile[]>([]);
-
-const exportCookieValue = ref(false);
 
 const jsonPreview = ref("");
 
@@ -37,7 +32,6 @@ watch(() => [profilesStore.ready, route.params.id] as const, ([ready, id]) => {
 // Reset selected profiles to empty
 onBeforeRouteLeave(() => {
   selectedProfiles.value = [];
-  exportCookieValue.value = false;
   handleSelectionChange([]);
 });
 
@@ -53,21 +47,9 @@ function updateJsonPreview() {
     return;
   }
   const profileExchange = createProfileExchange(profiles);
-  if (!exportCookieValue.value) {
-    for (const profile of profileExchange.profiles) {
-      for (const group of profile.syncCookieGroups ?? []) {
-        for (const item of group.items) {
-          item.value = "";
-        }
-      }
-    }
-  }
+
   jsonPreview.value = JSON.stringify(profileExchange, null, 2);
 }
-
-watch(exportCookieValue, () => {
-  updateJsonPreview();
-});
 
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview);
 
@@ -164,26 +146,18 @@ async function handleDownloadJson() {
       "
     >
       <div class="flex flex-1 flex-col">
-        <div
-          class="sticky top-0 z-10 flex items-center gap-2 bg-background p-2"
-        >
-          <Label class="flex items-center gap-2 text-sm font-normal">
-            <Checkbox v-model="exportCookieValue" />
-            Export cookie value
-          </Label>
-          <InfoTooltip description="Do not share cookies casually. They may expose private information or login credentials." />
-        </div>
         <div class="flex h-full flex-1 flex-col space-y-2">
           <JsonEditor
             v-model="jsonPreview"
             class="flex-1"
             height="100%"
+            search-panel-sticky-top="2.25rem"
           />
         </div>
         <p
           class="
-            sticky bottom-0 flex items-center gap-2 bg-background p-2 text-sm
-            text-warning
+            sticky bottom-0 flex items-center gap-2 bg-background px-2 py-1
+            text-sm text-warning
           "
         >
           <i class="i-lucide-alert-triangle size-4" />

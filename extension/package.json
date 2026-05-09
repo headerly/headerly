@@ -15,7 +15,10 @@
   },
   "dependencies": {
     "@codemirror/lang-json": "catalog:",
+    "@codemirror/search": "catalog:",
+    "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
+    "@codemirror/view": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
     "@formkit/auto-animate": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",
