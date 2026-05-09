@@ -117,12 +117,12 @@ async function toggleReplaceExpanded() {
 const searchPanelActions = [
   {
     label: "Previous match",
-    icon: "i-lucide-chevron-up",
+    icon: "i-lucide-arrow-up",
     run: () => runSearchCommand(findPrevious),
   },
   {
     label: "Next match",
-    icon: "i-lucide-chevron-down",
+    icon: "i-lucide-arrow-down",
     run: () => runSearchCommand(findNext),
   },
   {
