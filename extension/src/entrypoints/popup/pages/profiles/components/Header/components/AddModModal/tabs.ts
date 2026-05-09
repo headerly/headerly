@@ -73,7 +73,7 @@ export const tabs: Tab[] = [
       },
       {
         key: "simple-redirect-url",
-        title: "Simple redirect URL",
+        title: "Simple Redirect URL",
         description: "Redirect matched requests to a specific URL.",
         action: () => profilesStore.addRedirectUrlGroup(),
         get disabled() {
