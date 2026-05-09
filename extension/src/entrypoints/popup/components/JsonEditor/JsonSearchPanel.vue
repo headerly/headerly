@@ -5,11 +5,13 @@ import {
   findNext,
   findPrevious,
   getSearchQuery,
+  replaceAll,
+  replaceNext,
   SearchQuery,
   setSearchQuery,
 } from "@codemirror/search";
 import { runScopeHandlers } from "@codemirror/view";
-import { onMounted, ref, useTemplateRef, watch } from "vue";
+import { nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { Button } from "#/ui/button";
 import { Toggle } from "#/ui/toggle";
 import {
@@ -27,19 +29,24 @@ const props = defineProps<{
 }>();
 
 const searchInputRef = useTemplateRef<HTMLInputElement>("searchInputRef");
+const replaceInputRef = useTemplateRef<HTMLInputElement>("replaceInputRef");
 const searchText = ref("");
+const replaceText = ref("");
 const caseSensitive = ref(false);
+const replaceExpanded = ref(false);
 const regexp = ref(false);
 const wholeWord = ref(false);
 
-watch([searchText, caseSensitive, regexp, wholeWord], updateSearchQuery);
+watch([searchText, replaceText, caseSensitive, regexp, wholeWord], updateSearchQuery);
 
 onMounted(async () => {
   const query = getSearchQuery(props.view.state);
   searchText.value = query.search;
+  replaceText.value = query.replace;
   caseSensitive.value = query.caseSensitive;
   regexp.value = query.regexp;
   wholeWord.value = query.wholeWord;
+  await nextTick();
   searchInputRef.value?.focus();
 });
 
@@ -65,6 +72,7 @@ function updateSearchQuery() {
   const previous = getSearchQuery(props.view.state);
   const next = new SearchQuery({
     search: searchText.value,
+    replace: replaceText.value,
     caseSensitive: caseSensitive.value,
     regexp: regexp.value,
     wholeWord: wholeWord.value,
@@ -86,10 +94,23 @@ function handleSearchSubmit(event: KeyboardEvent) {
   runSearchCommand(event.shiftKey ? findPrevious : findNext);
 }
 
+function handleReplaceSubmit() {
+  runSearchCommand(replaceNext);
+}
+
 function handleSearchPanelKeydown(event: KeyboardEvent) {
   // This enables CodeMirror's search panel keyboard shortcuts.
   if (runScopeHandlers(props.view, event, "search-panel")) {
     event.preventDefault();
+  }
+}
+
+async function toggleReplaceExpanded() {
+  replaceExpanded.value = !replaceExpanded.value;
+
+  if (replaceExpanded.value) {
+    await nextTick();
+    replaceInputRef.value?.focus();
   }
 }
 
@@ -110,20 +131,59 @@ const searchPanelActions = [
     run: () => closeSearchPanel(props.view),
   },
 ] as const;
+
+const replacePanelActions = [
+  {
+    label: "Replace",
+    icon: "i-lucide-replace",
+    run: () => runSearchCommand(replaceNext),
+  },
+  {
+    label: "Replace all",
+    icon: "i-lucide-replace-all",
+    run: () => runSearchCommand(replaceAll),
+  },
+] as const;
 </script>
 
 <template>
   <div
     class="
-      flex items-center gap-1 border-b bg-background p-1.5 text-sm
-      text-foreground
+      grid grid-cols-[1.5rem_minmax(0,1fr)_auto] gap-1 border-b bg-background
+      p-1.5 text-sm text-foreground
     "
     @keydown="handleSearchPanelKeydown"
   >
+    <div :class="cn('flex items-center', replaceExpanded && 'row-span-2')">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button
+              type="button"
+              size="icon-xs"
+              class="size-6"
+              variant="ghost"
+              @click="toggleReplaceExpanded"
+            >
+              <i
+                :class="cn(
+                  'size-4 transition-transform',
+                  replaceExpanded && 'rotate-90',
+                  'i-lucide-chevron-right',
+                )"
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
+            Toggle replace
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+
     <div
-      class="flex h-8 min-w-0 flex-1 items-center rounded-sm bg-muted"
+      class="flex h-8 min-w-0 items-center rounded-sm bg-muted"
     >
-      <i class="ml-2 i-lucide-search" />
       <input
         ref="searchInputRef"
         v-model="searchText"
@@ -160,33 +220,77 @@ const searchPanelActions = [
                 <i :class="cn('size-4', option.icon)" />
               </Toggle>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="bottom" :side-offset="10">
               {{ option.label }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
     </div>
-    <TooltipProvider>
-      <Tooltip
-        v-for="action in searchPanelActions"
-        :key="action.label"
+
+    <div class="flex items-center gap-1">
+      <TooltipProvider>
+        <Tooltip
+          v-for="action in searchPanelActions"
+          :key="action.label"
+        >
+          <TooltipTrigger as-child>
+            <Button
+              type="button"
+              size="icon-sm"
+              class="size-6"
+              variant="ghost"
+              @click="action.run"
+            >
+              <i :class="cn('size-4', action.icon)" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
+            {{ action.label }}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+
+    <template v-if="replaceExpanded">
+      <div
+        class="col-start-2 flex h-8 min-w-0 items-center rounded-sm bg-muted"
       >
-        <TooltipTrigger as-child>
-          <Button
-            type="button"
-            size="icon-sm"
-            class="size-6"
-            variant="ghost"
-            @click="action.run"
+        <input
+          ref="replaceInputRef"
+          v-model="replaceText"
+          class="
+            h-full min-w-0 flex-1 px-2 text-sm outline-none
+            placeholder:text-muted-foreground
+          "
+          placeholder="Replace"
+          @keydown.enter="handleReplaceSubmit"
+        >
+      </div>
+
+      <div class="col-start-3 flex items-center gap-1">
+        <TooltipProvider>
+          <Tooltip
+            v-for="action in replacePanelActions"
+            :key="action.label"
           >
-            <i :class="cn('size-4', action.icon)" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" :collision-padding="8">
-          {{ action.label }}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+            <TooltipTrigger as-child>
+              <Button
+                type="button"
+                size="icon-sm"
+                class="size-6"
+                variant="ghost"
+                @click="action.run"
+              >
+                <i :class="cn('size-4', action.icon)" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
+              {{ action.label }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </template>
   </div>
 </template>
