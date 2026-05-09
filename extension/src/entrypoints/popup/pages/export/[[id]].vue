@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
 import { ref, watch } from "vue";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { toast } from "vue-sonner";
 import { Button } from "#/ui/button";
 import { useJsonValidation } from "@/composables/useJsonValidation";
@@ -28,12 +28,6 @@ watch(() => [profilesStore.ready, route.params.id] as const, ([ready, id]) => {
     handleSelectionChange([profile]);
   }
 }, { immediate: true });
-
-// Reset selected profiles to empty
-onBeforeRouteLeave(() => {
-  selectedProfiles.value = [];
-  handleSelectionChange([]);
-});
 
 function handleSelectionChange(profiles: Profile[]) {
   selectedProfiles.value = profiles;

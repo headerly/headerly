@@ -25,7 +25,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       data-slot="tooltip-content"
       v-bind="{ ...forwarded, ...$attrs }"
       :class="cn(`
-        z-50 w-fit animate-in rounded-md bg-foreground px-3 py-1.5 font-sans
+        z-1000 w-fit animate-in rounded-md bg-foreground px-3 py-1.5 font-sans
         text-sm text-pretty text-background fade-in-0 zoom-in-95
         data-[side=bottom]:slide-in-from-top-2
         data-[side=left]:slide-in-from-right-2
@@ -39,7 +39,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
       <TooltipArrow
         class="
-          z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-xs
+          z-1000 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-xs
           bg-foreground fill-foreground
         "
       />
