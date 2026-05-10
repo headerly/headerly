@@ -87,7 +87,7 @@ function buildQueryTransform(queryTransform?: ProfileQueryTransform) {
     addOrReplaceParams.push({
       key,
       value,
-      replaceOnly: item.replaceOnly ? true : undefined,
+      replaceOnly: item.replaceOnly || undefined,
     });
   }
 

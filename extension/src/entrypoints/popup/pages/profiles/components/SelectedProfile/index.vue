@@ -137,10 +137,8 @@ function isRedirectTransformEmpty() {
   const hasSimpleField = REDIRECT_TRANSFORM_SIMPLE_GROUP_CONFIGS.some((config) => {
     return Boolean(transform[config.key]?.length);
   });
-  const hasQueryTransform = Boolean(
-    transform.queryTransform?.addOrReplaceParams?.items.length
-    || transform.queryTransform?.removeParams?.items.length,
-  );
+  const hasQueryTransform = (transform.queryTransform?.addOrReplaceParams?.items.length ?? 0) > 0
+    || (transform.queryTransform?.removeParams?.items.length ?? 0) > 0;
 
   return !hasSimpleField && !hasQueryTransform;
 }
