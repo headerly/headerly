@@ -71,6 +71,7 @@ const REDIRECT_SIMPLE_GROUP_CONFIGS = [
     showUseCurrentTabButton: false,
   },
 ] as const;
+type RedirectSimpleGroupKey = (typeof REDIRECT_SIMPLE_GROUP_CONFIGS)[number]["key"];
 
 const REDIRECT_TRANSFORM_SIMPLE_GROUP_CONFIGS = [
   {
@@ -161,7 +162,7 @@ function cleanupRedirectTransform() {
   }
 }
 
-function deleteSimpleRedirectGroup(key: "redirectUrlGroup" | "redirectRegexSubstitution") {
+function deleteSimpleRedirectGroup(key: RedirectSimpleGroupKey) {
   delete profilesStore.selectedProfile[key];
 }
 
