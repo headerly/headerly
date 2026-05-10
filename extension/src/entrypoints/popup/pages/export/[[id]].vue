@@ -124,7 +124,6 @@ async function handleDownloadJson() {
       <h1
         class="flex items-center gap-2 text-base font-semibold"
       >
-        <i class="i-lucide-arrow-up-to-line size-5" />
         Export Profiles
       </h1>
       <div class="flex justify-end space-x-2">
@@ -139,7 +138,7 @@ async function handleDownloadJson() {
               <span class="sr-only">Export settings</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" :collision-padding="8">
+          <DropdownMenuContent align="end" :collision-padding="8" class="z-1000">
             <DropdownMenuCheckboxItem
               v-model="exportCookieValue"
               class="min-w-52 justify-between gap-3"
