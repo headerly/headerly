@@ -100,7 +100,7 @@ function addNewField() {
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this redirect URL</span>
+            <span class="sr-only">Delete this {{ props.name }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

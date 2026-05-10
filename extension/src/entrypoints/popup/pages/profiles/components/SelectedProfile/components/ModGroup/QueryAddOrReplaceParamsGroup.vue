@@ -2,7 +2,7 @@
 import type { QueryKeyValueGroup } from "@/lib/schema";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import { addItemToGroup, createRedirectQueryKeyValue } from "@/lib/utils";
+import { addItemToGroup, createQueryKeyValue } from "@/lib/utils";
 import QueryKeyValueFieldWithActions from "./QueryKeyValueFieldWithActions.vue";
 
 const group = defineModel<QueryKeyValueGroup>({
@@ -14,7 +14,7 @@ const emit = defineEmits<{
 }>();
 
 function addNewField() {
-  addItemToGroup(group.value.items, createRedirectQueryKeyValue(), group.value.type);
+  addItemToGroup(group.value.items, createQueryKeyValue(), group.value.type);
 }
 </script>
 

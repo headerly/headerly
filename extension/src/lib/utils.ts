@@ -44,7 +44,7 @@ export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
   return createRadioGroupAction(overrides);
 }
 
-export function createRedirectQueryKeyValue(overrides?: Partial<QueryKeyValueItem>) {
+export function createQueryKeyValue(overrides?: Partial<QueryKeyValueItem>) {
   return {
     id: uuidv7(),
     enabled: true,

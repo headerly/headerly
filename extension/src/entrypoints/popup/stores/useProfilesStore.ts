@@ -8,7 +8,7 @@ import { computed, ref } from "vue";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createHeaderMod, createProfile, createRadioGroupAction, createRedirectQueryKeyValue, createRedirectUrl, createSyncCookie } from "@/lib/utils";
+import { createHeaderMod, createProfile, createQueryKeyValue, createRadioGroupAction, createRedirectUrl, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
 
 function getProfileIcon() {
@@ -175,7 +175,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (!selectedProfile.value.redirectTransform.queryTransform.addOrReplaceParams?.items.length) {
       selectedProfile.value.redirectTransform.queryTransform.addOrReplaceParams = {
         type: "checkbox",
-        items: [createRedirectQueryKeyValue()],
+        items: [createQueryKeyValue()],
       };
     }
   }
