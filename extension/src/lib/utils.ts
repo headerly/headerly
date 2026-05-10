@@ -32,12 +32,13 @@ export function createHeaderMod(overrides?: Partial<HeaderMod>) {
 }
 
 export function createRadioGroupAction(overrides?: Partial<RadioGroupActionItem>) {
-  return {
+  const item: RadioGroupActionItem = {
     id: uuidv7(),
     enabled: true,
     value: "",
     ...(overrides ?? {}),
-  } as const satisfies RadioGroupActionItem;
+  };
+  return item;
 }
 
 export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
@@ -45,14 +46,15 @@ export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
 }
 
 export function createQueryKeyValue(overrides?: Partial<QueryKeyValueItem>) {
-  return {
+  const item: QueryKeyValueItem = {
     id: uuidv7(),
     enabled: true,
     key: "",
     value: "",
     replaceOnly: false,
     ...(overrides ?? {}),
-  } as const satisfies QueryKeyValueItem;
+  };
+  return item;
 }
 
 export function createProfile(overrides?: Partial<Profile>) {
