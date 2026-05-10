@@ -1,5 +1,5 @@
 import type { ClassValue } from "clsx";
-import type { GroupItem, GroupType, HeaderMod, Profile, RedirectUrlGroupItem, RuleActionType, SyncCookie } from "./schema";
+import type { GroupItem, GroupType, HeaderMod, Profile, QueryKeyValueItem, RadioGroupActionItem, RedirectUrlGroupItem, RuleActionType, SyncCookie } from "./schema";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
@@ -31,13 +31,28 @@ export function createHeaderMod(overrides?: Partial<HeaderMod>) {
   } as const satisfies HeaderMod;
 }
 
-export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
+export function createRadioGroupAction(overrides?: Partial<RadioGroupActionItem>) {
   return {
     id: uuidv7(),
     enabled: true,
     value: "",
     ...(overrides ?? {}),
-  } as const satisfies RedirectUrlGroupItem;
+  } as const satisfies RadioGroupActionItem;
+}
+
+export function createRedirectUrl(overrides?: Partial<RedirectUrlGroupItem>) {
+  return createRadioGroupAction(overrides);
+}
+
+export function createRedirectQueryKeyValue(overrides?: Partial<QueryKeyValueItem>) {
+  return {
+    id: uuidv7(),
+    enabled: true,
+    key: "",
+    value: "",
+    replaceOnly: false,
+    ...(overrides ?? {}),
+  } as const satisfies QueryKeyValueItem;
 }
 
 export function createProfile(overrides?: Partial<Profile>) {

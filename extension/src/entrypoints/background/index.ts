@@ -80,6 +80,8 @@ const NEED_WATCH_KEYS = [
   "filters",
   "syncCookieGroups",
   "redirectUrlGroup",
+  "redirectRegexSubstitution",
+  "redirectTransform",
   "priority",
   "ruleActionType",
 ] as const satisfies (keyof Profile)[];
@@ -104,7 +106,9 @@ function hasNonBlankActionFormValues(profile: ProfileCoreData): boolean {
       return requestHeaders !== undefined || responseHeaders !== undefined;
     })
     .with({ type: "redirect" }, ({ redirect }) => {
-      return redirect.url !== undefined;
+      return redirect.url !== undefined
+        || redirect.regexSubstitution !== undefined
+        || redirect.transform !== undefined;
     })
     .otherwise(() => true);
 }

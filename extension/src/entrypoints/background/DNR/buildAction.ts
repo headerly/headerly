@@ -1,4 +1,5 @@
 import type { ProfileCoreData } from "..";
+import type { QueryTransform as ProfileQueryTransform } from "@/lib/schema";
 import { match } from "ts-pattern";
 
 /**
@@ -24,21 +25,107 @@ export function buildAction(profile: ProfileCoreData) {
     })
     .with("redirect", (type) => {
       const redirectUrl = buildRedirectUrl(profile);
+      const regexSubstitution = buildRedirectRegexSubstitution(profile);
+      const transform = buildRedirectTransform(profile);
       return {
         type,
-        redirect: { url: redirectUrl },
+        redirect: {
+          url: redirectUrl,
+          regexSubstitution,
+          transform,
+        },
       } as const satisfies Browser.declarativeNetRequest.RuleAction;
     })
     .exhaustive();
 }
 
 export function buildRedirectUrl(profile: ProfileCoreData) {
-  const trimmed = profile.redirectUrlGroup
+  return getEnabledTrimmedValue(profile.redirectUrlGroup);
+}
+
+export function buildRedirectRegexSubstitution(profile: ProfileCoreData) {
+  return getEnabledTrimmedValue(profile.redirectRegexSubstitution);
+}
+
+export function buildRedirectTransform(profile: ProfileCoreData) {
+  const transform = profile.redirectTransform;
+  if (!transform) {
+    return undefined;
+  }
+
+  const queryTransform = buildQueryTransform(transform.queryTransform);
+  const builtTransform: Browser.declarativeNetRequest.URLTransform = {
+    fragment: getEnabledTrimmedValue(transform.fragment),
+    host: getEnabledTrimmedValue(transform.host),
+    password: getEnabledTrimmedValue(transform.password),
+    path: getEnabledTrimmedValue(transform.path),
+    port: getEnabledTrimmedValue(transform.port),
+    query: getEnabledTrimmedValue(transform.query),
+    scheme: getEnabledTrimmedValue(transform.scheme),
+    username: getEnabledTrimmedValue(transform.username),
+    queryTransform,
+  };
+
+  return hasDefinedValues(builtTransform) ? builtTransform : undefined;
+}
+
+function buildQueryTransform(queryTransform?: ProfileQueryTransform) {
+  if (!queryTransform) {
+    return undefined;
+  }
+
+  const addOrReplaceParams: Browser.declarativeNetRequest.QueryKeyValue[] = [];
+  for (const item of queryTransform.addOrReplaceParams?.items ?? []) {
+    if (!item.enabled) {
+      continue;
+    }
+    const key = item.key.trim();
+    const value = item.value.trim();
+    if (!key || !value) {
+      continue;
+    }
+    addOrReplaceParams.push({
+      key,
+      value,
+      replaceOnly: item.replaceOnly ? true : undefined,
+    });
+  }
+
+  const removeParams: string[] = [];
+  for (const item of queryTransform.removeParams?.items ?? []) {
+    if (!item.enabled) {
+      continue;
+    }
+    const value = item.value.trim();
+    if (!value) {
+      continue;
+    }
+    removeParams.push(value);
+  }
+
+  if (!addOrReplaceParams.length && !removeParams.length) {
+    return undefined;
+  }
+
+  return {
+    addOrReplaceParams: addOrReplaceParams.length ? addOrReplaceParams : undefined,
+    removeParams: removeParams.length ? removeParams : undefined,
+  } as const satisfies Browser.declarativeNetRequest.QueryTransform;
+}
+
+function getEnabledTrimmedValue(
+  list?: Array<{ enabled: boolean; value: string }>,
+) {
+  const trimmed = list
     ?.find(item => item.enabled)
     ?.value
     .trim();
-    // An empty string is not a valid redirect URL and will cause an error during rule registration, so we convert it to `undefined` to let DNR treat it as if the redirectUrlGroup is not set.
+  // Empty strings are not valid for redirect action values in DNR; convert to undefined so the field is omitted.
   return trimmed || undefined;
+}
+
+function hasDefinedValues(record: object) {
+  return Object.values(record).some(value => value !== undefined);
 }
 
 export function buildRequestHeaders(profile: ProfileCoreData) {

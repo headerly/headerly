@@ -1,4 +1,4 @@
-import type { GroupType, HeaderModGroup, Profile, RuleActionType } from "@/lib/schema";
+import type { GroupType, HeaderModGroup, Profile, RedirectTransformSimpleField, RuleActionType } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
@@ -8,7 +8,7 @@ import { computed, ref } from "vue";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie } from "@/lib/utils";
+import { createHeaderMod, createProfile, createRadioGroupAction, createRedirectQueryKeyValue, createRedirectUrl, createSyncCookie } from "@/lib/utils";
 import { useSettingsStore } from "./useSettingsStore";
 
 function getProfileIcon() {
@@ -145,6 +145,41 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
+  function addRedirectRegexSubstitutionGroup() {
+    if (!selectedProfile.value.redirectRegexSubstitution?.length) {
+      selectedProfile.value.redirectRegexSubstitution = [createRadioGroupAction()];
+    }
+  }
+
+  function addRedirectTransformField(field: RedirectTransformSimpleField) {
+    selectedProfile.value.redirectTransform ??= {};
+    if (!selectedProfile.value.redirectTransform[field]?.length) {
+      selectedProfile.value.redirectTransform[field] = [createRadioGroupAction()];
+    }
+  }
+
+  function addRedirectTransformRemoveParamsGroup() {
+    selectedProfile.value.redirectTransform ??= {};
+    selectedProfile.value.redirectTransform.queryTransform ??= {};
+    if (!selectedProfile.value.redirectTransform.queryTransform.removeParams?.items.length) {
+      selectedProfile.value.redirectTransform.queryTransform.removeParams = {
+        type: "checkbox",
+        items: [createRadioGroupAction()],
+      };
+    }
+  }
+
+  function addRedirectTransformAddOrReplaceParamsGroup() {
+    selectedProfile.value.redirectTransform ??= {};
+    selectedProfile.value.redirectTransform.queryTransform ??= {};
+    if (!selectedProfile.value.redirectTransform.queryTransform.addOrReplaceParams?.items.length) {
+      selectedProfile.value.redirectTransform.queryTransform.addOrReplaceParams = {
+        type: "checkbox",
+        items: [createRedirectQueryKeyValue()],
+      };
+    }
+  }
+
   return {
     // State
     manager,
@@ -163,6 +198,10 @@ export const useProfilesStore = defineStore("profiles", () => {
     addModGroup,
     addSyncCookieGroup,
     addRedirectUrlGroup,
+    addRedirectRegexSubstitutionGroup,
+    addRedirectTransformField,
+    addRedirectTransformRemoveParamsGroup,
+    addRedirectTransformAddOrReplaceParamsGroup,
     undo,
     redo,
   };
