@@ -1,3 +1,4 @@
+import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
@@ -23,10 +24,20 @@ async function getCurrentTabHostname() {
     if (!url) {
       return "";
     }
-    return (["https", "http"].includes(url.protocol) ? url.hostname : "");
+    return match(["https", "http"].includes(url.protocol))
+      .with(true, () => url.hostname)
+      .with(false, () => "")
+      .exhaustive();
   } catch {
     return "";
   }
+}
+
+function getDnrUrlFilterValue(hostname: string) {
+  return match(Boolean(hostname))
+    .with(true, () => `||${hostname}/`)
+    .with(false, () => "")
+    .exhaustive();
 }
 
 export const tabs: Tab[] = [
@@ -97,7 +108,7 @@ export const tabs: Tab[] = [
             {
               id: uuidv7(),
               enabled: true,
-              value: hostname ? `||${hostname}/` : "",
+              value: getDnrUrlFilterValue(hostname),
             },
           ];
         },
@@ -160,7 +171,7 @@ export const tabs: Tab[] = [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: hostname ? `||${hostname}/` : "",
+                value: getDnrUrlFilterValue(hostname),
               },
             ],
           };
@@ -212,7 +223,7 @@ export const tabs: Tab[] = [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: hostname ? `||${hostname}/` : "",
+                value: getDnrUrlFilterValue(hostname),
               },
             ],
           };
@@ -234,7 +245,7 @@ export const tabs: Tab[] = [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: hostname ? `||${hostname}/` : "",
+                value: getDnrUrlFilterValue(hostname),
               },
             ],
           };

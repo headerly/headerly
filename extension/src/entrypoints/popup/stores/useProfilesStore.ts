@@ -3,6 +3,7 @@ import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
+import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
 import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
@@ -16,16 +17,17 @@ function getProfileIcon() {
   if (settingsStore.autoAssignEmoji === false) {
     return "📃";
   }
-  const pool = settingsStore.randomEmojiCategory === "all"
-    ? allEmojis
-    : emoji[settingsStore.randomEmojiCategory];
+  const pool = match(settingsStore.randomEmojiCategory)
+    .with("all", () => allEmojis)
+    .otherwise(category => emoji[category]);
   return pool[round(random(pool.length - 1))];
 }
 
 export function findHeaderModGroups(profile: Profile, type: ActionType) {
-  return type === "request"
-    ? profile.requestHeaderModGroups
-    : profile.responseHeaderModGroups;
+  return match(type)
+    .with("request", () => profile.requestHeaderModGroups)
+    .with("response", () => profile.responseHeaderModGroups)
+    .exhaustive();
 }
 
 export const useProfilesStore = defineStore("profiles", () => {

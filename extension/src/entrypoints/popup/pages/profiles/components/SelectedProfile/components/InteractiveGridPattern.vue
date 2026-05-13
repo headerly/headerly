@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { match } from "ts-pattern";
 import { computed, ref } from "vue";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,10 @@ function getRectClass(index: number) {
       stroke-gray-400/30 transition-all duration-100 ease-in-out
       not-[&:hover]:duration-1000
     `,
-    hoveredSquare.value === index ? "fill-gray-300/30" : "fill-transparent",
+    match(hoveredSquare.value === index)
+      .with(true, () => "fill-gray-300/30")
+      .with(false, () => "fill-transparent")
+      .exhaustive(),
     props.squaresClassName,
   );
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
+import { match } from "ts-pattern";
 import { computed } from "vue";
 import ProfileOption from "#/components/ProfileOption.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
@@ -41,7 +42,10 @@ const allChecked = computed({
     return "indeterminate";
   },
   set(value) {
-    const newProfiles = value === true ? profilesStore.manager.profiles : [];
+    const newProfiles = match(value === true)
+      .with(true, () => profilesStore.manager.profiles)
+      .with(false, () => [])
+      .exhaustive();
     model.value = newProfiles;
     emit("change", newProfiles);
   },
@@ -54,13 +58,23 @@ function isSelected(profile: Profile) {
 function toggleProfile(profile: Profile, checked: unknown) {
   let newProfiles: Profile[];
   if (checked === true) {
-    newProfiles = isSelected(profile) ? model.value : [...model.value, profile];
+    newProfiles = match(isSelected(profile))
+      .with(true, () => model.value)
+      .with(false, () => [...model.value, profile])
+      .exhaustive();
   } else {
     newProfiles = model.value.filter(p => p.id !== profile.id);
   }
   model.value = newProfiles;
   emit("change", newProfiles);
 }
+
+const selectAllLabel = computed(() =>
+  match(allChecked.value === false || allChecked.value === "indeterminate")
+    .with(true, () => "Select all")
+    .with(false, () => "Unselect all")
+    .exhaustive(),
+);
 </script>
 
 <template>
@@ -86,7 +100,7 @@ function toggleProfile(profile: Profile, checked: unknown) {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right">
-          {{ allChecked === false || allChecked === "indeterminate" ? 'Select all' : 'Unselect all' }}
+          {{ selectAllLabel }}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

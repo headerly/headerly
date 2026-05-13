@@ -15,6 +15,7 @@ export default antfu(
     files: ["**/*.{ts,vue}"],
     rules: {
       "antfu/no-top-level-await": "off",
+      "no-ternary": "error",
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
       "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],

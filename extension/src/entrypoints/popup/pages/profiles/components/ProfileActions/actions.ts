@@ -1,4 +1,5 @@
 import type { Profile } from "@/lib/schema";
+import { match } from "ts-pattern";
 import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
@@ -31,8 +32,14 @@ export function useProfileActions() {
   const actions = [
     {
       id: "toggle",
-      label: p => (p.enabled ? "Pause" : "Resume"),
-      icon: p => (p.enabled ? "i-lucide-pause" : "i-lucide-play"),
+      label: p => match(p.enabled)
+        .with(true, () => "Pause")
+        .with(false, () => "Resume")
+        .exhaustive(),
+      icon: p => match(p.enabled)
+        .with(true, () => "i-lucide-pause")
+        .with(false, () => "i-lucide-play")
+        .exhaustive(),
       onClick: p => profilesStore.toggleProfileEnabled(p.id),
     },
     {
@@ -43,8 +50,14 @@ export function useProfileActions() {
     },
     {
       id: "delete",
-      label: () => (profilesStore.manager.profiles.length === 1 ? "Reset" : "Delete"),
-      icon: () => (profilesStore.manager.profiles.length === 1 ? "i-lucide-refresh-ccw" : "i-lucide-trash"),
+      label: () => match(profilesStore.manager.profiles.length === 1)
+        .with(true, () => "Reset")
+        .with(false, () => "Delete")
+        .exhaustive(),
+      icon: () => match(profilesStore.manager.profiles.length === 1)
+        .with(true, () => "i-lucide-refresh-ccw")
+        .with(false, () => "i-lucide-trash")
+        .exhaustive(),
       onClick: p => profilesStore.deleteProfile(p.id),
       variant: "destructive",
     },
@@ -80,7 +93,9 @@ export function transformIdsToActions(actionIds: (ActionKey[] | "separator")[]) 
   const id2ActionMap = new Map(actions.map(a => [a.id, a]));
 
   const actionGroups = actionIds.map(group =>
-    group === "separator" ? "separator" : group.map(id => id2ActionMap.get(id)!),
+    match(group)
+      .with("separator", () => "separator" as const)
+      .otherwise(ids => ids.map(id => id2ActionMap.get(id)!)),
   );
 
   return actionGroups;

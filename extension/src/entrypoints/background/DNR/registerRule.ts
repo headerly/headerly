@@ -1,4 +1,5 @@
 import type { ProfileChanges } from "../index";
+import { match, P } from "ts-pattern";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
@@ -70,7 +71,9 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
     const profileId2RelatedRuleIdRecord = await profileId2RelatedRuleIdRecordItem.getValue();
     const ruleId = profileId2RelatedRuleIdRecord[deletedProfile.id];
     await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: ruleId ? [ruleId] : undefined,
+      removeRuleIds: match(ruleId)
+        .with(P.number, id => [id])
+        .otherwise(() => undefined),
     });
     results.push({
       status: "fulfilled",
@@ -105,12 +108,15 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     // For modified profiles, remove old rule first
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = changes.modified.includes(profile)
-      ? record[profile.id]
-      : undefined;
+    const deleteRuleId = match(changes.modified.includes(profile))
+      .with(true, () => record[profile.id])
+      .with(false, () => undefined)
+      .exhaustive();
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: deleteRuleId ? [deleteRuleId] : undefined,
+      removeRuleIds: match(deleteRuleId)
+        .with(P.number, id => [id])
+        .otherwise(() => undefined),
       addRules: [rule],
     }).then(() => {
       return {

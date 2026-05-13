@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { match } from "ts-pattern";
 import { ref, useTemplateRef } from "vue";
 import { toast } from "vue-sonner";
 import JsonEditor from "#/components/JsonEditor/index.vue";
@@ -55,7 +56,11 @@ async function confirmImport() {
 
     profilesStore.manager.profiles.push(...profiles.map(addProfileIds));
 
-    toast.success(`Successfully imported ${profiles.length} profile${profiles.length === 1 ? "" : "s"}!`);
+    const profileCountLabel = match(profiles.length === 1)
+      .with(true, () => "profile")
+      .with(false, () => "profiles")
+      .exhaustive();
+    toast.success(`Successfully imported ${profiles.length} ${profileCountLabel}!`);
     open.value = false;
     userInput.value = "";
   } catch (error) {

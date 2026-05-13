@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { match } from "ts-pattern";
 import { cn } from "@/lib/utils";
 
 const props = withDefaults(defineProps<{
@@ -17,7 +18,10 @@ const emits = defineEmits<{
 
 function emitUpdate(event: Event) {
   const value = (event.target as HTMLInputElement).value;
-  emits("update:modelValue", props.modelModifiers.trim ? value.trim() : value);
+  emits("update:modelValue", match(props.modelModifiers.trim === true)
+    .with(true, () => value.trim())
+    .with(false, () => value)
+    .exhaustive());
 }
 </script>
 
