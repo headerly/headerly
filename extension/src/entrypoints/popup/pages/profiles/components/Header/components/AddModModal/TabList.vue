@@ -69,7 +69,7 @@ useSortableAndAutoAnimate({
       mt-2 flex max-h-[60vh] flex-col gap-1 overflow-y-auto
     "
   >
-    <button
+    <div
       v-for="item in list"
       :key="item.key"
       class="
@@ -80,10 +80,10 @@ useSortableAndAutoAnimate({
       "
       :class="{ 'opacity-50': item.disabled }"
     >
-      <div
+      <button
         class="flex flex-1 flex-col items-start p-3 pl-2"
         :disabled="item.disabled"
-        :class="{ 'cursor-not-allowed': item.disabled }"
+        :class="{ 'cursor-not-allowed!': item.disabled }"
         @click="() => {
           item.action();
           emit('close');
@@ -95,7 +95,7 @@ useSortableAndAutoAnimate({
         <div class="text-left text-xs text-muted-foreground">
           {{ item.description }}
         </div>
-      </div>
+      </button>
       <div
         data-sort-handle
         class="
@@ -109,6 +109,6 @@ useSortableAndAutoAnimate({
       >
         <i class="i-lucide-grip-vertical size-4" />
       </div>
-    </button>
+    </div>
   </div>
 </template>
