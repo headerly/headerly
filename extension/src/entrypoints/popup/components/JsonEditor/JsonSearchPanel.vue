@@ -159,30 +159,24 @@ const replacePanelActions = [
     @keydown="handleSearchPanelKeydown"
   >
     <div :class="cn('flex items-center', replaceExpanded && 'row-span-2')">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              type="button"
-              size="icon-xs"
-              class="size-6"
-              variant="ghost"
-              @click="toggleReplaceExpanded"
-            >
-              <i
-                :class="cn(
-                  'size-4 transition-transform',
-                  replaceExpanded && 'rotate-90',
-                  'i-lucide-chevron-right',
-                )"
-              />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
-            Toggle replace
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button
+        type="button"
+        size="icon-xs"
+        :class="cn('h-full w-6')"
+        variant="ghost"
+        @click="toggleReplaceExpanded"
+      >
+        <span class="sr-only">
+          Toggle replace
+        </span>
+        <i
+          :class="cn(
+            'size-4 transition-transform',
+            replaceExpanded && 'rotate-90',
+            'i-lucide-chevron-right',
+          )"
+        />
+      </Button>
     </div>
 
     <div
