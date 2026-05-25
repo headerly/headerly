@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/headerly/headerly/compare/v1.4.0...v1.5.0) (2026-05-24)
+
+
+### Features
+
+* adjust the size of the json editor replace/search toggle ([9c5d165](https://github.com/headerly/headerly/commit/9c5d165d1c494980617049ec8c7446418f9ddc5c))
+
+
+### Bug Fixes
+
+* button is not disabled and can still be clicked ([d9cbd4e](https://github.com/headerly/headerly/commit/d9cbd4ede90c435947188eaa0a6eda1aadceb9b2))
+
 ## [1.4.0](https://github.com/headerly/headerly/compare/v1.3.0...v1.4.0) (2026-05-10)
 
 
