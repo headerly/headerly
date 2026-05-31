@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/headerly/headerly/compare/v1.5.0...v1.5.1) (2026-05-31)
+
+
+### Bug Fixes
+
+* header name input field for the remove operation only occupies 50% of the width ([400bb93](https://github.com/headerly/headerly/commit/400bb938b32bf5089ea962ca36bf208f89c4fa50))
+
 ## [1.5.0](https://github.com/headerly/headerly/compare/v1.4.0...v1.5.0) (2026-05-24)
 
 
