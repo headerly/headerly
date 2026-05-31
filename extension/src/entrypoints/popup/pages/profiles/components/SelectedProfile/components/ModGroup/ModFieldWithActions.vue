@@ -86,7 +86,7 @@ const nextOperation = computed(() => {
       >
         <Combobox
           :model-value="field.name"
-          class="flex-1"
+          :class="cn('flex-1', field.operation === 'remove' && `col-span-2`)"
           @update:model-value="(val) => {
             if (typeof val === 'string') field.name = val;
           }"
