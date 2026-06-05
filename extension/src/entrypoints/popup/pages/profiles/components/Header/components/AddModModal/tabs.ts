@@ -92,6 +92,116 @@ export const tabs: Tab[] = [
             || Boolean(profilesStore.selectedProfile.redirectUrlGroup?.length);
         },
       },
+      {
+        key: "redirect-regex-substitution",
+        title: "Redirect Regex Substitution",
+        description: "Substitution pattern for rules with regexFilter. Use \\0 to \\9 for capture groups.",
+        action: () => profilesStore.addRedirectRegexSubstitutionGroup(),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectRegexSubstitution?.length);
+        },
+      },
+      {
+        key: "redirect-transform-fragment",
+        title: "Redirect Transform Fragment",
+        description: "The new fragment for the request. Use empty to clear, or begin with '#'.",
+        action: () => profilesStore.addRedirectTransformField("fragment"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.fragment?.length);
+        },
+      },
+      {
+        key: "redirect-transform-host",
+        title: "Redirect Transform Host",
+        description: "The new host for the request.",
+        action: () => profilesStore.addRedirectTransformField("host"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.host?.length);
+        },
+      },
+      {
+        key: "redirect-transform-password",
+        title: "Redirect Transform Password",
+        description: "The new password for the request.",
+        action: () => profilesStore.addRedirectTransformField("password"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.password?.length);
+        },
+      },
+      {
+        key: "redirect-transform-path",
+        title: "Redirect Transform Path",
+        description: "The new path for the request. If empty, the existing path is cleared.",
+        action: () => profilesStore.addRedirectTransformField("path"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.path?.length);
+        },
+      },
+      {
+        key: "redirect-transform-port",
+        title: "Redirect Transform Port",
+        description: "The new port for the request. If empty, the existing port is cleared.",
+        action: () => profilesStore.addRedirectTransformField("port"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.port?.length);
+        },
+      },
+      {
+        key: "redirect-transform-query",
+        title: "Redirect Transform Query",
+        description: "The new query for the request. Use empty to clear, or begin with '?'.",
+        action: () => profilesStore.addRedirectTransformField("query"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.query?.length);
+        },
+      },
+      {
+        key: "redirect-transform-scheme",
+        title: "Redirect Transform Scheme",
+        description: "The new scheme for the request (http, https, ftp, chrome-extension).",
+        action: () => profilesStore.addRedirectTransformField("scheme"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.scheme?.length);
+        },
+      },
+      {
+        key: "redirect-transform-username",
+        title: "Redirect Transform Username",
+        description: "The new username for the request.",
+        action: () => profilesStore.addRedirectTransformField("username"),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.username?.length);
+        },
+      },
+      {
+        key: "redirect-transform-query-remove-params",
+        title: "Redirect Query Remove Params",
+        description: "The list of query keys to be removed.",
+        action: () => profilesStore.addRedirectTransformRemoveParamsGroup(),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.queryTransform?.removeParams?.items.length);
+        },
+      },
+      {
+        key: "redirect-transform-query-add-or-replace",
+        title: "Redirect Query Add/Replace Params",
+        description: "The list of query key-value pairs to be added or replaced.",
+        action: () => profilesStore.addRedirectTransformAddOrReplaceParamsGroup(),
+        get disabled() {
+          return profilesStore.selectedProfile.ruleActionType !== "redirect"
+            || Boolean(profilesStore.selectedProfile.redirectTransform?.queryTransform?.addOrReplaceParams?.items.length);
+        },
+      },
     ],
   },
   {

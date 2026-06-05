@@ -62,9 +62,13 @@ function handleChangeType() {
       delete p.responseHeaderModGroups;
       delete p.syncCookieGroups;
       delete p.redirectUrlGroup;
+      delete p.redirectRegexSubstitution;
+      delete p.redirectTransform;
     })
     .with("modifyHeaders", () => {
       delete p.redirectUrlGroup;
+      delete p.redirectRegexSubstitution;
+      delete p.redirectTransform;
       p.requestHeaderModGroups ??= [{
         id: uuidv7(),
         type: "checkbox",

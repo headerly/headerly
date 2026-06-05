@@ -14,8 +14,14 @@ const groupItemWithValueSchema = groupItemSchema.extend({
   value: z.string(),
 });
 
-const redirectUrlGroupItemSchema = groupItemWithValueSchema;
-export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
+const radioGroupActionItemSchema = groupItemWithValueSchema;
+export type RadioGroupActionItem = z.infer<typeof radioGroupActionItemSchema>;
+
+const redirectUrlGroupItemSchema = radioGroupActionItemSchema;
+export type RedirectUrlGroupItem = RadioGroupActionItem;
+
+const redirectRegexSubstitutionSchema = radioGroupActionItemSchema;
+export type RedirectRegexSubstitutionItem = z.infer<typeof redirectRegexSubstitutionSchema>;
 
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
@@ -136,6 +142,56 @@ const syncCookieGroupSchema = z.object({
 });
 export type SyncCookieGroup = z.infer<typeof syncCookieGroupSchema>;
 
+const queryKeyValueSchema = groupItemSchema.extend({
+  key: z.string(),
+  value: z.string(),
+  replaceOnly: z.boolean().optional(),
+});
+export type QueryKeyValueItem = z.infer<typeof queryKeyValueSchema>;
+
+const queryKeyValueGroupSchema = z.object({
+  type: groupTypeSchema,
+  items: z.array(queryKeyValueSchema),
+});
+export type QueryKeyValueGroup = z.infer<typeof queryKeyValueGroupSchema>;
+
+const removeParamsGroupSchema = z.object({
+  type: groupTypeSchema,
+  items: z.array(groupItemWithValueSchema),
+});
+export type RemoveParamsGroup = z.infer<typeof removeParamsGroupSchema>;
+
+const queryTransformSchema = z.object({
+  addOrReplaceParams: queryKeyValueGroupSchema.optional(),
+  removeParams: removeParamsGroupSchema.optional(),
+});
+export type QueryTransform = z.infer<typeof queryTransformSchema>;
+
+export const REDIRECT_TRANSFORM_SIMPLE_FIELDS = [
+  "fragment",
+  "host",
+  "password",
+  "path",
+  "port",
+  "query",
+  "scheme",
+  "username",
+] as const;
+export type RedirectTransformSimpleField = typeof REDIRECT_TRANSFORM_SIMPLE_FIELDS[number];
+
+const redirectTransformSchema = z.object({
+  fragment: z.array(radioGroupActionItemSchema).optional(),
+  host: z.array(radioGroupActionItemSchema).optional(),
+  password: z.array(radioGroupActionItemSchema).optional(),
+  path: z.array(radioGroupActionItemSchema).optional(),
+  port: z.array(radioGroupActionItemSchema).optional(),
+  query: z.array(radioGroupActionItemSchema).optional(),
+  scheme: z.array(radioGroupActionItemSchema).optional(),
+  username: z.array(radioGroupActionItemSchema).optional(),
+  queryTransform: queryTransformSchema.optional(),
+});
+export type RedirectTransform = z.infer<typeof redirectTransformSchema>;
+
 const filterSchema = z.object({
   urlFilter: z.array(urlOrRegexFilterSchema).optional(),
   regexFilter: z.array(urlOrRegexFilterSchema).optional(),
@@ -168,6 +224,8 @@ const profileSchema = z.object({
   responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
   redirectUrlGroup: z.array(redirectUrlGroupItemSchema).optional(),
+  redirectRegexSubstitution: z.array(redirectRegexSubstitutionSchema).optional(),
+  redirectTransform: redirectTransformSchema.optional(),
   filters: filterSchema,
 });
 export type Profile = z.infer<typeof profileSchema>;
@@ -191,6 +249,33 @@ const syncCookieGroupWithoutIdSchema = syncCookieGroupSchema.omit({ id: true }).
 });
 
 const redirectUrlGroupItemWithoutIdSchema = redirectUrlGroupItemSchema.omit({ id: true });
+const redirectRegexSubstitutionWithoutIdSchema = redirectRegexSubstitutionSchema.omit({ id: true });
+
+const queryKeyValueWithoutIdSchema = queryKeyValueSchema.omit({ id: true });
+const queryKeyValueGroupWithoutIdSchema = queryKeyValueGroupSchema.extend({
+  items: z.array(queryKeyValueWithoutIdSchema),
+});
+
+const removeParamsGroupWithoutIdSchema = removeParamsGroupSchema.extend({
+  items: z.array(groupItemWithValueSchema.omit({ id: true })),
+});
+
+const queryTransformWithoutIdSchema = queryTransformSchema.extend({
+  addOrReplaceParams: queryKeyValueGroupWithoutIdSchema.optional(),
+  removeParams: removeParamsGroupWithoutIdSchema.optional(),
+});
+
+const redirectTransformWithoutIdSchema = redirectTransformSchema.extend({
+  fragment: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  host: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  password: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  path: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  port: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  query: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  scheme: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  username: z.array(radioGroupActionItemSchema.omit({ id: true })).optional(),
+  queryTransform: queryTransformWithoutIdSchema.optional(),
+});
 
 const urlOrRegexFilterWithoutIdSchema = urlOrRegexFilterSchema.omit({ id: true });
 
@@ -219,6 +304,8 @@ export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).exten
   responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),
   redirectUrlGroup: z.array(redirectUrlGroupItemWithoutIdSchema).optional(),
+  redirectRegexSubstitution: z.array(redirectRegexSubstitutionWithoutIdSchema).optional(),
+  redirectTransform: redirectTransformWithoutIdSchema.optional(),
   filters: filterWithoutIdSchema,
 });
 

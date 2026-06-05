@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RedirectUrlGroupItem } from "@/lib/schema";
+import type { RadioGroupActionItem } from "@/lib/schema";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -12,22 +12,31 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, createRedirectUrl } from "@/lib/utils";
+import { addItemToGroup, createRadioGroupAction } from "@/lib/utils";
 
-const list = defineModel<RedirectUrlGroupItem[]>({
+const list = defineModel<RadioGroupActionItem[]>({
   required: true,
 });
 
-const profilesStore = useProfilesStore();
+const props = withDefaults(defineProps<{
+  name: string;
+  description: string;
+  placeholder: string;
+  inputType?: "url" | "text";
+  showUseCurrentTabButton?: boolean;
+}>(), {
+  inputType: "text",
+  showUseCurrentTabButton: false,
+});
+
+const emit = defineEmits<{
+  (e: "deleteGroup"): void;
+}>();
+
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 
 function addNewField() {
-  addItemToGroup(list.value, createRedirectUrl(), "radio");
-}
-
-function deleteGroup() {
-  delete profilesStore.selectedProfile.redirectUrlGroup;
+  addItemToGroup(list.value, createRadioGroupAction(), "radio");
 }
 </script>
 
@@ -35,14 +44,14 @@ function deleteGroup() {
   <Group
     v-model:list="list"
     type="radio"
-    name="Redirect URL"
-    @delete-empty-group="deleteGroup"
+    :name="props.name"
+    @delete-empty-group="emit('deleteGroup')"
   >
     <template #name-after>
       <GroupActions
         v-model:list="list"
-        description="The redirect URL. Redirects to JavaScript URLs are not allowed."
-        @delete-group="deleteGroup"
+        :description="props.description"
+        @delete-group="emit('deleteGroup')"
         @new-field="addNewField"
       />
     </template>
@@ -56,8 +65,8 @@ function deleteGroup() {
         <div class="flex w-full flex-1">
           <Input
             v-model.trim.lazy="list[index]!.value"
-            type="url"
-            placeholder="https://example.com/"
+            :type="props.inputType"
+            :placeholder="props.placeholder"
             class="
               text-base
               placeholder:italic
@@ -65,7 +74,7 @@ function deleteGroup() {
           />
         </div>
         <div class="flex items-center gap-0.5">
-          <TooltipProvider>
+          <TooltipProvider v-if="props.showUseCurrentTabButton">
             <Tooltip>
               <TooltipTrigger as-child>
                 <Button
@@ -91,7 +100,7 @@ function deleteGroup() {
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this redirect URL</span>
+            <span class="sr-only">Delete this {{ props.name }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown
