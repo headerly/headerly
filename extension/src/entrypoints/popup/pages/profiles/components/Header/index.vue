@@ -3,6 +3,7 @@ import type { HTMLAttributes } from "vue";
 import { useEventBus, useEventListener } from "@vueuse/core";
 import { match } from "ts-pattern";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   DropdownMenuGroup,
@@ -21,7 +22,7 @@ import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
-import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
+import { cn, getRuleActionTypeIcon, useRuleActionTypeLabelKey } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
 import { openAddModModalKey } from "./components/AddModModal/open";
@@ -32,6 +33,7 @@ const { class: className } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 const isCompact = useCompactScreen();
 const addModBus = useEventBus(openAddModModalKey);
@@ -68,7 +70,7 @@ const undoAndRedoButtonGroup = [
     icon: "i-lucide-undo-2",
     tooltip: (
       <p>
-        Undo
+        {t("common.undo")}
       </p>
     ),
     get disabled() {
@@ -81,7 +83,7 @@ const undoAndRedoButtonGroup = [
     icon: "i-lucide-redo-2",
     tooltip: (
       <p>
-        Redo
+        {t("common.redo")}
       </p>
     ),
     get disabled() {
@@ -93,7 +95,7 @@ const undoAndRedoButtonGroup = [
 
 const actionTypeBadge = computed(() => ({
   icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
-  label: getRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
+  label: useRuleActionTypeLabelKey(profilesStore.selectedProfile.ruleActionType),
 }));
 
 const defaultTab = computed(() => {
@@ -159,7 +161,7 @@ const defaultTab = computed(() => {
                     hidden
                     md:inline
                   "
-                >Priority: </span>
+                >{{ t("profile.header.priorityLabel") }}</span>
                 <span
                   class="
                     max-w-4 truncate
@@ -169,7 +171,7 @@ const defaultTab = computed(() => {
               </Badge>
             </TooltipTrigger>
             <TooltipContent side="bottom" class="md:hidden">
-              Priority: {{ profilesStore.selectedProfile.priority ?? 1 }}
+              {{ t("profile.header.priorityValue", { priority: profilesStore.selectedProfile.priority ?? 1 }) }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -187,7 +189,7 @@ const defaultTab = computed(() => {
               </Badge>
             </TooltipTrigger>
             <TooltipContent side="bottom" class="md:hidden">
-              {{ `Rule action type: ${actionTypeBadge.label}` }}
+              {{ t("profile.header.ruleActionType", { type: actionTypeBadge.label }) }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -216,18 +218,18 @@ const defaultTab = computed(() => {
 
       <IconsGroupWithMore :profile="profilesStore.selectedProfile">
         <template #after-main>
-          <AddModModal tooltip-text="Add a new action or condition" :default-tab />
+          <AddModModal :tooltip-text="t('profile.header.addActionOrConditionTooltip')" :default-tab />
         </template>
         <template #compact-extra>
           <DropdownMenuGroup>
             <DropdownMenuItem :disabled="!profilesStore.canUndo" @click="profilesStore.undo">
-              <span>Undo</span>
+              <span>{{ t("common.undo") }}</span>
             </DropdownMenuItem>
             <DropdownMenuItem :disabled="!profilesStore.canRedo" @click="profilesStore.redo">
-              <span>Redo</span>
+              <span>{{ t("common.redo") }}</span>
             </DropdownMenuItem>
             <DropdownMenuItem @click="addModBus.emit({ target: 'actions' })">
-              <span>Add action or condition</span>
+              <span>{{ t("profile.header.addActionOrCondition") }}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </template>

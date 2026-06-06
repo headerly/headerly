@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HeaderModGroup } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
+import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups, useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -16,6 +17,7 @@ const { actionType } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 function addNewField() {
   const mod = createHeaderMod();
@@ -44,7 +46,7 @@ function deleteGroup() {
   <Group
     v-model:list="group.items"
     :type="group.type"
-    :name="actionType === 'request' ? 'Request Headers' : 'Response Headers'"
+    :name="actionType === 'request' ? t('headerMod.requestHeaders') : t('headerMod.responseHeaders')"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>

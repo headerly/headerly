@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { VNode } from "vue";
 import type { GroupItem, GroupType } from "@/lib/schema";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Tooltip,
@@ -24,6 +25,8 @@ const emit = defineEmits<{
   (e: "newField"): void;
   (e: "update:type", value: GroupType): void;
 }>();
+
+const { t } = useI18n();
 
 function transferGroupType() {
   if (type === "checkbox") {
@@ -74,7 +77,7 @@ function transferGroupType() {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          Add a new item
+          {{ t("group.actions.addItem") }}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -90,7 +93,7 @@ function transferGroupType() {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          Delete this group
+          {{ t("group.actions.deleteGroup") }}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -109,8 +112,8 @@ function transferGroupType() {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
-          Transfer group type to
-          {{ type === 'checkbox' ? 'Radio' : 'Checkbox' }}
+          {{ t("group.actions.transferGroupTypeTo") }}
+          {{ type === 'checkbox' ? t("common.radio") : t("common.checkbox") }}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

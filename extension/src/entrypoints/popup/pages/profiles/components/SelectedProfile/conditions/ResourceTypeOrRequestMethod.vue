@@ -2,6 +2,7 @@
 import type { GroupItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -34,52 +35,52 @@ const { type } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 const nameMap = {
-  resourceTypes: "Resource Types",
-  excludedResourceTypes: "Excluded Resource Types",
-  requestMethods: "Request Methods",
-  excludedRequestMethods: "Excluded Request Methods",
+  resourceTypes: "condition.resourceTypes.title",
+  excludedResourceTypes: "condition.excludedResourceTypes.title",
+  requestMethods: "condition.requestMethods.title",
+  excludedRequestMethods: "condition.excludedRequestMethods.title",
 };
 
 interface ResourceTypeOption {
   value: `${Browser.declarativeNetRequest.ResourceType}`;
-  label: string;
+  labelKey: string;
 }
 
 const resourceTypeOptions = [
-  { value: "csp_report", label: "CSP Report" },
-  { value: "font", label: "Font" },
-  { value: "image", label: "Image" },
-  { value: "main_frame", label: "Main Frame" },
-  { value: "media", label: "Media" },
-  { value: "object", label: "Object" },
-  { value: "other", label: "Other" },
-  { value: "ping", label: "Ping" },
-  { value: "script", label: "Script" },
-  { value: "stylesheet", label: "Stylesheet" },
-  { value: "sub_frame", label: "Sub Frame" },
-  { value: "webbundle", label: "WebBundle" },
-  { value: "websocket", label: "WebSocket" },
-  { value: "webtransport", label: "WebTransport" },
-  { value: "xmlhttprequest", label: "XMLHttpRequest" },
+  { value: "csp_report", labelKey: "condition.resourceType.cspReport" },
+  { value: "font", labelKey: "condition.resourceType.font" },
+  { value: "image", labelKey: "condition.resourceType.image" },
+  { value: "main_frame", labelKey: "condition.resourceType.mainFrame" },
+  { value: "media", labelKey: "condition.resourceType.media" },
+  { value: "object", labelKey: "condition.resourceType.object" },
+  { value: "other", labelKey: "condition.resourceType.other" },
+  { value: "ping", labelKey: "condition.resourceType.ping" },
+  { value: "script", labelKey: "condition.resourceType.script" },
+  { value: "stylesheet", labelKey: "condition.resourceType.stylesheet" },
+  { value: "sub_frame", labelKey: "condition.resourceType.subFrame" },
+  { value: "webbundle", labelKey: "condition.resourceType.webbundle" },
+  { value: "websocket", labelKey: "condition.resourceType.websocket" },
+  { value: "webtransport", labelKey: "condition.resourceType.webtransport" },
+  { value: "xmlhttprequest", labelKey: "condition.resourceType.xmlhttprequest" },
 ] as const satisfies ResourceTypeOption[];
 
 interface RequestMethodOption {
   value: `${Browser.declarativeNetRequest.RequestMethod}`;
-  label: string;
 }
 
 const requestMethodsOptions = [
-  { value: "connect", label: "CONNECT" },
-  { value: "delete", label: "DELETE" },
-  { value: "get", label: "GET" },
-  { value: "head", label: "HEAD" },
-  { value: "options", label: "OPTIONS" },
-  { value: "other", label: "OTHER" },
-  { value: "patch", label: "PATCH" },
-  { value: "post", label: "POST" },
-  { value: "put", label: "PUT" },
+  { value: "connect" },
+  { value: "delete" },
+  { value: "get" },
+  { value: "head" },
+  { value: "options" },
+  { value: "other" },
+  { value: "patch" },
+  { value: "post" },
+  { value: "put" },
 ] as const satisfies RequestMethodOption[];
 
 const optionsMap = {
@@ -93,11 +94,17 @@ const options = computed(() => optionsMap[type]);
 
 // Convert available options to MultiSelect options
 const multiSelectOptions = computed(() =>
-  options.value.map(option => ({
-    value: option.value,
-    label: option.label,
-    disabled: false,
-  })),
+  options.value.map((option) => {
+    let label = option.value.toUpperCase();
+    if ("labelKey" in option) {
+      label = t(option.labelKey);
+    }
+    return {
+      value: option.value,
+      label,
+      disabled: false,
+    };
+  }),
 );
 
 function deleteGroup() {
@@ -118,7 +125,7 @@ function newField() {
 <template>
   <Group
     v-model:list="list"
-    :name="nameMap[type]"
+    :name="t(nameMap[type])"
     type="radio"
     @delete-empty-group="deleteGroup"
   >
@@ -144,7 +151,7 @@ function newField() {
             sm:w-auto
           "
           :options="multiSelectOptions"
-          :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
+          :placeholder="t('condition.selectPlaceholder', { name: t(nameMap[type]).toLowerCase() })"
         />
         <div class="flex gap-0.5">
           <Button
@@ -154,7 +161,7 @@ function newField() {
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this header mod</span>
+            <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

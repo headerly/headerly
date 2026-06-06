@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +26,7 @@ const { class: className } = defineProps<{
 }>();
 
 const settingsStore = useSettingsStore();
+const { t } = useI18n();
 </script>
 
 <template>
@@ -37,7 +39,7 @@ const settingsStore = useSettingsStore();
     <div class="flex items-center">
       <h1 class="flex items-center gap-2 font-sans font-semibold">
         <i class="i-lucide-settings size-5" />
-        Settings
+        {{ t("common.settings") }}
       </h1>
     </div>
     <div class="flex items-center gap-2">
@@ -51,31 +53,31 @@ const settingsStore = useSettingsStore();
                   :disabled="!settingsStore.isModified"
                 >
                   <i class="i-lucide-refresh-cw size-4" />
-                  Reset
+                  {{ t("common.reset") }}
                 </Button>
               </AlertDialogTrigger>
             </TooltipTrigger>
             <TooltipContent side="bottom" :collision-padding="5">
-              Reset extension settings
+              {{ t("settings.reset.tooltip") }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reset extension settings</AlertDialogTitle>
+            <AlertDialogTitle>{{ t("settings.reset.title") }}</AlertDialogTitle>
             <AlertDialogDescription>
-              <p>Are you sure you want to reset all settings to their default values?</p>
-              <p>This action cannot be undone.</p>
+              <p>{{ t("settings.reset.description") }}</p>
+              <p>{{ t("settings.reset.cannotUndo") }}</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{{ t("common.cancel") }}</AlertDialogCancel>
             <AlertDialogAction
               class="bg-destructive"
               @click="settingsStore.resetToDefault()"
             >
-              Confirm
+              {{ t("common.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
+import { useI18n } from "vue-i18n";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -86,14 +87,15 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
   list.push(item);
 }
 
-export function getRuleActionTypeLabel(type: RuleActionType) {
+export function useRuleActionTypeLabelKey(type: RuleActionType) {
+  const { t } = useI18n();
   const typeMap = {
-    modifyHeaders: "Modify headers",
-    block: "Block",
-    allow: "Allow",
-    upgradeScheme: "Upgrade scheme",
-    allowAllRequests: "Allow all requests",
-    redirect: "Redirect",
+    modifyHeaders: t("ruleAction.modifyHeaders"),
+    block: t("ruleAction.block"),
+    allow: t("ruleAction.allow"),
+    upgradeScheme: t("ruleAction.upgradeScheme"),
+    allowAllRequests: t("ruleAction.allowAllRequests"),
+    redirect: t("ruleAction.redirect"),
   } as const;
   return typeMap[type];
 }

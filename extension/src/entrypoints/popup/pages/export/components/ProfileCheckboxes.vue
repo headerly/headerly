@@ -2,6 +2,7 @@
 import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ProfileOption from "#/components/ProfileOption.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { Button } from "#/ui/button";
@@ -27,6 +28,7 @@ const emit = defineEmits<{
 }>();
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 const { setRef } = useScrollToProfile({
   scrollTargetIdOnMounted,
 });
@@ -71,8 +73,8 @@ function toggleProfile(profile: Profile, checked: unknown) {
 
 const selectAllLabel = computed(() =>
   match(allChecked.value === false || allChecked.value === "indeterminate")
-    .with(true, () => "Select all")
-    .with(false, () => "Unselect all")
+    .with(true, () => t("export.selectAll"))
+    .with(false, () => t("export.unselectAll"))
     .exhaustive(),
 );
 </script>

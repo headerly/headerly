@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Popover,
@@ -18,10 +19,12 @@ import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
 const parentRef = useTemplateRef("parentRef");
+const { t } = useI18n();
 
 interface VirtualItem {
   type: "header" | "emoji";
-  categoryLabel?: string;
+  categoryValue?: string;
+  categoryLabelKey?: string;
   emojis?: string[];
 }
 
@@ -31,7 +34,8 @@ const virtualItems = computed<VirtualItem[]>(() => {
   emojisWithCategory.forEach((category) => {
     items.push({
       type: "header",
-      categoryLabel: category.label,
+      categoryValue: category.value,
+      categoryLabelKey: category.labelKey,
     });
 
     const emojis = category.emojis;
@@ -54,9 +58,9 @@ const rowVirtualizer = useVirtualizer({
   overscan: 10,
 });
 
-function scrollToCategory(categoryLabel: string) {
+function scrollToCategory(categoryValue: string) {
   const targetIndex = virtualItems.value.findIndex(
-    item => item.type === "header" && item.categoryLabel === categoryLabel,
+    item => item.type === "header" && item.categoryValue === categoryValue,
   );
 
   if (targetIndex !== -1) {
@@ -88,7 +92,7 @@ function scrollToCategory(categoryLabel: string) {
               class="mt-2 rounded-md border bg-secondary"
             >
               <ul class="flex flex-nowrap justify-between p-0.5">
-                <li v-for="item in emojisWithCategory" :key="item.label">
+                <li v-for="item in emojisWithCategory" :key="item.value">
                   <TooltipProvider ignore-non-keyboard-focus>
                     <Tooltip>
                       <TooltipTrigger as-child>
@@ -96,13 +100,13 @@ function scrollToCategory(categoryLabel: string) {
                           class="hover:bg-primary/10!"
                           size="icon-sm"
                           variant="ghost"
-                          @click="scrollToCategory(item.label)"
+                          @click="scrollToCategory(item.value)"
                         >
                           <i :class="cn(item.icon, 'size-4')" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p>{{ item.label }}</p>
+                        <p>{{ t(item.labelKey) }}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -134,7 +138,7 @@ function scrollToCategory(categoryLabel: string) {
                   class="flex h-full items-center"
                 >
                   <h2 class="px-1 pt-1 text-sm font-medium">
-                    {{ virtualItems[virtualRow.index]?.categoryLabel }}
+                    {{ t(virtualItems[virtualRow.index]?.categoryLabelKey ?? "") }}
                   </h2>
                 </div>
 

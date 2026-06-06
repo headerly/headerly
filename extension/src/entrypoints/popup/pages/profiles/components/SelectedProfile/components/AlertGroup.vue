@@ -2,6 +2,7 @@
 import { useEventBus } from "@vueuse/core";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import {
   Alert,
@@ -18,6 +19,7 @@ const { empty, hasAnyFilters } = defineProps<{
   hasAnyFilters: boolean;
 }>();
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 function ignoreWarning() {
   profilesStore.selectedProfile.filters.urlFilter = [
@@ -40,7 +42,7 @@ const bus = useEventBus(openAddModModalKey);
   >
     <i class="i-lucide-bug size-6" />
     <AlertTitle>
-      This profile caused an error when registering rules.
+      {{ t("profile.alert.registrationErrorTitle") }}
     </AlertTitle>
     <AlertDescription>
       <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
@@ -53,7 +55,7 @@ const bus = useEventBus(openAddModModalKey);
           href="https://github.com/headerly/headerly/issues"
         >
           <i class="i-lucide-github size-4" />
-          Report an issue
+          {{ t("common.reportIssue") }}
         </Button>
       </ButtonGroup>
     </AlertDescription>
@@ -64,18 +66,18 @@ const bus = useEventBus(openAddModModalKey);
     class="mt-2"
   >
     <i class="i-lucide-triangle-alert size-6" />
-    <AlertTitle>This profile affects every request and might break sites.</AlertTitle>
+    <AlertTitle>{{ t("profile.alert.globalRuleTitle") }}</AlertTitle>
     <AlertDescription>
-      <p>Add a condition to avoid issues.</p>
+      <p>{{ t("profile.alert.globalRuleDescription") }}</p>
       <ButtonGroup>
         <Button size="sm" variant="secondary" @click="ignoreWarning">
           <i class="i-lucide-ban size-4" />
-          Ignore warning
+          {{ t("profile.alert.ignoreWarning") }}
         </Button>
         <ButtonGroupSeparator />
         <Button size="sm" variant="secondary" @click="bus.emit({ target: 'conditions' })">
           <i class="i-lucide-plus size-4" />
-          Add a condition
+          {{ t("common.addCondition") }}
         </Button>
       </ButtonGroup>
     </AlertDescription>

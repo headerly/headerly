@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import type { DomainsFilter } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -24,65 +25,67 @@ const { filterType } = defineProps<{
   filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
 }>();
 
+const { t } = useI18n();
+
 const field = {
   requestDomains: {
-    title: "Request Domains Filter",
+    titleKey: "condition.domains.requestDomains.title",
     description: (
       <>
         <p>
-          The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.
+          {t("condition.domains.requestDomains.description")}
         </p>
         <ul>
-          <li>{"Sub-domains like \"a.example.com\" are also allowed."}</li>
-          <li>The entries must consist of only ascii characters.</li>
-          <li>Use punycode encoding for internationalized domains.</li>
+          <li>{t("condition.domains.subdomainsAllowed")}</li>
+          <li>{t("condition.domains.asciiOnly")}</li>
+          <li>{t("condition.domains.punycode")}</li>
         </ul>
       </>
     ),
   },
   excludedRequestDomains: {
-    title: "Excluded Request Domains Filter",
+    titleKey: "condition.domains.excludedRequestDomains.title",
     description: (
       <>
         <p>
-          The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.
+          {t("condition.domains.excludedRequestDomains.description")}
         </p>
         <ul>
-          <li>{"Sub-domains like \"a.example.com\" are also allowed."}</li>
-          <li>The entries must consist of only ascii characters.</li>
-          <li>Use punycode encoding for internationalized domains.</li>
+          <li>{t("condition.domains.subdomainsAllowed")}</li>
+          <li>{t("condition.domains.asciiOnly")}</li>
+          <li>{t("condition.domains.punycode")}</li>
         </ul>
       </>
     ),
   },
   initiatorDomains: {
-    title: "Initiator Domains Filter",
+    titleKey: "condition.domains.initiatorDomains.title",
     description: (
       <>
         <p>
-          The rule will only match network requests originating from the list of initiatorDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.
+          {t("condition.domains.initiatorDomains.description")}
         </p>
         <ul>
-          <li>{"Sub-domains like \"a.example.com\" are also allowed."}</li>
-          <li>The entries must consist of only ascii characters.</li>
-          <li>Use punycode encoding for internationalized domains.</li>
-          <li>This matches against the request initiator and not the request url.</li>
+          <li>{t("condition.domains.subdomainsAllowed")}</li>
+          <li>{t("condition.domains.asciiOnly")}</li>
+          <li>{t("condition.domains.punycode")}</li>
+          <li>{t("condition.domains.matchesInitiator")}</li>
         </ul>
       </>
     ),
   },
   excludedInitiatorDomains: {
-    title: "Excluded Initiator Domains Filter",
+    titleKey: "condition.domains.excludedInitiatorDomains.title",
     description: (
       <>
         <p>
-          The rule will not match network requests originating from the list of excludedInitiatorDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiatorDomains.
+          {t("condition.domains.excludedInitiatorDomains.description")}
         </p>
         <ul>
-          <li>{"Sub-domains like \"a.example.com\" are also allowed."}</li>
-          <li>The entries must consist of only ascii characters.</li>
-          <li>Use punycode encoding for internationalized domains.</li>
-          <li>This matches against the request initiator and not the request url.</li>
+          <li>{t("condition.domains.subdomainsAllowed")}</li>
+          <li>{t("condition.domains.asciiOnly")}</li>
+          <li>{t("condition.domains.punycode")}</li>
+          <li>{t("condition.domains.matchesInitiator")}</li>
         </ul>
       </>
     ),
@@ -111,7 +114,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 <template>
   <Group
     v-model:list="domainsFilter.items"
-    :name="field[filterType].title"
+    :name="t(field[filterType].titleKey)"
     :type="domainsFilter.type"
     @delete-empty-group="deleteGroup"
   >
@@ -155,7 +158,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                Use the domain of the current tab
+                {{ t("condition.domains.useCurrentTabDomain") }}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -166,7 +169,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
               domainsFilter.items.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this domain</span>
+            <span class="sr-only">{{ t("common.deleteDomain") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

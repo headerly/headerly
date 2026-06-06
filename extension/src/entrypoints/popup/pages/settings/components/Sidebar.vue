@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Tooltip,
@@ -12,6 +13,8 @@ import { settings } from "../fields";
 const { class: className } = defineProps<{
   class?: string;
 }>();
+
+const { t } = useI18n();
 
 function handleAnchorClick(anchor: string) {
   const element = document.getElementById(anchor);
@@ -33,7 +36,7 @@ function handleAnchorClick(anchor: string) {
         to="/profiles"
       >
         <i class="i-lucide-arrow-left size-4" />
-        <span class="sr-only">Back to profiles</span>
+        <span class="sr-only">{{ t("common.backToProfiles") }}</span>
       </RouterLink>
     </Button>
     <div
@@ -59,7 +62,7 @@ function handleAnchorClick(anchor: string) {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            {{ value.fieldsetTitle }}
+            {{ t(value.fieldsetTitleKey) }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

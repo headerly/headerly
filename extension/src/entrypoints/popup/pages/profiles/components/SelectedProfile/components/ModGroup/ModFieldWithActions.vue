@@ -3,6 +3,7 @@ import type { HeaderMod } from "@/lib/schema";
 import type { ActionType, HeaderModOperation } from "@/lib/types";
 
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Button } from "#/ui/button";
 import {
@@ -40,6 +41,8 @@ const { actionType, index } = defineProps<{
   index: number;
 }>();
 
+const { t } = useI18n();
+
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
     return AUTOCOMPLETE_RESPONSE_FIELDS;
@@ -64,7 +67,7 @@ const nextOperation = computed(() => {
   const nextIndex = (currentIndex + 1) % supportedOperations.length;
   return {
     value: supportedOperations[nextIndex]!,
-    label: supportedOperations[nextIndex]!.charAt(0).toUpperCase() + supportedOperations[nextIndex]!.slice(1),
+    labelKey: `headerMod.operation.${supportedOperations[nextIndex]!}`,
   };
 });
 </script>
@@ -94,7 +97,7 @@ const nextOperation = computed(() => {
           <ComboboxAnchor class="w-full">
             <ComboboxInput
               v-model="field.name"
-              placeholder="Name"
+              :placeholder="t('common.name')"
               class="
                 w-full text-base
                 placeholder:italic
@@ -121,7 +124,7 @@ const nextOperation = computed(() => {
           <Input
             v-model.trim.lazy="field.value"
             type="text"
-            placeholder="Value"
+            :placeholder="t('common.value')"
             class="
               text-base
               placeholder:italic
@@ -152,8 +155,8 @@ const nextOperation = computed(() => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
-            <p>Current operation: {{ field.operation }}</p>
-            <p>Switch to {{ nextOperation.label }}</p>
+            <p>{{ t("headerMod.currentOperation", { operation: t(`headerMod.operation.${field.operation}`) }) }}</p>
+            <p>{{ t("headerMod.switchTo", { operation: t(nextOperation.labelKey) }) }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -164,7 +167,7 @@ const nextOperation = computed(() => {
           list.splice(index, 1);
         }"
       >
-        <span class="sr-only">Delete this header mod</span>
+        <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
         <i class="i-lucide-x size-4" />
       </Button>
       <ActionsDropdown

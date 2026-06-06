@@ -5,13 +5,13 @@ import { setI18nLanguage, SUPPORT_LOCALES } from "#/i18n";
 import { categories } from "@/entrypoints/popup/constants/emoji";
 
 interface BaseSettingField {
-  label: string;
+  labelKey: string;
   key: keyof ReturnType<typeof useSettingsStore>;
-  description?: string;
+  descriptionKey?: string;
 }
 
 interface SelectField extends BaseSettingField {
-  options: readonly { label: string; value: string }[];
+  options: readonly ({ label: string; value: string } | { labelKey: string; value: string })[];
   type: "select";
   onChange?: (v: string) => void;
 }
@@ -24,7 +24,7 @@ interface CheckboxField extends BaseSettingField {
 type SettingField = SelectField | CheckboxField;
 
 interface SettingGroup {
-  fieldsetTitle: string;
+  fieldsetTitleKey: string;
   fields: SettingField[];
   anchor: string;
   anchorIcon: string;
@@ -32,13 +32,13 @@ interface SettingGroup {
 
 export const settings = [
   {
-    fieldsetTitle: "Appearance",
+    fieldsetTitleKey: "settings.groups.appearance",
     anchor: "appearance",
     anchorIcon: "i-lucide-aperture",
     fields: [
       {
         type: "select",
-        label: "Language",
+        labelKey: "settings.fields.language",
         options: SUPPORT_LOCALES.map(locale => ({
           label: new Intl.DisplayNames(locale, { type: "language" }).of(locale) ?? locale,
           value: locale,
@@ -50,37 +50,40 @@ export const settings = [
       },
       {
         type: "select",
-        label: "Theme",
+        labelKey: "settings.fields.theme",
         options: [
-          { label: "Auto", value: "auto" },
-          { label: "Light", value: "light" },
-          { label: "Dark", value: "dark" },
-        ] satisfies { label: string; value: BasicColorSchema }[],
+          { labelKey: "common.auto", value: "auto" },
+          { labelKey: "common.light", value: "light" },
+          { labelKey: "common.dark", value: "dark" },
+        ] satisfies { labelKey: string; value: BasicColorSchema }[],
         key: "theme",
       },
       {
         type: "checkbox",
-        label: "Automatically assign emoji to new profiles",
+        labelKey: "settings.fields.autoAssignEmoji",
         key: "autoAssignEmoji",
       },
       {
         type: "select",
-        label: "Category for random emoji assignment",
-        options: categories,
+        labelKey: "settings.fields.randomEmojiCategory",
+        options: categories.map(category => ({
+          labelKey: `emoji.categories.${category.value}`,
+          value: category.value,
+        })),
         key: "randomEmojiCategory",
       },
     ],
   },
   {
-    fieldsetTitle: "Profiles",
+    fieldsetTitleKey: "settings.groups.profiles",
     anchor: "profiles",
     anchorIcon: "i-lucide-code-xml",
     fields: [
       {
         type: "checkbox",
-        label: "Use native DNR resource type behavior",
+        labelKey: "settings.fields.nativeResourceTypeBehavior",
         key: "nativeResourceTypeBehavior",
-        description: "Resource type defaults to 'all', but enabling this option will not set it to 'all', and rules without a resource type condition will match only a narrower range of requests.",
+        descriptionKey: "settings.descriptions.nativeResourceTypeBehavior",
       },
     ],
   },

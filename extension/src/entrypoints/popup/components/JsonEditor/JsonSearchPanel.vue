@@ -13,6 +13,7 @@ import {
 import { runScopeHandlers } from "@codemirror/view";
 import { match } from "ts-pattern";
 import { nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { Toggle } from "#/ui/toggle";
 import {
@@ -28,6 +29,8 @@ type SearchCommand = (view: EditorView) => boolean;
 const props = defineProps<{
   view: EditorView;
 }>();
+
+const { t } = useI18n();
 
 const searchInputRef = useTemplateRef<HTMLInputElement>("searchInputRef");
 const replaceInputRef = useTemplateRef<HTMLInputElement>("replaceInputRef");
@@ -53,17 +56,17 @@ onMounted(async () => {
 
 const searchOptions = [
   {
-    label: "Match case",
+    labelKey: "jsonEditor.search.matchCase",
     icon: "i-lucide-case-sensitive",
     model: caseSensitive,
   },
   {
-    label: "Match whole word",
+    labelKey: "jsonEditor.search.matchWholeWord",
     icon: "i-lucide-whole-word",
     model: wholeWord,
   },
   {
-    label: "Use regular expression",
+    labelKey: "jsonEditor.search.useRegularExpression",
     icon: "i-lucide-regex",
     model: regexp,
   },
@@ -120,17 +123,17 @@ async function toggleReplaceExpanded() {
 
 const searchPanelActions = [
   {
-    label: "Previous match",
+    labelKey: "jsonEditor.search.previousMatch",
     icon: "i-lucide-arrow-up",
     run: () => runSearchCommand(findPrevious),
   },
   {
-    label: "Next match",
+    labelKey: "jsonEditor.search.nextMatch",
     icon: "i-lucide-arrow-down",
     run: () => runSearchCommand(findNext),
   },
   {
-    label: "Close search",
+    labelKey: "jsonEditor.search.closeSearch",
     icon: "i-lucide-x",
     run: () => closeSearchPanel(props.view),
   },
@@ -138,12 +141,12 @@ const searchPanelActions = [
 
 const replacePanelActions = [
   {
-    label: "Replace",
+    labelKey: "jsonEditor.search.replace",
     icon: "i-lucide-replace",
     run: () => runSearchCommand(replaceNext),
   },
   {
-    label: "Replace all",
+    labelKey: "jsonEditor.search.replaceAll",
     icon: "i-lucide-replace-all",
     run: () => runSearchCommand(replaceAll),
   },
@@ -167,7 +170,7 @@ const replacePanelActions = [
         @click="toggleReplaceExpanded"
       >
         <span class="sr-only">
-          Toggle replace
+          {{ t("jsonEditor.search.toggleReplace") }}
         </span>
         <i
           :class="cn(
@@ -190,7 +193,7 @@ const replacePanelActions = [
           h-full min-w-0 flex-1 px-2 text-sm outline-none
           placeholder:text-muted-foreground
         "
-        placeholder="Find"
+        :placeholder="t('jsonEditor.search.findPlaceholder')"
         @keydown.enter="handleSearchSubmit"
       >
 
@@ -198,7 +201,7 @@ const replacePanelActions = [
         <TooltipProvider>
           <Tooltip
             v-for="option in searchOptions"
-            :key="option.label"
+            :key="option.labelKey"
           >
             <!-- Tooltip and Toggle share the same `data-state` attribute, so using as-child directly causes the state to behave incorrectly. -->
             <TooltipTrigger as="div">
@@ -219,7 +222,7 @@ const replacePanelActions = [
               </Toggle>
             </TooltipTrigger>
             <TooltipContent side="bottom" :side-offset="10">
-              {{ option.label }}
+              {{ t(option.labelKey) }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -230,7 +233,7 @@ const replacePanelActions = [
       <TooltipProvider>
         <Tooltip
           v-for="action in searchPanelActions"
-          :key="action.label"
+          :key="action.labelKey"
         >
           <TooltipTrigger as-child>
             <Button
@@ -244,7 +247,7 @@ const replacePanelActions = [
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
-            {{ action.label }}
+            {{ t(action.labelKey) }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -261,7 +264,7 @@ const replacePanelActions = [
             h-full min-w-0 flex-1 px-2 text-sm outline-none
             placeholder:text-muted-foreground
           "
-          placeholder="Replace"
+          :placeholder="t('jsonEditor.search.replacePlaceholder')"
           @keydown.enter="handleReplaceSubmit"
         >
       </div>
@@ -270,7 +273,7 @@ const replacePanelActions = [
         <TooltipProvider>
           <Tooltip
             v-for="action in replacePanelActions"
-            :key="action.label"
+            :key="action.labelKey"
           >
             <TooltipTrigger as-child>
               <Button
@@ -284,7 +287,7 @@ const replacePanelActions = [
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
-              {{ action.label }}
+              {{ t(action.labelKey) }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

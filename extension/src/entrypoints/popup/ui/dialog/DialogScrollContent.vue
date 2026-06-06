@@ -10,6 +10,7 @@ import {
   DialogPortal,
   useForwardPropsEmits,
 } from "reka-ui";
+import { useI18n } from "vue-i18n";
 import { cn } from "@/lib/utils";
 
 defineOptions({
@@ -22,6 +23,7 @@ const emits = defineEmits<DialogContentEmits>();
 const delegatedProps = reactiveOmit(props, "class");
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const { t } = useI18n();
 </script>
 
 <template>
@@ -63,7 +65,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           "
         >
           <X class="size-4" />
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ t("common.close") }}</span>
         </DialogClose>
       </DialogContent>
     </DialogOverlay>

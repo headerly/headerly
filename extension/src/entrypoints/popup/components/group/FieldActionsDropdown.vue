@@ -2,6 +2,7 @@
 import type { GroupItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -24,12 +25,14 @@ const { index } = defineProps<{
   index: number;
 }>();
 
+const { t } = useI18n();
+
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
 const moreActions = [
   {
     key: "duplicate",
-    label: "Duplicate",
+    labelKey: "common.duplicate",
     onClick: () => {
       const newField = { ...field.value, id: uuidv7() };
       list.value.splice(index + 1, 0, newField);
@@ -37,7 +40,7 @@ const moreActions = [
   },
   {
     key: "comments",
-    label: "Comments",
+    labelKey: "common.comments",
     onClick: () => commentsDialogRef.value?.open(),
   },
 ];
@@ -48,7 +51,7 @@ const moreActions = [
     <DropdownMenuTrigger as-child>
       <Button size="icon-xs" variant="secondary">
         <i class="i-lucide-ellipsis-vertical size-4" />
-        <span class="sr-only">More options</span>
+        <span class="sr-only">{{ t("common.moreOptions") }}</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
@@ -60,7 +63,7 @@ const moreActions = [
         <DropdownMenuItem
           @click="action.onClick"
         >
-          <span>{{ action.label }}</span>
+          <span>{{ t(action.labelKey) }}</span>
         </DropdownMenuItem>
       </template>
       <DropdownMenuSeparator v-if="$slots['buttons-after']" />

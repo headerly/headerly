@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useEventBus } from "@vueuse/core";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -33,6 +34,7 @@ const { defaultTab, class: className } = defineProps<{
 
 const currentTab = ref<typeof defaultTab>(defaultTab);
 const isOpen = ref(false);
+const { t } = useI18n();
 
 const bus = useEventBus(openAddModModalKey);
 bus.on(({ target }) => {
@@ -69,14 +71,14 @@ bus.on(({ target }) => {
     <DialogContent class="max-w-md">
       <DialogHeader>
         <DialogTitle class="sr-only">
-          Add action or condition
+          {{ t("profile.header.addActionOrCondition") }}
         </DialogTitle>
       </DialogHeader>
 
       <Tabs v-model="currentTab" class="w-full">
         <TabsList class="grid w-full grid-cols-2">
           <TabsTrigger v-for="tab in tabs" :key="tab.value" :value="tab.value">
-            {{ tab.label }}
+            {{ t(tab.labelKey) }}
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">

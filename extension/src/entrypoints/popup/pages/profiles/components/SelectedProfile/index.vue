@@ -90,7 +90,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
           whitespace-pre-wrap
         "
       >
-        No data, please add any actions or conditions first.
+        {{ $t("profile.empty") }}
       </p>
       <InteractiveGridPattern
         class="

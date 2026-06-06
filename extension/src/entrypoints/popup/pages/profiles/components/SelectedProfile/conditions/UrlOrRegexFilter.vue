@@ -1,6 +1,8 @@
 <script setup lang="tsx">
 import type { UrlOrRegexFilterItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
+import { h, resolveComponent } from "vue";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -24,9 +26,21 @@ const { filterType } = defineProps<{
   filterType: "urlFilter" | "regexFilter";
 }>();
 
+const { t } = useI18n();
+const I18nT = resolveComponent("i18n-t");
+
+const urlFilterTokens = {
+  wildcard: "*",
+  anchor: "|",
+  domainAnchor: "||",
+  separator: "^",
+  separatorExcludedChars: "_ - . %",
+  regexEngine: "RE2",
+} as const;
+
 const field = {
   urlFilter: {
-    title: "URL Filter",
+    titleKey: "condition.urlFilter.title",
     description: (
       <>
         <p>
@@ -34,50 +48,53 @@ const field = {
             href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#url_filter_syntax"
             target="_blank"
           >
-            URL pattern syntax
+            {t("condition.urlFilter.syntaxLink")}
           </a>
         </p>
         <ul>
           <li>
-            <code>*</code>
-            — Wildcard: matches any characters.
+            <code>{urlFilterTokens.wildcard}</code>
+            {t("condition.urlFilter.wildcard")}
           </li>
           <li>
-            <code>|</code>
-            — Anchor: marks start or end of the URL.
+            <code>{urlFilterTokens.anchor}</code>
+            {t("condition.urlFilter.anchor")}
           </li>
           <li>
-            <code>||</code>
-            — Domain anchor: matches start of a (sub)domain.
+            <code>{urlFilterTokens.domainAnchor}</code>
+            {t("condition.urlFilter.domainAnchor")}
           </li>
           <li>
-            <code>^</code>
-            — Separator: matches anything except letters, digits,
-            <code>_ - . %</code>
-            , or end of URL.
+            {h(I18nT, {
+              keypath: "condition.urlFilter.separator",
+              tag: "span",
+            }, {
+              chars: () => <code>{urlFilterTokens.separatorExcludedChars}</code>,
+              separator: () => <code>{urlFilterTokens.separator}</code>,
+            })}
           </li>
         </ul>
         <p>
-          Format: (optional anchor) + pattern + (optional anchor)
+          {t("condition.urlFilter.format")}
         </p>
-        <p>Omitted = all URLs match. Empty string not allowed.</p>
-        <p>Note: Only one of urlFilter or regexFilter can be used.</p>
+        <p>{t("condition.urlFilter.omitted")}</p>
+        <p>{t("condition.urlFilter.onlyOne")}</p>
       </>
     ),
   },
   regexFilter: {
-    title: "Regex Filter",
+    titleKey: "condition.regexFilter.title",
     description: (
       <>
         <p>
-          Regular expression to match against the network request url.
+          {t("condition.regexFilter.description")}
         </p>
         <p>
-          This follows the
+          {t("condition.regexFilter.syntaxPrefix")}
           {" "}
-          <a href="https://github.com/google/re2/wiki/syntax" target="_blank">RE2</a>
+          <a href="https://github.com/google/re2/wiki/syntax" target="_blank">{urlFilterTokens.regexEngine}</a>
           {" "}
-          syntax.
+          {t("condition.regexFilter.syntaxSuffix")}
         </p>
       </>
     ),
@@ -106,7 +123,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 <template>
   <Group
     v-model:list="list"
-    :name="field[filterType].title"
+    :name="t(field[filterType].titleKey)"
     type="radio"
     @delete-empty-group="deleteGroup"
   >
@@ -151,7 +168,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                Use the URL of the current tab
+                {{ t("condition.urlFilter.useCurrentTabUrl") }}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -162,7 +179,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this header mod</span>
+            <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

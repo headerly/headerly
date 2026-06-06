@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RedirectUrlGroupItem } from "@/lib/schema";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -21,6 +22,7 @@ const list = defineModel<RedirectUrlGroupItem[]>({
 
 const profilesStore = useProfilesStore();
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
+const { t } = useI18n();
 
 function addNewField() {
   addItemToGroup(list.value, createRedirectUrl(), "radio");
@@ -35,13 +37,13 @@ function deleteGroup() {
   <Group
     v-model:list="list"
     type="radio"
-    name="Redirect URL"
+    :name="t('redirectUrl.title')"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>
       <GroupActions
         v-model:list="list"
-        description="The redirect URL. Redirects to JavaScript URLs are not allowed."
+        :description="t('redirectUrl.description')"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />
@@ -80,7 +82,7 @@ function deleteGroup() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                Use the URL of the current tab
+                {{ t("condition.urlFilter.useCurrentTabUrl") }}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -91,7 +93,7 @@ function deleteGroup() {
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this redirect URL</span>
+            <span class="sr-only">{{ t("redirectUrl.delete") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

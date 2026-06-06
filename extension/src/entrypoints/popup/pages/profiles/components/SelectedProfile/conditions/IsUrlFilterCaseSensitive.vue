@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/schema";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
 import { Label } from "#/ui/label";
@@ -18,6 +19,7 @@ const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({
 });
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 const radioValue = computed({
   get: () => String(model.value.value),
@@ -29,17 +31,17 @@ const radioValue = computed({
 
 <template>
   <Fieldset
-    name="Url Filter Case Sensitive"
+    :name="t('condition.urlFilterCaseSensitive.title')"
   >
     <template #main>
       <RadioGroup v-model="radioValue" class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <RadioGroupItem id="on" value="true" />
-          <Label for="on" class="font-normal">On</Label>
+          <Label for="on" class="font-normal">{{ t("common.on") }}</Label>
         </div>
         <div class="flex items-center gap-2">
           <RadioGroupItem id="off" value="false" />
-          <Label for="off" class="font-normal">Off</Label>
+          <Label for="off" class="font-normal">{{ t("common.off") }}</Label>
         </div>
       </RadioGroup>
     </template>
@@ -58,7 +60,7 @@ const radioValue = computed({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
-            Delete this condition
+            {{ t("common.deleteCondition") }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

@@ -1,5 +1,6 @@
 import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
@@ -28,13 +29,14 @@ export interface ProfileActionItem {
 export function useProfileActions() {
   const profilesStore = useProfilesStore();
   const router = useRouter();
+  const { t } = useI18n();
 
   const actions = [
     {
       id: "toggle",
       label: p => match(p.enabled)
-        .with(true, () => "Pause")
-        .with(false, () => "Resume")
+        .with(true, () => t("profile.actions.pause"))
+        .with(false, () => t("profile.actions.resume"))
         .exhaustive(),
       icon: p => match(p.enabled)
         .with(true, () => "i-lucide-pause")
@@ -44,15 +46,15 @@ export function useProfileActions() {
     },
     {
       id: "duplicate",
-      label: () => "Duplicate",
+      label: () => t("common.duplicate"),
       icon: () => "i-lucide-copy",
       onClick: p => profilesStore.duplicateProfile(p.id),
     },
     {
       id: "delete",
       label: () => match(profilesStore.manager.profiles.length === 1)
-        .with(true, () => "Reset")
-        .with(false, () => "Delete")
+        .with(true, () => t("common.reset"))
+        .with(false, () => t("profile.actions.delete"))
         .exhaustive(),
       icon: () => match(profilesStore.manager.profiles.length === 1)
         .with(true, () => "i-lucide-refresh-ccw")
@@ -63,24 +65,24 @@ export function useProfileActions() {
     },
     {
       id: "comments",
-      label: () => "Comments",
+      label: () => t("common.comments"),
       onClick: (_, opts) => opts?.openComments?.(),
     },
     {
       id: "rulePriority",
-      label: () => `Priority`,
+      label: () => t("profile.header.priority"),
       onClick: (_, opts) => opts?.openPriority?.(),
     },
     {
       id: "ruleActionType",
       label: () => {
-        return "Rule action type";
+        return t("profile.actions.ruleActionType");
       },
       onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
     },
     {
       id: "copyJson",
-      label: () => "Export to JSON",
+      label: () => t("profile.actions.exportToJson"),
       onClick: p => router.push(`/export/${p.id}`),
     },
   ] satisfies ProfileActionItem[];

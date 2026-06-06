@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
 import { ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 
 interface Item {
   key: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   action: () => void;
   disabled?: boolean;
 }
@@ -19,6 +20,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
+
+const { t } = useI18n();
 
 const allOrders = useStorage<{
   [key in typeof props.tabValue]?: string[];
@@ -90,10 +93,10 @@ useSortableAndAutoAnimate({
         }"
       >
         <div class="font-semibold">
-          {{ item.title }}
+          {{ t(item.titleKey) }}
         </div>
         <div class="text-left text-xs text-muted-foreground">
-          {{ item.description }}
+          {{ t(item.descriptionKey) }}
         </div>
       </button>
       <div

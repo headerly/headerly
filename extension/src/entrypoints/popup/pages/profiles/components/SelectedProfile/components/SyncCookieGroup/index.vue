@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SyncCookieGroup } from "@/lib/schema";
+import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -11,6 +12,7 @@ const group = defineModel<SyncCookieGroup>({
 });
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 
 function addNewField() {
   const newCookie = createSyncCookie();
@@ -34,7 +36,7 @@ function deleteGroup() {
   <Group
     v-model:list="group.items"
     :type="group.type"
-    name="Sync Cookies"
+    :name="t('syncCookie.title')"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>
