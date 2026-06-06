@@ -1,4 +1,5 @@
 import antfu from "@antfu/eslint-config";
+import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 import tailwind from "eslint-plugin-better-tailwindcss";
 
 export default antfu(
@@ -9,6 +10,14 @@ export default antfu(
     },
     // Automatic detection does not work in a monorepo and must be enabled manually.
     vue: true,
+  },
+  ...vueI18n.configs.recommended,
+  {
+    settings: {
+      "vue-i18n": {
+        localeDir: "./src/locales/*.yaml",
+      },
+    },
   },
   {
     // Remember to specify the file glob here, otherwise it might cause the vue plugin to handle non-vue files

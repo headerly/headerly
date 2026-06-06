@@ -4,6 +4,7 @@
     "antfu.iconify",
     "bradlc.vscode-tailwindcss",
     "Vue.volar",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "lokalise.i18n-ally"
   ]
 }

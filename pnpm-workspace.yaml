@@ -25,6 +25,7 @@ catalog:
   "@fontsource-variable/roboto-mono": ^5.2.8
   "@formkit/auto-animate": ^0.9.0
   "@iconify-json/lucide": ^1.2.106
+  "@intlify/eslint-plugin-vue-i18n": ^4.5.1
   "@replit/codemirror-indentation-markers": ^6.5.3
   "@tailwindcss/typography": ^0.5.19
   "@tailwindcss/vite": ^4.3.0
@@ -72,8 +73,9 @@ catalog:
   vitepress: 2.0.0-alpha.15
   vitest: ^4.1.5
   vitest-browser-vue: ^2.1.0
-  vue: ^3.5.34
+  vue: 3.6.0-beta.14
   vue-codemirror6: ^1.5.2
+  vue-i18n: 12.0.0-alpha.4
   vue-router: ^5.0.6
   vue-sonner: 2.0.9
   vue-tsc: ^3.2.8

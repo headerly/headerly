@@ -45,6 +45,7 @@
     "vee-validate": "catalog:",
     "vue": "catalog:",
     "vue-codemirror6": "catalog:",
+    "vue-i18n": "catalog:",
     "vue-router": "catalog:",
     "vue-sonner": "catalog:",
     "zod": "catalog:"

@@ -54,5 +54,10 @@
   // Exclude some files from the "Go to Definition" recommendation list
   "search.exclude": {
     "**/*.css": true
-  }
+  },
+
+  // i18n settings
+  "i18n-ally.localesPaths": ["extension/src/locales"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.enabledFrameworks": ["vue"]
 }
