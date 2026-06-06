@@ -15,7 +15,7 @@ export default antfu(
   {
     settings: {
       "vue-i18n": {
-        localeDir: "./src/locales/*.yaml",
+        localeDir: "./src/locales/*.json",
       },
     },
   },
