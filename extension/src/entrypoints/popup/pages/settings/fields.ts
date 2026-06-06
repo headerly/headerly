@@ -1,5 +1,7 @@
 import type { BasicColorSchema } from "@vueuse/core";
+import type { SupportLocale } from "#/i18n";
 import type { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
+import { setI18nLanguage, SUPPORT_LOCALES } from "#/i18n";
 import { categories } from "@/entrypoints/popup/constants/emoji";
 
 interface BaseSettingField {
@@ -34,6 +36,18 @@ export const settings = [
     anchor: "appearance",
     anchorIcon: "i-lucide-aperture",
     fields: [
+      {
+        type: "select",
+        label: "Language",
+        options: SUPPORT_LOCALES.map(locale => ({
+          label: new Intl.DisplayNames(locale, { type: "language" }).of(locale) ?? locale,
+          value: locale,
+        })),
+        key: "language",
+        onChange(v) {
+          setI18nLanguage(v as SupportLocale);
+        },
+      },
       {
         type: "select",
         label: "Theme",

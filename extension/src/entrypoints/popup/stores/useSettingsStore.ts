@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
   useAutoAssignEmojiStorage,
+  useLanguageStorage,
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
   useRandomEmojiCategoryStorage,
@@ -17,6 +18,7 @@ export const useSettingsStore = defineStore("settings", () => {
     autoAssignEmoji: useAutoAssignEmojiStorage(),
     randomEmojiCategory: useRandomEmojiCategoryStorage(),
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
+    language: useLanguageStorage(),
   } as const;
 
   const isModified = computed(() => {

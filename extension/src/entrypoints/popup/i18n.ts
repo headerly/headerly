@@ -2,25 +2,27 @@ import type enUS from "@/locales/en.json";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
-export const SUPPORT_LOCALES = ["en", "zh·"] as const;
+export const SUPPORT_LOCALES = ["en", "zh-CN"] as const;
+export type SupportLocale = typeof SUPPORT_LOCALES[number];
 type MessageSchema = typeof enUS;
 
+const i18n = createI18n<[MessageSchema], SupportLocale>({
+  locale: "en",
+  fallbackLocale: "en",
+});
+
 export function setupI18n() {
-  const i18n = createI18n<[MessageSchema], typeof SUPPORT_LOCALES[number]>({
-    locale: "en",
-    fallbackLocale: "en",
-  });
-  loadLocaleMessages(i18n, "en");
-  setI18nLanguage(i18n, "en");
+  setI18nLanguage("en");
   return i18n;
 }
 
-export function setI18nLanguage(i18n: ReturnType<typeof setupI18n>, locale: typeof SUPPORT_LOCALES[number]) {
+export function setI18nLanguage(locale: SupportLocale) {
   i18n.global.locale.value = locale;
-  document.querySelector("html")?.setAttribute("lang", locale);
+  loadLocaleMessages(locale);
+  document.documentElement.lang = locale;
 }
 
-export async function loadLocaleMessages(i18n: ReturnType<typeof setupI18n>, locale: typeof SUPPORT_LOCALES[number]) {
+async function loadLocaleMessages(locale: SupportLocale) {
   // load locale messages with dynamic import
   const messages = await import(
     `../../locales/${locale}.json`

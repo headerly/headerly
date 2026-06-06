@@ -1,10 +1,13 @@
-import type { SerializerAsync, StorageLikeAsync } from "@vueuse/core";
+import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
+import type { SupportLocale } from "#/i18n";
 import type { ProfileManager } from "./types";
 import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
-import { useDebounceFn, useStorageAsync } from "@vueuse/core";
+import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
+import { match } from "ts-pattern";
 import { toRaw } from "vue";
+import { SUPPORT_LOCALES } from "#/i18n";
 import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./utils";
 
@@ -16,6 +19,13 @@ interface UseBrowserStorageOptions<T> {
   migrations?: WxtStorageItemOptions<T>["migrations"];
 }
 
+/**
+ * Synchronizes a WXT `chrome.storage` item with VueUse's reactive storage API.
+ *
+ * Use this helper for storage values that are shared across extension contexts
+ * such as the background service worker and popup pages, so both the direct
+ * WXT storage item and the Vue reactive ref stay in sync.
+ */
 function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: UseBrowserStorageOptions<T>) {
   const item = storage.defineItem<T>(key, {
     fallback: initialValue,
@@ -77,6 +87,19 @@ function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: Us
   };
 }
 
+/**
+ * Creates a VueUse-backed `localStorage` ref for UI-only preferences.
+ *
+ * Use this helper when a storage value is only consumed by user interface
+ * contexts, such as popup pages, to avoid unnecessary `chrome.storage` usage.
+ */
+function useLocalStorage<T>(key: string, initialValue: T, options?: UseStorageOptions<T>) {
+  return {
+    ref: useStorage<T>(key, initialValue, localStorage, options),
+    initialValue,
+  } as const;
+}
+
 function createDefaultProfileManager() {
   const profile = createProfile();
   return {
@@ -108,14 +131,22 @@ export function usePowerOnStorage() {
   return useBrowserStorage<boolean>("local:powerOn", true);
 }
 
+export function useNativeResourceTypeBehaviorStorage() {
+  return useBrowserStorage<boolean>("local:nativeResourceTypeBehavior", false);
+}
+
+export function useLanguageStorage() {
+  const browserLanguage = browser.i18n.getUILanguage().replace("_", "-");
+  const initialLanguage = match(SUPPORT_LOCALES.includes(browserLanguage))
+    .with(true, () => browserLanguage as SupportLocale)
+    .otherwise(() => "en" as const);
+  return useLocalStorage<SupportLocale>("language", initialLanguage);
+}
+
 export function useAutoAssignEmojiStorage() {
-  return useBrowserStorage<boolean>("local:autoAssignEmoji", true);
+  return useLocalStorage<boolean>("autoAssignEmoji", false);
 }
 
 export function useRandomEmojiCategoryStorage() {
-  return useBrowserStorage<EmojiCategoryKey>("local:randomEmojiCategory", "foodDrink");
-}
-
-export function useNativeResourceTypeBehaviorStorage() {
-  return useBrowserStorage<boolean>("local:nativeResourceTypeBehavior", false);
+  return useLocalStorage<EmojiCategoryKey>("randomEmojiCategory", "foodDrink");
 }
