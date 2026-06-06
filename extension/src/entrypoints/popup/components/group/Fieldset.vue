@@ -14,12 +14,15 @@ const { name } = defineProps<{
   >
     <legend
       class="
-        -mb-1 flex items-center justify-between gap-2 py-2 text-base font-medium
+        -mb-1 flex w-full items-center justify-between gap-2 py-2 text-base
+        font-medium
       "
     >
       <slot name="name-before" />
       <span data-testid="fieldset-name">{{ name }}</span>
-      <slot name="name-after" />
+      <div class="flex flex-1 items-center gap-1">
+        <slot name="group-actions" />
+      </div>
     </legend>
     <div data-testid="fieldset-main">
       <slot name="main" />

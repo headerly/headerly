@@ -110,7 +110,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
     type="radio"
     @delete-empty-group="deleteGroup"
   >
-    <template #name-after>
+    <template #group-actions>
       <GroupActions
         v-model:list="list"
         :description="field[filterType].description"

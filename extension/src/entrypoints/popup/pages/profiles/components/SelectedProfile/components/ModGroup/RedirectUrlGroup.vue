@@ -38,7 +38,7 @@ function deleteGroup() {
     name="Redirect URL"
     @delete-empty-group="deleteGroup"
   >
-    <template #name-after>
+    <template #group-actions>
       <GroupActions
         v-model:list="list"
         description="The redirect URL. Redirects to JavaScript URLs are not allowed."

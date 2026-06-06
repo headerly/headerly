@@ -43,7 +43,7 @@ const radioValue = computed({
         </div>
       </RadioGroup>
     </template>
-    <template #name-after>
+    <template #group-actions>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>

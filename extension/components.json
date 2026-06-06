@@ -9,8 +9,9 @@
     "cssVariables": true,
     "prefix": ""
   },
+
   "aliases": {
-    "components": "#/",
+    "components": "#",
     "composables": "#/composables",
     "utils": "@/lib/utils",
     "ui": "#/ui",

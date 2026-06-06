@@ -84,7 +84,8 @@
 
 
 @theme inline {
-  --animate-meteor-effect: meteor 5s linear infinite;
+  --animate-collapsible-down: collapsible-down 200ms ease-out;
+  --animate-collapsible-up: collapsible-up 200ms ease-out;
   --color-brand: var(--brand);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -132,6 +133,26 @@
     }
     100% {
       transform: rotate(215deg) translateX(-500px);
+      opacity: 0;
+    }
+  }
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--reka-collapsible-content-height);
+      opacity: 1;
+    }
+  }
+  @keyframes collapsible-up {
+    from {
+      height: var(--reka-collapsible-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
       opacity: 0;
     }
   }

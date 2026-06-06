@@ -37,7 +37,7 @@ function deleteGroup() {
     name="Sync Cookies"
     @delete-empty-group="deleteGroup"
   >
-    <template #name-after>
+    <template #group-actions>
       <GroupActions
         v-model:list="group.items"
         v-model:type="group.type"

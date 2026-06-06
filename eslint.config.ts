@@ -62,6 +62,6 @@ export default antfu(
     },
   },
   {
-    ignores: ["**/*.md"],
+    ignores: ["**/*.{css,md}"],
   },
 );

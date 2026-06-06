@@ -115,7 +115,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
     :type="domainsFilter.type"
     @delete-empty-group="deleteGroup"
   >
-    <template #name-after>
+    <template #group-actions>
       <GroupActions
         v-model:list="domainsFilter.items"
         v-model:type="domainsFilter.type"

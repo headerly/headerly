@@ -3,7 +3,9 @@ import type { GroupItem, GroupType } from "@/lib/schema";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
+import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/ui/collapsible";
 import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
@@ -55,78 +57,99 @@ useSortableAndAutoAnimate({
 </script>
 
 <template>
-  <Fieldset
+  <Collapsible
     v-if="list.length"
-    v-auto-animate
-    :name
+    v-slot="{ open }"
+    default-open
   >
-    <template #name-before>
-      <Label v-if="type">
-        <Checkbox
-          :model-value="checkedState"
-          @update:model-value="(val) => {
-            const isChecked = val === true;
-            if (type === 'checkbox'){
-              list.forEach(item => {
-                item.enabled = isChecked;
-              });
-            } else if (isChecked){
-              const firstItem = head(list);
-              if (firstItem) firstItem.enabled = true;
-            } else {
-              list.forEach(item => {
-                item.enabled = false;
-              });
-            }
-          }"
-        />
-      </Label>
-    </template>
-    <template #name-after>
-      <slot name="name-after" />
-    </template>
-    <template #main>
-      <component
-        :is="type === 'radio' ? RadioGroup : 'div'"
-        v-bind="type === 'radio'
-          ? {
-            'as': 'div',
-            'modelValue': list.find(item => item.enabled)?.id,
-            'onUpdate:modelValue': (val: string) => {
-              list.forEach(item => {
-                item.enabled = item.id === val;
-              });
-            },
-          }
-          : {}"
-      >
-        <div
-          ref="listContainer"
-          class="flex flex-col gap-1"
-        >
-          <div
-            v-for="item, index in list"
-            :key="item.id"
+    <Fieldset
+      v-auto-animate
+      :name
+    >
+      <template #name-before>
+        <Label v-if="type">
+          <Checkbox
+            :model-value="checkedState"
+            @update:model-value="(val) => {
+              const isChecked = val === true;
+              if (type === 'checkbox') {
+                list.forEach(item => {
+                  item.enabled = isChecked;
+                });
+              } else if (isChecked) {
+                const firstItem = head(list);
+                if (firstItem) firstItem.enabled = true;
+              } else {
+                list.forEach(item => {
+                  item.enabled = false;
+                });
+              }
+            }"
+          />
+        </Label>
+      </template>
+      <template #group-actions>
+        <slot name="group-actions" />
+        <span class="flex-1 border" />
+        <CollapsibleTrigger as-child>
+          <Button
+            :aria-label="open ? 'Collapse group' : 'Expand group'"
+            size="icon-xs"
+            type="button"
+            variant="ghost"
           >
-            <SortableItem>
-              <Checkbox
-                v-if="type === 'checkbox'"
-                :model-value="item.enabled"
-                class="mr-1"
-                @update:model-value="(val) => item.enabled = val === true"
-              />
-              <RadioGroupItem
-                v-else
-                :value="item.id"
-                class="mr-1"
-              />
-              <div class="flex flex-1 items-center">
-                <slot :index name="item" />
+            <i
+              class="i-lucide-chevron-down transition-transform"
+              :class="{ '-rotate-90': !open }"
+            />
+          </Button>
+        </CollapsibleTrigger>
+      </template>
+      <template #main>
+        <CollapsibleContent>
+          <component
+            :is="type === 'radio' ? RadioGroup : 'div'"
+            v-bind="type === 'radio'
+              ? {
+                'as': 'div',
+                'modelValue': list.find(item => item.enabled)?.id,
+                'onUpdate:modelValue': (val: string) => {
+                  list.forEach(item => {
+                    item.enabled = item.id === val;
+                  });
+                },
+              }
+              : {}"
+          >
+            <div
+              ref="listContainer"
+              class="flex flex-col gap-1"
+            >
+              <div
+                v-for="item, index in list"
+                :key="item.id"
+              >
+                <SortableItem>
+                  <Checkbox
+                    v-if="type === 'checkbox'"
+                    :model-value="item.enabled"
+                    class="mr-1"
+                    @update:model-value="(val) => item.enabled = val === true"
+                  />
+                  <RadioGroupItem
+                    v-else
+                    :value="item.id"
+                    class="mr-1"
+                  />
+                  <div class="flex flex-1 items-center">
+                    <slot :index name="item" />
+                  </div>
+                </SortableItem>
               </div>
-            </SortableItem>
-          </div>
-        </div>
-      </component>
-    </template>
-  </Fieldset>
+            </div>
+          </component>
+        </CollapsibleContent>
+      </template>
+    </Fieldset>
+  </Collapsible>
 </template>
