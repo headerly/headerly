@@ -52,7 +52,6 @@ catalog:
   eslint: ^10.3.0
   eslint-plugin-better-tailwindcss: ^4.5.0
   lefthook: ^2.1.6
-  lucide-vue-next: ^1.0.0
   motion-v: ^2.2.1
   oxc-minify: ^0.129.0
   pinia: ^3.0.4

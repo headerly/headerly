@@ -2,7 +2,6 @@
 import type { CheckboxRootEmits, CheckboxRootProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { Check, Minus } from "lucide-vue-next";
 import { AnimatePresence, motion } from "motion-v";
 import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from "reka-ui";
 import { cn } from "@/lib/utils";
@@ -52,10 +51,14 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           :transition="{ duration: 0.15 }"
         >
           <slot v-bind="slotProps">
-            <Check v-if="slotProps.modelValue === true" class="size-3.5" />
-            <Minus
+            <i
+              v-if="slotProps.modelValue === true" class="
+                i-lucide-check size-3.5
+              "
+            />
+            <i
               v-else-if="slotProps.modelValue === 'indeterminate'" class="
-                size-3.5
+                i-lucide-minus size-3.5
               "
             />
           </slot>

@@ -2,7 +2,6 @@
 import type { RadioGroupItemProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { CircleIcon } from "lucide-vue-next";
 import { AnimatePresence, motion } from "motion-v";
 import {
   RadioGroupIndicator,
@@ -55,9 +54,7 @@ const forwardedProps = useForwardProps(delegatedProps);
           :transition="{ duration: 0.15 }"
         >
           <slot>
-            <CircleIcon
-              class="size-2 fill-primary"
-            />
+            <i class="i-lucide-circle size-2 fill-primary" />
           </slot>
         </motion.span>
       </AnimatePresence>

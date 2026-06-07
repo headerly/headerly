@@ -2,7 +2,6 @@
 import type { ContextMenuCheckboxItemEmits, ContextMenuCheckboxItemProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { Check } from "lucide-vue-next";
 import {
   ContextMenuCheckboxItem,
   ContextMenuItemIndicator,
@@ -42,7 +41,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     >
       <ContextMenuItemIndicator>
         <slot name="indicator-icon">
-          <Check class="size-4" />
+          <i class="i-lucide-check size-4" />
         </slot>
       </ContextMenuItemIndicator>
     </span>

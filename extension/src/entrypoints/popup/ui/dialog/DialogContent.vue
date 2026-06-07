@@ -2,7 +2,6 @@
 import type { DialogContentEmits, DialogContentProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit } from "@vueuse/core";
-import { X } from "lucide-vue-next";
 import {
   DialogClose,
   DialogContent,
@@ -65,7 +64,7 @@ const { t } = useI18n();
           [&_i:not([class*='size-'])]:size-4
         "
       >
-        <X />
+        <i class="i-lucide-x" />
         <span class="sr-only">{{ t("common.close") }}</span>
       </DialogClose>
     </DialogContent>

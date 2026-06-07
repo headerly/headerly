@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import { useWindowSize } from "@vueuse/core";
-import { LucideCheck, LucideX } from "lucide-vue-next";
 import {
   ComboboxInput,
   ComboboxRoot,
@@ -199,7 +198,7 @@ function removeTagByValue(value: string) {
           :aria-label="t('common.clearAll')"
           @click="() => (modelValue = [])"
         >
-          <LucideX class="size-4" aria-hidden="true" />
+          <i class="i-lucide-x size-4" aria-hidden="true" />
         </button>
       </TagsInputRoot>
     </ComboboxAnchor>
@@ -228,7 +227,7 @@ function removeTagByValue(value: string) {
           {{ option.label }}
 
           <ComboboxItemIndicator v-if="modelValue.includes(option.value)">
-            <LucideCheck class="ml-auto size-4" />
+            <i class="ml-auto i-lucide-check size-4" />
           </ComboboxItemIndicator>
         </ComboboxItem>
       </ComboboxGroup>

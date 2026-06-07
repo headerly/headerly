@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { LucideX } from "lucide-vue-next";
 import {
   TagsInputItem,
   TagsInputItemDelete,
@@ -64,7 +63,7 @@ function handleRemove() {
       "
       @click="handleRemove"
     >
-      <LucideX class="size-4" aria-hidden="true" />
+      <i class="i-lucide-x size-4" aria-hidden="true" />
     </TagsInputItemDelete>
   </TagsInputItem>
 
@@ -97,7 +96,7 @@ function handleRemove() {
       "
       @click="handleRemove"
     >
-      <LucideX class="size-3" />
+      <i class="i-lucide-x size-3" />
     </button>
   </div>
 </template>
