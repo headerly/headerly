@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
+import { i18n } from "#/i18n";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -87,15 +88,15 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
 }
 
 export function getRuleActionTypeLabel(type: RuleActionType) {
-  const typeMap = {
-    modifyHeaders: "Modify headers",
-    block: "Block",
-    allow: "Allow",
-    upgradeScheme: "Upgrade scheme",
-    allowAllRequests: "Allow all requests",
-    redirect: "Redirect",
-  } as const;
-  return typeMap[type];
+  const { t } = i18n.global;
+  return match(type)
+    .with("modifyHeaders", () => t("ruleAction.modifyHeaders"))
+    .with("block", () => t("ruleAction.block"))
+    .with("allow", () => t("ruleAction.allow"))
+    .with("upgradeScheme", () => t("ruleAction.upgradeScheme"))
+    .with("allowAllRequests", () => t("ruleAction.allowAllRequests"))
+    .with("redirect", () => t("ruleAction.redirect"))
+    .exhaustive();
 }
 
 export function getRuleActionTypeIcon(type: RuleActionType) {

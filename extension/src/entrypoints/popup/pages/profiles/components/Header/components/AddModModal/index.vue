@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useEventBus } from "@vueuse/core";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -23,7 +24,7 @@ import {
 } from "#/ui/tooltip";
 import { openAddModModalKey } from "./open";
 import TabList from "./TabList.vue";
-import { tabs } from "./tabs";
+import { useCreateTabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
   defaultTab: "actions" | "conditions";
@@ -33,6 +34,8 @@ const { defaultTab, class: className } = defineProps<{
 
 const currentTab = ref<typeof defaultTab>(defaultTab);
 const isOpen = ref(false);
+const { t } = useI18n();
+const tabs = useCreateTabs();
 
 const bus = useEventBus(openAddModModalKey);
 bus.on(({ target }) => {
@@ -69,7 +72,7 @@ bus.on(({ target }) => {
     <DialogContent class="max-w-md">
       <DialogHeader>
         <DialogTitle class="sr-only">
-          Add action or condition
+          {{ t("profile.header.addActionOrCondition") }}
         </DialogTitle>
       </DialogHeader>
 

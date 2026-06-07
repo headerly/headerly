@@ -12,7 +12,8 @@ import {
 } from "@codemirror/search";
 import { runScopeHandlers } from "@codemirror/view";
 import { match } from "ts-pattern";
-import { nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { Toggle } from "#/ui/toggle";
 import {
@@ -28,6 +29,8 @@ type SearchCommand = (view: EditorView) => boolean;
 const props = defineProps<{
   view: EditorView;
 }>();
+
+const { t } = useI18n();
 
 const searchInputRef = useTemplateRef<HTMLInputElement>("searchInputRef");
 const replaceInputRef = useTemplateRef<HTMLInputElement>("replaceInputRef");
@@ -51,23 +54,23 @@ onMounted(async () => {
   searchInputRef.value?.focus();
 });
 
-const searchOptions = [
+const searchOptions = computed(() => [
   {
-    label: "Match case",
+    label: t("jsonEditor.search.matchCase"),
     icon: "i-lucide-case-sensitive",
     model: caseSensitive,
   },
   {
-    label: "Match whole word",
+    label: t("jsonEditor.search.matchWholeWord"),
     icon: "i-lucide-whole-word",
     model: wholeWord,
   },
   {
-    label: "Use regular expression",
+    label: t("jsonEditor.search.useRegularExpression"),
     icon: "i-lucide-regex",
     model: regexp,
   },
-] as const;
+] as const);
 
 function updateSearchQuery() {
   const previous = getSearchQuery(props.view.state);
@@ -118,36 +121,36 @@ async function toggleReplaceExpanded() {
   }
 }
 
-const searchPanelActions = [
+const searchPanelActions = computed(() => [
   {
-    label: "Previous match",
+    label: t("jsonEditor.search.previousMatch"),
     icon: "i-lucide-arrow-up",
     run: () => runSearchCommand(findPrevious),
   },
   {
-    label: "Next match",
+    label: t("jsonEditor.search.nextMatch"),
     icon: "i-lucide-arrow-down",
     run: () => runSearchCommand(findNext),
   },
   {
-    label: "Close search",
+    label: t("jsonEditor.search.closeSearch"),
     icon: "i-lucide-x",
     run: () => closeSearchPanel(props.view),
   },
-] as const;
+] as const);
 
-const replacePanelActions = [
+const replacePanelActions = computed(() => [
   {
-    label: "Replace",
+    label: t("jsonEditor.search.replace"),
     icon: "i-lucide-replace",
     run: () => runSearchCommand(replaceNext),
   },
   {
-    label: "Replace all",
+    label: t("jsonEditor.search.replaceAll"),
     icon: "i-lucide-replace-all",
     run: () => runSearchCommand(replaceAll),
   },
-] as const;
+] as const);
 </script>
 
 <template>
@@ -167,7 +170,7 @@ const replacePanelActions = [
         @click="toggleReplaceExpanded"
       >
         <span class="sr-only">
-          Toggle replace
+          {{ t("jsonEditor.search.toggleReplace") }}
         </span>
         <i
           :class="cn(
@@ -190,7 +193,7 @@ const replacePanelActions = [
           h-full min-w-0 flex-1 px-2 text-sm outline-none
           placeholder:text-muted-foreground
         "
-        placeholder="Find"
+        :placeholder="t('jsonEditor.search.findPlaceholder')"
         @keydown.enter="handleSearchSubmit"
       >
 
@@ -261,7 +264,7 @@ const replacePanelActions = [
             h-full min-w-0 flex-1 px-2 text-sm outline-none
             placeholder:text-muted-foreground
           "
-          placeholder="Replace"
+          :placeholder="t('jsonEditor.search.replacePlaceholder')"
           @keydown.enter="handleReplaceSubmit"
         >
       </div>

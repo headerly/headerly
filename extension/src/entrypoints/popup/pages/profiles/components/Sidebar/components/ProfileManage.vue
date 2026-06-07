@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HeaderMod } from "@/lib/schema";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { Input } from "#/ui/input";
 import {
@@ -14,6 +15,7 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const profilesStore = useProfilesStore();
 const open = ref(false);
+const { t } = useI18n();
 
 const searchKeyword = ref("");
 
@@ -48,7 +50,7 @@ const searchResults = computed(() => {
       "
     >
       <SheetHeader>
-        <SheetTitle>Search profiles</SheetTitle>
+        <SheetTitle>{{ t("profile.search.title") }}</SheetTitle>
       </SheetHeader>
       <div class="relative mx-4">
         <i
@@ -60,7 +62,7 @@ const searchResults = computed(() => {
         <Input
           v-model.lazy.trim="searchKeyword"
           type="search"
-          placeholder="Search profiles..."
+          :placeholder="t('profile.search.placeholder')"
           class="pl-8"
           autofocus
         />
@@ -90,7 +92,7 @@ const searchResults = computed(() => {
           v-if="searchResults.length === 0"
           class="py-6 text-center text-sm text-muted-foreground"
         >
-          No profiles found.
+          {{ t("profile.search.noProfiles") }}
         </div>
       </div>
     </SheetContent>

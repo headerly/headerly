@@ -1,0 +1,400 @@
+{
+  "addModModal": {
+    "items": {
+      "cookieSyncRequestHeader": {
+        "description": "Sync cookies for a specific website to the request header. New permissions need to be granted.",
+        "title": "Cookie Sync to Request Header"
+      },
+      "domainType": {
+        "description": "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
+        "title": "Domain Type"
+      },
+      "excludedDomainType": {
+        "description": "Excludes requests based on whether the network request is first-party or third-party to the domain from which it originated. If omitted, all requests are accepted.",
+        "title": "Excluded Domain Type"
+      },
+      "excludedInitiatorDomains": {
+        "description": "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
+        "title": "Excluded Initiator Domains"
+      },
+      "excludedRequestDomains": {
+        "description": "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
+        "title": "Excluded Request Domains"
+      },
+      "excludedRequestMethods": {
+        "description": "List of request methods which the rule won't match. Only one of requestMethods and excludedRequestMethods should be specified. If neither is specified, all request methods are matched.",
+        "title": "Excluded Request Methods"
+      },
+      "excludedResourceTypes": {
+        "description": "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
+        "title": "Excluded Resource Types"
+      },
+      "initiatorDomains": {
+        "description": "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
+        "title": "Initiator Domains"
+      },
+      "modifyRequestHeader": {
+        "description": "Set, remove, or append HTTP request headers.",
+        "title": "Modify HTTP Request Header"
+      },
+      "modifyResponseHeader": {
+        "description": "Set, remove, or append HTTP response headers.",
+        "title": "Modify HTTP Response Header"
+      },
+      "regexFilter": {
+        "description": "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
+        "title": "Regex Filter"
+      },
+      "requestDomains": {
+        "description": "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
+        "title": "Request Domains"
+      },
+      "requestMethods": {
+        "description": "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
+        "title": "Request Methods"
+      },
+      "resourceTypes": {
+        "description": "List of resource types which the rule can match. An empty list is not allowed.",
+        "title": "Resource Types"
+      },
+      "simpleRedirectUrl": {
+        "description": "Redirect matched requests to a specific URL.",
+        "title": "Simple Redirect URL"
+      },
+      "urlFilter": {
+        "description": "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
+        "title": "URL Filter"
+      },
+      "urlRegexFilterCaseSensitive": {
+        "description": "Specifies whether the URL filter is case sensitive.",
+        "title": "Url & Regex Filter Case Sensitive"
+      }
+    },
+    "tabs": {
+      "actions": "Actions",
+      "conditions": "Conditions"
+    }
+  },
+  "commentsDialog": {
+    "description": "Add or edit comments for this profile field.",
+    "placeholder": "Add your comments here...",
+    "title": "Edit Comments"
+  },
+  "common": {
+    "addCondition": "Add a condition",
+    "auto": "Auto",
+    "backToProfiles": "Back to profiles",
+    "beautify": "Beautify",
+    "cancel": "Cancel",
+    "checkbox": "Checkbox",
+    "clearAll": "Clear all",
+    "close": "Close",
+    "comments": "Comments",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "dark": "Dark",
+    "deleteCondition": "Delete this condition",
+    "deleteDomain": "Delete this domain",
+    "deleteHeaderMod": "Delete this header mod",
+    "domain": "Domain",
+    "duplicate": "Duplicate",
+    "export": "Export",
+    "github": "GitHub",
+    "import": "Import",
+    "light": "Light",
+    "loading": "Loading",
+    "moreOptions": "More options",
+    "name": "Name",
+    "noResultsFound": "No results found.",
+    "notAvailable": "Not available",
+    "off": "Off",
+    "on": "On",
+    "radio": "Radio",
+    "redo": "Redo",
+    "reportIssue": "Report an issue",
+    "reset": "Reset",
+    "save": "Save",
+    "search": "Search",
+    "selectOptions": "Select options",
+    "settings": "Settings",
+    "undo": "Undo",
+    "value": "Value"
+  },
+  "condition": {
+    "domains": {
+      "asciiOnly": "The entries must consist of only ascii characters.",
+      "excludedInitiatorDomains": {
+        "description": "The rule will not match network requests originating from the list of excludedInitiatorDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiatorDomains.",
+        "title": "Excluded Initiator Domains Filter"
+      },
+      "excludedRequestDomains": {
+        "description": "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
+        "title": "Excluded Request Domains Filter"
+      },
+      "initiatorDomains": {
+        "description": "The rule will only match network requests originating from the list of initiatorDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
+        "title": "Initiator Domains Filter"
+      },
+      "matchesInitiator": "This matches against the request initiator and not the request url.",
+      "punycode": "Use punycode encoding for internationalized domains.",
+      "requestDomains": {
+        "description": "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
+        "title": "Request Domains Filter"
+      },
+      "subdomainsAllowed": "Sub-domains like \"a.example.com\" are also allowed.",
+      "useCurrentTabDomain": "Use the domain of the current tab"
+    },
+    "domainType": {
+      "firstParty": "First Party",
+      "thirdParty": "Third Party",
+      "title": "Domain Type"
+    },
+    "excludedRequestMethods": {
+      "title": "Excluded Request Methods"
+    },
+    "excludedResourceTypes": {
+      "title": "Excluded Resource Types"
+    },
+    "regexFilter": {
+      "description": "Regular expression to match against the network request url.",
+      "syntaxPrefix": "This follows the",
+      "syntaxSuffix": "syntax.",
+      "title": "Regex Filter"
+    },
+    "requestMethods": {
+      "title": "Request Methods"
+    },
+    "resourceType": {
+      "cspReport": "CSP Report",
+      "font": "Font",
+      "image": "Image",
+      "mainFrame": "Main Frame",
+      "media": "Media",
+      "object": "Object",
+      "other": "Other",
+      "ping": "Ping",
+      "script": "Script",
+      "stylesheet": "Stylesheet",
+      "subFrame": "Sub Frame",
+      "webbundle": "WebBundle",
+      "websocket": "WebSocket",
+      "webtransport": "WebTransport",
+      "xmlhttprequest": "XMLHttpRequest"
+    },
+    "resourceTypes": {
+      "title": "Resource Types"
+    },
+    "selectPlaceholder": "Select {name}...",
+    "urlFilter": {
+      "anchor": " - Anchor: marks start or end of the URL.",
+      "domainAnchor": " - Domain anchor: matches start of a (sub)domain.",
+      "format": "Format: (optional anchor) + pattern + (optional anchor)",
+      "omitted": "Omitted = all URLs match. Empty string not allowed.",
+      "onlyOne": "Note: Only one of urlFilter or regexFilter can be used.",
+      "separator": "{separator} - Separator: matches anything except letters, digits, {chars}, or end of URL.",
+      "syntaxLink": "URL pattern syntax",
+      "title": "URL Filter",
+      "useCurrentTabUrl": "Use the URL of the current tab",
+      "wildcard": " - Wildcard: matches any characters."
+    },
+    "urlFilterCaseSensitive": {
+      "title": "Url Filter Case Sensitive"
+    }
+  },
+  "emoji": {
+    "categories": {
+      "activities": "Activities",
+      "all": "All",
+      "animalsNature": "Animals & Nature",
+      "flags": "Flags",
+      "foodDrink": "Food & Drink",
+      "objects": "Objects",
+      "smileysPeople": "Smileys & People",
+      "symbols": "Symbols",
+      "travelPlaces": "Travel & Places"
+    }
+  },
+  "export": {
+    "cookieValue": "Export cookie value",
+    "cookieValueDescription": "Do not share cookies casually. They may expose private information or login credentials.",
+    "saveAsFile": "Save as File",
+    "selectAll": "Select all",
+    "sensitiveWarning": "Exported profiles may include sensitive authentication tokens or cookies.",
+    "settings": "Export settings",
+    "title": "Export Profiles",
+    "toast": {
+      "copied": "Profile JSON copied to clipboard"
+    },
+    "unselectAll": "Unselect all"
+  },
+  "group": {
+    "actions": {
+      "addItem": "Add a new item",
+      "deleteGroup": "Delete this group",
+      "transferGroupTypeTo": "Transfer group type to"
+    },
+    "collapse": "Collapse group",
+    "expand": "Expand group"
+  },
+  "headerMod": {
+    "currentOperation": "Current operation: {operation}",
+    "operation": {
+      "append": "Append",
+      "remove": "Remove",
+      "set": "Set"
+    },
+    "requestHeaders": "Request Headers",
+    "responseHeaders": "Response Headers",
+    "switchTo": "Switch to {operation}"
+  },
+  "import": {
+    "confirm": "Confirm Import",
+    "loadFromFile": "Load from File",
+    "profile": "profile",
+    "profiles": "profiles",
+    "title": "Import Profiles with JSON",
+    "toast": {
+      "cookiesPermissionRequired": "Import cancelled: cookies permission is required for cookie sync profiles",
+      "fileLoaded": "File loaded successfully",
+      "fileReadFailed": "Failed to read file",
+      "invalidJson": "Import failed: Invalid JSON format",
+      "success": "Successfully imported {count} {label}!"
+    }
+  },
+  "jsonEditor": {
+    "search": {
+      "closeSearch": "Close search",
+      "findPlaceholder": "Find",
+      "matchCase": "Match case",
+      "matchWholeWord": "Match whole word",
+      "nextMatch": "Next match",
+      "previousMatch": "Previous match",
+      "replace": "Replace",
+      "replaceAll": "Replace all",
+      "replacePlaceholder": "Replace",
+      "toggleReplace": "Toggle replace",
+      "useRegularExpression": "Use regular expression"
+    }
+  },
+  "profile": {
+    "actions": {
+      "delete": "Delete",
+      "exportToJson": "Export to JSON",
+      "openSecondaryOperations": "Open Secondary Operations Dropdown",
+      "pause": "Pause",
+      "resume": "Resume",
+      "ruleActionType": "Rule action type"
+    },
+    "alert": {
+      "globalRuleDescription": "Add a condition to avoid issues.",
+      "globalRuleTitle": "This profile affects every request and might break sites.",
+      "ignoreWarning": "Ignore warning",
+      "registrationErrorTitle": "This profile caused an error when registering rules."
+    },
+    "changeType": {
+      "description": "Select a new action type for this profile. Switching types may remove existing actions.",
+      "placeholder": "Select a type",
+      "title": "Change Rule Action Type"
+    },
+    "empty": "No data, please add any actions or conditions first.",
+    "header": {
+      "addActionOrCondition": "Add action or condition",
+      "addActionOrConditionTooltip": "Add a new action or condition",
+      "priority": "Priority",
+      "priorityLabel": "Priority: ",
+      "priorityValue": "Priority: {priority}",
+      "ruleActionType": "Rule action type: {type}"
+    },
+    "priority": {
+      "description": "Priority defines the conflict resolution strategy for rules. When multiple rules match a single request, the system executes the rule with the higher weight as a priority.",
+      "title": "Edit Rule Priority"
+    },
+    "search": {
+      "noProfiles": "No profiles found.",
+      "placeholder": "Search profiles...",
+      "title": "Search profiles"
+    },
+    "sidebar": {
+      "changelog": "Changelog",
+      "defaultActionType": "Action type by default",
+      "makeDefault": "Make as default",
+      "newProfile": "New profile",
+      "openInTab": "Open in tab",
+      "openMenu": "Open sidebar menu",
+      "profiles": "Profiles",
+      "quickCreate": "Quick create",
+      "quickCreateDescription": "The default rule action type can be changed in the submenu of New profile",
+      "resources": "Resources",
+      "turnOff": "Turn off extension",
+      "turnOn": "Turn on extension"
+    }
+  },
+  "redirectUrl": {
+    "delete": "Delete this redirect URL",
+    "description": "The redirect URL. Redirects to JavaScript URLs are not allowed.",
+    "title": "Redirect URL"
+  },
+  "ruleAction": {
+    "allow": "Allow",
+    "allowAllRequests": "Allow all requests",
+    "block": "Block",
+    "description": {
+      "allow": "Allow the network request. The request won't be intercepted if there is an allow rule which matches it",
+      "allowAllRequests": "Allow all requests within a frame hierarchy, including the frame request itself",
+      "block": "Block the network request",
+      "modifyHeaders": "Modify request/response headers from the network request",
+      "redirect": "Redirect the network request",
+      "upgradeScheme": "Upgrade the network request URL's scheme to HTTPS if the request is HTTP or FTP"
+    },
+    "modifyHeaders": "Modify headers",
+    "redirect": "Redirect",
+    "upgradeScheme": "Upgrade scheme"
+  },
+  "settings": {
+    "descriptions": {
+      "nativeResourceTypeBehavior": "Resource type defaults to 'all', but enabling this option will not set it to 'all', and rules without a resource type condition will match only a narrower range of requests."
+    },
+    "fieldLabel": "{label}:",
+    "fields": {
+      "autoAssignEmoji": "Automatically assign emoji to new profiles",
+      "language": "Language",
+      "nativeResourceTypeBehavior": "Use native DNR resource type behavior",
+      "randomEmojiCategory": "Category for random emoji assignment",
+      "theme": "Theme"
+    },
+    "groups": {
+      "appearance": "Appearance",
+      "profiles": "Profiles",
+      "troubleshooting": "Troubleshooting"
+    },
+    "reset": {
+      "cannotUndo": "This action cannot be undone.",
+      "description": "Are you sure you want to reset all settings to their default values?",
+      "title": "Reset extension settings",
+      "tooltip": "Reset extension settings"
+    },
+    "theme": {
+      "auto": "Auto",
+      "dark": "Dark",
+      "light": "Light"
+    },
+    "troubleshooting": {
+      "reinitializeAll": "Reinitialize all profiles",
+      "reinitializeDescription": "If you find that the number of active profiles you defined is inconsistent with the number displayed in the extension popup badge, please click the button below.",
+      "reinitializeError": "Failed to reinitialize profiles. Please report this issue to us.",
+      "reinitializeSuccess": "All profiles have been reinitialized. Please check if the issue is resolved. If not, please report this issue to us."
+    }
+  },
+  "syncCookie": {
+    "missing": "(Missing)",
+    "pickCookie": "Pick a cookie",
+    "refreshTooltip": "Refresh to get the latest cookie",
+    "sharingWarning": "Warning: Sharing cookies with others may result in the leakage of login credentials!",
+    "title": "Sync Cookies",
+    "toast": {
+      "notFound": "The cookie was not found. It may no longer exist.",
+      "refreshed": "Cookie refreshed successfully."
+    },
+    "viewCookie": "View Cookie"
+  }
+}

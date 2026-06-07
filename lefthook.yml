@@ -2,7 +2,7 @@ pre-commit:
   commands:
     lint:
       glob: "*"
-      run: "pnpm exec eslint --fix --no-warn-ignored {staged_files}"
+      run: "pnpm exec eslint --max-warnings 0 --fix --no-warn-ignored {staged_files}"
       stage_fixed: true
     typecheck:
       glob: "*.{ts,vue}"

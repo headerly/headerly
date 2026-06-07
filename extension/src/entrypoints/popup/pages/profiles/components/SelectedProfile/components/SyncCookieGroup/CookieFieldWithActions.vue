@@ -4,6 +4,7 @@ import type { SyncCookie } from "@/lib/schema";
 import { useQuery } from "@tanstack/vue-query";
 import { pick, sortBy } from "es-toolkit";
 import { computed, ref, toValue } from "vue";
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Alert, AlertDescription } from "#/ui/alert";
@@ -47,6 +48,8 @@ const field = defineModel<SyncCookie>("field", {
 const { index } = defineProps<{
   index: number;
 }>();
+
+const { t } = useI18n();
 
 function useCookiesQuery(domainComplex: MaybeRefOrGetter<string>) {
   return useQuery({
@@ -150,9 +153,9 @@ async function refreshCookie() {
   });
   if (cookie) {
     field.value.value = cookie.value;
-    toast.success("Cookie refreshed successfully.");
+    toast.success(t("syncCookie.toast.refreshed"));
   } else {
-    toast.error("The cookie was not found. It may no longer exist.");
+    toast.error(t("syncCookie.toast.notFound"));
   }
 }
 </script>
@@ -174,7 +177,7 @@ async function refreshCookie() {
       >
         <Input
           :model-value="field.domain"
-          placeholder="Domain"
+          :placeholder="t('common.domain')"
           class="
             text-base
             placeholder:italic
@@ -199,7 +202,7 @@ async function refreshCookie() {
               />
               <SelectValue
                 v-else
-                :placeholder="disabled ? 'Not available' : 'Pick a cookie'"
+                :placeholder="disabled ? t('common.notAvailable') : t('syncCookie.pickCookie')"
                 class="block! flex-1 truncate text-left"
               />
             </SelectTrigger>
@@ -225,7 +228,7 @@ async function refreshCookie() {
                     <span
                       v-if="option.isMissing"
                     >
-                      (Missing)
+                      {{ t("syncCookie.missing") }}
                     </span>
                   </div>
                 </SelectItem>
@@ -249,7 +252,7 @@ async function refreshCookie() {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top" :collision-padding="5">
-            Refresh to get the latest cookie
+            {{ t("syncCookie.refreshTooltip") }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -260,7 +263,7 @@ async function refreshCookie() {
           list.splice(index, 1);
         }"
       >
-        <span class="sr-only">Delete this header mod</span>
+        <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
         <i class="i-lucide-x size-4" />
       </Button>
       <ActionsDropdown
@@ -273,7 +276,7 @@ async function refreshCookie() {
             :disabled="!field.value"
             @click="() => isCookieDialogOpen = true"
           >
-            View Cookie
+            {{ t("syncCookie.viewCookie") }}
           </DropdownMenuItem>
         </template>
       </ActionsDropdown>
@@ -283,20 +286,20 @@ async function refreshCookie() {
   <Dialog v-model:open="isCookieDialogOpen">
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>View Cookie</DialogTitle>
+        <DialogTitle>{{ t("syncCookie.viewCookie") }}</DialogTitle>
       </DialogHeader>
 
       <Alert variant="warning">
         <i class="i-lucide-triangle-alert size-4" />
         <AlertDescription>
-          Warning: Sharing cookies with others may result in the leakage of login credentials!
+          {{ t("syncCookie.sharingWarning") }}
         </AlertDescription>
       </Alert>
 
       <Textarea
         v-model="field.value"
         class="mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
-        placeholder="Comments"
+        :placeholder="t('common.comments')"
         disabled
       />
     </DialogContent>

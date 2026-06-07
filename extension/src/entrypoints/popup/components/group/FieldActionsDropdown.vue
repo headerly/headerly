@@ -1,7 +1,8 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -24,12 +25,14 @@ const { index } = defineProps<{
   index: number;
 }>();
 
+const { t } = useI18n();
+
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
-const moreActions = [
+const moreActions = computed(() => [
   {
     key: "duplicate",
-    label: "Duplicate",
+    label: t("common.duplicate"),
     onClick: () => {
       const newField = { ...field.value, id: uuidv7() };
       list.value.splice(index + 1, 0, newField);
@@ -37,10 +40,10 @@ const moreActions = [
   },
   {
     key: "comments",
-    label: "Comments",
+    label: t("common.comments"),
     onClick: () => commentsDialogRef.value?.open(),
   },
-];
+]);
 </script>
 
 <template>
@@ -48,7 +51,7 @@ const moreActions = [
     <DropdownMenuTrigger as-child>
       <Button size="icon-xs" variant="secondary">
         <i class="i-lucide-ellipsis-vertical size-4" />
-        <span class="sr-only">More options</span>
+        <span class="sr-only">{{ t("common.moreOptions") }}</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">

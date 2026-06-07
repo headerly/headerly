@@ -13,14 +13,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { emojisWithCategory } from "@/entrypoints/popup/constants/emoji";
+import { useEmojisWithCategory } from "@/entrypoints/popup/constants/emoji";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
 const parentRef = useTemplateRef("parentRef");
+const emojisWithCategory = useEmojisWithCategory();
+
+type EmojiCategoryValue = ReturnType<typeof useEmojisWithCategory>[number]["value"];
 
 interface VirtualItem {
   type: "header" | "emoji";
+  categoryValue?: EmojiCategoryValue;
   categoryLabel?: string;
   emojis?: string[];
 }
@@ -31,6 +35,7 @@ const virtualItems = computed<VirtualItem[]>(() => {
   emojisWithCategory.forEach((category) => {
     items.push({
       type: "header",
+      categoryValue: category.value,
       categoryLabel: category.label,
     });
 
@@ -54,9 +59,9 @@ const rowVirtualizer = useVirtualizer({
   overscan: 10,
 });
 
-function scrollToCategory(categoryLabel: string) {
+function scrollToCategory(categoryValue: EmojiCategoryValue) {
   const targetIndex = virtualItems.value.findIndex(
-    item => item.type === "header" && item.categoryLabel === categoryLabel,
+    item => item.type === "header" && item.categoryValue === categoryValue,
   );
 
   if (targetIndex !== -1) {
@@ -88,7 +93,7 @@ function scrollToCategory(categoryLabel: string) {
               class="mt-2 rounded-md border bg-secondary"
             >
               <ul class="flex flex-nowrap justify-between p-0.5">
-                <li v-for="item in emojisWithCategory" :key="item.label">
+                <li v-for="item in emojisWithCategory" :key="item.value">
                   <TooltipProvider ignore-non-keyboard-focus>
                     <Tooltip>
                       <TooltipTrigger as-child>
@@ -96,7 +101,7 @@ function scrollToCategory(categoryLabel: string) {
                           class="hover:bg-primary/10!"
                           size="icon-sm"
                           variant="ghost"
-                          @click="scrollToCategory(item.label)"
+                          @click="scrollToCategory(item.value)"
                         >
                           <i :class="cn(item.icon, 'size-4')" />
                         </Button>

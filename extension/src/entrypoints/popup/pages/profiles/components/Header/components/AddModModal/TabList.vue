@@ -45,7 +45,11 @@ function initList() {
   list.value = newList;
 }
 
-initList();
+watch(
+  () => props.items,
+  initList,
+  { immediate: true },
+);
 
 watch(
   () => list.value.map(item => item.key),

@@ -2,7 +2,9 @@
 import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import { useStorage } from "@vueuse/core";
+import { match } from "ts-pattern";
 import { defineAsyncComponent, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import Badge from "#/ui/badge/Badge.vue";
 
@@ -40,6 +42,7 @@ const ImportProfileModal = defineAsyncComponent(() => import("./components/Impor
 
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
+const { t } = useI18n();
 const importModalOpen = ref(false);
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
@@ -56,14 +59,17 @@ const ruleActionTypes = [
   "allowAllRequests",
   "redirect",
 ] as const satisfies RuleActionType[];
-const ruleActionTypeDescriptions = {
-  modifyHeaders: "Modify request/response headers from the network request",
-  block: "Block the network request",
-  allow: "Allow the network request. The request won't be intercepted if there is an allow rule which matches it",
-  upgradeScheme: "Upgrade the network request URL's scheme to HTTPS if the request is HTTP or FTP",
-  allowAllRequests: "Allow all requests within a frame hierarchy, including the frame request itself",
-  redirect: "Redirect the network request",
-} as const;
+
+function getRuleActionTypeDescription(type: RuleActionType) {
+  return match(type)
+    .with("modifyHeaders", () => t("ruleAction.description.modifyHeaders"))
+    .with("block", () => t("ruleAction.description.block"))
+    .with("allow", () => t("ruleAction.description.allow"))
+    .with("upgradeScheme", () => t("ruleAction.description.upgradeScheme"))
+    .with("allowAllRequests", () => t("ruleAction.description.allowAllRequests"))
+    .with("redirect", () => t("ruleAction.description.redirect"))
+    .exhaustive();
+}
 </script>
 
 <template>
@@ -81,20 +87,20 @@ const ruleActionTypeDescriptions = {
           )"
         >
           <i class="i-lucide-menu size-4" />
-          <span class="sr-only">Open sidebar menu</span>
+          <span class="sr-only">{{ t("profile.sidebar.openMenu") }}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
         <DropdownMenuGroup>
           <DropdownMenuItem class="gap-1" @click="profilesStore.addProfile(defaultRuleActionType)">
-            Quick create
+            {{ t("profile.sidebar.quickCreate") }}
             <InfoTooltip
-              description="The default rule action type can be changed in the submenu of New profile"
+              :description="t('profile.sidebar.quickCreateDescription')"
             />
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              New profile
+              {{ t("profile.sidebar.newProfile") }}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent class="min-w-40">
               <DropdownMenuSub
@@ -108,17 +114,17 @@ const ruleActionTypeDescriptions = {
                 >
                   {{ getRuleActionTypeLabel(type) }}
                   <InfoTooltip
-                    :description="ruleActionTypeDescriptions[type]"
+                    :description="getRuleActionTypeDescription(type)"
                     class="ml-1"
                   />
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem v-if="type !== defaultRuleActionType" @click="defaultRuleActionType = type">
-                    Make as default
+                    {{ t("profile.sidebar.makeDefault") }}
                   </DropdownMenuItem>
                   <DropdownMenuItem v-else>
                     <Badge>
-                      Action type by default
+                      {{ t("profile.sidebar.defaultActionType") }}
                     </Badge>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
@@ -127,20 +133,20 @@ const ruleActionTypeDescriptions = {
           </DropdownMenuSub>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              Profiles
+              {{ t("profile.sidebar.profiles") }}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <ProfileManage>
                 <DropdownMenuItem @select.prevent>
-                  Search
+                  {{ t("common.search") }}
                 </DropdownMenuItem>
               </ProfileManage>
               <DropdownMenuItem @click="importModalOpen = true">
-                Import
+                {{ t("common.import") }}
               </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <RouterLink to="/export">
-                  Export
+                  {{ t("common.export") }}
                 </RouterLink>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
@@ -150,22 +156,22 @@ const ruleActionTypeDescriptions = {
         <DropdownMenuGroup>
           <DropdownMenuItem as-child>
             <RouterLink to="/settings">
-              Settings
+              {{ t("common.settings") }}
             </RouterLink>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              Resources
+              {{ t("profile.sidebar.resources") }}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuItem as-child>
                 <a href="https://github.com/headerly/headerly" target="_blank">
-                  GitHub
+                  {{ t("common.github") }}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <a href="https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md" target="_blank">
-                  Changelog
+                  {{ t("profile.sidebar.changelog") }}
                 </a>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
@@ -174,7 +180,7 @@ const ruleActionTypeDescriptions = {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem @click="openInFullscreen">
-            Open in tab
+            {{ t("profile.sidebar.openInTab") }}
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -215,7 +221,7 @@ const ruleActionTypeDescriptions = {
             </Label>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>{{ settingsStore.powerOn ? 'Turn off extension' : 'Turn on extension' }}</p>
+            <p>{{ settingsStore.powerOn ? t("profile.sidebar.turnOff") : t("profile.sidebar.turnOn") }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

@@ -1,7 +1,9 @@
-<script setup lang="ts" generic="T extends 'resourceTypes' | 'requestMethods' | 'excludedResourceTypes' | 'excludedRequestMethods'">
+<script setup lang="ts" generic="T extends ConditionType">
 import type { GroupItem } from "@/lib/schema";
+import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
@@ -34,13 +36,7 @@ const { type } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
-
-const nameMap = {
-  resourceTypes: "Resource Types",
-  excludedResourceTypes: "Excluded Resource Types",
-  requestMethods: "Request Methods",
-  excludedRequestMethods: "Excluded Request Methods",
-};
+const { t } = useI18n();
 
 interface ResourceTypeOption {
   value: `${Browser.declarativeNetRequest.ResourceType}`;
@@ -48,21 +44,21 @@ interface ResourceTypeOption {
 }
 
 const resourceTypeOptions = [
-  { value: "csp_report", label: "CSP Report" },
-  { value: "font", label: "Font" },
-  { value: "image", label: "Image" },
-  { value: "main_frame", label: "Main Frame" },
-  { value: "media", label: "Media" },
-  { value: "object", label: "Object" },
-  { value: "other", label: "Other" },
-  { value: "ping", label: "Ping" },
-  { value: "script", label: "Script" },
-  { value: "stylesheet", label: "Stylesheet" },
-  { value: "sub_frame", label: "Sub Frame" },
-  { value: "webbundle", label: "WebBundle" },
-  { value: "websocket", label: "WebSocket" },
-  { value: "webtransport", label: "WebTransport" },
-  { value: "xmlhttprequest", label: "XMLHttpRequest" },
+  { value: "csp_report", label: t("condition.resourceType.cspReport") },
+  { value: "font", label: t("condition.resourceType.font") },
+  { value: "image", label: t("condition.resourceType.image") },
+  { value: "main_frame", label: t("condition.resourceType.mainFrame") },
+  { value: "media", label: t("condition.resourceType.media") },
+  { value: "object", label: t("condition.resourceType.object") },
+  { value: "other", label: t("condition.resourceType.other") },
+  { value: "ping", label: t("condition.resourceType.ping") },
+  { value: "script", label: t("condition.resourceType.script") },
+  { value: "stylesheet", label: t("condition.resourceType.stylesheet") },
+  { value: "sub_frame", label: t("condition.resourceType.subFrame") },
+  { value: "webbundle", label: t("condition.resourceType.webbundle") },
+  { value: "websocket", label: t("condition.resourceType.websocket") },
+  { value: "webtransport", label: t("condition.resourceType.webtransport") },
+  { value: "xmlhttprequest", label: t("condition.resourceType.xmlhttprequest") },
 ] as const satisfies ResourceTypeOption[];
 
 interface RequestMethodOption {
@@ -91,13 +87,13 @@ const optionsMap = {
 
 const options = computed(() => optionsMap[type]);
 
-// Convert available options to MultiSelect options
-const multiSelectOptions = computed(() =>
-  options.value.map(option => ({
-    value: option.value,
-    label: option.label,
-    disabled: false,
-  })),
+const name = computed(() =>
+  match(type as ConditionType)
+    .with("resourceTypes", () => t("condition.resourceTypes.title"))
+    .with("excludedResourceTypes", () => t("condition.excludedResourceTypes.title"))
+    .with("requestMethods", () => t("condition.requestMethods.title"))
+    .with("excludedRequestMethods", () => t("condition.excludedRequestMethods.title"))
+    .exhaustive(),
 );
 
 function deleteGroup() {
@@ -115,10 +111,14 @@ function newField() {
 }
 </script>
 
+<script lang="ts">
+type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes" | "excludedRequestMethods";
+</script>
+
 <template>
   <Group
     v-model:list="list"
-    :name="nameMap[type]"
+    :name
     type="radio"
     @delete-empty-group="deleteGroup"
   >
@@ -143,8 +143,8 @@ function newField() {
             w-full
             sm:w-auto
           "
-          :options="multiSelectOptions"
-          :placeholder="`Select ${nameMap[type].toLowerCase()}...`"
+          :options
+          :placeholder="t('condition.selectPlaceholder', { name: name.toLowerCase() })"
         />
         <div class="flex gap-0.5">
           <Button
@@ -154,7 +154,7 @@ function newField() {
               list.splice(index, 1);
             }"
           >
-            <span class="sr-only">Delete this header mod</span>
+            <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown

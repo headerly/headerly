@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { toast } from "vue-sonner";
 import InfoTooltip from "#/components/InfoTooltip.vue";
@@ -20,6 +21,7 @@ import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
 
 const profilesStore = useProfilesStore();
 const route = useRoute();
+const { t } = useI18n();
 
 const selectedProfiles = ref<Profile[]>([]);
 
@@ -71,7 +73,7 @@ const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview
 
 async function handleCopyJson() {
   await navigator.clipboard.writeText(jsonPreview.value);
-  toast.success("Profile JSON copied to clipboard");
+  toast.success(t("export.toast.copied"));
 }
 
 async function handleDownloadJson() {
@@ -104,7 +106,7 @@ async function handleDownloadJson() {
       <Button as-child size="icon-sm" variant="secondary" class="mx-2">
         <RouterLink to="/profiles">
           <i class="i-lucide-arrow-left size-4" />
-          <span class="sr-only">Back to profiles</span>
+          <span class="sr-only">{{ t("common.backToProfiles") }}</span>
         </RouterLink>
       </Button>
       <div
@@ -124,7 +126,7 @@ async function handleDownloadJson() {
       <h1
         class="flex items-center gap-2 text-base font-semibold"
       >
-        Export Profiles
+        {{ t("export.title") }}
       </h1>
       <div class="flex justify-end space-x-2">
         <DropdownMenu>
@@ -135,7 +137,7 @@ async function handleDownloadJson() {
               variant="secondary"
             >
               <i class="i-lucide-settings size-4" />
-              <span class="sr-only">Export settings</span>
+              <span class="sr-only">{{ t("export.settings") }}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" :collision-padding="8" class="z-1000">
@@ -143,12 +145,12 @@ async function handleDownloadJson() {
               v-model="exportCookieValue"
               class="min-w-52 justify-between gap-3"
             >
-              <span>Export cookie value</span>
+              <span>{{ t("export.cookieValue") }}</span>
               <span
                 @click.stop
                 @pointerdown.stop
               >
-                <InfoTooltip description="Do not share cookies casually. They may expose private information or login credentials." />
+                <InfoTooltip :description="t('export.cookieValueDescription')" />
               </span>
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
@@ -160,7 +162,7 @@ async function handleDownloadJson() {
           @click="jsonPreview = formatJson()"
         >
           <i class="i-lucide-braces" />
-          Beautify
+          {{ t("common.beautify") }}
         </Button>
         <Button
           size="sm"
@@ -169,7 +171,7 @@ async function handleDownloadJson() {
           @click="handleDownloadJson"
         >
           <i class="i-lucide-hard-drive-download" />
-          Save as File
+          {{ t("export.saveAsFile") }}
         </Button>
         <Button
           size="sm"
@@ -177,7 +179,7 @@ async function handleDownloadJson() {
           @click="handleCopyJson"
         >
           <i class="i-lucide-copy" />
-          Copy
+          {{ t("common.copy") }}
         </Button>
       </div>
     </header>
@@ -202,7 +204,7 @@ async function handleDownloadJson() {
           "
         >
           <i class="i-lucide-alert-triangle size-4" />
-          Exported profiles may include sensitive authentication tokens or cookies.
+          {{ t("export.sensitiveWarning") }}
         </p>
       </div>
     </main>

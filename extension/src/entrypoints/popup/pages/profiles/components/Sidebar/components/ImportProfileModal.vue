@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { match } from "ts-pattern";
 import { ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import JsonEditor from "#/components/JsonEditor/index.vue";
 import { Button } from "#/ui/button";
@@ -22,6 +23,7 @@ const userInput = ref("");
 
 const profilesStore = useProfilesStore();
 const fileInputRef = useTemplateRef("fileInputRef");
+const { t } = useI18n();
 
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(userInput);
 
@@ -50,22 +52,22 @@ async function confirmImport() {
     const { profiles } = result.data;
     const hasSyncCookieGroups = profiles.some(profile => Boolean(profile.syncCookieGroups?.length));
     if (hasSyncCookieGroups && !await ensureCookiesPermission()) {
-      toast.error("Import cancelled: cookies permission is required for cookie sync profiles");
+      toast.error(t("import.toast.cookiesPermissionRequired"));
       return;
     }
 
     profilesStore.manager.profiles.push(...profiles.map(addProfileIds));
 
     const profileCountLabel = match(profiles.length === 1)
-      .with(true, () => "profile")
-      .with(false, () => "profiles")
+      .with(true, () => t("import.profile"))
+      .with(false, () => t("import.profiles"))
       .exhaustive();
-    toast.success(`Successfully imported ${profiles.length} ${profileCountLabel}!`);
+    toast.success(t("import.toast.success", { count: profiles.length, label: profileCountLabel }));
     open.value = false;
     userInput.value = "";
   } catch (error) {
     console.error("Import failed:", error);
-    toast.error("Import failed: Invalid JSON format");
+    toast.error(t("import.toast.invalidJson"));
   }
 }
 
@@ -85,11 +87,11 @@ function handleFileChange(event: Event) {
   reader.onload = (e) => {
     const content = e.target?.result as string;
     userInput.value = content;
-    toast.success("File loaded successfully");
+    toast.success(t("import.toast.fileLoaded"));
   };
 
   reader.onerror = () => {
-    toast.error("Failed to read file");
+    toast.error(t("import.toast.fileReadFailed"));
   };
 
   reader.readAsText(file);
@@ -113,7 +115,7 @@ function handleClose() {
     >
       <DialogHeader>
         <DialogTitle class="flex items-center gap-2">
-          Import Profiles with JSON
+          {{ t("import.title") }}
         </DialogTitle>
       </DialogHeader>
 
@@ -124,7 +126,7 @@ function handleClose() {
       <DialogFooter class="flex flex-row justify-end gap-2">
         <DialogClose as-child>
           <Button variant="secondary" @click="handleClose">
-            Cancel
+            {{ t("common.cancel") }}
           </Button>
         </DialogClose>
         <Button
@@ -132,16 +134,16 @@ function handleClose() {
           :disabled="!validJson"
           @click="handleFormatJson"
         >
-          Beautify
+          {{ t("common.beautify") }}
         </Button>
         <Button variant="secondary" @click="handleFileImport">
-          Load from File
+          {{ t("import.loadFromFile") }}
         </Button>
         <Button
           :disabled="!validJsonSchema"
           @click="confirmImport"
         >
-          Confirm Import
+          {{ t("import.confirm") }}
         </Button>
 
         <!-- Hidden file input -->

@@ -1,0 +1,400 @@
+{
+  "addModModal": {
+    "items": {
+      "cookieSyncRequestHeader": {
+        "description": "将指定网站的 Cookie 同步到请求头。需要授予新的权限。",
+        "title": "同步 Cookie 到请求头"
+      },
+      "domainType": {
+        "description": "指定网络请求相对于其发起域名是一方请求还是三方请求。",
+        "title": "域名类型"
+      },
+      "excludedDomainType": {
+        "description": "根据网络请求相对于其发起域名是一方请求还是三方请求来排除请求。省略时接受所有请求。",
+        "title": "排除域名类型"
+      },
+      "excludedInitiatorDomains": {
+        "description": "当请求发起域名匹配 excluded initiator domains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 initiator domains。",
+        "title": "排除发起域名"
+      },
+      "excludedRequestDomains": {
+        "description": "当请求域名匹配 excludedRequestDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 requestDomains。",
+        "title": "排除请求域名"
+      },
+      "excludedRequestMethods": {
+        "description": "规则不会匹配的请求方法列表。requestMethods 和 excludedRequestMethods 只能指定其中一个。如果两者都未指定，则匹配所有请求方法。",
+        "title": "排除请求方法"
+      },
+      "excludedResourceTypes": {
+        "description": "规则不会匹配的资源类型列表。resourceTypes 和 excludedResourceTypes 只能指定其中一个。如果两者都未指定，则会阻止除 main_frame 外的所有资源类型。",
+        "title": "排除资源类型"
+      },
+      "initiatorDomains": {
+        "description": "规则仅匹配来自 initiator domains 列表中域名的网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
+        "title": "发起域名"
+      },
+      "modifyRequestHeader": {
+        "description": "设置、移除或追加 HTTP 请求头。",
+        "title": "修改 HTTP 请求头"
+      },
+      "modifyResponseHeader": {
+        "description": "设置、移除或追加 HTTP 响应头。",
+        "title": "修改 HTTP 响应头"
+      },
+      "regexFilter": {
+        "description": "规则仅匹配 URL 包含任一指定子串的网络请求。省略列表时，规则应用于所有 URL 的请求。不允许空列表。urlFilter 和 regexFilter 只能指定其中一个。",
+        "title": "正则过滤器"
+      },
+      "requestDomains": {
+        "description": "当请求域名匹配 requestDomains 列表中的某一项时，规则才会匹配网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
+        "title": "请求域名"
+      },
+      "requestMethods": {
+        "description": "规则可以匹配的 HTTP 请求方法列表。不允许空列表。注意：指定 requestMethods 也会排除非 HTTP(S) 请求。",
+        "title": "请求方法"
+      },
+      "resourceTypes": {
+        "description": "规则可以匹配的资源类型列表。不允许空列表。",
+        "title": "资源类型"
+      },
+      "simpleRedirectUrl": {
+        "description": "将匹配的请求重定向到指定 URL。",
+        "title": "简单重定向 URL"
+      },
+      "urlFilter": {
+        "description": "规则仅匹配 URL 包含任一指定子串的网络请求。省略列表时，规则应用于所有 URL 的请求。不允许空列表。urlFilter 和 regexFilter 只能指定其中一个。",
+        "title": "URL 过滤器"
+      },
+      "urlRegexFilterCaseSensitive": {
+        "description": "指定 URL 过滤器是否区分大小写。",
+        "title": "URL 与正则过滤器区分大小写"
+      }
+    },
+    "tabs": {
+      "actions": "操作",
+      "conditions": "条件"
+    }
+  },
+  "commentsDialog": {
+    "description": "为这个配置字段添加或编辑备注。",
+    "placeholder": "在这里添加备注...",
+    "title": "编辑备注"
+  },
+  "common": {
+    "addCondition": "添加条件",
+    "auto": "自动",
+    "backToProfiles": "返回配置",
+    "beautify": "格式化",
+    "cancel": "取消",
+    "checkbox": "复选",
+    "clearAll": "清除全部",
+    "close": "关闭",
+    "comments": "备注",
+    "confirm": "确认",
+    "copy": "复制",
+    "dark": "深色",
+    "deleteCondition": "删除此条件",
+    "deleteDomain": "删除此域名",
+    "deleteHeaderMod": "删除此请求头修改项",
+    "domain": "域名",
+    "duplicate": "复制",
+    "export": "导出",
+    "github": "GitHub",
+    "import": "导入",
+    "light": "浅色",
+    "loading": "加载中",
+    "moreOptions": "更多选项",
+    "name": "名称",
+    "noResultsFound": "未找到结果。",
+    "notAvailable": "不可用",
+    "off": "关",
+    "on": "开",
+    "radio": "单选",
+    "redo": "重做",
+    "reportIssue": "反馈问题",
+    "reset": "重置",
+    "save": "保存",
+    "search": "搜索",
+    "selectOptions": "选择选项",
+    "settings": "设置",
+    "undo": "撤销",
+    "value": "值"
+  },
+  "condition": {
+    "domains": {
+      "asciiOnly": "条目只能包含 ASCII 字符。",
+      "excludedInitiatorDomains": {
+        "description": "当请求发起域名匹配 excludedInitiatorDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 initiatorDomains。",
+        "title": "排除发起域名过滤器"
+      },
+      "excludedRequestDomains": {
+        "description": "当请求域名匹配 excludedRequestDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 requestDomains。",
+        "title": "排除请求域名过滤器"
+      },
+      "initiatorDomains": {
+        "description": "规则仅匹配来自 initiatorDomains 列表中域名的网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
+        "title": "发起域名过滤器"
+      },
+      "matchesInitiator": "它匹配请求发起方，而不是请求 URL。",
+      "punycode": "国际化域名请使用 punycode 编码。",
+      "requestDomains": {
+        "description": "当请求域名匹配 requestDomains 列表中的某一项时，规则才会匹配网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
+        "title": "请求域名过滤器"
+      },
+      "subdomainsAllowed": "也允许类似 \"a.example.com\" 的子域名。",
+      "useCurrentTabDomain": "使用当前标签页的域名"
+    },
+    "domainType": {
+      "firstParty": "一方",
+      "thirdParty": "三方",
+      "title": "域名类型"
+    },
+    "excludedRequestMethods": {
+      "title": "排除请求方法"
+    },
+    "excludedResourceTypes": {
+      "title": "排除资源类型"
+    },
+    "regexFilter": {
+      "description": "用于匹配网络请求 URL 的正则表达式。",
+      "syntaxPrefix": "它遵循",
+      "syntaxSuffix": "语法。",
+      "title": "正则过滤器"
+    },
+    "requestMethods": {
+      "title": "请求方法"
+    },
+    "resourceType": {
+      "cspReport": "CSP 报告",
+      "font": "字体",
+      "image": "图片",
+      "mainFrame": "主框架",
+      "media": "媒体",
+      "object": "对象",
+      "other": "其他",
+      "ping": "Ping",
+      "script": "脚本",
+      "stylesheet": "样式表",
+      "subFrame": "子框架",
+      "webbundle": "WebBundle",
+      "websocket": "WebSocket",
+      "webtransport": "WebTransport",
+      "xmlhttprequest": "XMLHttpRequest"
+    },
+    "resourceTypes": {
+      "title": "资源类型"
+    },
+    "selectPlaceholder": "选择{name}...",
+    "urlFilter": {
+      "anchor": " - 锚点：匹配 URL 开头或结尾。",
+      "domainAnchor": " - 域名锚点：匹配子域名或域名开头。",
+      "format": "格式：（可选锚点）+ 模式 +（可选锚点）",
+      "omitted": "省略时匹配所有 URL。不允许空字符串。",
+      "onlyOne": "注意：urlFilter 和 regexFilter 只能使用其中一个。",
+      "separator": "{separator} - 分隔符：匹配除字母、数字和 {chars} 以外的任意内容，或 URL 结尾。",
+      "syntaxLink": "URL 模式语法",
+      "title": "URL 过滤器",
+      "useCurrentTabUrl": "使用当前标签页的 URL",
+      "wildcard": " - 通配符：匹配任意字符。"
+    },
+    "urlFilterCaseSensitive": {
+      "title": "URL 过滤器区分大小写"
+    }
+  },
+  "emoji": {
+    "categories": {
+      "activities": "活动",
+      "all": "全部",
+      "animalsNature": "动物与自然",
+      "flags": "旗帜",
+      "foodDrink": "食物与饮品",
+      "objects": "物品",
+      "smileysPeople": "笑脸与人物",
+      "symbols": "符号",
+      "travelPlaces": "旅行与地点"
+    }
+  },
+  "export": {
+    "cookieValue": "导出 Cookie 值",
+    "cookieValueDescription": "请勿随意分享 Cookie，它们可能暴露隐私信息或登录凭据。",
+    "saveAsFile": "保存为文件",
+    "selectAll": "全选",
+    "sensitiveWarning": "导出的配置可能包含敏感的身份验证 token 或 Cookie。",
+    "settings": "导出设置",
+    "title": "导出配置",
+    "toast": {
+      "copied": "配置 JSON 已复制到剪贴板"
+    },
+    "unselectAll": "取消全选"
+  },
+  "group": {
+    "actions": {
+      "addItem": "添加新项目",
+      "deleteGroup": "删除此分组",
+      "transferGroupTypeTo": "转换分组类型为"
+    },
+    "collapse": "折叠分组",
+    "expand": "展开分组"
+  },
+  "headerMod": {
+    "currentOperation": "当前操作：{operation}",
+    "operation": {
+      "append": "追加",
+      "remove": "移除",
+      "set": "设置"
+    },
+    "requestHeaders": "请求头",
+    "responseHeaders": "响应头",
+    "switchTo": "切换到 {operation}"
+  },
+  "import": {
+    "confirm": "确认导入",
+    "loadFromFile": "从文件加载",
+    "profile": "个配置",
+    "profiles": "个配置",
+    "title": "使用 JSON 导入配置",
+    "toast": {
+      "cookiesPermissionRequired": "导入已取消：Cookie 同步配置需要 Cookie 权限",
+      "fileLoaded": "文件加载成功",
+      "fileReadFailed": "读取文件失败",
+      "invalidJson": "导入失败：JSON 格式无效",
+      "success": "成功导入 {count} {label}！"
+    }
+  },
+  "jsonEditor": {
+    "search": {
+      "closeSearch": "关闭搜索",
+      "findPlaceholder": "查找",
+      "matchCase": "区分大小写",
+      "matchWholeWord": "全词匹配",
+      "nextMatch": "下一个匹配",
+      "previousMatch": "上一个匹配",
+      "replace": "替换",
+      "replaceAll": "全部替换",
+      "replacePlaceholder": "替换",
+      "toggleReplace": "切换替换",
+      "useRegularExpression": "使用正则表达式"
+    }
+  },
+  "profile": {
+    "actions": {
+      "delete": "删除",
+      "exportToJson": "导出为 JSON",
+      "openSecondaryOperations": "打开更多操作下拉菜单",
+      "pause": "暂停",
+      "resume": "恢复",
+      "ruleActionType": "规则操作类型"
+    },
+    "alert": {
+      "globalRuleDescription": "添加一个条件以避免问题。",
+      "globalRuleTitle": "此配置会影响所有请求，可能导致网站异常。",
+      "ignoreWarning": "忽略警告",
+      "registrationErrorTitle": "此配置注册规则时发生错误。"
+    },
+    "changeType": {
+      "description": "为此配置选择新的操作类型。切换类型可能会移除现有操作。",
+      "placeholder": "选择类型",
+      "title": "更改规则操作类型"
+    },
+    "empty": "暂无数据，请先添加操作或条件。",
+    "header": {
+      "addActionOrCondition": "添加操作或条件",
+      "addActionOrConditionTooltip": "添加新的操作或条件",
+      "priority": "优先级",
+      "priorityLabel": "优先级：",
+      "priorityValue": "优先级：{priority}",
+      "ruleActionType": "规则操作类型：{type}"
+    },
+    "priority": {
+      "description": "优先级定义规则的冲突解决策略。当多个规则匹配同一请求时，系统会优先执行权重更高的规则。",
+      "title": "编辑规则优先级"
+    },
+    "search": {
+      "noProfiles": "未找到配置。",
+      "placeholder": "搜索配置...",
+      "title": "搜索配置"
+    },
+    "sidebar": {
+      "changelog": "更新日志",
+      "defaultActionType": "默认操作类型",
+      "makeDefault": "设为默认",
+      "newProfile": "新建配置",
+      "openInTab": "在标签页中打开",
+      "openMenu": "打开侧边栏菜单",
+      "profiles": "配置",
+      "quickCreate": "快速创建",
+      "quickCreateDescription": "默认规则操作类型可在“新建配置”的子菜单中更改",
+      "resources": "资源",
+      "turnOff": "关闭扩展",
+      "turnOn": "开启扩展"
+    }
+  },
+  "redirectUrl": {
+    "delete": "删除此重定向 URL",
+    "description": "重定向 URL。不允许重定向到 JavaScript URL。",
+    "title": "重定向 URL"
+  },
+  "ruleAction": {
+    "allow": "允许",
+    "allowAllRequests": "允许所有请求",
+    "block": "阻止",
+    "description": {
+      "allow": "允许网络请求。如果存在匹配的 allow 规则，则请求不会被拦截",
+      "allowAllRequests": "允许某个框架层级内的所有请求，包括框架请求本身",
+      "block": "阻止网络请求",
+      "modifyHeaders": "修改网络请求中的请求头或响应头",
+      "redirect": "重定向网络请求",
+      "upgradeScheme": "如果请求是 HTTP 或 FTP，则将网络请求 URL 的协议升级为 HTTPS"
+    },
+    "modifyHeaders": "修改请求头",
+    "redirect": "重定向",
+    "upgradeScheme": "升级协议"
+  },
+  "settings": {
+    "descriptions": {
+      "nativeResourceTypeBehavior": "资源类型默认是 'all'，但启用此选项后不会设置为 'all'，没有资源类型条件的规则只会匹配更窄范围的请求。"
+    },
+    "fieldLabel": "{label}：",
+    "fields": {
+      "autoAssignEmoji": "自动为新配置分配 emoji",
+      "language": "语言",
+      "nativeResourceTypeBehavior": "使用原生 DNR 资源类型行为",
+      "randomEmojiCategory": "随机 emoji 分配分类",
+      "theme": "主题"
+    },
+    "groups": {
+      "appearance": "外观",
+      "profiles": "配置",
+      "troubleshooting": "故障排查"
+    },
+    "reset": {
+      "cannotUndo": "此操作无法撤销。",
+      "description": "确定要将所有设置重置为默认值吗？",
+      "title": "重置扩展设置",
+      "tooltip": "重置扩展设置"
+    },
+    "theme": {
+      "auto": "自动",
+      "dark": "深色",
+      "light": "浅色"
+    },
+    "troubleshooting": {
+      "reinitializeAll": "重新初始化所有配置",
+      "reinitializeDescription": "如果你发现定义的活动配置数量与扩展弹出角标显示的数量不一致，请点击下面的按钮。",
+      "reinitializeError": "重新初始化配置失败。请向我们反馈此问题。",
+      "reinitializeSuccess": "所有配置已重新初始化。请检查问题是否已解决；如果没有，请向我们反馈。"
+    }
+  },
+  "syncCookie": {
+    "missing": "（缺失）",
+    "pickCookie": "选择 Cookie",
+    "refreshTooltip": "刷新以获取最新 Cookie",
+    "sharingWarning": "警告：与他人分享 Cookie 可能导致登录凭据泄露！",
+    "title": "同步 Cookie",
+    "toast": {
+      "notFound": "未找到该 Cookie，它可能已不存在。",
+      "refreshed": "Cookie 刷新成功。"
+    },
+    "viewCookie": "查看 Cookie"
+  }
+}

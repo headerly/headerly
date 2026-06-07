@@ -9,6 +9,7 @@ import {
   useFilter,
 } from "reka-ui";
 import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   ComboboxAnchor,
   ComboboxEmpty,
@@ -47,6 +48,8 @@ const modelValue = defineModel<string[]>("modelValue", {
 });
 
 const props = defineProps<MultiSelectProps>();
+
+const { t } = useI18n();
 
 const { contains } = useFilter({ sensitivity: "base" });
 
@@ -170,7 +173,7 @@ function removeTagByValue(value: string) {
 
           <ComboboxInput v-model="query" as-child>
             <TagsInputInput
-              :placeholder="modelValue.length > 0 ? '' : props.placeholder || 'Select options'"
+              :placeholder="modelValue.length > 0 ? '' : props.placeholder || t('common.selectOptions')"
               class="
                 min-w-30 flex-1 bg-transparent px-2 py-1 outline-hidden
                 placeholder:text-muted-foreground/70
@@ -193,7 +196,7 @@ function removeTagByValue(value: string) {
             focus-visible:border-ring focus-visible:ring-[3px]
             focus-visible:ring-ring/50
           "
-          aria-label="Clear all"
+          :aria-label="t('common.clearAll')"
           @click="() => (modelValue = [])"
         >
           <LucideX class="size-4" aria-hidden="true" />
@@ -205,7 +208,7 @@ function removeTagByValue(value: string) {
       class="w-(--reka-combobox-trigger-width)"
     >
       <ComboboxEmpty class="px-2 py-4">
-        No results found.
+        {{ t("common.noResultsFound") }}
       </ComboboxEmpty>
 
       <ComboboxGroup

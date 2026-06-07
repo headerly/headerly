@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -21,6 +22,8 @@ import {
 const priority = defineModel<number>({
   default: 1,
 });
+
+const { t } = useI18n();
 
 const openState = ref(false);
 const priorityInput = ref(priority.value);
@@ -51,12 +54,10 @@ defineExpose({
   <Dialog v-model:open="openState">
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>Edit Rule Priority</DialogTitle>
+        <DialogTitle>{{ t("profile.priority.title") }}</DialogTitle>
         <DialogDescription>
           <p>
-            Priority defines the conflict resolution strategy for rules.
-            When multiple rules match a single request, the system executes
-            the rule with the higher weight as a priority.
+            {{ t("profile.priority.description") }}
           </p>
         </DialogDescription>
       </DialogHeader>
@@ -80,11 +81,11 @@ defineExpose({
       <DialogFooter class="flex flex-row justify-end gap-2">
         <DialogClose as-child>
           <Button variant="secondary">
-            Cancel
+            {{ t("common.cancel") }}
           </Button>
         </DialogClose>
         <Button :disabled="!isValid" @click="handleSave">
-          Save
+          {{ t("common.save") }}
         </Button>
       </DialogFooter>
     </DialogContent>

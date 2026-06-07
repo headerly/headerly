@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RuleActionType } from "@/lib/schema";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -29,6 +30,8 @@ const emit = defineEmits<{
   (e: "changed"): void;
 }>();
 
+const { t } = useI18n();
+
 const openState = ref(false);
 const typeInput = ref<RuleActionType>(ruleActionType.value);
 
@@ -37,7 +40,7 @@ function open() {
   openState.value = true;
 }
 
-const options = ([
+const options = computed(() => ([
   "modifyHeaders",
   "redirect",
   "block",
@@ -47,7 +50,7 @@ const options = ([
 ] as const satisfies RuleActionType[]).map(value => ({
   value,
   label: getRuleActionTypeLabel(value),
-}));
+})));
 
 function handleConfirm() {
   if (typeInput.value !== ruleActionType.value) {
@@ -66,15 +69,15 @@ defineExpose({
   <Dialog v-model:open="openState">
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>Change Rule Action Type</DialogTitle>
+        <DialogTitle>{{ t("profile.changeType.title") }}</DialogTitle>
         <DialogDescription>
-          Select a new action type for this profile. Switching types may remove existing actions.
+          {{ t("profile.changeType.description") }}
         </DialogDescription>
       </DialogHeader>
       <div class="flex items-center space-x-2 py-4">
         <Select v-model="typeInput">
           <SelectTrigger class="w-full">
-            <SelectValue placeholder="Select a type" />
+            <SelectValue :placeholder="t('profile.changeType.placeholder')" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -88,11 +91,11 @@ defineExpose({
       <DialogFooter class="flex flex-row justify-end gap-2">
         <DialogClose as-child>
           <Button variant="secondary">
-            Cancel
+            {{ t("common.cancel") }}
           </Button>
         </DialogClose>
         <Button @click="handleConfirm">
-          Confirm
+          {{ t("common.confirm") }}
         </Button>
       </DialogFooter>
     </DialogContent>

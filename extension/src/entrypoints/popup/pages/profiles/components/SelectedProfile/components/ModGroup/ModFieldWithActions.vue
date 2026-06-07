@@ -2,7 +2,9 @@
 import type { HeaderMod } from "@/lib/schema";
 import type { ActionType, HeaderModOperation } from "@/lib/types";
 
+import { match } from "ts-pattern";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Button } from "#/ui/button";
 import {
@@ -40,6 +42,8 @@ const { actionType, index } = defineProps<{
   index: number;
 }>();
 
+const { t } = useI18n();
+
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
     return AUTOCOMPLETE_RESPONSE_FIELDS;
@@ -64,9 +68,17 @@ const nextOperation = computed(() => {
   const nextIndex = (currentIndex + 1) % supportedOperations.length;
   return {
     value: supportedOperations[nextIndex]!,
-    label: supportedOperations[nextIndex]!.charAt(0).toUpperCase() + supportedOperations[nextIndex]!.slice(1),
+    label: getOperationLabel(supportedOperations[nextIndex]!),
   };
 });
+
+function getOperationLabel(operation: HeaderModOperation) {
+  return match(operation)
+    .with("set", () => t("headerMod.operation.set"))
+    .with("append", () => t("headerMod.operation.append"))
+    .with("remove", () => t("headerMod.operation.remove"))
+    .exhaustive();
+}
 </script>
 
 <template>
@@ -94,7 +106,7 @@ const nextOperation = computed(() => {
           <ComboboxAnchor class="w-full">
             <ComboboxInput
               v-model="field.name"
-              placeholder="Name"
+              :placeholder="t('common.name')"
               class="
                 w-full text-base
                 placeholder:italic
@@ -121,7 +133,7 @@ const nextOperation = computed(() => {
           <Input
             v-model.trim.lazy="field.value"
             type="text"
-            placeholder="Value"
+            :placeholder="t('common.value')"
             class="
               text-base
               placeholder:italic
@@ -152,8 +164,8 @@ const nextOperation = computed(() => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
-            <p>Current operation: {{ field.operation }}</p>
-            <p>Switch to {{ nextOperation.label }}</p>
+            <p>{{ t("headerMod.currentOperation", { operation: getOperationLabel(field.operation) }) }}</p>
+            <p>{{ t("headerMod.switchTo", { operation: nextOperation.label }) }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -164,7 +176,7 @@ const nextOperation = computed(() => {
           list.splice(index, 1);
         }"
       >
-        <span class="sr-only">Delete this header mod</span>
+        <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
         <i class="i-lucide-x size-4" />
       </Button>
       <ActionsDropdown

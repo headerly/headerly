@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { sendMessage } from "##/background/message";
 import Fieldset from "#/components/group/Fieldset.vue";
@@ -18,9 +19,12 @@ import {
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
-import { settings } from "./fields";
+import { useCreateSettings } from "./fields";
+
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
+const settings = useCreateSettings();
 </script>
 
 <template>
@@ -53,11 +57,14 @@ const settingsStore = useSettingsStore();
                 <Label
                   class="flex flex-col items-start whitespace-normal"
                 >
-                  {{ field.label }}:
+                  {{ t("settings.fieldLabel", { label: field.label }) }}
                   <div class="flex items-center gap-1">
-                    <Select v-model="settingsStore[field.key]">
+                    <Select
+                      v-model="settingsStore[field.key]"
+                      @update:model-value="value => field.onChange?.(String(value))"
+                    >
                       <SelectTrigger class="min-w-60">
-                        <SelectValue placeholder="Select a fruit" />
+                        <SelectValue :placeholder="t('common.selectOptions')" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -93,7 +100,7 @@ const settingsStore = useSettingsStore();
       </Fieldset>
       <Fieldset
         class="gap-y-4 border bg-primary-foreground p-4 text-base"
-        name="Troubleshooting"
+        :name="t('settings.groups.troubleshooting')"
       >
         <template #main>
           <div class="flex gap-2">
@@ -103,19 +110,19 @@ const settingsStore = useSettingsStore();
               @click="async () => {
                 try {
                   await sendMessage('reinitializeAllRules');
-                  toast.success('All profiles have been reinitialized. Please check if the issue is resolved. If not, please report this issue to us.');
+                  toast.success(t('settings.troubleshooting.reinitializeSuccess'));
                 } catch (error) {
-                  toast.error('Failed to reinitialize profiles. Please report this issue to us.');
+                  toast.error(t('settings.troubleshooting.reinitializeError'));
                 }
               }"
             >
-              Reinitialize all profiles
-              <InfoTooltip description="If you find that the number of active profiles you defined is inconsistent with the number displayed in the extension popup badge, please click the button below." />
+              {{ t("settings.troubleshooting.reinitializeAll") }}
+              <InfoTooltip :description="t('settings.troubleshooting.reinitializeDescription')" />
             </Button>
             <Button as-child>
               <a target="_blank" href="https://github.com/headerly/headerly/issues/new?template=BUG_REPORT.yml">
                 <i class="i-lucide-github" />
-                Report an issue
+                {{ t("common.reportIssue") }}
               </a>
             </Button>
           </div>

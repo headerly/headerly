@@ -72,6 +72,14 @@ Type-safe messaging between background and popup (`extension/src/entrypoints/bac
 
 ### Key Patterns
 
+**Internationalization**
+- Popup UI internationalization uses `vue-i18n` v12.
+- Do not build i18n keys dynamically. Avoid key concatenation such as ``t(`headerMod.operation.${operation}`)``.
+- Do not store i18n keys in intermediate fields or variables such as `labelKey`, `titleKey`, or `descriptionKey`.
+- Any localized UI string should be produced directly with `t("literal.key.path")`.
+- Do not pass `t` through function parameters. When shared localized data is needed, wrap it in a `useXXX()` composable and call `useI18n()` inside that composable to get `t`.
+- When a localized string needs HTML or component-rich interpolation, use the `I18nT` component instead of splitting the sentence into multiple `t()` calls.
+
 **Storage Synchronization**
 - Background watches storage via `item.watch()` for reactive updates
 - Popup uses `@vueuse/integrations` for reactive storage binding

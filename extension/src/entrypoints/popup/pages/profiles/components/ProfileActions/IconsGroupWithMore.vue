@@ -4,6 +4,7 @@ import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
 import {
@@ -29,6 +30,8 @@ import PriorityDialog from "./PriorityDialog.vue";
 const profile = defineModel<Profile>("profile", {
   required: true,
 });
+
+const { t } = useI18n();
 
 const isCompact = useCompactScreen();
 
@@ -138,7 +141,7 @@ function handleChangeType() {
           size="icon-sm"
         >
           <i class="i-lucide-ellipsis-vertical size-4" />
-          <span class="sr-only">Open Secondary Operations Dropdown</span>
+          <span class="sr-only">{{ t("profile.actions.openSecondaryOperations") }}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

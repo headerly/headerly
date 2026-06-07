@@ -3,6 +3,7 @@ import type { GroupItem, GroupType } from "@/lib/schema";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { Checkbox } from "#/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/ui/collapsible";
@@ -24,6 +25,8 @@ const { name, type } = defineProps<{
 const emit = defineEmits<{
   (e: "deleteEmptyGroup"): void;
 }>();
+
+const { t } = useI18n();
 
 watch(() => list.value.length, (newLength) => {
   if (newLength === 0) {
@@ -93,7 +96,7 @@ useSortableAndAutoAnimate({
         <span class="flex-1 border" />
         <CollapsibleTrigger as-child>
           <Button
-            :aria-label="open ? 'Collapse group' : 'Expand group'"
+            :aria-label="open ? t('group.collapse') : t('group.expand')"
             size="icon-xs"
             type="button"
             variant="ghost"

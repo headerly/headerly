@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/schema";
+import { useI18n } from "vue-i18n";
 import Fieldset from "#/components/group/Fieldset.vue";
 import { Button } from "#/ui/button";
 import { Label } from "#/ui/label";
@@ -17,21 +18,22 @@ const model = defineModel<NonNullable<Filter["domainType"]>>({
 });
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 </script>
 
 <template>
   <Fieldset
-    name="Domain Type"
+    :name="t('condition.domainType.title')"
   >
     <template #main>
       <RadioGroup v-model="model.value" class="flex items-center gap-4">
         <div class="flex items-center gap-2">
           <RadioGroupItem id="firstParty" value="firstParty" />
-          <Label for="firstParty" class="font-normal">First Party</Label>
+          <Label for="firstParty" class="font-normal">{{ t("condition.domainType.firstParty") }}</Label>
         </div>
         <div class="flex items-center gap-2">
           <RadioGroupItem id="thirdParty" value="thirdParty" />
-          <Label for="thirdParty" class="font-normal">Third Party</Label>
+          <Label for="thirdParty" class="font-normal">{{ t("condition.domainType.thirdParty") }}</Label>
         </div>
       </RadioGroup>
     </template>
@@ -50,7 +52,7 @@ const profilesStore = useProfilesStore();
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">
-            Delete this condition
+            {{ t("common.deleteCondition") }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
