@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "Headerly"
+  },
+  "extensionDescription": {
+    "message": "Manage and customize HTTP request & response headers with ease. Quickly set, append, or remove headers."
+  }
+}

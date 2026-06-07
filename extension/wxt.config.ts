@@ -11,9 +11,12 @@ import { defineConfig } from "wxt";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
-    description: "Manage and customize HTTP request & response headers with ease. Quickly set, append, or remove headers.",
+    // The public _locales files only let Chrome Web Store detect supported languages.
+    // Runtime UI translations are handled by vue-i18n.
+    default_locale: "en",
+    description: "__MSG_extensionDescription__",
+    name: "__MSG_extensionName__",
     homepage_url: "https://github.com/headerly/headerly",
-    name: "Headerly",
     permissions: [
       "storage",
       "declarativeNetRequest",
