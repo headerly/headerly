@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import { useRuleActionTypeLabel } from "@/lib/utils";
+import { getRuleActionTypeLabel } from "@/lib/utils";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {
   required: true,
@@ -49,7 +49,7 @@ const options = computed(() => ([
   "allowAllRequests",
 ] as const satisfies RuleActionType[]).map(value => ({
   value,
-  label: useRuleActionTypeLabel(value),
+  label: getRuleActionTypeLabel(value),
 })));
 
 function handleConfirm() {

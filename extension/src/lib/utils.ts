@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
-import { useI18n } from "vue-i18n";
+import { i18n } from "#/i18n";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -87,8 +87,8 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
   list.push(item);
 }
 
-export function useRuleActionTypeLabel(type: RuleActionType) {
-  const { t } = useI18n();
+export function getRuleActionTypeLabel(type: RuleActionType) {
+  const { t } = i18n.global;
   return match(type)
     .with("modifyHeaders", () => t("ruleAction.modifyHeaders"))
     .with("block", () => t("ruleAction.block"))

@@ -30,7 +30,7 @@ import {
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn, useRuleActionTypeLabel } from "@/lib/utils";
+import { cn, getRuleActionTypeLabel } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
@@ -112,7 +112,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                   hide-arrow
                   @click="profilesStore.addProfile(type)"
                 >
-                  {{ useRuleActionTypeLabel(type) }}
+                  {{ getRuleActionTypeLabel(type) }}
                   <InfoTooltip
                     :description="getRuleActionTypeDescription(type)"
                     class="ml-1"
