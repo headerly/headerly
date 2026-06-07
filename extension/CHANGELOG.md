@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/headerly/headerly/compare/v1.5.1...v1.6.0) (2026-06-07)
+
+
+### Features
+
+* **i18n:** UI supporting Simplified Chinese ([#41](https://github.com/headerly/headerly/issues/41)) ([7ed9fec](https://github.com/headerly/headerly/commit/7ed9fec08926a5f211b0294af89b47d67db0381c))
+* supports collapsing/expanding groups ([980b739](https://github.com/headerly/headerly/commit/980b739b8878ac8f9e5e8e2fe71ec984e4594151))
+
 ## [1.5.1](https://github.com/headerly/headerly/compare/v1.5.0...v1.5.1) (2026-05-31)
 
 
