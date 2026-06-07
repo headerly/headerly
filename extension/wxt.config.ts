@@ -74,6 +74,19 @@ export default defineConfig({
     ],
     build: {
       target: "esnext",
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // CodeMirror's official packages are roughly 420 KB, so split them out to avoid Rolldown's 500 KB chunk warning.
+            if (
+              id.includes("/node_modules/.pnpm/@codemirror+")
+              || id.includes("/node_modules/.pnpm/@lezer+")
+            ) {
+              return "codemirror";
+            }
+          },
+        },
+      },
     },
   }),
 });
