@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import type { UrlOrRegexFilterItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
-import { h, resolveComponent } from "vue";
+import { computed, h, resolveComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
@@ -38,9 +38,9 @@ const urlFilterTokens = {
   regexEngine: "RE2",
 } as const;
 
-const field = {
+const field = computed(() => ({
   urlFilter: {
-    titleKey: "condition.urlFilter.title",
+    title: t("condition.urlFilter.title"),
     description: (
       <>
         <p>
@@ -83,7 +83,7 @@ const field = {
     ),
   },
   regexFilter: {
-    titleKey: "condition.regexFilter.title",
+    title: t("condition.regexFilter.title"),
     description: (
       <>
         <p>
@@ -99,7 +99,7 @@ const field = {
       </>
     ),
   },
-} as const;
+} as const));
 
 const profilesStore = useProfilesStore();
 
@@ -123,7 +123,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 <template>
   <Group
     v-model:list="list"
-    :name="t(field[filterType].titleKey)"
+    :name="field[filterType].title"
     type="radio"
     @delete-empty-group="deleteGroup"
   >

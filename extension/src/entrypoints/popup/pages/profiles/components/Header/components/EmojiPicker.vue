@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
   Popover,
@@ -14,17 +13,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { emojisWithCategory } from "@/entrypoints/popup/constants/emoji";
+import { useEmojisWithCategory } from "@/entrypoints/popup/constants/emoji";
 import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
 const parentRef = useTemplateRef("parentRef");
-const { t } = useI18n();
+const emojisWithCategory = useEmojisWithCategory();
+
+type EmojiCategoryValue = ReturnType<typeof useEmojisWithCategory>[number]["value"];
 
 interface VirtualItem {
   type: "header" | "emoji";
-  categoryValue?: string;
-  categoryLabelKey?: string;
+  categoryValue?: EmojiCategoryValue;
+  categoryLabel?: string;
   emojis?: string[];
 }
 
@@ -35,7 +36,7 @@ const virtualItems = computed<VirtualItem[]>(() => {
     items.push({
       type: "header",
       categoryValue: category.value,
-      categoryLabelKey: category.labelKey,
+      categoryLabel: category.label,
     });
 
     const emojis = category.emojis;
@@ -58,7 +59,7 @@ const rowVirtualizer = useVirtualizer({
   overscan: 10,
 });
 
-function scrollToCategory(categoryValue: string) {
+function scrollToCategory(categoryValue: EmojiCategoryValue) {
   const targetIndex = virtualItems.value.findIndex(
     item => item.type === "header" && item.categoryValue === categoryValue,
   );
@@ -106,7 +107,7 @@ function scrollToCategory(categoryValue: string) {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p>{{ t(item.labelKey) }}</p>
+                        <p>{{ item.label }}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -138,7 +139,7 @@ function scrollToCategory(categoryValue: string) {
                   class="flex h-full items-center"
                 >
                   <h2 class="px-1 pt-1 text-sm font-medium">
-                    {{ t(virtualItems[virtualRow.index]?.categoryLabelKey ?? "") }}
+                    {{ virtualItems[virtualRow.index]?.categoryLabel }}
                   </h2>
                 </div>
 

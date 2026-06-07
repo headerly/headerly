@@ -2,6 +2,7 @@
 import type { HeaderMod } from "@/lib/schema";
 import type { ActionType, HeaderModOperation } from "@/lib/types";
 
+import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
@@ -67,9 +68,17 @@ const nextOperation = computed(() => {
   const nextIndex = (currentIndex + 1) % supportedOperations.length;
   return {
     value: supportedOperations[nextIndex]!,
-    labelKey: `headerMod.operation.${supportedOperations[nextIndex]!}`,
+    label: getOperationLabel(supportedOperations[nextIndex]!),
   };
 });
+
+function getOperationLabel(operation: HeaderModOperation) {
+  return match(operation)
+    .with("set", () => t("headerMod.operation.set"))
+    .with("append", () => t("headerMod.operation.append"))
+    .with("remove", () => t("headerMod.operation.remove"))
+    .exhaustive();
+}
 </script>
 
 <template>
@@ -155,8 +164,8 @@ const nextOperation = computed(() => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :collision-padding="20">
-            <p>{{ t("headerMod.currentOperation", { operation: t(`headerMod.operation.${field.operation}`) }) }}</p>
-            <p>{{ t("headerMod.switchTo", { operation: t(nextOperation.labelKey) }) }}</p>
+            <p>{{ t("headerMod.currentOperation", { operation: getOperationLabel(field.operation) }) }}</p>
+            <p>{{ t("headerMod.switchTo", { operation: nextOperation.label }) }}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

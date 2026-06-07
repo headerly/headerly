@@ -12,7 +12,7 @@ import {
 } from "@codemirror/search";
 import { runScopeHandlers } from "@codemirror/view";
 import { match } from "ts-pattern";
-import { nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { Toggle } from "#/ui/toggle";
@@ -54,23 +54,23 @@ onMounted(async () => {
   searchInputRef.value?.focus();
 });
 
-const searchOptions = [
+const searchOptions = computed(() => [
   {
-    labelKey: "jsonEditor.search.matchCase",
+    label: t("jsonEditor.search.matchCase"),
     icon: "i-lucide-case-sensitive",
     model: caseSensitive,
   },
   {
-    labelKey: "jsonEditor.search.matchWholeWord",
+    label: t("jsonEditor.search.matchWholeWord"),
     icon: "i-lucide-whole-word",
     model: wholeWord,
   },
   {
-    labelKey: "jsonEditor.search.useRegularExpression",
+    label: t("jsonEditor.search.useRegularExpression"),
     icon: "i-lucide-regex",
     model: regexp,
   },
-] as const;
+] as const);
 
 function updateSearchQuery() {
   const previous = getSearchQuery(props.view.state);
@@ -121,36 +121,36 @@ async function toggleReplaceExpanded() {
   }
 }
 
-const searchPanelActions = [
+const searchPanelActions = computed(() => [
   {
-    labelKey: "jsonEditor.search.previousMatch",
+    label: t("jsonEditor.search.previousMatch"),
     icon: "i-lucide-arrow-up",
     run: () => runSearchCommand(findPrevious),
   },
   {
-    labelKey: "jsonEditor.search.nextMatch",
+    label: t("jsonEditor.search.nextMatch"),
     icon: "i-lucide-arrow-down",
     run: () => runSearchCommand(findNext),
   },
   {
-    labelKey: "jsonEditor.search.closeSearch",
+    label: t("jsonEditor.search.closeSearch"),
     icon: "i-lucide-x",
     run: () => closeSearchPanel(props.view),
   },
-] as const;
+] as const);
 
-const replacePanelActions = [
+const replacePanelActions = computed(() => [
   {
-    labelKey: "jsonEditor.search.replace",
+    label: t("jsonEditor.search.replace"),
     icon: "i-lucide-replace",
     run: () => runSearchCommand(replaceNext),
   },
   {
-    labelKey: "jsonEditor.search.replaceAll",
+    label: t("jsonEditor.search.replaceAll"),
     icon: "i-lucide-replace-all",
     run: () => runSearchCommand(replaceAll),
   },
-] as const;
+] as const);
 </script>
 
 <template>
@@ -201,7 +201,7 @@ const replacePanelActions = [
         <TooltipProvider>
           <Tooltip
             v-for="option in searchOptions"
-            :key="option.labelKey"
+            :key="option.label"
           >
             <!-- Tooltip and Toggle share the same `data-state` attribute, so using as-child directly causes the state to behave incorrectly. -->
             <TooltipTrigger as="div">
@@ -222,7 +222,7 @@ const replacePanelActions = [
               </Toggle>
             </TooltipTrigger>
             <TooltipContent side="bottom" :side-offset="10">
-              {{ t(option.labelKey) }}
+              {{ option.label }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -233,7 +233,7 @@ const replacePanelActions = [
       <TooltipProvider>
         <Tooltip
           v-for="action in searchPanelActions"
-          :key="action.labelKey"
+          :key="action.label"
         >
           <TooltipTrigger as-child>
             <Button
@@ -247,7 +247,7 @@ const replacePanelActions = [
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
-            {{ t(action.labelKey) }}
+            {{ action.label }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -273,7 +273,7 @@ const replacePanelActions = [
         <TooltipProvider>
           <Tooltip
             v-for="action in replacePanelActions"
-            :key="action.labelKey"
+            :key="action.label"
           >
             <TooltipTrigger as-child>
               <Button
@@ -287,7 +287,7 @@ const replacePanelActions = [
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" :side-offset="10" :collision-padding="8">
-              {{ t(action.labelKey) }}
+              {{ action.label }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -1,14 +1,15 @@
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
+import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 interface Tab {
-  labelKey: string;
+  label: string;
   value: "actions" | "conditions";
   items: {
     key: string;
-    titleKey: string;
-    descriptionKey: string;
+    title: string;
+    description: string;
     action: () => void;
     disabled?: boolean;
   }[];
@@ -40,303 +41,296 @@ function getDnrUrlFilterValue(hostname: string) {
     .exhaustive();
 }
 
-export const tabs: Tab[] = [
-  {
-    labelKey: "addModModal.tabs.actions",
-    value: "actions",
-    items: [
-      {
-        key: "modify-request-header",
-        titleKey: "addModModal.items.modifyRequestHeader.title",
-        descriptionKey: "addModModal.items.modifyRequestHeader.description",
-        action: () => profilesStore.addModGroup("request", "checkbox"),
-        get disabled() {
-          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+export function useCreateTabs(): Tab[] {
+  const { t } = useI18n();
+  return [
+    {
+      label: t("addModModal.tabs.actions"),
+      value: "actions",
+      items: [
+        {
+          key: "modify-request-header",
+          title: t("addModModal.items.modifyRequestHeader.title"),
+          description: t("addModModal.items.modifyRequestHeader.description"),
+          action: () => profilesStore.addModGroup("request", "checkbox"),
+          get disabled() {
+            return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+          },
         },
-      },
-      {
-        key: "modify-response-header",
-        titleKey: "addModModal.items.modifyResponseHeader.title",
-        descriptionKey: "addModModal.items.modifyResponseHeader.description",
-        action: () => profilesStore.addModGroup("response", "checkbox"),
-        get disabled() {
-          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        {
+          key: "modify-response-header",
+          title: t("addModModal.items.modifyResponseHeader.title"),
+          description: t("addModModal.items.modifyResponseHeader.description"),
+          action: () => profilesStore.addModGroup("response", "checkbox"),
+          get disabled() {
+            return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+          },
         },
-      },
-      {
-        key: "cookie-sync-request-header",
-        titleKey: "addModModal.items.cookieSyncRequestHeader.title",
-        descriptionKey: "addModModal.items.cookieSyncRequestHeader.description",
-        action: async () => {
-          const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
-          if (hasCookiesPermission) {
-            profilesStore.addSyncCookieGroup();
-          } else {
-            const granted = await browser.permissions.request({ permissions: ["cookies"] });
-            if (granted) {
+        {
+          key: "cookie-sync-request-header",
+          title: t("addModModal.items.cookieSyncRequestHeader.title"),
+          description: t("addModModal.items.cookieSyncRequestHeader.description"),
+          action: async () => {
+            const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
+            if (hasCookiesPermission) {
               profilesStore.addSyncCookieGroup();
+            } else {
+              const granted = await browser.permissions.request({ permissions: ["cookies"] });
+              if (granted) {
+                profilesStore.addSyncCookieGroup();
+              }
             }
-          }
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+          },
         },
-        get disabled() {
-          return profilesStore.selectedProfile.ruleActionType !== "modifyHeaders";
+        {
+          key: "simple-redirect-url",
+          title: t("addModModal.items.simpleRedirectUrl.title"),
+          description: t("addModModal.items.simpleRedirectUrl.description"),
+          action: () => profilesStore.addRedirectUrlGroup(),
+          get disabled() {
+            return profilesStore.selectedProfile.ruleActionType !== "redirect"
+              || Boolean(profilesStore.selectedProfile.redirectUrlGroup?.length);
+          },
         },
-      },
-      {
-        key: "simple-redirect-url",
-        titleKey: "addModModal.items.simpleRedirectUrl.title",
-        descriptionKey: "addModModal.items.simpleRedirectUrl.description",
-        action: () => profilesStore.addRedirectUrlGroup(),
-        get disabled() {
-          return profilesStore.selectedProfile.ruleActionType !== "redirect"
-            || Boolean(profilesStore.selectedProfile.redirectUrlGroup?.length);
-        },
-      },
-    ],
-  },
-  {
-    labelKey: "addModModal.tabs.conditions",
-    value: "conditions",
-    items: [
-      {
-        key: "url-filter",
-        titleKey: "addModModal.items.urlFilter.title",
-        descriptionKey: "addModModal.items.urlFilter.description",
-        action: async () => {
-          const hostname = await getCurrentTabHostname();
-          profilesStore.selectedProfile.filters.urlFilter = [
-            {
-              id: uuidv7(),
-              enabled: true,
-              value: getDnrUrlFilterValue(hostname),
-            },
-          ];
-        },
-        get disabled() {
-          return (profilesStore.selectedProfile.filters.urlFilter
-            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
-          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
-        },
-      },
-      {
-        key: "regex-filter",
-        titleKey: "addModModal.items.regexFilter.title",
-        descriptionKey: "addModModal.items.regexFilter.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.regexFilter = [
-            {
-              id: uuidv7(),
-              enabled: true,
-              value: "",
-            },
-          ];
-        },
-        get disabled() {
-          return (profilesStore.selectedProfile.filters.urlFilter
-            && profilesStore.selectedProfile.filters.urlFilter.length > 0)
-          || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
-        },
-      },
-      {
-        key: "request-domains",
-        titleKey: "addModModal.items.requestDomains.title",
-        descriptionKey: "addModModal.items.requestDomains.description",
-        action: async () => {
-          const hostname = await getCurrentTabHostname();
-          profilesStore.selectedProfile.filters.requestDomains = {
-            type: "checkbox",
-            items: [
-              {
-                id: uuidv7(),
-                enabled: true,
-                value: hostname,
-              },
-            ],
-          };
-        },
-        get disabled() {
-          return profilesStore.selectedProfile.filters.requestDomains
-            && profilesStore.selectedProfile.filters.requestDomains.items.length > 0;
-        },
-      },
-      {
-        key: "excluded-request-domains",
-        titleKey: "addModModal.items.excludedRequestDomains.title",
-        descriptionKey: "addModModal.items.excludedRequestDomains.description",
-        action: async () => {
-          const hostname = await getCurrentTabHostname();
-          profilesStore.selectedProfile.filters.excludedRequestDomains = {
-            type: "checkbox",
-            items: [
+      ],
+    },
+    {
+      label: t("addModModal.tabs.conditions"),
+      value: "conditions",
+      items: [
+        {
+          key: "url-filter",
+          title: t("addModModal.items.urlFilter.title"),
+          description: t("addModModal.items.urlFilter.description"),
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.urlFilter = [
               {
                 id: uuidv7(),
                 enabled: true,
                 value: getDnrUrlFilterValue(hostname),
               },
-            ],
-          };
+            ];
+          },
+          get disabled() {
+            return (profilesStore.selectedProfile.filters.urlFilter
+              && profilesStore.selectedProfile.filters.urlFilter.length > 0)
+            || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
+          },
         },
-        get disabled() {
-          return profilesStore.selectedProfile.filters.excludedRequestDomains
-            && profilesStore.selectedProfile.filters.excludedRequestDomains.items.length > 0;
-        },
-      },
-      // {
-      //   title: "Specified Tabs",
-      //   description: "List of tab IDs which the rule should match. An ID of TAB_ID_NONE includes requests which don't originate from a tab. An empty list is not allowed. Only supported for session-scoped rules.",
-      //   action: () => {},
-      // },
-      // {
-      //   title: "Excluded Specified Tabs",
-      //   description: "List of tab IDs which the rule should not match. An ID of TAB_ID_NONE excludes requests which don't originate from a tab. Only supported for session-scoped rules.",
-      //   action: () => {},
-      // },
-      {
-        key: "domain-type",
-        titleKey: "addModModal.items.domainType.title",
-        descriptionKey: "addModModal.items.domainType.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.domainType = {
-            enabled: true,
-            value: "firstParty",
-          };
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.domainType);
-        },
-      },
-      {
-        key: "excluded-domain-type",
-        titleKey: "addModModal.items.excludedDomainType.title",
-        descriptionKey: "addModModal.items.excludedDomainType.description",
-        action: () => {},
-      },
-      {
-        key: "initiator-domains",
-        titleKey: "addModModal.items.initiatorDomains.title",
-        descriptionKey: "addModModal.items.initiatorDomains.description",
-        action: async () => {
-          const hostname = await getCurrentTabHostname();
-          profilesStore.selectedProfile.filters.initiatorDomains = {
-            type: "checkbox",
-            items: [
+        {
+          key: "regex-filter",
+          title: t("addModModal.items.regexFilter.title"),
+          description: t("addModModal.items.regexFilter.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.regexFilter = [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: getDnrUrlFilterValue(hostname),
+                value: "",
               },
-            ],
-          };
+            ];
+          },
+          get disabled() {
+            return (profilesStore.selectedProfile.filters.urlFilter
+              && profilesStore.selectedProfile.filters.urlFilter.length > 0)
+            || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
+          },
         },
-        get disabled() {
-          return profilesStore.selectedProfile.filters.initiatorDomains
-            && profilesStore.selectedProfile.filters.initiatorDomains.items.length > 0;
+        {
+          key: "request-domains",
+          title: t("addModModal.items.requestDomains.title"),
+          description: t("addModModal.items.requestDomains.description"),
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.requestDomains = {
+              type: "checkbox",
+              items: [
+                {
+                  id: uuidv7(),
+                  enabled: true,
+                  value: hostname,
+                },
+              ],
+            };
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.filters.requestDomains
+              && profilesStore.selectedProfile.filters.requestDomains.items.length > 0;
+          },
         },
-      },
-      {
-        key: "excluded-initiator-domains",
-        titleKey: "addModModal.items.excludedInitiatorDomains.title",
-        descriptionKey: "addModModal.items.excludedInitiatorDomains.description",
-        action: async () => {
-          const hostname = await getCurrentTabHostname();
-          profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
-            type: "checkbox",
-            items: [
+        {
+          key: "excluded-request-domains",
+          title: t("addModModal.items.excludedRequestDomains.title"),
+          description: t("addModModal.items.excludedRequestDomains.description"),
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.excludedRequestDomains = {
+              type: "checkbox",
+              items: [
+                {
+                  id: uuidv7(),
+                  enabled: true,
+                  value: getDnrUrlFilterValue(hostname),
+                },
+              ],
+            };
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.filters.excludedRequestDomains
+              && profilesStore.selectedProfile.filters.excludedRequestDomains.items.length > 0;
+          },
+        },
+        {
+          key: "domain-type",
+          title: t("addModModal.items.domainType.title"),
+          description: t("addModModal.items.domainType.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.domainType = {
+              enabled: true,
+              value: "firstParty",
+            };
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.domainType);
+          },
+        },
+        {
+          key: "excluded-domain-type",
+          title: t("addModModal.items.excludedDomainType.title"),
+          description: t("addModModal.items.excludedDomainType.description"),
+          action: () => {},
+        },
+        {
+          key: "initiator-domains",
+          title: t("addModModal.items.initiatorDomains.title"),
+          description: t("addModModal.items.initiatorDomains.description"),
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.initiatorDomains = {
+              type: "checkbox",
+              items: [
+                {
+                  id: uuidv7(),
+                  enabled: true,
+                  value: getDnrUrlFilterValue(hostname),
+                },
+              ],
+            };
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.filters.initiatorDomains
+              && profilesStore.selectedProfile.filters.initiatorDomains.items.length > 0;
+          },
+        },
+        {
+          key: "excluded-initiator-domains",
+          title: t("addModModal.items.excludedInitiatorDomains.title"),
+          description: t("addModModal.items.excludedInitiatorDomains.description"),
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
+              type: "checkbox",
+              items: [
+                {
+                  id: uuidv7(),
+                  enabled: true,
+                  value: getDnrUrlFilterValue(hostname),
+                },
+              ],
+            };
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.filters.excludedInitiatorDomains
+              && profilesStore.selectedProfile.filters.excludedInitiatorDomains.items.length > 0;
+          },
+        },
+        {
+          key: "request-methods",
+          title: t("addModModal.items.requestMethods.title"),
+          description: t("addModModal.items.requestMethods.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.requestMethods = [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: getDnrUrlFilterValue(hostname),
+                value: ["get"], // Default to GET method
               },
-            ],
-          };
+            ];
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.requestMethods);
+          },
         },
-        get disabled() {
-          return profilesStore.selectedProfile.filters.excludedInitiatorDomains
-            && profilesStore.selectedProfile.filters.excludedInitiatorDomains.items.length > 0;
+        {
+          key: "excluded-request-methods",
+          title: t("addModModal.items.excludedRequestMethods.title"),
+          description: t("addModModal.items.excludedRequestMethods.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.excludedRequestMethods = [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: ["get"], // Default to GET method
+              },
+            ];
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.excludedRequestMethods);
+          },
         },
-      },
-      {
-        key: "request-methods",
-        titleKey: "addModModal.items.requestMethods.title",
-        descriptionKey: "addModModal.items.requestMethods.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.requestMethods = [
-            {
-              id: uuidv7(),
+        {
+          key: "resource-types",
+          title: t("addModModal.items.resourceTypes.title"),
+          description: t("addModModal.items.resourceTypes.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.resourceTypes = [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: ["main_frame"], // Default to main_frame
+              },
+            ];
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.resourceTypes);
+          },
+        },
+        {
+          key: "excluded-resource-types",
+          title: t("addModModal.items.excludedResourceTypes.title"),
+          description: t("addModModal.items.excludedResourceTypes.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.excludedResourceTypes = [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: ["main_frame"], // Default to main_frame
+              },
+            ];
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.excludedResourceTypes);
+          },
+        },
+        {
+          key: "url-regex-filter-case-sensitive",
+          title: t("addModModal.items.urlRegexFilterCaseSensitive.title"),
+          description: t("addModModal.items.urlRegexFilterCaseSensitive.description"),
+          action: () => {
+            profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
               enabled: true,
-              value: ["get"], // Default to GET method
-            },
-          ];
+              value: false,
+            };
+          },
+          get disabled() {
+            return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
+          },
         },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.requestMethods);
-        },
-      },
-      {
-        key: "excluded-request-methods",
-        titleKey: "addModModal.items.excludedRequestMethods.title",
-        descriptionKey: "addModModal.items.excludedRequestMethods.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.excludedRequestMethods = [
-            {
-              id: uuidv7(),
-              enabled: true,
-              value: ["get"], // Default to GET method
-            },
-          ];
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.excludedRequestMethods);
-        },
-      },
-      {
-        key: "resource-types",
-        titleKey: "addModModal.items.resourceTypes.title",
-        descriptionKey: "addModModal.items.resourceTypes.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.resourceTypes = [
-            {
-              id: uuidv7(),
-              enabled: true,
-              value: ["main_frame"], // Default to main_frame
-            },
-          ];
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.resourceTypes);
-        },
-      },
-      {
-        key: "excluded-resource-types",
-        titleKey: "addModModal.items.excludedResourceTypes.title",
-        descriptionKey: "addModModal.items.excludedResourceTypes.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.excludedResourceTypes = [
-            {
-              id: uuidv7(),
-              enabled: true,
-              value: ["main_frame"], // Default to main_frame
-            },
-          ];
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.excludedResourceTypes);
-        },
-      },
-      {
-        key: "url-regex-filter-case-sensitive",
-        titleKey: "addModModal.items.urlRegexFilterCaseSensitive.title",
-        descriptionKey: "addModModal.items.urlRegexFilterCaseSensitive.description",
-        action: () => {
-          profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
-            enabled: true,
-            value: false,
-          };
-        },
-        get disabled() {
-          return Boolean(profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive);
-        },
-      },
-    ],
-  },
-];
+      ],
+    },
+  ];
+}

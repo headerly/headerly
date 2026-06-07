@@ -1,3 +1,5 @@
+import { useI18n } from "vue-i18n";
+
 export const emoji = {
   smileysPeople: ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾"],
   animalsNature: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🐛", "🦋", "🐌", "🐞", "🐜", "🦟", "🦗", "🕷️", "🕸️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦈", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐", "🦌", "🐕", "🐩", "🦮", "🐕‍🦺", "🐈", "🌲", "🌳", "🌴", "🌵", "🌶️", "🍄", "🌾", "💐", "🌷", "🌹", "🥀", "🌺", "🌸", "🌼", "🌻", "🌞", "🌝", "🌛", "🌜", "🌚"],
@@ -9,29 +11,35 @@ export const emoji = {
   flags: ["🏁", "🚩", "🎌", "🏴", "🏳️", "🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️", "🇦🇫", "🇦🇽", "🇦🇱", "🇩🇿", "🇦🇸", "🇦🇩", "🇦🇴", "🇦🇮", "🇦🇶", "🇦🇬", "🇦🇷", "🇦🇲", "🇦🇼", "🇦🇺", "🇦🇹", "🇦🇿", "🇧🇸", "🇧🇭", "🇧🇩", "🇧🇧", "🇧🇾", "🇧🇪", "🇧🇿", "🇧🇯", "🇧🇲", "🇧🇹", "🇧🇴", "🇧🇦", "🇧🇼", "🇧🇷", "🇮🇴", "🇻🇬", "🇧🇳", "🇧🇬", "🇧🇫", "🇧🇮", "🇰🇭", "🇨🇲", "🇨🇦", "🇮🇨", "🇨🇻", "🇧🇶", "🇰🇾", "🇨🇫", "🇹🇩", "🇨🇱", "🇨🇳", "🇨🇽", "🇨🇨", "🇨🇴", "🇰🇲", "🇨🇬", "🇨🇩", "🇨🇰", "🇨🇷", "🇨🇮", "🇭🇷", "🇨🇺", "🇨🇼", "🇨🇾", "🇨🇿", "🇩🇰", "🇩🇯", "🇩🇲", "🇩🇴", "🇪🇨", "🇪🇬", "🇸🇻", "🇬🇶", "🇪🇷", "🇪🇪", "🇪🇹", "🇪🇺", "🇫🇰", "🇫🇴", "🇫🇯", "🇫🇮", "🇫🇷", "🇬🇫", "🇵🇫", "🇹🇫", "🇬🇦"],
 } as const;
 
-export const emojisWithCategory = [
-  { value: "smileysPeople", labelKey: "emoji.categories.smileysPeople", icon: "i-lucide-smile", emojis: emoji.smileysPeople },
-  { value: "animalsNature", labelKey: "emoji.categories.animalsNature", icon: "i-lucide-bird", emojis: emoji.animalsNature },
-  { value: "foodDrink", labelKey: "emoji.categories.foodDrink", icon: "i-lucide-apple", emojis: emoji.foodDrink },
-  { value: "travelPlaces", labelKey: "emoji.categories.travelPlaces", icon: "i-lucide-map-pin", emojis: emoji.travelPlaces },
-  { value: "activities", labelKey: "emoji.categories.activities", icon: "i-lucide-car-front", emojis: emoji.activities },
-  { value: "objects", labelKey: "emoji.categories.objects", icon: "i-lucide-lightbulb", emojis: emoji.objects },
-  { value: "symbols", labelKey: "emoji.categories.symbols", icon: "i-lucide-heart", emojis: emoji.symbols },
-  { value: "flags", labelKey: "emoji.categories.flags", icon: "i-lucide-flag", emojis: emoji.flags },
-] as const;
+export function useEmojisWithCategory() {
+  const { t } = useI18n();
+  return [
+    { value: "smileysPeople", label: t("emoji.categories.smileysPeople"), icon: "i-lucide-smile", emojis: emoji.smileysPeople },
+    { value: "animalsNature", label: t("emoji.categories.animalsNature"), icon: "i-lucide-bird", emojis: emoji.animalsNature },
+    { value: "foodDrink", label: t("emoji.categories.foodDrink"), icon: "i-lucide-apple", emojis: emoji.foodDrink },
+    { value: "travelPlaces", label: t("emoji.categories.travelPlaces"), icon: "i-lucide-map-pin", emojis: emoji.travelPlaces },
+    { value: "activities", label: t("emoji.categories.activities"), icon: "i-lucide-car-front", emojis: emoji.activities },
+    { value: "objects", label: t("emoji.categories.objects"), icon: "i-lucide-lightbulb", emojis: emoji.objects },
+    { value: "symbols", label: t("emoji.categories.symbols"), icon: "i-lucide-heart", emojis: emoji.symbols },
+    { value: "flags", label: t("emoji.categories.flags"), icon: "i-lucide-flag", emojis: emoji.flags },
+  ] as const;
+}
 
-export const categories = [
-  { value: "all", labelKey: "emoji.categories.all" },
-  { value: "smileysPeople", labelKey: "emoji.categories.smileysPeople" },
-  { value: "animalsNature", labelKey: "emoji.categories.animalsNature" },
-  { value: "foodDrink", labelKey: "emoji.categories.foodDrink" },
-  { value: "travelPlaces", labelKey: "emoji.categories.travelPlaces" },
-  { value: "activities", labelKey: "emoji.categories.activities" },
-  { value: "objects", labelKey: "emoji.categories.objects" },
-  { value: "symbols", labelKey: "emoji.categories.symbols" },
-  { value: "flags", labelKey: "emoji.categories.flags" },
-] as const;
+export function useEmojiCategories() {
+  const { t } = useI18n();
+  return [
+    { value: "all", label: t("emoji.categories.all") },
+    { value: "smileysPeople", label: t("emoji.categories.smileysPeople") },
+    { value: "animalsNature", label: t("emoji.categories.animalsNature") },
+    { value: "foodDrink", label: t("emoji.categories.foodDrink") },
+    { value: "travelPlaces", label: t("emoji.categories.travelPlaces") },
+    { value: "activities", label: t("emoji.categories.activities") },
+    { value: "objects", label: t("emoji.categories.objects") },
+    { value: "symbols", label: t("emoji.categories.symbols") },
+    { value: "flags", label: t("emoji.categories.flags") },
+  ] as const;
+}
 
-export type EmojiCategoryKey = (typeof categories)[number]["value"];
+export type EmojiCategoryKey = ReturnType<typeof useEmojiCategories>[number]["value"];
 
 export const allEmojis = Object.values(emoji).flat();

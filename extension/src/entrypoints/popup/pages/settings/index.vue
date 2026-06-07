@@ -19,10 +19,12 @@ import {
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
-import { settings } from "./fields";
+import { useCreateSettings } from "./fields";
+
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
-const { t } = useI18n();
+const settings = useCreateSettings();
 </script>
 
 <template>
@@ -42,20 +44,20 @@ const { t } = useI18n();
       <Fieldset
         v-for="setting in settings"
         :id="setting.anchor"
-        :key="setting.fieldsetTitleKey"
-        :name="t(setting.fieldsetTitleKey)"
+        :key="setting.fieldsetTitle"
+        :name="setting.fieldsetTitle"
         class="gap-y-4 border bg-primary-foreground p-4 text-base"
       >
         <template #main>
           <div class="flex size-full flex-col gap-2">
-            <template v-for="field in setting.fields" :key="field.labelKey">
+            <template v-for="field in setting.fields" :key="field.label">
               <div
                 v-if="field.type === 'select'"
               >
                 <Label
                   class="flex flex-col items-start whitespace-normal"
                 >
-                  {{ t("settings.fieldLabel", { label: t(field.labelKey) }) }}
+                  {{ t("settings.fieldLabel", { label: field.label }) }}
                   <div class="flex items-center gap-1">
                     <Select
                       v-model="settingsStore[field.key]"
@@ -67,7 +69,7 @@ const { t } = useI18n();
                       <SelectContent>
                         <SelectGroup>
                           <SelectItem v-for="option in field.options" :key="option.value" :value="option.value">
-                            {{ "labelKey" in option ? t(option.labelKey) : option.label }}
+                            {{ option.label }}
                           </SelectItem>
                         </SelectGroup>
                       </SelectContent>
@@ -85,10 +87,10 @@ const { t } = useI18n();
                   <Checkbox
                     v-model="settingsStore[field.key]"
                   />
-                  {{ t(field.labelKey) }}
+                  {{ field.label }}
                   <InfoTooltip
-                    v-if="'descriptionKey' in field && field.descriptionKey"
-                    :description="t(field.descriptionKey)"
+                    v-if="'description' in field && field.description"
+                    :description="field.description"
                   />
                 </Label>
               </div>

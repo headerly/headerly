@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RuleActionType } from "@/lib/schema";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import { useRuleActionTypeLabelKey } from "@/lib/utils";
+import { useRuleActionTypeLabel } from "@/lib/utils";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {
   required: true,
@@ -40,7 +40,7 @@ function open() {
   openState.value = true;
 }
 
-const options = ([
+const options = computed(() => ([
   "modifyHeaders",
   "redirect",
   "block",
@@ -49,8 +49,8 @@ const options = ([
   "allowAllRequests",
 ] as const satisfies RuleActionType[]).map(value => ({
   value,
-  label: useRuleActionTypeLabelKey(value),
-}));
+  label: useRuleActionTypeLabel(value),
+})));
 
 function handleConfirm() {
   if (typeInput.value !== ruleActionType.value) {

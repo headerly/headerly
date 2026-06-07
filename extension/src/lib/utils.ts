@@ -87,17 +87,16 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
   list.push(item);
 }
 
-export function useRuleActionTypeLabelKey(type: RuleActionType) {
+export function useRuleActionTypeLabel(type: RuleActionType) {
   const { t } = useI18n();
-  const typeMap = {
-    modifyHeaders: t("ruleAction.modifyHeaders"),
-    block: t("ruleAction.block"),
-    allow: t("ruleAction.allow"),
-    upgradeScheme: t("ruleAction.upgradeScheme"),
-    allowAllRequests: t("ruleAction.allowAllRequests"),
-    redirect: t("ruleAction.redirect"),
-  } as const;
-  return typeMap[type];
+  return match(type)
+    .with("modifyHeaders", () => t("ruleAction.modifyHeaders"))
+    .with("block", () => t("ruleAction.block"))
+    .with("allow", () => t("ruleAction.allow"))
+    .with("upgradeScheme", () => t("ruleAction.upgradeScheme"))
+    .with("allowAllRequests", () => t("ruleAction.allowAllRequests"))
+    .with("redirect", () => t("ruleAction.redirect"))
+    .exhaustive();
 }
 
 export function getRuleActionTypeIcon(type: RuleActionType) {

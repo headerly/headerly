@@ -24,7 +24,7 @@ import {
 } from "#/ui/tooltip";
 import { openAddModModalKey } from "./open";
 import TabList from "./TabList.vue";
-import { tabs } from "./tabs";
+import { useCreateTabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
   defaultTab: "actions" | "conditions";
@@ -35,6 +35,7 @@ const { defaultTab, class: className } = defineProps<{
 const currentTab = ref<typeof defaultTab>(defaultTab);
 const isOpen = ref(false);
 const { t } = useI18n();
+const tabs = useCreateTabs();
 
 const bus = useEventBus(openAddModModalKey);
 bus.on(({ target }) => {
@@ -78,7 +79,7 @@ bus.on(({ target }) => {
       <Tabs v-model="currentTab" class="w-full">
         <TabsList class="grid w-full grid-cols-2">
           <TabsTrigger v-for="tab in tabs" :key="tab.value" :value="tab.value">
-            {{ t(tab.labelKey) }}
+            {{ tab.label }}
           </TabsTrigger>
         </TabsList>
         <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">

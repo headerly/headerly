@@ -24,7 +24,17 @@ export default antfu(
     files: ["**/*.{ts,vue}"],
     rules: {
       "antfu/no-top-level-await": "off",
-      "no-ternary": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "SwitchStatement",
+          message: "Use ts-pattern match instead.",
+        },
+        {
+          selector: "ConditionalExpression",
+          message: "Use ts-pattern match instead.",
+        },
+      ],
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
       "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],

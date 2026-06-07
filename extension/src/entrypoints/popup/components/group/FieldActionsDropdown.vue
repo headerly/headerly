@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { Button } from "#/ui/button";
@@ -29,10 +29,10 @@ const { t } = useI18n();
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
-const moreActions = [
+const moreActions = computed(() => [
   {
     key: "duplicate",
-    labelKey: "common.duplicate",
+    label: t("common.duplicate"),
     onClick: () => {
       const newField = { ...field.value, id: uuidv7() };
       list.value.splice(index + 1, 0, newField);
@@ -40,10 +40,10 @@ const moreActions = [
   },
   {
     key: "comments",
-    labelKey: "common.comments",
+    label: t("common.comments"),
     onClick: () => commentsDialogRef.value?.open(),
   },
-];
+]);
 </script>
 
 <template>
@@ -63,7 +63,7 @@ const moreActions = [
         <DropdownMenuItem
           @click="action.onClick"
         >
-          <span>{{ t(action.labelKey) }}</span>
+          <span>{{ action.label }}</span>
         </DropdownMenuItem>
       </template>
       <DropdownMenuSeparator v-if="$slots['buttons-after']" />

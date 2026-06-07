@@ -8,13 +8,14 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { settings } from "../fields";
+import { useCreateSettings } from "../fields";
 
 const { class: className } = defineProps<{
   class?: string;
 }>();
 
 const { t } = useI18n();
+const settings = useCreateSettings();
 
 function handleAnchorClick(anchor: string) {
   const element = document.getElementById(anchor);
@@ -62,7 +63,7 @@ function handleAnchorClick(anchor: string) {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            {{ t(value.fieldsetTitleKey) }}
+            {{ value.fieldsetTitle }}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

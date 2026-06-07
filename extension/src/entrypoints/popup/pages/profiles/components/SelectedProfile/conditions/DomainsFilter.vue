@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import type { DomainsFilter } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
@@ -27,9 +28,9 @@ const { filterType } = defineProps<{
 
 const { t } = useI18n();
 
-const field = {
+const field = computed(() => ({
   requestDomains: {
-    titleKey: "condition.domains.requestDomains.title",
+    title: t("condition.domains.requestDomains.title"),
     description: (
       <>
         <p>
@@ -44,7 +45,7 @@ const field = {
     ),
   },
   excludedRequestDomains: {
-    titleKey: "condition.domains.excludedRequestDomains.title",
+    title: t("condition.domains.excludedRequestDomains.title"),
     description: (
       <>
         <p>
@@ -59,7 +60,7 @@ const field = {
     ),
   },
   initiatorDomains: {
-    titleKey: "condition.domains.initiatorDomains.title",
+    title: t("condition.domains.initiatorDomains.title"),
     description: (
       <>
         <p>
@@ -75,7 +76,7 @@ const field = {
     ),
   },
   excludedInitiatorDomains: {
-    titleKey: "condition.domains.excludedInitiatorDomains.title",
+    title: t("condition.domains.excludedInitiatorDomains.title"),
     description: (
       <>
         <p>
@@ -90,7 +91,7 @@ const field = {
       </>
     ),
   },
-};
+}));
 
 const profilesStore = useProfilesStore();
 
@@ -114,7 +115,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 <template>
   <Group
     v-model:list="domainsFilter.items"
-    :name="t(field[filterType].titleKey)"
+    :name="field[filterType].title"
     :type="domainsFilter.type"
     @delete-empty-group="deleteGroup"
   >

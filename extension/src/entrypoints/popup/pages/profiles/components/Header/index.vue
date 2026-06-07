@@ -22,7 +22,7 @@ import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
-import { cn, getRuleActionTypeIcon, useRuleActionTypeLabelKey } from "@/lib/utils";
+import { cn, getRuleActionTypeIcon, useRuleActionTypeLabel } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import AddModModal from "./components/AddModModal/index.vue";
 import { openAddModModalKey } from "./components/AddModModal/open";
@@ -95,7 +95,7 @@ const undoAndRedoButtonGroup = [
 
 const actionTypeBadge = computed(() => ({
   icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
-  label: useRuleActionTypeLabelKey(profilesStore.selectedProfile.ruleActionType),
+  label: useRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
 }));
 
 const defaultTab = computed(() => {

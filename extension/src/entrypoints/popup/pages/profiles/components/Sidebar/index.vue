@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import { useStorage } from "@vueuse/core";
+import { match } from "ts-pattern";
 import { defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
@@ -29,7 +30,7 @@ import {
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn, useRuleActionTypeLabelKey } from "@/lib/utils";
+import { cn, useRuleActionTypeLabel } from "@/lib/utils";
 import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
@@ -58,14 +59,17 @@ const ruleActionTypes = [
   "allowAllRequests",
   "redirect",
 ] as const satisfies RuleActionType[];
-const ruleActionTypeDescriptions = {
-  modifyHeaders: "ruleAction.description.modifyHeaders",
-  block: "ruleAction.description.block",
-  allow: "ruleAction.description.allow",
-  upgradeScheme: "ruleAction.description.upgradeScheme",
-  allowAllRequests: "ruleAction.description.allowAllRequests",
-  redirect: "ruleAction.description.redirect",
-} as const;
+
+function getRuleActionTypeDescription(type: RuleActionType) {
+  return match(type)
+    .with("modifyHeaders", () => t("ruleAction.description.modifyHeaders"))
+    .with("block", () => t("ruleAction.description.block"))
+    .with("allow", () => t("ruleAction.description.allow"))
+    .with("upgradeScheme", () => t("ruleAction.description.upgradeScheme"))
+    .with("allowAllRequests", () => t("ruleAction.description.allowAllRequests"))
+    .with("redirect", () => t("ruleAction.description.redirect"))
+    .exhaustive();
+}
 </script>
 
 <template>
@@ -108,9 +112,9 @@ const ruleActionTypeDescriptions = {
                   hide-arrow
                   @click="profilesStore.addProfile(type)"
                 >
-                  {{ useRuleActionTypeLabelKey(type) }}
+                  {{ useRuleActionTypeLabel(type) }}
                   <InfoTooltip
-                    :description="t(ruleActionTypeDescriptions[type])"
+                    :description="getRuleActionTypeDescription(type)"
                     class="ml-1"
                   />
                 </DropdownMenuSubTrigger>
