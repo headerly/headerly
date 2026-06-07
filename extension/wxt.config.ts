@@ -48,8 +48,6 @@ export default defineConfig({
     "prepare:types": async (_, entries) => {
       entries.push({
         module: "./typed-router.d.ts",
-      }, {
-        module: "./vue-components.d.ts",
       });
     },
   },
