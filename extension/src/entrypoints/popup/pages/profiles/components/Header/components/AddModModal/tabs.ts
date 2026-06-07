@@ -15,8 +15,6 @@ interface Tab {
   }[];
 }
 
-const profilesStore = useProfilesStore();
-
 async function getCurrentTabHostname() {
   const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
   // Try to construct URL object, return null if invalid URL(for example, `chrome://extensions/`)
@@ -43,6 +41,8 @@ function getDnrUrlFilterValue(hostname: string) {
 
 export function useCreateTabs(): Tab[] {
   const { t } = useI18n();
+  const profilesStore = useProfilesStore();
+
   return [
     {
       label: t("addModModal.tabs.actions"),
