@@ -54,7 +54,7 @@ const forwardedProps = useForwardProps(delegatedProps);
           :transition="{ duration: 0.15 }"
         >
           <slot>
-            <i class="i-lucide-circle size-2 fill-primary" />
+            <span class="size-1.5 rounded-full bg-primary" />
           </slot>
         </motion.span>
       </AnimatePresence>
