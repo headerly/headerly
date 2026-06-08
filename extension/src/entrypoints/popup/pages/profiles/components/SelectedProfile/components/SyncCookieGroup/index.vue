@@ -34,6 +34,7 @@ function deleteGroup() {
 
 <template>
   <Group
+    :id="group.id"
     v-model:list="group.items"
     :type="group.type"
     :name="t('syncCookie.title')"

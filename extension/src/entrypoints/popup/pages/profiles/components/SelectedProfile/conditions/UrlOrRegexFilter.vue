@@ -122,6 +122,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 
 <template>
   <Group
+    :id="`${profilesStore.selectedProfile.id}:${filterType}`"
     v-model:list="list"
     :name="field[filterType].title"
     type="radio"

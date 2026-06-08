@@ -35,6 +35,7 @@ function deleteGroup() {
 
 <template>
   <Group
+    :id="`${profilesStore.selectedProfile.id}:redirectUrlGroup`"
     v-model:list="list"
     type="radio"
     :name="t('redirectUrl.title')"

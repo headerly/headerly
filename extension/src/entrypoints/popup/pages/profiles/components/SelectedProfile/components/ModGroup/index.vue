@@ -44,6 +44,7 @@ function deleteGroup() {
 
 <template>
   <Group
+    :id="`${group.id}:${actionType}-HeaderModGroup`"
     v-model:list="group.items"
     :type="group.type"
     :name="actionType === 'request' ? t('headerMod.requestHeaders') : t('headerMod.responseHeaders')"

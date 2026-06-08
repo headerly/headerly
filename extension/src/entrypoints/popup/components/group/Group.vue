@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/schema";
+import { StorageSerializers, useStorage } from "@vueuse/core";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
@@ -17,7 +18,8 @@ const list = defineModel<T[]>("list", {
   required: true,
 });
 
-const { name, type } = defineProps<{
+const { id, name, type } = defineProps<{
+  id: string;
   name: string;
   type?: GroupType;
 }>();
@@ -27,6 +29,22 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const closedGroupIds = useStorage<Set<string>>("group-collapsible:closed-group-ids", new Set(), localStorage, {
+  serializer: StorageSerializers.set,
+});
+
+const open = computed({
+  get: () => !closedGroupIds.value.has(id),
+  set: (isOpen: boolean) => {
+    const nextClosedGroupIds = new Set(closedGroupIds.value);
+    if (isOpen) {
+      nextClosedGroupIds.delete(id);
+    } else {
+      nextClosedGroupIds.add(id);
+    }
+    closedGroupIds.value = nextClosedGroupIds;
+  },
+});
 
 watch(() => list.value.length, (newLength) => {
   if (newLength === 0) {
@@ -62,8 +80,7 @@ useSortableAndAutoAnimate({
 <template>
   <Collapsible
     v-if="list.length"
-    v-slot="{ open }"
-    default-open
+    v-model:open="open"
   >
     <Fieldset
       v-auto-animate
@@ -109,7 +126,7 @@ useSortableAndAutoAnimate({
         </CollapsibleTrigger>
       </template>
       <template #main>
-        <CollapsibleContent>
+        <CollapsibleContent class="overflow-visible">
           <component
             :is="type === 'radio' ? RadioGroup : 'div'"
             v-bind="type === 'radio'

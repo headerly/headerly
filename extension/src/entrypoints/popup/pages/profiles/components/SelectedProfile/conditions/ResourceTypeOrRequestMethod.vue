@@ -117,6 +117,7 @@ type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes
 
 <template>
   <Group
+    :id="`${profilesStore.selectedProfile.id}:${type}`"
     v-model:list="list"
     :name
     type="radio"
