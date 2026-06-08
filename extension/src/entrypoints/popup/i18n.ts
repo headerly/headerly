@@ -18,9 +18,10 @@ export function setupI18n() {
   return i18n;
 }
 
-export function setI18nLanguage(locale: SupportLocale) {
+export async function setI18nLanguage(locale: SupportLocale) {
+  await loadLocaleMessages(locale);
   i18n.global.locale.value = locale;
-  loadLocaleMessages(locale);
+
   document.documentElement.lang = locale;
 }
 

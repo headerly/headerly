@@ -1,9 +1,10 @@
 import type { BasicColorSchema } from "@vueuse/core";
 import type { SupportLocale } from "#/i18n";
 import type { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useEmojiCategories } from "#/constants/emoji";
 import { setI18nLanguage, SUPPORT_LOCALES } from "#/i18n";
-import { useEmojiCategories } from "@/entrypoints/popup/constants/emoji";
 
 interface BaseSettingField {
   label: string;
@@ -34,7 +35,9 @@ interface SettingGroup {
 export function useCreateSettings() {
   const { t } = useI18n();
   const emojiCategories = useEmojiCategories();
-  return [
+
+  // This needs computed because t() depends on the reactive locale; otherwise the UI will not update when the language changes.
+  return computed(() => [
     {
       fieldsetTitle: t("settings.groups.appearance"),
       anchor: "appearance",
@@ -91,5 +94,5 @@ export function useCreateSettings() {
         },
       ],
     },
-  ] satisfies SettingGroup[];
+  ] satisfies SettingGroup[]);
 }
