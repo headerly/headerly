@@ -93,7 +93,7 @@ useSortableAndAutoAnimate({
       </template>
       <template #group-actions>
         <slot name="group-actions" />
-        <span class="flex-1 border" />
+        <span class="flex-1 border-t" />
         <CollapsibleTrigger as-child>
           <Button
             :aria-label="open ? t('group.collapse') : t('group.expand')"
