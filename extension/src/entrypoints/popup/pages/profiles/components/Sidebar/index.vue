@@ -92,7 +92,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
       </DropdownMenuTrigger>
       <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
         <DropdownMenuGroup>
-          <DropdownMenuItem class="gap-1" @click="profilesStore.addProfile(defaultRuleActionType)">
+          <DropdownMenuItem class="justify-between gap-1" @click="profilesStore.addProfile(defaultRuleActionType)">
             {{ t("profile.sidebar.quickCreate") }}
             <InfoTooltip
               :description="t('profile.sidebar.quickCreateDescription')"
@@ -108,21 +108,20 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                 :key="type"
               >
                 <DropdownMenuSubTrigger
-                  class="cursor-pointer"
+                  class="cursor-pointer justify-between"
                   hide-arrow
                   @click="profilesStore.addProfile(type)"
                 >
                   {{ getRuleActionTypeLabel(type) }}
                   <InfoTooltip
                     :description="getRuleActionTypeDescription(type)"
-                    class="ml-1"
                   />
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem v-if="type !== defaultRuleActionType" @click="defaultRuleActionType = type">
                     {{ t("profile.sidebar.makeDefault") }}
                   </DropdownMenuItem>
-                  <DropdownMenuItem v-else>
+                  <DropdownMenuItem v-else disabled class="opacity-100!">
                     <Badge>
                       {{ t("profile.sidebar.defaultActionType") }}
                     </Badge>
