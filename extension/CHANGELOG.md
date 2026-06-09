@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/headerly/headerly/compare/v1.6.0...v1.7.0) (2026-06-08)
+
+
+### Features
+
+* persist group collapsed state ([f535f46](https://github.com/headerly/headerly/commit/f535f46eee37b77bfce61150931959273fe78411))
+
+
+### Bug Fixes
+
+* settings page did not update the language when switching languages ([d13e2ab](https://github.com/headerly/headerly/commit/d13e2ab443fb2da369734e2763848ebbdb2c7998))
+
 ## [1.6.0](https://github.com/headerly/headerly/compare/v1.5.1...v1.6.0) (2026-06-07)
 
 
