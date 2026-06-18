@@ -62,7 +62,7 @@ useSortableAndAutoAnimate({
           :profile
           :show-shortcut-hint="true"
           @click="profilesStore.manager.selectedProfileId = profile.id"
-          @mousedown.middle.prevent="profilesStore.deleteProfile(profile.id)"
+          @mousedown.middle.prevent="profilesStore.toggleProfileEnabled(profile.id)"
         />
       </ContextMenuWithTrigger>
     </div>
