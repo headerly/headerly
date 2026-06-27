@@ -16,7 +16,7 @@ const list = defineModel<T[]>("list", {
 });
 
 const { description, type } = defineProps<{
-  description?: string | VNode;
+  description?: string | string[] | VNode;
   type?: GroupType;
 }>();
 
@@ -59,6 +59,14 @@ function transferGroupType() {
           <template v-if="typeof description === 'string'">
             {{ description }}
           </template>
+          <div v-else-if="Array.isArray(description)" class="space-y-2">
+            <p
+              v-for="paragraph in description"
+              :key="paragraph"
+            >
+              {{ paragraph }}
+            </p>
+          </div>
           <div v-else class="max-h-40 overflow-y-auto">
             <component :is="description" />
           </div>

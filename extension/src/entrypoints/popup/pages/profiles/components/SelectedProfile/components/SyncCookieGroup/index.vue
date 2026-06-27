@@ -44,6 +44,11 @@ function deleteGroup() {
       <GroupActions
         v-model:list="group.items"
         v-model:type="group.type"
+        :description="[
+          t('syncCookie.description.behavior'),
+          t('syncCookie.description.uniqueness'),
+          t('syncCookie.description.syncValue'),
+        ]"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />

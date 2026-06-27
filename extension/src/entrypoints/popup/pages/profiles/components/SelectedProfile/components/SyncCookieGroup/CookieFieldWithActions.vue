@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/vue-query";
 import { pick, sortBy } from "es-toolkit";
 import { computed, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import { Alert, AlertDescription } from "#/ui/alert";
 import { Button } from "#/ui/button";
@@ -15,9 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "#/ui/dialog";
-import {
-  DropdownMenuItem,
-} from "#/ui/dropdown-menu";
 import { Input } from "#/ui/input";
 import {
   Select,
@@ -29,12 +25,6 @@ import {
   SelectValue,
 } from "#/ui/select";
 import { Textarea } from "#/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const list = defineModel<SyncCookie[]>("list", {
@@ -61,15 +51,19 @@ function useCookiesQuery(domainComplex: MaybeRefOrGetter<string>) {
       }
       const cookies = await browser.cookies.getAll({ domain });
 
-      return cookies.filter(
-        cookie => cookie.domain === domain || cookie.domain === `.${domain}`,
-      ).map(cookie => pick(cookie, ["name", "value", "path", "domain"]));
+      return cookies.filter(cookie => isCookieInDomain(cookie, domain))
+        .map(cookie => pick(cookie, ["name", "value", "path", "domain"]));
     },
   });
 }
 
 const { data: cookies, isPending } = useCookiesQuery(() => field.value.domain);
 const getCookieKey = (c: Pick<SyncCookie, "name" | "path" | "domain">) => `${c.domain}|${c.path}|${c.name}`;
+
+function isCookieInDomain(cookie: Pick<Browser.cookies.Cookie, "domain">, domain: string) {
+  return cookie.domain === domain || cookie.domain === `.${domain}`;
+}
+
 function createOption(cookie: Pick<SyncCookie, "name" | "value" | "path" | "domain">) {
   return {
     value: getCookieKey(cookie),
@@ -77,9 +71,13 @@ function createOption(cookie: Pick<SyncCookie, "name" | "value" | "path" | "doma
     cookieValue: cookie.value,
     path: cookie.path,
     domain: cookie.domain,
-    isMissing: false,
   };
 }
+
+const isSelectedCookieMissing = computed(() => {
+  return Boolean(field.value.name && field.value.value === "");
+});
+
 const cookieOptions = computed(() => {
   if (isPending.value) {
     return [];
@@ -89,10 +87,7 @@ const cookieOptions = computed(() => {
   const currentKey = getCookieKey(field.value);
 
   if (field.value.name && !options.some(option => option.value === currentKey)) {
-    options.push({
-      ...createOption(field.value),
-      isMissing: true,
-    });
+    options.push(createOption(field.value));
   }
 
   return sortBy(options, ["label", "domain", "path"]);
@@ -127,37 +122,16 @@ function updateCookie(newKey: string) {
   }
 }
 
-const selectedCookieOption = computed(() => {
-  const currentKey = getCookieKey(field.value);
-  return cookieOptions.value.find((cookie) => {
-    return cookie.value === currentKey;
-  });
-});
-
 const groupedCookieOptions = computed(() => {
   return Object.groupBy(cookieOptions.value, option => `${option.domain}${option.path}`);
 });
 
-const refreshButtonDisabled = computed(() => {
-  return !field.value.name
-    || isPending.value
-    || selectedCookieOption.value?.isMissing
-    || cookieOptions.value.length === 0
-    || selectedCookieOption.value?.cookieValue === field.value.value;
-});
-
-async function refreshCookie() {
-  const cookie = await browser.cookies.get({
-    name: field.value.name,
-    url: `https://${field.value.domain}${field.value.path}`,
-  });
-  if (cookie) {
-    field.value.value = cookie.value;
-    toast.success(t("syncCookie.toast.refreshed"));
-  } else {
-    toast.error(t("syncCookie.toast.notFound"));
+const missedCookieOptionKey = computed(() => {
+  if (field.value.value === "") {
+    return getCookieKey(field.value);
   }
-}
+  return null;
+});
 </script>
 
 <template>
@@ -193,7 +167,7 @@ async function refreshCookie() {
             <SelectTrigger
               :class="cn(
                 'w-full min-w-0 px-3 text-base',
-                selectedCookieOption?.isMissing && 'border-warning text-warning',
+                isSelectedCookieMissing && 'border-warning text-warning',
               )"
             >
               <div
@@ -218,7 +192,7 @@ async function refreshCookie() {
                   :value="option.value"
                 >
                   <div
-                    :class="cn('flex items-center gap-1', option.isMissing ? `
+                    :class="cn('flex items-center gap-1', option.value === missedCookieOptionKey ? `
                       text-warning
                     ` : '')"
                   >
@@ -226,7 +200,7 @@ async function refreshCookie() {
                       {{ option.label }}
                     </span>
                     <span
-                      v-if="option.isMissing"
+                      v-if="option.value === missedCookieOptionKey"
                     >
                       {{ t("syncCookie.missing") }}
                     </span>
@@ -239,23 +213,15 @@ async function refreshCookie() {
       </div>
     </div>
     <div class="flex gap-0.5">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Button
-              :variant="refreshButtonDisabled ? 'secondary' : 'default'"
-              size="icon-xs"
-              :disabled="refreshButtonDisabled"
-              @click="refreshCookie"
-            >
-              <i class="i-lucide-rotate-ccw size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top" :collision-padding="5">
-            {{ t("syncCookie.refreshTooltip") }}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button
+        variant="secondary"
+        size="icon-xs"
+        :disabled="!field.value"
+        @click="() => isCookieDialogOpen = true"
+      >
+        <span class="sr-only">{{ t("syncCookie.viewCookie") }}</span>
+        <i class="i-lucide-eye size-4" />
+      </Button>
       <Button
         variant="secondary"
         size="icon-xs"
@@ -270,16 +236,7 @@ async function refreshCookie() {
         v-model:list="list"
         v-model:field="field"
         :index
-      >
-        <template #buttons-before>
-          <DropdownMenuItem
-            :disabled="!field.value"
-            @click="() => isCookieDialogOpen = true"
-          >
-            {{ t("syncCookie.viewCookie") }}
-          </DropdownMenuItem>
-        </template>
-      </ActionsDropdown>
+      />
     </div>
   </div>
 
@@ -298,7 +255,7 @@ async function refreshCookie() {
 
       <Textarea
         v-model="field.value"
-        class="mt-2 min-h-24 w-full text-base wrap-anywhere select-all"
+        class="min-h-24 w-full text-base wrap-anywhere select-all"
         :placeholder="t('common.comments')"
         disabled
       />
