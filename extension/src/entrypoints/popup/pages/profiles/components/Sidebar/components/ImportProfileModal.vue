@@ -16,6 +16,7 @@ import {
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
+import { ensureCookiesPermission } from "@/lib/utils";
 
 const open = defineModel<boolean>("open", { required: true });
 
@@ -29,15 +30,6 @@ const { validJson, validJsonSchema, formatJson } = useJsonValidation(userInput);
 
 function handleFormatJson() {
   userInput.value = formatJson();
-}
-
-async function ensureCookiesPermission() {
-  const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
-  if (hasCookiesPermission) {
-    return true;
-  }
-
-  return browser.permissions.request({ permissions: ["cookies"] });
 }
 
 async function confirmImport() {

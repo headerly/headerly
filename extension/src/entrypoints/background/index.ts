@@ -8,6 +8,7 @@ import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
+import { setupSyncCookies } from "./syncCookies";
 
 export default defineBackground({
   type: "module",
@@ -15,11 +16,11 @@ export default defineBackground({
     const { item: powerOnItem } = usePowerOnStorage();
     const { item: profileManagerItem } = useProfileManagerStorage();
     // Serialize all DNR rule operations to prevent concurrent access.
-    const mutex = new Mutex();
+    const profileManagerMutex = new Mutex();
     // `storage.watch` must be registered synchronously at the top level of the service worker;
     // asynchronous registration will cause the service worker to lose events while in an inactive state.
     powerOnItem.watch((powerOn) => {
-      mutex.runExclusive(async () => {
+      profileManagerMutex.runExclusive(async () => {
         if (powerOn) {
           await treatAllProfilesAsCreated();
           browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
@@ -30,7 +31,7 @@ export default defineBackground({
       });
     });
     profileManagerItem.watch(({ profiles: newProfiles }, { profiles: oldProfiles }) => {
-      mutex.runExclusive(async () => {
+      profileManagerMutex.runExclusive(async () => {
         if (await powerOnItem.getValue()) {
           const changes = diffProfiles(oldProfiles, newProfiles);
           if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
@@ -40,6 +41,7 @@ export default defineBackground({
         }
       });
     });
+    setupSyncCookies({ profileManagerMutex, profileManagerItem });
 
     // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
     updateBadgeWhenRestarted();
@@ -49,7 +51,7 @@ export default defineBackground({
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
-      mutex.runExclusive(async () => {
+      profileManagerMutex.runExclusive(async () => {
         const powerOn = await powerOnItem.getValue();
         if (powerOn) {
           await unregisterAllRules();

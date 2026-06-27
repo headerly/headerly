@@ -2,6 +2,7 @@ import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { ensureCookiesPermission } from "@/lib/utils";
 
 interface Tab {
   label: string;
@@ -71,14 +72,8 @@ export function useCreateTabs(): Tab[] {
           title: t("addModModal.items.cookieSyncRequestHeader.title"),
           description: t("addModModal.items.cookieSyncRequestHeader.description"),
           action: async () => {
-            const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
-            if (hasCookiesPermission) {
+            if (await ensureCookiesPermission()) {
               profilesStore.addSyncCookieGroup();
-            } else {
-              const granted = await browser.permissions.request({ permissions: ["cookies"] });
-              if (granted) {
-                profilesStore.addSyncCookieGroup();
-              }
             }
           },
           get disabled() {
