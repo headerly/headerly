@@ -59,10 +59,12 @@ export function setupSyncCookies(options: {
   }
 
   function handleCookieChanged(changeInfo: Browser.cookies.CookieChangeInfo) {
-    if (syncCookieKeys && !hasSyncCookieKey(syncCookieKeys, changeInfo.cookie)) {
+    if (!syncCookieKeys) {
       return;
     }
-
+    if (!hasSyncCookieKey(syncCookieKeys, changeInfo.cookie)) {
+      return;
+    }
     pendingSyncCookieChanges.set(createSyncCookieKey(changeInfo.cookie), {
       cookie: changeInfo.cookie,
       removed: changeInfo.removed,
