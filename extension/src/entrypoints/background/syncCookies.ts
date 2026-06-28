@@ -45,7 +45,7 @@ export function setupSyncCookies(options: {
   registerCookieChangeListener();
 
   // Optional permissions may be granted after the service worker starts.
-  browser.permissions?.onAdded.addListener((permissions) => {
+  browser.permissions.onAdded.addListener((permissions) => {
     if (permissions.permissions?.includes("cookies")) {
       registerCookieChangeListener();
       syncAllCookieValues();
