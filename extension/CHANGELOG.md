@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/headerly/headerly/compare/v1.7.0...v1.8.0) (2026-06-28)
+
+
+### Features
+
+* automatically update the Sync Cookie value when the cookie is updated ([#47](https://github.com/headerly/headerly/issues/47)) ([f8adf34](https://github.com/headerly/headerly/commit/f8adf3477612a107fe7503029cea213cd2759b46))
+* **profile:** replace middle-click delete with pause/resume toggle ([88984e5](https://github.com/headerly/headerly/commit/88984e5563c387833a353456aebe94a17d63ff81))
+
 ## [1.7.0](https://github.com/headerly/headerly/compare/v1.6.0...v1.7.0) (2026-06-08)
 
 
