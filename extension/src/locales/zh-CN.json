@@ -204,7 +204,6 @@
   "emoji": {
     "categories": {
       "activities": "活动",
-      "all": "全部",
       "animalsNature": "动物与自然",
       "flags": "旗帜",
       "foodDrink": "食物与饮品",
@@ -356,10 +355,8 @@
     },
     "fieldLabel": "{label}：",
     "fields": {
-      "autoAssignEmoji": "自动为新配置分配 emoji",
       "language": "语言",
       "nativeResourceTypeBehavior": "使用原生 DNR 资源类型行为",
-      "randomEmojiCategory": "随机 emoji 分配分类",
       "theme": "主题"
     },
     "groups": {

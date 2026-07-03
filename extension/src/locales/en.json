@@ -204,7 +204,6 @@
   "emoji": {
     "categories": {
       "activities": "Activities",
-      "all": "All",
       "animalsNature": "Animals & Nature",
       "flags": "Flags",
       "foodDrink": "Food & Drink",
@@ -356,10 +355,8 @@
     },
     "fieldLabel": "{label}:",
     "fields": {
-      "autoAssignEmoji": "Automatically assign emoji to new profiles",
       "language": "Language",
       "nativeResourceTypeBehavior": "Use native DNR resource type behavior",
-      "randomEmojiCategory": "Category for random emoji assignment",
       "theme": "Theme"
     },
     "groups": {

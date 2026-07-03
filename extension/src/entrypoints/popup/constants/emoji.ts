@@ -24,22 +24,3 @@ export function useEmojisWithCategory() {
     { value: "flags", label: t("emoji.categories.flags"), icon: "i-lucide-flag", emojis: emoji.flags },
   ] as const;
 }
-
-export function useEmojiCategories() {
-  const { t } = useI18n();
-  return [
-    { value: "all", label: t("emoji.categories.all") },
-    { value: "smileysPeople", label: t("emoji.categories.smileysPeople") },
-    { value: "animalsNature", label: t("emoji.categories.animalsNature") },
-    { value: "foodDrink", label: t("emoji.categories.foodDrink") },
-    { value: "travelPlaces", label: t("emoji.categories.travelPlaces") },
-    { value: "activities", label: t("emoji.categories.activities") },
-    { value: "objects", label: t("emoji.categories.objects") },
-    { value: "symbols", label: t("emoji.categories.symbols") },
-    { value: "flags", label: t("emoji.categories.flags") },
-  ] as const;
-}
-
-export type EmojiCategoryKey = ReturnType<typeof useEmojiCategories>[number]["value"];
-
-export const allEmojis = Object.values(emoji).flat();

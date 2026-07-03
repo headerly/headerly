@@ -2,7 +2,6 @@ import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueu
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
 import type { ProfileManager } from "./types";
-import type { EmojiCategoryKey } from "@/entrypoints/popup/constants/emoji";
 import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
@@ -141,12 +140,4 @@ export function useLanguageStorage() {
     .with(true, () => browserLanguage as SupportLocale)
     .otherwise(() => "en" as const);
   return useLocalStorage<SupportLocale>("language", initialLanguage);
-}
-
-export function useAutoAssignEmojiStorage() {
-  return useLocalStorage<boolean>("autoAssignEmoji", false);
-}
-
-export function useRandomEmojiCategoryStorage() {
-  return useLocalStorage<EmojiCategoryKey>("randomEmojiCategory", "foodDrink");
 }

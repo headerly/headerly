@@ -2,11 +2,9 @@ import { useColorMode } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
-  useAutoAssignEmojiStorage,
   useLanguageStorage,
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
-  useRandomEmojiCategoryStorage,
 } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", () => {
@@ -15,8 +13,6 @@ export const useSettingsStore = defineStore("settings", () => {
   });
   const storageConfigs = {
     powerOn: usePowerOnStorage(),
-    autoAssignEmoji: useAutoAssignEmojiStorage(),
-    randomEmojiCategory: useRandomEmojiCategoryStorage(),
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
     language: useLanguageStorage(),
   } as const;

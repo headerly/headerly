@@ -1,27 +1,13 @@
 import type { GroupType, HeaderModGroup, Profile, RuleActionType } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
-import { random, round } from "es-toolkit";
 import { defineStore } from "pinia";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
-import { allEmojis, emoji } from "@/entrypoints/popup/constants/emoji";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie } from "@/lib/utils";
-import { useSettingsStore } from "./useSettingsStore";
-
-function getProfileIcon() {
-  const settingsStore = useSettingsStore();
-  if (settingsStore.autoAssignEmoji === false) {
-    return "📃";
-  }
-  const pool = match(settingsStore.randomEmojiCategory)
-    .with("all", () => allEmojis)
-    .otherwise(category => emoji[category]);
-  return pool[round(random(pool.length - 1))];
-}
 
 export function findHeaderModGroups(profile: Profile, type: ActionType) {
   return match(type)
@@ -55,7 +41,6 @@ export const useProfilesStore = defineStore("profiles", () => {
   function addProfile(ruleActionType: RuleActionType) {
     const newProfile = createProfile({
       name: `New Profile ${manager.value.profiles.length + 1}`,
-      emoji: getProfileIcon(),
       ruleActionType,
     });
     manager.value.profiles.push(newProfile);
