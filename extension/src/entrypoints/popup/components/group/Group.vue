@@ -120,7 +120,7 @@ useSortableAndAutoAnimate({
           >
             <i
               class="i-lucide-chevron-down transition-transform"
-              :class="{ '-rotate-90': !open }"
+              :class="{ 'rotate-90': !open }"
             />
           </Button>
         </CollapsibleTrigger>
