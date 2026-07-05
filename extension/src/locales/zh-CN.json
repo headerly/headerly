@@ -259,7 +259,7 @@
       "fileReadFailed": "读取文件失败",
       "invalidJson": "导入失败：JSON 格式无效",
       "invalidShareLink": "导入失败：分享链接无效",
-      "invalidShareLinkDescription": "请检查分享链接是否完整，且没有包含多余字符。",
+      "invalidShareLinkDescription": "请检查分享链接是否完整，且不包含多余字符。"
       "success": "成功导入 {count} {label}！"
     }
   },
