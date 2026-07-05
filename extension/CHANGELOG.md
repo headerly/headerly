@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.9.0](https://github.com/headerly/headerly/compare/v1.8.0...v1.9.0) (2026-07-05)
+
+
+### Features
+
+* add a link to the documentation site ([34361db](https://github.com/headerly/headerly/commit/34361db0f6881cc66b2e5a53ef27637ff63f7eea))
+* remove auto emoji assignment setting ([e9e8225](https://github.com/headerly/headerly/commit/e9e82256bfbb509d63b34c71c146b77cdba024de))
+
+
+### Bug Fixes
+
+* close main dropdown when opening sub actions and search ([cf2e5f3](https://github.com/headerly/headerly/commit/cf2e5f3e0881c121931776282a57219cb880bdd7))
+* **cookie:** prevent exported profiles from carrying sync cookie values ([a3dd7b3](https://github.com/headerly/headerly/commit/a3dd7b3d1d123e5fcfe7bd588f60f593a3007326))
+* **cookie:** refresh sync cookies when importing duplicate identities ([061cbc5](https://github.com/headerly/headerly/commit/061cbc5d3da67e1f13a5851e7ad4b27fd9e07c9e))
+
 ## [1.8.0](https://github.com/headerly/headerly/compare/v1.7.0...v1.8.0) (2026-06-28)
 
 
@@ -54,7 +69,7 @@
 
 * by default, sync cookies group data is not exported ([#27](https://github.com/headerly/headerly/issues/27)) ([59488b6](https://github.com/headerly/headerly/commit/59488b626f6bf41c9dd53e7a35c01b607ca046fe))
 * reorganize profile menu and add changelog link ([6bd6afa](https://github.com/headerly/headerly/commit/6bd6afa2707cd165119ba5ebce39e4ffec3b963d))
-* support for serach/replace functions in the JSON editor ([#29](https://github.com/headerly/headerly/issues/29)) ([4063213](https://github.com/headerly/headerly/commit/40632137a5bfc78fb079de1414b0ec634d3dd453))
+* support for search/replace functions in the JSON editor ([#29](https://github.com/headerly/headerly/issues/29)) ([4063213](https://github.com/headerly/headerly/commit/40632137a5bfc78fb079de1414b0ec634d3dd453))
 
 
 ### Bug Fixes
