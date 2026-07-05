@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.9.0](https://github.com/headerly/headerly/compare/v1.8.0...v1.9.0) (2026-07-05)
+
+
+### Features
+
+* add a link to the documentation site ([34361db](https://github.com/headerly/headerly/commit/34361db0f6881cc66b2e5a53ef27637ff63f7eea))
+* remove auto emoji assignment setting ([e9e8225](https://github.com/headerly/headerly/commit/e9e82256bfbb509d63b34c71c146b77cdba024de))
+
+
+### Bug Fixes
+
+* close main dropdown when opening sub actions and search ([cf2e5f3](https://github.com/headerly/headerly/commit/cf2e5f3e0881c121931776282a57219cb880bdd7))
+* prevent exported profiles from carrying sync cookie values ([a3dd7b3](https://github.com/headerly/headerly/commit/a3dd7b3d1d123e5fcfe7bd588f60f593a3007326))
+* refresh sync cookies when importing duplicate identities ([061cbc5](https://github.com/headerly/headerly/commit/061cbc5d3da67e1f13a5851e7ad4b27fd9e07c9e))
+
 ## [1.8.0](https://github.com/headerly/headerly/compare/v1.7.0...v1.8.0) (2026-06-28)
 
 
