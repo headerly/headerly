@@ -61,6 +61,18 @@ export default defineBackground({
         }
       });
     });
+    onMessage("openSharedProfilesImport", async ({ data: query, sender }) => {
+      const importUrl = browser.runtime.getURL(`/popup.html#/import${query}`);
+      if (sender.tab?.id !== undefined) {
+        try {
+          await browser.tabs.update(sender.tab.id, { url: importUrl });
+          return;
+        } catch (error) {
+          console.error("Failed to open import page in the current tab:", error);
+        }
+      }
+      await browser.tabs.create({ url: importUrl });
+    });
 
     async function treatAllProfilesAsCreated() {
       const manager = await profileManagerItem.getValue();

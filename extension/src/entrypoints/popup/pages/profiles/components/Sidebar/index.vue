@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import { useStorage } from "@vueuse/core";
 import { match } from "ts-pattern";
-import { defineAsyncComponent, nextTick, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import Badge from "#/ui/badge/Badge.vue";
@@ -38,12 +38,9 @@ const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 
-const ImportProfileModal = defineAsyncComponent(() => import("./components/ImportProfileModal.vue"));
-
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
-const importModalOpen = ref(false);
 const profileSearchOpen = ref(false);
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
@@ -149,14 +146,16 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                 <i class="i-lucide-search size-4 shrink-0" />
                 {{ t("common.search") }}
               </DropdownMenuItem>
-              <DropdownMenuItem @click="importModalOpen = true">
-                <i class="i-lucide-upload size-4 shrink-0" />
-                {{ t("common.import") }}
+              <DropdownMenuItem as-child>
+                <RouterLink to="/import">
+                  <i class="i-lucide-upload size-4 shrink-0" />
+                  {{ t("common.import") }}
+                </RouterLink>
               </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <RouterLink to="/export">
-                  <i class="i-lucide-download size-4 shrink-0" />
-                  {{ t("common.export") }}
+                  <i class="i-lucide-share-2 size-4 shrink-0" />
+                  {{ t("common.share") }}
                 </RouterLink>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
@@ -245,7 +244,6 @@ function getRuleActionTypeDescription(type: RuleActionType) {
       </TooltipProvider>
     </div>
 
-    <ImportProfileModal v-model:open="importModalOpen" />
     <ProfileManage v-model:open="profileSearchOpen" />
   </aside>
 </template>

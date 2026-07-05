@@ -5,9 +5,16 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { toast } from "vue-sonner";
 import { Button } from "#/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "#/ui/dropdown-menu";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { encodeProfileSharePayload } from "@/lib/profileShare";
 import { createProfileExchange } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
@@ -58,7 +65,13 @@ const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview
 
 async function handleCopyJson() {
   await navigator.clipboard.writeText(jsonPreview.value);
-  toast.success(t("export.toast.copied"));
+  toast.success(t("share.toast.jsonCopied"));
+}
+
+async function handleCopyShareLink() {
+  const payload = await encodeProfileSharePayload(jsonPreview.value);
+  await navigator.clipboard.writeText(`https://headerly.dev/share?profiles=${payload}`);
+  toast.success(t("share.toast.linkCopied"));
 }
 
 async function handleDownloadJson() {
@@ -111,7 +124,7 @@ async function handleDownloadJson() {
       <h1
         class="flex items-center gap-2 text-base font-semibold"
       >
-        {{ t("export.title") }}
+        {{ t("share.title") }}
       </h1>
       <div class="flex justify-end space-x-2">
         <Button
@@ -123,23 +136,32 @@ async function handleDownloadJson() {
           <i class="i-lucide-braces" />
           {{ t("common.beautify") }}
         </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          :disabled="!validJsonSchema"
-          @click="handleDownloadJson"
-        >
-          <i class="i-lucide-hard-drive-download" />
-          {{ t("export.saveAsFile") }}
-        </Button>
-        <Button
-          size="sm"
-          :disabled="!validJsonSchema"
-          @click="handleCopyJson"
-        >
-          <i class="i-lucide-copy" />
-          {{ t("common.copy") }}
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button
+              size="sm"
+              :disabled="!validJsonSchema"
+            >
+              <i class="i-lucide-share-2" />
+              {{ t("common.share") }}
+              <i class="i-lucide-chevron-down" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" :collision-padding="8">
+            <DropdownMenuItem @click="handleCopyShareLink">
+              <i class="i-lucide-link" />
+              {{ t("share.copyLink") }}
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="handleCopyJson">
+              <i class="i-lucide-copy" />
+              {{ t("share.copyToClipboard") }}
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="handleDownloadJson">
+              <i class="i-lucide-hard-drive-download" />
+              {{ t("share.saveAsFile") }}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
     <main
@@ -163,7 +185,7 @@ async function handleDownloadJson() {
           "
         >
           <i class="i-lucide-alert-triangle size-4" />
-          {{ t("export.sensitiveWarning") }}
+          {{ t("share.sensitiveWarning") }}
         </p>
       </div>
     </main>

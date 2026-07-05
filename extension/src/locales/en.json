@@ -98,7 +98,6 @@
     "deleteHeaderMod": "Delete this header mod",
     "domain": "Domain",
     "duplicate": "Duplicate",
-    "export": "Export",
     "github": "GitHub",
     "import": "Import",
     "light": "Light",
@@ -117,6 +116,7 @@
     "search": "Search",
     "selectOptions": "Select options",
     "settings": "Settings",
+    "share": "Share",
     "undo": "Undo",
     "value": "Value"
   },
@@ -213,14 +213,16 @@
       "travelPlaces": "Travel & Places"
     }
   },
-  "export": {
+  "share": {
+    "copyLink": "Copy Share Link",
+    "copyToClipboard": "Copy to Clipboard",
     "saveAsFile": "Save as File",
     "selectAll": "Select all",
-    "sensitiveWarning": "Exported profiles may include sensitive authentication tokens or cookies.",
-    "settings": "Export settings",
-    "title": "Export Profiles",
+    "sensitiveWarning": "Shared profiles may include sensitive authentication tokens or cookies.",
+    "title": "Share Profiles",
     "toast": {
-      "copied": "Profile JSON copied to clipboard"
+      "jsonCopied": "Profile JSON copied to clipboard",
+      "linkCopied": "Share link copied to clipboard"
     },
     "unselectAll": "Unselect all"
   },
@@ -256,6 +258,8 @@
       "fileLoaded": "File loaded successfully",
       "fileReadFailed": "Failed to read file",
       "invalidJson": "Import failed: Invalid JSON format",
+      "invalidShareLink": "Import failed: Invalid share link",
+      "invalidShareLinkDescription": "Check that the share link is complete and does not include extra characters.",
       "success": "Successfully imported {count} {label}!"
     }
   },
@@ -277,11 +281,11 @@
   "profile": {
     "actions": {
       "delete": "Delete",
-      "exportToJson": "Export to JSON",
       "openSecondaryOperations": "Open Secondary Operations Dropdown",
       "pause": "Pause",
       "resume": "Resume",
-      "ruleActionType": "Rule action type"
+      "ruleActionType": "Rule action type",
+      "share": "Share"
     },
     "alert": {
       "globalRuleDescription": "Add a condition to avoid issues.",
