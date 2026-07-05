@@ -4,14 +4,7 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { toast } from "vue-sonner";
-import InfoTooltip from "#/components/InfoTooltip.vue";
 import { Button } from "#/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -24,8 +17,6 @@ const route = useRoute();
 const { t } = useI18n();
 
 const selectedProfiles = ref<Profile[]>([]);
-
-const exportCookieValue = ref(false);
 
 const jsonPreview = ref("");
 
@@ -52,22 +43,16 @@ function updateJsonPreview() {
     return;
   }
   const profileExchange = createProfileExchange(profiles);
-  if (!exportCookieValue.value) {
-    for (const profile of profileExchange.profiles) {
-      for (const group of profile.syncCookieGroups ?? []) {
-        for (const item of group.items) {
-          item.value = "";
-        }
+  for (const profile of profileExchange.profiles) {
+    for (const group of profile.syncCookieGroups ?? []) {
+      for (const item of group.items) {
+        item.value = "";
       }
     }
   }
 
   jsonPreview.value = JSON.stringify(profileExchange, null, 2);
 }
-
-watch(exportCookieValue, () => {
-  updateJsonPreview();
-});
 
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview);
 
@@ -129,32 +114,6 @@ async function handleDownloadJson() {
         {{ t("export.title") }}
       </h1>
       <div class="flex justify-end space-x-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <Button
-              type="button"
-              size="icon-sm"
-              variant="secondary"
-            >
-              <i class="i-lucide-settings size-4" />
-              <span class="sr-only">{{ t("export.settings") }}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" :collision-padding="8" class="z-1000">
-            <DropdownMenuCheckboxItem
-              v-model="exportCookieValue"
-              class="min-w-52 justify-between gap-3"
-            >
-              <span>{{ t("export.cookieValue") }}</span>
-              <span
-                @click.stop
-                @pointerdown.stop
-              >
-                <InfoTooltip :description="t('export.cookieValueDescription')" />
-              </span>
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         <Button
           size="sm"
           variant="secondary"

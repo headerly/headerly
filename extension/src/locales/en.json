@@ -214,8 +214,6 @@
     }
   },
   "export": {
-    "cookieValue": "Export cookie value",
-    "cookieValueDescription": "Do not share cookies casually. They may expose private information or login credentials.",
     "saveAsFile": "Save as File",
     "selectAll": "Select all",
     "sensitiveWarning": "Exported profiles may include sensitive authentication tokens or cookies.",

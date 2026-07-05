@@ -214,8 +214,6 @@
     }
   },
   "export": {
-    "cookieValue": "导出 Cookie 值",
-    "cookieValueDescription": "请勿随意分享 Cookie，它们可能暴露隐私信息或登录凭据。",
     "saveAsFile": "保存为文件",
     "selectAll": "全选",
     "sensitiveWarning": "导出的配置可能包含敏感的身份验证 token 或 Cookie。",
