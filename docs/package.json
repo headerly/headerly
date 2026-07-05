@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "deploy": "vitepress build && wrangler deploy",
+    "deploy": "vitepress build && wrangler pages deploy",
     "preview": "vitepress build && wrangler preview",
     "typecheck": "vue-tsc --noEmit"
   },
