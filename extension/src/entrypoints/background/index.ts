@@ -62,11 +62,7 @@ export default defineBackground({
       });
     });
     onMessage("openSharedProfilesImport", async ({ data: query, sender }) => {
-      const normalizedQuery = match(query.startsWith("?"))
-        .with(true, () => query)
-        .with(false, () => "")
-        .exhaustive();
-      const importUrl = browser.runtime.getURL(`/popup.html#/import${normalizedQuery}`);
+      const importUrl = browser.runtime.getURL(`/popup.html#/import${query}`);
       if (sender.tab?.id !== undefined) {
         try {
           await browser.tabs.update(sender.tab.id, { url: importUrl });
