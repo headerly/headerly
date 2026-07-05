@@ -24,20 +24,25 @@ export function setupSyncCookies(options: {
   const { profileManagerMutex, profileManagerItem } = options;
   // Cached identities let the cookie listener ignore unrelated cookie changes.
   let syncCookieKeys: Set<string> | undefined;
+  // A counted signature detects duplicate sync-cookie identities added by imports.
+  let syncCookieIdentitySignature: string | undefined;
   // Cookie changes can arrive in bursts, so only the latest change per cookie is kept.
   const pendingSyncCookieChanges = new Map<string, { cookie: ChangedCookie; removed: boolean }>();
   let syncCookieFlushTimer: ReturnType<typeof setTimeout> | undefined;
 
   profileManagerItem.getValue().then(async (manager) => {
     syncCookieKeys = createSyncCookieKeySet(manager);
+    syncCookieIdentitySignature = createSyncCookieIdentitySignature(manager);
     await syncAllCookieValues();
   });
 
   profileManagerItem.watch((manager) => {
     const nextSyncCookieKeys = createSyncCookieKeySet(manager);
-    const keysChanged = !areSetsEqual(syncCookieKeys, nextSyncCookieKeys);
+    const nextSyncCookieIdentitySignature = createSyncCookieIdentitySignature(manager);
+    const syncCookieIdentitiesChanged = syncCookieIdentitySignature !== nextSyncCookieIdentitySignature;
     syncCookieKeys = nextSyncCookieKeys;
-    if (keysChanged) {
+    syncCookieIdentitySignature = nextSyncCookieIdentitySignature;
+    if (syncCookieIdentitiesChanged) {
       syncAllCookieValues();
     }
   });
@@ -115,6 +120,7 @@ export function setupSyncCookies(options: {
   async function setProfileManagerIfChanged(manager: ProfileManager, nextManager: ProfileManager) {
     if (!isEqual(manager, nextManager)) {
       syncCookieKeys = createSyncCookieKeySet(nextManager);
+      syncCookieIdentitySignature = createSyncCookieIdentitySignature(nextManager);
       await profileManagerItem.setValue(nextManager);
     }
   }
@@ -127,33 +133,31 @@ async function hasCookiesPermission() {
 function createSyncCookieKeySet(manager: Pick<ProfileManager, "profiles">) {
   const keys = new Set<string>();
 
-  for (const profile of manager.profiles) {
-    for (const group of profile.syncCookieGroups ?? []) {
-      for (const item of group.items) {
-        if (hasValidCookieIdentity(item)) {
-          keys.add(createSyncCookieKey(item));
-        }
-      }
-    }
+  for (const key of iterateSyncCookieKeys(manager)) {
+    keys.add(key);
   }
 
   return keys;
 }
 
-function hasSyncCookieKey(keys: Set<string>, cookie: CookieIdentity) {
-  return keys.has(createSyncCookieKey(cookie));
+function createSyncCookieIdentitySignature(manager: Pick<ProfileManager, "profiles">) {
+  return [...iterateSyncCookieKeys(manager)].sort().join("\n\n");
 }
 
-function areSetsEqual(a: Set<string> | undefined, b: Set<string>) {
-  if (!a || a.size !== b.size) {
-    return false;
-  }
-  for (const value of a) {
-    if (!b.has(value)) {
-      return false;
+function* iterateSyncCookieKeys(manager: Pick<ProfileManager, "profiles">) {
+  for (const profile of manager.profiles) {
+    for (const group of profile.syncCookieGroups ?? []) {
+      for (const item of group.items) {
+        if (hasValidCookieIdentity(item)) {
+          yield createSyncCookieKey(item);
+        }
+      }
     }
   }
-  return true;
+}
+
+function hasSyncCookieKey(keys: Set<string>, cookie: CookieIdentity) {
+  return keys.has(createSyncCookieKey(cookie));
 }
 
 function createSyncCookieKey(cookie: CookieIdentity) {
