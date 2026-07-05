@@ -1,0 +1,6 @@
+name = "headerly"
+pages_build_output_dir = ".vitepress/dist"
+compatibility_date = "2026-07-05"
+
+[vars]
+NODE_VERSION = "24.15.0"
