@@ -8,4 +8,4 @@ hero:
   actions:
     - theme: brand
       text: "How to use the Sync Cookies feature"
-      link: /how-to-use-the-sync-cookies-feature
+      link: /guide/sync-cookies-feature

@@ -228,6 +228,7 @@
     "actions": {
       "addItem": "添加新项目",
       "deleteGroup": "删除此分组",
+      "openDocumentation": "打开文档",
       "transferGroupTypeTo": "转换分组类型为"
     },
     "collapse": "折叠分组",
@@ -314,6 +315,7 @@
     "sidebar": {
       "changelog": "更新日志",
       "defaultActionType": "默认操作类型",
+      "documentation": "文档",
       "makeDefault": "设为默认",
       "newProfile": "新建配置",
       "openInTab": "在标签页中打开",
@@ -381,11 +383,6 @@
     }
   },
   "syncCookie": {
-    "description": {
-      "behavior": "将指定的 Cookie name 和 value 附加到 HTTP request header 上；不支持 value 为空字符串的 Cookie。",
-      "syncValue": "注意：此功能中 Cookie 的 value 始终和源网站保持同步，如果源 Cookie 被删除，这里的 value 也会被清空。",
-      "uniqueness": "唯一性要求：不支持匿名窗口、Host only flag 以及 Partitioned Cookie / CHIPS 等场景；此类场景不满足通过 name + path 定位到唯一 Cookie 的要求，此功能无法正常使用。"
-    },
     "missing": "（缺失）",
     "pickCookie": "选择 Cookie",
     "refreshTooltip": "刷新以获取最新 Cookie",

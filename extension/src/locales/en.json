@@ -228,6 +228,7 @@
     "actions": {
       "addItem": "Add a new item",
       "deleteGroup": "Delete this group",
+      "openDocumentation": "Open documentation",
       "transferGroupTypeTo": "Transfer group type to"
     },
     "collapse": "Collapse group",
@@ -314,6 +315,7 @@
     "sidebar": {
       "changelog": "Changelog",
       "defaultActionType": "Action type by default",
+      "documentation": "Documentation",
       "makeDefault": "Make as default",
       "newProfile": "New profile",
       "openInTab": "Open in tab",
@@ -381,11 +383,6 @@
     }
   },
   "syncCookie": {
-    "description": {
-      "behavior": "Appends the specified cookie name and value to HTTP request headers. Cookies with an empty string value are not supported.",
-      "syncValue": "Note: the cookie value in this feature always stays in sync with the source website. If the source cookie is deleted, this value will also be cleared.",
-      "uniqueness": "Uniqueness requirement: incognito windows, Host only flag, Partitioned Cookie / CHIPS, and similar cases are not supported. These cases cannot identify a unique cookie by name + path, so this feature will not work correctly."
-    },
     "missing": "(Missing)",
     "pickCookie": "Pick a cookie",
     "refreshTooltip": "Refresh to get the latest cookie",

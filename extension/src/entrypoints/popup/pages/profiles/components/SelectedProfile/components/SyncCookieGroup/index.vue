@@ -44,11 +44,7 @@ function deleteGroup() {
       <GroupActions
         v-model:list="group.items"
         v-model:type="group.type"
-        :description="[
-          t('syncCookie.description.behavior'),
-          t('syncCookie.description.uniqueness'),
-          t('syncCookie.description.syncValue'),
-        ]"
+        documentation-link="https://headerly.dev/guide/sync-cookies-feature"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />

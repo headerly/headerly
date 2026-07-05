@@ -175,6 +175,12 @@ function getRuleActionTypeDescription(type: RuleActionType) {
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuItem as-child>
+                <a href="https://headerly.dev/guide/getting-started" target="_blank">
+                  <i class="i-lucide-book-open size-4 shrink-0" />
+                  {{ t("profile.sidebar.documentation") }}
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem as-child>
                 <a href="https://github.com/headerly/headerly" target="_blank">
                   <i class="i-lucide-github size-4 shrink-0" />
                   {{ t("common.github") }}

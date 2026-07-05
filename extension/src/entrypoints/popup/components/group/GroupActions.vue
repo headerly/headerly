@@ -15,8 +15,9 @@ const list = defineModel<T[]>("list", {
   required: true,
 });
 
-const { description, type } = defineProps<{
+const { description, documentationLink, type } = defineProps<{
   description?: string | string[] | VNode;
+  documentationLink?: string;
   type?: GroupType;
 }>();
 
@@ -44,6 +45,25 @@ function transferGroupType() {
 <template>
   <div class="flex gap-1">
     <slot name="buttons-before" />
+    <TooltipProvider v-if="documentationLink">
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button as-child size="icon-xs" variant="secondary">
+            <a
+              :href="documentationLink"
+              target="_blank"
+              rel="noreferrer"
+              :aria-label="t('group.actions.openDocumentation')"
+            >
+              <i class="i-lucide-book-open size-4" />
+            </a>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          {{ t("group.actions.openDocumentation") }}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
     <TooltipProvider v-if="description">
       <Tooltip>
         <TooltipTrigger as-child>
