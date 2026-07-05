@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import { useStorage } from "@vueuse/core";
 import { match } from "ts-pattern";
-import { defineAsyncComponent, ref } from "vue";
+import { defineAsyncComponent, nextTick, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import Badge from "#/ui/badge/Badge.vue";
@@ -44,11 +44,21 @@ const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
 const importModalOpen = ref(false);
+const profileSearchOpen = ref(false);
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
 
 function openInFullscreen() {
   browser.tabs.create({ url: browser.runtime.getURL("/popup.html") });
+}
+
+const menuOpen = ref(false);
+async function openProfileSearch() {
+  // Without this sequence, the sheet closes immediately after opening because
+  // the dropdown moves focus while closing, making search unusable.
+  menuOpen.value = false;
+  await nextTick();
+  profileSearchOpen.value = true;
 }
 
 const ruleActionTypes = [
@@ -76,7 +86,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
   <aside
     :class="cn(`flex h-full flex-col justify-between border-r py-2`, className)"
   >
-    <DropdownMenu>
+    <DropdownMenu v-model:open="menuOpen">
       <DropdownMenuTrigger as-child>
         <Button
           variant="secondary"
@@ -108,7 +118,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                 :key="type"
               >
                 <DropdownMenuSubTrigger
-                  class="cursor-pointer justify-between"
+                  class="cursor-pointer justify-between gap-2"
                   hide-arrow
                   @click="profilesStore.addProfile(type)"
                 >
@@ -135,16 +145,17 @@ function getRuleActionTypeDescription(type: RuleActionType) {
               {{ t("profile.sidebar.profiles") }}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <ProfileManage>
-                <DropdownMenuItem @select.prevent>
-                  {{ t("common.search") }}
-                </DropdownMenuItem>
-              </ProfileManage>
+              <DropdownMenuItem @select.prevent="openProfileSearch">
+                <i class="i-lucide-search size-4 shrink-0" />
+                {{ t("common.search") }}
+              </DropdownMenuItem>
               <DropdownMenuItem @click="importModalOpen = true">
+                <i class="i-lucide-upload size-4 shrink-0" />
                 {{ t("common.import") }}
               </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <RouterLink to="/export">
+                  <i class="i-lucide-download size-4 shrink-0" />
                   {{ t("common.export") }}
                 </RouterLink>
               </DropdownMenuItem>
@@ -165,11 +176,13 @@ function getRuleActionTypeDescription(type: RuleActionType) {
             <DropdownMenuSubContent>
               <DropdownMenuItem as-child>
                 <a href="https://github.com/headerly/headerly" target="_blank">
+                  <i class="i-lucide-github size-4 shrink-0" />
                   {{ t("common.github") }}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <a href="https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md" target="_blank">
+                  <i class="i-lucide-scroll-text size-4 shrink-0" />
                   {{ t("profile.sidebar.changelog") }}
                 </a>
               </DropdownMenuItem>
@@ -227,5 +240,6 @@ function getRuleActionTypeDescription(type: RuleActionType) {
     </div>
 
     <ImportProfileModal v-model:open="importModalOpen" />
+    <ProfileManage v-model:open="profileSearchOpen" />
   </aside>
 </template>

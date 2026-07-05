@@ -13,8 +13,10 @@ import {
 } from "#/ui/sheet";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
+const open = defineModel<boolean>("open", {
+  default: false,
+});
 const profilesStore = useProfilesStore();
-const open = ref(false);
 const { t } = useI18n();
 
 const searchKeyword = ref("");
@@ -40,7 +42,7 @@ const searchResults = computed(() => {
 
 <template>
   <Sheet v-model:open="open">
-    <SheetTrigger as-child>
+    <SheetTrigger v-if="$slots.default" as-child>
       <slot />
     </SheetTrigger>
     <SheetContent
