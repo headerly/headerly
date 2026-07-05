@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/headerly/headerly/compare/v1.9.0...v1.10.0) (2026-07-05)
+
+
+### Features
+
+* support importing and exporting profile data via links ([#49](https://github.com/headerly/headerly/issues/49)) ([f28b5c6](https://github.com/headerly/headerly/commit/f28b5c6f5634c9b5443a454377b9a351692e7468))
+
 ## [1.9.0](https://github.com/headerly/headerly/compare/v1.8.0...v1.9.0) (2026-07-05)
 
 
