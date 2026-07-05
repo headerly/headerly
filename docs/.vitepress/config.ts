@@ -8,21 +8,20 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Examples", link: "/markdown-examples" },
+
     ],
 
     sidebar: [
       {
-        text: "Examples",
+        text: "Guides",
         items: [
-          { text: "Markdown Examples", link: "/markdown-examples" },
-          { text: "Runtime API Examples", link: "/api-examples" },
+          { text: "How to use the Sync Cookies feature", link: "/how-to-use-the-sync-cookies-feature" },
         ],
       },
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/vuejs/vitepress" },
+      { icon: "github", link: "https://github.com/headerly/headerly" },
     ],
   },
 });
