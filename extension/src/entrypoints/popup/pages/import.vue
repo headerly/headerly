@@ -1,35 +1,48 @@
 <script setup lang="ts">
 import { match } from "ts-pattern";
-import { ref, useTemplateRef } from "vue";
+import { ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import JsonEditor from "#/components/JsonEditor/index.vue";
 import { Button } from "#/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "#/ui/dialog";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { decodeProfileSharePayload } from "@/lib/profileShare";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
-import { ensureCookiesPermission } from "@/lib/utils";
-
-const open = defineModel<boolean>("open", { required: true });
-
-const userInput = ref("");
+import { cn, ensureCookiesPermission } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
+const route = useRoute();
+const router = useRouter();
 const fileInputRef = useTemplateRef("fileInputRef");
 const { t } = useI18n();
 
+const userInput = ref("");
+
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(userInput);
+
+watch(() => route.query.profiles, async (profiles) => {
+  if (typeof profiles === "string" && userInput.value === "") {
+    try {
+      userInput.value = await decodeProfileSharePayload(profiles);
+      userInput.value = formatJson();
+    } catch (error) {
+      console.error("Failed to decode shared profiles:", error);
+      toast.error(t("import.toast.invalidShareLink"), {
+        description: t("import.toast.invalidShareLinkDescription"),
+      });
+    }
+  }
+}, { immediate: true });
 
 function handleFormatJson() {
   userInput.value = formatJson();
+}
+
+async function closeImportPage() {
+  userInput.value = "";
+  await router.push("/");
 }
 
 async function confirmImport() {
@@ -55,8 +68,7 @@ async function confirmImport() {
       .with(false, () => t("import.profiles"))
       .exhaustive();
     toast.success(t("import.toast.success", { count: profiles.length, label: profileCountLabel }));
-    open.value = false;
-    userInput.value = "";
+    await router.push("/profiles");
   } catch (error) {
     console.error("Import failed:", error);
     toast.error(t("import.toast.invalidJson"));
@@ -90,37 +102,63 @@ function handleFileChange(event: Event) {
 
   target.value = "";
 }
-
-function handleClose() {
-  open.value = false;
-  userInput.value = "";
-}
 </script>
 
 <template>
-  <Dialog v-model:open="open">
-    <DialogContent
+  <div
+    v-if="profilesStore.ready"
+    :class="cn(
+      'flex size-full items-center justify-center bg-background',
+    )"
+  >
+    <div
       class="
-        flex flex-col
-        sm:max-w-2xl
+        flex size-full flex-col overflow-y-auto rounded-lg border bg-background
+        py-2 shadow-lg
       "
     >
-      <DialogHeader>
-        <DialogTitle class="flex items-center gap-2">
+      <header
+        class="
+          sticky top-0 z-10 flex items-center justify-between gap-4 border-b
+          bg-background px-4 pb-2
+        "
+      >
+        <h1 class="text-lg leading-none font-semibold">
           {{ t("import.title") }}
-        </DialogTitle>
-      </DialogHeader>
+        </h1>
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          class="
+            -mr-2 opacity-70
+            hover:opacity-100
+          "
+          @click="closeImportPage"
+        >
+          <i class="i-lucide-x size-4" />
+          <span class="sr-only">{{ t("common.close") }}</span>
+        </Button>
+      </header>
 
-      <div class="flex min-h-0 flex-1 flex-col gap-3">
-        <JsonEditor v-model="userInput" height="280px" />
-      </div>
+      <main
+        class="flex min-h-0 flex-1 flex-col overflow-hidden"
+      >
+        <JsonEditor
+          v-model="userInput"
+          class="min-h-0 flex-1"
+          height="100%"
+        />
+      </main>
 
-      <DialogFooter class="flex flex-row justify-end gap-2">
-        <DialogClose as-child>
-          <Button variant="secondary" @click="handleClose">
-            {{ t("common.cancel") }}
-          </Button>
-        </DialogClose>
+      <footer
+        class="
+          sticky bottom-0 z-10 flex flex-row justify-end gap-2 border-t
+          bg-background px-4 pt-2
+        "
+      >
+        <Button variant="secondary" @click="closeImportPage">
+          {{ t("common.cancel") }}
+        </Button>
         <Button
           variant="secondary"
           :disabled="!validJson"
@@ -138,7 +176,6 @@ function handleClose() {
           {{ t("import.confirm") }}
         </Button>
 
-        <!-- Hidden file input -->
         <input
           ref="fileInputRef"
           type="file"
@@ -146,7 +183,7 @@ function handleClose() {
           class="hidden"
           @change="handleFileChange"
         >
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      </footer>
+    </div>
+  </div>
 </template>

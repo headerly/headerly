@@ -28,7 +28,7 @@ const profile = computed(() => profilesStore.manager.profiles.find(p => p.id ===
 const actionIdGroups = [
   ["toggle", "duplicate", "delete", "comments", "rulePriority", "ruleActionType"],
   "separator",
-  ["copyJson"],
+  ["shareProfile"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const actionGroups = transformIdsToActions(actionIdGroups);
 

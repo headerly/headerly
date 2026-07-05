@@ -18,6 +18,7 @@ const isPopup = browser.extension.getViews({ type: "popup" }).includes(window);
     <RouterView />
     <Toaster
       :theme="settingsStore.theme === 'auto' ? 'system' : settingsStore.theme"
+      position="top-center"
       rich-colors
     />
   </div>

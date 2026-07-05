@@ -98,7 +98,6 @@
     "deleteHeaderMod": "删除此请求头修改项",
     "domain": "域名",
     "duplicate": "复制",
-    "export": "导出",
     "github": "GitHub",
     "import": "导入",
     "light": "浅色",
@@ -117,6 +116,7 @@
     "search": "搜索",
     "selectOptions": "选择选项",
     "settings": "设置",
+    "share": "分享",
     "undo": "撤销",
     "value": "值"
   },
@@ -213,14 +213,16 @@
       "travelPlaces": "旅行与地点"
     }
   },
-  "export": {
+  "share": {
+    "copyLink": "复制分享链接",
+    "copyToClipboard": "复制到剪贴板",
     "saveAsFile": "保存为文件",
     "selectAll": "全选",
-    "sensitiveWarning": "导出的配置可能包含敏感的身份验证 token 或 Cookie。",
-    "settings": "导出设置",
-    "title": "导出配置",
+    "sensitiveWarning": "分享的配置可能包含敏感的身份验证 token 或 Cookie。",
+    "title": "分享配置",
     "toast": {
-      "copied": "配置 JSON 已复制到剪贴板"
+      "jsonCopied": "配置 JSON 已复制到剪贴板",
+      "linkCopied": "分享链接已复制到剪贴板"
     },
     "unselectAll": "取消全选"
   },
@@ -256,6 +258,8 @@
       "fileLoaded": "文件加载成功",
       "fileReadFailed": "读取文件失败",
       "invalidJson": "导入失败：JSON 格式无效",
+      "invalidShareLink": "导入失败：分享链接无效",
+      "invalidShareLinkDescription": "请检查分享链接是否完整，且没有包含多余字符。",
       "success": "成功导入 {count} {label}！"
     }
   },
@@ -277,11 +281,11 @@
   "profile": {
     "actions": {
       "delete": "删除",
-      "exportToJson": "导出为 JSON",
       "openSecondaryOperations": "打开更多操作下拉菜单",
       "pause": "暂停",
       "resume": "恢复",
-      "ruleActionType": "规则操作类型"
+      "ruleActionType": "规则操作类型",
+      "share": "分享"
     },
     "alert": {
       "globalRuleDescription": "添加一个条件以避免问题。",

@@ -73,8 +73,8 @@ function toggleProfile(profile: Profile, checked: unknown) {
 
 const selectAllLabel = computed(() =>
   match(allChecked.value === false || allChecked.value === "indeterminate")
-    .with(true, () => t("export.selectAll"))
-    .with(false, () => t("export.unselectAll"))
+    .with(true, () => t("share.selectAll"))
+    .with(false, () => t("share.unselectAll"))
     .exhaustive(),
 );
 </script>

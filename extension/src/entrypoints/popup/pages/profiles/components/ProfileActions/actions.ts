@@ -11,7 +11,7 @@ export type ActionKey
     | "comments"
     | "rulePriority"
     | "ruleActionType"
-    | "copyJson";
+    | "shareProfile";
 
 export interface ProfileActionItem {
   id: ActionKey;
@@ -81,8 +81,8 @@ export function useProfileActions() {
       onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
     },
     {
-      id: "copyJson",
-      label: () => t("profile.actions.exportToJson"),
+      id: "shareProfile",
+      label: () => t("profile.actions.share"),
       onClick: p => router.push(`/export/${p.id}`),
     },
   ] satisfies ProfileActionItem[];

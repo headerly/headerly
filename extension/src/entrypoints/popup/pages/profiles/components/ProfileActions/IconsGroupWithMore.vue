@@ -42,7 +42,7 @@ const mainActions = actions.filter(action => mainActionIds.includes(action.id));
 const moreActionIdGroups = [
   ["duplicate", "comments", "rulePriority", "ruleActionType"],
   "separator",
-  ["copyJson"],
+  ["shareProfile"],
 ] as const satisfies (ActionKey[] | "separator")[];
 const moreActionGroups = transformIdsToActions(moreActionIdGroups);
 
