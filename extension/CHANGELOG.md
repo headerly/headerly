@@ -12,8 +12,8 @@
 ### Bug Fixes
 
 * close main dropdown when opening sub actions and search ([cf2e5f3](https://github.com/headerly/headerly/commit/cf2e5f3e0881c121931776282a57219cb880bdd7))
-* **cookie**: prevent exported profiles from carrying sync cookie values ([a3dd7b3](https://github.com/headerly/headerly/commit/a3dd7b3d1d123e5fcfe7bd588f60f593a3007326))
-* **cookie**: refresh sync cookies when importing duplicate identities ([061cbc5](https://github.com/headerly/headerly/commit/061cbc5d3da67e1f13a5851e7ad4b27fd9e07c9e))
+* **cookie:** prevent exported profiles from carrying sync cookie values ([a3dd7b3](https://github.com/headerly/headerly/commit/a3dd7b3d1d123e5fcfe7bd588f60f593a3007326))
+* **cookie:** refresh sync cookies when importing duplicate identities ([061cbc5](https://github.com/headerly/headerly/commit/061cbc5d3da67e1f13a5851e7ad4b27fd9e07c9e))
 
 ## [1.8.0](https://github.com/headerly/headerly/compare/v1.7.0...v1.8.0) (2026-06-28)
 
