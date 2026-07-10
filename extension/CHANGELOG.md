@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.11.0](https://github.com/headerly/headerly/compare/v1.10.0...v1.11.0) (2026-07-10)
+
+
+### Features
+
+* extract domains from condition URL inputs ([7edf5f8](https://github.com/headerly/headerly/commit/7edf5f82857c30c0b8d2dbd9498486783be471f5))
+* highlight popular request domains condition ([b8de448](https://github.com/headerly/headerly/commit/b8de44899f5a1da424b66b6503486b3fb4bc6045))
+* match current tab URL filters by origin ([2ab4ba7](https://github.com/headerly/headerly/commit/2ab4ba7e84c9d718225d5d7e8bb36b33bcff4cbc))
+* shift-click a profile to pause or resume it ([4273a0a](https://github.com/headerly/headerly/commit/4273a0ad71b6b65c3f7c9fdb632dde09b636b732))
+
+
+### Bug Fixes
+
+* popup pages are unavailable in Vivaldi browser ([9d7b30b](https://github.com/headerly/headerly/commit/9d7b30b0274d826cfd5d59cb7fad4fc72f0d58ab))
+* some text in the tooltip is not displayed in the light theme ([1f059d2](https://github.com/headerly/headerly/commit/1f059d25a48c01a93ab3bc596342605c802608cf))
+
 ## [1.10.0](https://github.com/headerly/headerly/compare/v1.9.0...v1.10.0) (2026-07-05)
 
 
