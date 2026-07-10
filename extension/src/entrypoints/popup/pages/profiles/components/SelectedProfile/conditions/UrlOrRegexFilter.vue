@@ -118,6 +118,15 @@ function newField() {
 }
 
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
+
+function escapeRegex(value: string) {
+  // Metacharacters *+?()|
+  return value.replaceAll(/[-\\^$*+?()|.[\]{}:]/g, "\\$&");
+}
+
+function getCurrentTabRootUrlValue() {
+  return `${currentUrl.value!.origin}/`;
+}
 </script>
 
 <template>
@@ -145,7 +154,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
       >
         <Input
           v-model.trim.lazy="list[index]!.value"
-          placeholder="|https://example.com/"
+          placeholder="|https://example.com/*"
           class="
             text-base
             placeholder:italic
@@ -160,16 +169,17 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
                   size="icon-xs"
                   :disabled="!canUseCurrentUrl"
                   @click="() => {
+                    const rootUrl = getCurrentTabRootUrlValue();
                     list[index]!.value = filterType === 'urlFilter'
-                      // Metacharacters *+?()|
-                      ? `|${currentUrl!.href}|` : currentUrl!.href.replaceAll(/[-\\^$*+?()|.\[\]{}:]/g, '\\$&');
+                      ? `|${rootUrl}*`
+                      : `^${escapeRegex(rootUrl)}.*`;
                   }"
                 >
                   <i class="i-lucide-at-sign size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                {{ t("condition.urlFilter.useCurrentTabUrl") }}
+                {{ t("condition.urlFilter.useCurrentTabRootUrl") }}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

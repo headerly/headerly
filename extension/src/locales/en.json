@@ -195,7 +195,7 @@
       "separator": "{separator} - Separator: matches anything except letters, digits, {chars}, or end of URL.",
       "syntaxLink": "URL pattern syntax",
       "title": "URL Filter",
-      "useCurrentTabUrl": "Use the URL of the current tab",
+      "useCurrentTabRootUrl": "Use the root URL of the current tab",
       "wildcard": " - Wildcard: matches any characters."
     },
     "urlFilterCaseSensitive": {
@@ -336,7 +336,8 @@
   "redirectUrl": {
     "delete": "Delete this redirect URL",
     "description": "The redirect URL. Redirects to JavaScript URLs are not allowed.",
-    "title": "Redirect URL"
+    "title": "Redirect URL",
+    "useCurrentTabUrl": "Use the URL of the current tab"
   },
   "ruleAction": {
     "allow": "Allow",

@@ -36,6 +36,13 @@ async function getCurrentTabHostname() {
 
 function getDnrUrlFilterValue(hostname: string) {
   return match(Boolean(hostname))
+    .with(true, () => `||${hostname}/*`)
+    .with(false, () => "")
+    .exhaustive();
+}
+
+function getDnrDomainFilterValue(hostname: string) {
+  return match(Boolean(hostname))
     .with(true, () => `||${hostname}/`)
     .with(false, () => "")
     .exhaustive();
@@ -171,7 +178,7 @@ export function useCreateTabs(): Tab[] {
                 {
                   id: uuidv7(),
                   enabled: true,
-                  value: getDnrUrlFilterValue(hostname),
+                  value: getDnrDomainFilterValue(hostname),
                 },
               ],
             };
@@ -213,7 +220,7 @@ export function useCreateTabs(): Tab[] {
                 {
                   id: uuidv7(),
                   enabled: true,
-                  value: getDnrUrlFilterValue(hostname),
+                  value: getDnrDomainFilterValue(hostname),
                 },
               ],
             };
@@ -235,7 +242,7 @@ export function useCreateTabs(): Tab[] {
                 {
                   id: uuidv7(),
                   enabled: true,
-                  value: getDnrUrlFilterValue(hostname),
+                  value: getDnrDomainFilterValue(hostname),
                 },
               ],
             };

@@ -195,7 +195,7 @@
       "separator": "{separator} - 分隔符：匹配除字母、数字和 {chars} 以外的任意内容，或 URL 结尾。",
       "syntaxLink": "URL 模式语法",
       "title": "URL 过滤器",
-      "useCurrentTabUrl": "使用当前标签页的 URL",
+      "useCurrentTabRootUrl": "使用当前标签页的根 URL",
       "wildcard": " - 通配符：匹配任意字符。"
     },
     "urlFilterCaseSensitive": {
@@ -336,7 +336,8 @@
   "redirectUrl": {
     "delete": "删除此重定向 URL",
     "description": "重定向 URL。不允许重定向到 JavaScript URL。",
-    "title": "重定向 URL"
+    "title": "重定向 URL",
+    "useCurrentTabUrl": "使用当前标签页的 URL"
   },
   "ruleAction": {
     "allow": "允许",

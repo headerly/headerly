@@ -83,7 +83,7 @@ function deleteGroup() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                {{ t("condition.urlFilter.useCurrentTabUrl") }}
+                {{ t("redirectUrl.useCurrentTabUrl") }}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
