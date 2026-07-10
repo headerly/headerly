@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { Toaster } from "vue-sonner";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "./stores/useSettingsStore";
@@ -6,7 +7,13 @@ import "vue-sonner/style.css";
 
 const settingsStore = useSettingsStore();
 
-const isPopup = browser.extension.getViews({ type: "popup" }).includes(window);
+// https://github.com/headerly/headerly/issues/53
+// const isPopup = browser.extension.getViews({ type: "popup" }).includes(window);
+const isPopup = ref(true);
+
+onMounted(async () => {
+  isPopup.value = !(await browser.tabs.getCurrent());
+});
 </script>
 
 <template>
