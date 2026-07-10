@@ -74,7 +74,10 @@ function transferGroupType() {
         <TooltipContent
           :collision-padding="20"
           side="top"
-          class="prose prose-sm max-w-lg"
+          class="
+            prose-sm max-w-lg prose-invert
+            dark:prose
+          "
         >
           <template v-if="typeof description === 'string'">
             {{ description }}

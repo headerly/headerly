@@ -4,6 +4,8 @@
 @plugin '@egoist/tailwindcss-icons';
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter Variable", sans-serif;
   --font-mono: "Roboto Mono Variable", monospace;
