@@ -36,6 +36,15 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
   }
 }
 
+function handleProfileClick(event: MouseEvent, profileId: string) {
+  if (event.shiftKey) {
+    profilesStore.toggleProfileEnabled(profileId);
+    return;
+  }
+
+  profilesStore.manager.selectedProfileId = profileId;
+}
+
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 useSortableAndAutoAnimate({
@@ -60,8 +69,7 @@ useSortableAndAutoAnimate({
         <ProfileOption
           :index
           :profile
-          :show-shortcut-hint="true"
-          @click="profilesStore.manager.selectedProfileId = profile.id"
+          @click="event => handleProfileClick(event, profile.id)"
           @mousedown.middle.prevent="profilesStore.toggleProfileEnabled(profile.id)"
         />
       </ContextMenuWithTrigger>

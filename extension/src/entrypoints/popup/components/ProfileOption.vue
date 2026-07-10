@@ -14,13 +14,12 @@ import { cn } from "@/lib/utils";
 const { profile, class: className } = defineProps<{
   profile: Profile;
   index: number;
-  showShortcutHint?: boolean;
   class?: string;
   as?: string;
 }>();
 
 const emit = defineEmits<{
-  (e: "click"): void;
+  (e: "click", event: MouseEvent): void;
 }>();
 
 const profilesStore = useProfilesStore();
@@ -34,7 +33,7 @@ const isSelected = computed(() => profilesStore.manager.selectedProfileId === pr
     :variant="isSelected ? 'default' : 'secondary'"
     :class="cn('relative flex text-xl select-none', isSelected && 'bg-brand!', className)"
     :as
-    @click="emit('click')"
+    @click="emit('click', $event)"
   >
     <TooltipProvider ignore-non-keyboard-focus>
       <Tooltip>
