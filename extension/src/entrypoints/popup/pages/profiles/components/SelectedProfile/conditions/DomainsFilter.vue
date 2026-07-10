@@ -109,6 +109,24 @@ function newField() {
   addItemToGroup(domainsFilter.value.items, item, domainsFilter.value.type);
 }
 
+function getDomainFromUserInput(value: string) {
+  const userInput = value.trim();
+  if (userInput === "") {
+    return "";
+  }
+
+  for (const urlLikeValue of [userInput, `https://${userInput}`]) {
+    try {
+      const url = new URL(urlLikeValue);
+      if (url.hostname) {
+        return url.hostname;
+      }
+    } catch {}
+  }
+
+  return userInput;
+}
+
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 </script>
 
@@ -137,12 +155,16 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
         "
       >
         <Input
-          v-model.trim.lazy="domainsFilter.items[index]!.value"
+          :model-value="domainsFilter.items[index]!.value"
+          :model-modifiers="{ lazy: true }"
           placeholder="example.com"
           class="
             w-full text-base
             placeholder:italic
           "
+          @update:model-value="(value) => {
+            domainsFilter.items[index]!.value = getDomainFromUserInput(value);
+          }"
         />
         <div class="flex gap-0.5">
           <TooltipProvider>
