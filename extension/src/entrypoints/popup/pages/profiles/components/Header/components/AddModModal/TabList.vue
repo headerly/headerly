@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
 import { ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import Badge from "#/ui/badge/Badge.vue";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 
 interface Item {
@@ -9,6 +11,7 @@ interface Item {
   description: string;
   action: () => void;
   disabled?: boolean;
+  isPopular?: boolean;
 }
 
 const props = defineProps<{
@@ -19,6 +22,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
+
+const { t } = useI18n();
 
 const allOrders = useStorage<{
   [key in typeof props.tabValue]?: string[];
@@ -93,8 +98,12 @@ useSortableAndAutoAnimate({
           emit('close');
         }"
       >
-        <div class="font-semibold">
+        <div class="mb-1 flex items-center gap-2 font-semibold">
           {{ item.title }}
+          <Badge v-if="item.isPopular" class="gap-1">
+            <i class="i-lucide-flame size-3" />
+            {{ t("common.popular") }}
+          </Badge>
         </div>
         <div class="text-left text-xs text-muted-foreground">
           {{ item.description }}

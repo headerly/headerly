@@ -13,6 +13,7 @@ interface Tab {
     description: string;
     action: () => void;
     disabled?: boolean;
+    isPopular?: boolean;
   }[];
 }
 
@@ -97,6 +98,29 @@ export function useCreateTabs(): Tab[] {
       value: "conditions",
       items: [
         {
+          key: "request-domains",
+          title: t("addModModal.items.requestDomains.title"),
+          description: t("addModModal.items.requestDomains.description"),
+          isPopular: true,
+          action: async () => {
+            const hostname = await getCurrentTabHostname();
+            profilesStore.selectedProfile.filters.requestDomains = {
+              type: "checkbox",
+              items: [
+                {
+                  id: uuidv7(),
+                  enabled: true,
+                  value: hostname,
+                },
+              ],
+            };
+          },
+          get disabled() {
+            return profilesStore.selectedProfile.filters.requestDomains
+              && profilesStore.selectedProfile.filters.requestDomains.items.length > 0;
+          },
+        },
+        {
           key: "url-filter",
           title: t("addModModal.items.urlFilter.title"),
           description: t("addModModal.items.urlFilter.description"),
@@ -133,28 +157,6 @@ export function useCreateTabs(): Tab[] {
             return (profilesStore.selectedProfile.filters.urlFilter
               && profilesStore.selectedProfile.filters.urlFilter.length > 0)
             || Boolean(profilesStore.selectedProfile.filters.regexFilter?.length);
-          },
-        },
-        {
-          key: "request-domains",
-          title: t("addModModal.items.requestDomains.title"),
-          description: t("addModModal.items.requestDomains.description"),
-          action: async () => {
-            const hostname = await getCurrentTabHostname();
-            profilesStore.selectedProfile.filters.requestDomains = {
-              type: "checkbox",
-              items: [
-                {
-                  id: uuidv7(),
-                  enabled: true,
-                  value: hostname,
-                },
-              ],
-            };
-          },
-          get disabled() {
-            return profilesStore.selectedProfile.filters.requestDomains
-              && profilesStore.selectedProfile.filters.requestDomains.items.length > 0;
           },
         },
         {
