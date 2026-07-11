@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { match } from "ts-pattern";
+import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
 const props = withDefaults(defineProps<{
@@ -16,6 +17,8 @@ const emits = defineEmits<{
   (e: "update:modelValue", payload: string): void;
 }>();
 
+const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
+
 function emitUpdate(event: Event) {
   const value = (event.target as HTMLInputElement).value;
   emits("update:modelValue", match(props.modelModifiers.trim === true)
@@ -23,10 +26,18 @@ function emitUpdate(event: Event) {
     .with(false, () => value)
     .exhaustive());
 }
+
+defineExpose({
+  input: inputRef,
+  focus: (options?: FocusOptions) => inputRef.value?.focus(options),
+  blur: () => inputRef.value?.blur(),
+  select: () => inputRef.value?.select(),
+});
 </script>
 
 <template>
   <input
+    ref="inputRef"
     :value="modelValue ?? defaultValue"
     data-slot="input"
     :class="cn(

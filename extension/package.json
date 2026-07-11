@@ -33,6 +33,7 @@
     "codemirror": "catalog:",
     "codemirror-json-schema": "catalog:",
     "es-toolkit": "catalog:",
+    "fuse.js": "catalog:",
     "motion-v": "catalog:",
     "pinia": "catalog:",
     "reka-ui": "catalog:",

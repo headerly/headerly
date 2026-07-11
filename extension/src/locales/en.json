@@ -336,8 +336,11 @@
       "title": "Edit Rule Priority"
     },
     "search": {
-      "noProfiles": "No profiles found.",
+      "batchManage": "Batch manage",
+      "deleteSelectedProfiles": "Delete all selected profiles",
+      "pauseSelectedProfiles": "Pause all selected profiles",
       "placeholder": "Search profiles...",
+      "resumeSelectedProfiles": "Resume all selected profiles",
       "title": "Search profiles"
     },
     "sidebar": {
