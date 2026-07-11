@@ -1,4 +1,4 @@
-import type { GroupType, HeaderModGroup, Profile, RuleActionType } from "@/lib/schema";
+import type { GroupType, HeaderModGroup, Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { defineStore } from "pinia";
@@ -34,15 +34,30 @@ export const useProfilesStore = defineStore("profiles", () => {
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);
 
+  const profileGroups = computed({
+    get() {
+      manager.value.profileGroups ??= [];
+      return manager.value.profileGroups;
+    },
+    set(value: ProfileGroup[]) {
+      manager.value.profileGroups = value;
+    },
+  });
+
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
 
-  async function addProfile(ruleActionType: RuleActionType) {
+  function getProfileGroup(groupId?: string) {
+    return profileGroups.value.find(group => group.id === groupId);
+  }
+
+  async function addProfile(ruleActionType: RuleActionType, groupId?: string) {
     const currentTabHostname = await getCurrentTabHostname();
     const newProfile = createProfile({
       name: `New Profile ${manager.value.profiles.length + 1}`,
       ruleActionType,
+      groupId,
       filters: {
         requestDomains: {
           type: "checkbox",
@@ -66,6 +81,7 @@ export const useProfilesStore = defineStore("profiles", () => {
 
     // Using `stripProfileIds` and `addProfileIds` ensures deep cloning and generation of fresh UUIDs for nested arrays.
     const newProfile = addProfileIds(stripProfileIds(targetProfile));
+    newProfile.groupId = targetProfile.groupId;
     const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
     manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
     manager.value.selectedProfileId = newProfile.id;
@@ -106,8 +122,82 @@ export const useProfilesStore = defineStore("profiles", () => {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
     const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
     if (targetProfile) {
-      targetProfile.enabled = !targetProfile.enabled;
+      setProfileEnabled(targetProfile.id, !targetProfile.enabled);
     }
+  }
+
+  function setProfileEnabled(profileId: string, enabled: boolean) {
+    const targetProfile = manager.value.profiles.find(p => p.id === profileId);
+    if (!targetProfile)
+      return;
+
+    targetProfile.enabled = enabled;
+    const group = getProfileGroup(targetProfile.groupId);
+    if (enabled && group?.type === "radio") {
+      manager.value.profiles
+        .filter(profile => profile.groupId === group.id && profile.id !== targetProfile.id)
+        .forEach(profile => profile.enabled = false);
+    }
+  }
+
+  function createProfileGroup(overrides?: Partial<ProfileGroup>) {
+    const group = {
+      id: uuidv7(),
+      name: `Group ${profileGroups.value.length + 1}`,
+      color: "slate",
+      type: "checkbox",
+      ...(overrides ?? {}),
+    } as const satisfies ProfileGroup;
+    profileGroups.value.push(group);
+    return group;
+  }
+
+  function addProfileToGroup(profileId: string, groupId: string) {
+    const profile = manager.value.profiles.find(p => p.id === profileId);
+    const group = getProfileGroup(groupId);
+    if (!profile || !group)
+      return;
+
+    profile.groupId = group.id;
+    if (group.type === "radio" && profile.enabled) {
+      setProfileEnabled(profile.id, true);
+    }
+  }
+
+  function addProfileToNewGroup(profileId: string) {
+    const group = createProfileGroup();
+    addProfileToGroup(profileId, group.id);
+    return group;
+  }
+
+  function removeProfileFromGroup(profileId: string) {
+    const profile = manager.value.profiles.find(p => p.id === profileId);
+    if (profile) {
+      delete profile.groupId;
+    }
+  }
+
+  function updateProfileGroup(groupId: string, value: Partial<Pick<ProfileGroup, "color" | "name" | "type">>) {
+    const group = getProfileGroup(groupId);
+    if (!group)
+      return;
+
+    Object.assign(group, value);
+    if (value.type === "radio") {
+      const enabledProfiles = manager.value.profiles.filter(profile => profile.groupId === group.id && profile.enabled);
+      enabledProfiles.slice(1).forEach(profile => profile.enabled = false);
+    }
+  }
+
+  function deleteProfileGroup(groupId: string) {
+    const groupIndex = profileGroups.value.findIndex(group => group.id === groupId);
+    if (groupIndex === -1)
+      return;
+
+    profileGroups.value.splice(groupIndex, 1);
+    manager.value.profiles
+      .filter(profile => profile.groupId === groupId)
+      .forEach(profile => delete profile.groupId);
   }
 
   function addHeaderActionGroup(type: ActionType, groupType: GroupType) {
@@ -146,6 +236,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   return {
     // State
     manager,
+    profileGroups,
     profileId2RelatedRuleIdRecord,
     profileId2ErrorMessageRecord,
     canUndo,
@@ -153,11 +244,19 @@ export const useProfilesStore = defineStore("profiles", () => {
     ready,
     // Getters
     selectedProfile,
+    getProfileGroup,
     // Actions
     addProfile,
+    addProfileToGroup,
+    addProfileToNewGroup,
+    createProfileGroup,
+    deleteProfileGroup,
     duplicateProfile,
     deleteProfile,
+    removeProfileFromGroup,
+    setProfileEnabled,
     toggleProfileEnabled,
+    updateProfileGroup,
     addHeaderActionGroup,
     addSyncCookieGroup,
     addRedirectUrlGroup,

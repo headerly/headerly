@@ -1,4 +1,4 @@
-import type { ShallowRef } from "vue";
+import type { ComputedRef, ShallowRef } from "vue";
 import autoAnimate from "@formkit/auto-animate";
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { nextTick, watch } from "vue";
@@ -6,6 +6,7 @@ import { nextTick, watch } from "vue";
 interface UseSortableAndAutoAnimateOptions<T> {
   listContainer: Readonly<ShallowRef<HTMLElement | null>>;
   list: T[];
+  disabled?: ComputedRef<boolean> | ShallowRef<boolean>;
   handle?: string;
 }
 export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateOptions<T>) {
@@ -30,8 +31,9 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
     };
   }, { flush: "post" });
 
-  useSortable(options.listContainer, options.list, {
+  const sortable = useSortable(options.listContainer, options.list, {
     animation: 250,
+    disabled: options.disabled?.value,
     handle: options.handle,
     ghostClass: "sortable-ghost",
     watchElement: true,
@@ -61,4 +63,9 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
       enableAutoAnimate?.(true);
     },
   });
+
+  watch(
+    () => options.disabled?.value,
+    disabled => sortable.option("disabled", disabled ?? false),
+  );
 }

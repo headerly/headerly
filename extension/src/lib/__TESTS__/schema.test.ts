@@ -35,6 +35,7 @@ describe("profile ID Management", () => {
     name: "Test Profile",
     enabled: true,
     emoji: "🔒",
+    groupId: "550e8400-e29b-41d4-a716-446655440099",
     comments: "Test profile for unit tests",
     priority: 5,
     requestHeaderModGroups: [
@@ -233,6 +234,7 @@ describe("profile ID Management", () => {
 
       // Check that main profile id is removed
       expect(result).not.toHaveProperty("id");
+      expect(result).not.toHaveProperty("groupId");
 
       // Check that the result matches ProfileWithoutIds schema
       expect(() => profileWithoutIdsZodSchema.parse(result)).not.toThrow();

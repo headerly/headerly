@@ -103,6 +103,7 @@ function createDefaultProfileManager() {
   const profile = createProfile();
   return {
     profiles: [profile],
+    profileGroups: [],
     selectedProfileId: profile.id,
   } as const satisfies ProfileManager;
 }

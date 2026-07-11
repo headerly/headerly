@@ -20,6 +20,29 @@ export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
 
+const profileGroupColorSchema = z.enum([
+  "slate",
+  "blue",
+  "red",
+  "yellow",
+  "green",
+  "pink",
+  "purple",
+  "cyan",
+  "orange",
+]);
+export type ProfileGroupColor = z.infer<typeof profileGroupColorSchema>;
+
+export const PROFILE_GROUP_COLORS = profileGroupColorSchema.options;
+
+export const profileGroupSchema = z.object({
+  id: uuidSchema,
+  name: z.string(),
+  color: profileGroupColorSchema,
+  type: groupTypeSchema,
+});
+export type ProfileGroup = z.infer<typeof profileGroupSchema>;
+
 export const RESOURCE_TYPES = [
   "main_frame",
   "sub_frame",
@@ -163,6 +186,7 @@ const profileSchema = z.object({
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
+  groupId: z.string().optional(),
   comments: z.string().optional(),
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
@@ -219,7 +243,7 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedRequestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
 });
 
-export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).extend({
+export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({
   requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),

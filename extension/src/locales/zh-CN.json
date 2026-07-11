@@ -304,12 +304,16 @@
   },
   "profile": {
     "actions": {
+      "addToGroup": "将配置加入分组",
+      "createNewGroup": "创建新分组",
       "delete": "删除",
+      "newGroup": "新建分组",
       "openSecondaryOperations": "打开更多操作下拉菜单",
       "pause": "暂停",
       "resume": "恢复",
       "ruleActionType": "规则操作类型",
-      "share": "分享"
+      "share": "分享",
+      "ungroup": "移出分组"
     },
     "alert": {
       "globalRuleDescription": "添加一个条件以避免问题。",
@@ -358,6 +362,14 @@
       "turnOff": "关闭扩展",
       "turnOn": "开启扩展"
     }
+  },
+  "profileGroup": {
+    "actions": {
+      "delete": "删除分组",
+      "newProfile": "在分组中新建配置",
+      "ungroup": "取消分组"
+    },
+    "namePlaceholder": "命名此分组"
   },
   "redirectUrl": {
     "delete": "删除此重定向 URL",

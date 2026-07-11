@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
 import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import {
   ContextMenu,
@@ -9,9 +10,13 @@ import {
   ContextMenuItem,
   ContextMenuLabel,
   ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { getProfileGroupColorClass } from "../Sidebar/components/utils";
 import {
   handleProfileRuleActionTypeChanged,
   profileActionIdGroups,
@@ -25,6 +30,7 @@ const props = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+const { t } = useI18n();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
 const actionGroups = transformIdsToActions(profileActionIdGroups);
@@ -64,6 +70,36 @@ async function handleChangeType() {
             })"
           >
             {{ action.label(profile) }}
+          </ContextMenuItem>
+          <ContextMenuSub v-if="index === 0">
+            <ContextMenuSubTrigger>
+              {{ t("profile.actions.addToGroup") }}
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent class="min-w-44">
+              <ContextMenuItem
+                v-for="group in profilesStore.profileGroups"
+                :key="group.id"
+                @click="profilesStore.addProfileToGroup(profile.id, group.id)"
+              >
+                <span
+                  class="size-2.5 shrink-0 rounded-full" :class="[
+                    getProfileGroupColorClass(group.color),
+                  ]"
+                />
+                <span class="truncate">{{ group.name }}</span>
+              </ContextMenuItem>
+              <ContextMenuSeparator v-if="profilesStore.profileGroups.length > 0" />
+              <ContextMenuItem @click="profilesStore.addProfileToNewGroup(profile.id)">
+                <i class="i-lucide-folder-plus size-4" />
+                {{ t("profile.actions.createNewGroup") }}
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuItem
+            v-if="index === 0 && profile.groupId"
+            @click="profilesStore.removeProfileFromGroup(profile.id)"
+          >
+            {{ t("profile.actions.ungroup") }}
           </ContextMenuItem>
         </ContextMenuGroup>
       </template>
