@@ -305,12 +305,16 @@
   },
   "profile": {
     "actions": {
+      "addToGroup": "Add profile to group",
+      "createNewGroup": "Create new group",
       "delete": "Delete",
+      "newGroup": "New group",
       "openSecondaryOperations": "Open Secondary Operations Dropdown",
       "pause": "Pause",
       "resume": "Resume",
       "ruleActionType": "Rule action type",
-      "share": "Share"
+      "share": "Share",
+      "ungroup": "Ungroup"
     },
     "alert": {
       "globalRuleDescription": "Add a condition to avoid issues.",
@@ -359,6 +363,14 @@
       "turnOff": "Turn off extension",
       "turnOn": "Turn on extension"
     }
+  },
+  "profileGroup": {
+    "actions": {
+      "delete": "Delete group",
+      "newProfile": "New profile in group",
+      "ungroup": "Ungroup"
+    },
+    "namePlaceholder": "Name this group"
   },
   "redirectUrl": {
     "delete": "Delete this redirect URL",
