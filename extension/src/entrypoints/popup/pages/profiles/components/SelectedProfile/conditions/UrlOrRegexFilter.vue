@@ -41,6 +41,7 @@ const urlFilterTokens = {
 const field = computed(() => ({
   urlFilter: {
     title: t("condition.urlFilter.title"),
+    placeholder: "|https://example.com/*",
     description: (
       <>
         <p>
@@ -84,6 +85,7 @@ const field = computed(() => ({
   },
   regexFilter: {
     title: t("condition.regexFilter.title"),
+    placeholder: String.raw`^https?:\/\/example\.com\/.*`,
     description: (
       <>
         <p>
@@ -149,7 +151,7 @@ function getCurrentTabHostname() {
       >
         <Input
           v-model.trim.lazy="list[index]!.value"
-          placeholder="|https://example.com/*"
+          :placeholder="field[filterType].placeholder"
           class="
             text-base
             placeholder:italic
