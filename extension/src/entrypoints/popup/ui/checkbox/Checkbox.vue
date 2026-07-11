@@ -21,16 +21,17 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     v-bind="forwarded"
     :class="
       cn(`
-        peer size-4 shrink-0 rounded-sm border border-input shadow-xs
-        transition-shadow outline-none
+        peer size-4.5 shrink-0 rounded-[3px] border-2 border-muted-foreground/70
+        bg-transparent text-background
+        transition-[background-color,border-color,box-shadow] outline-none
         focus-visible:border-ring focus-visible:ring-[3px]
         focus-visible:ring-ring/50
         disabled:cursor-not-allowed disabled:opacity-50
         aria-invalid:border-destructive aria-invalid:ring-destructive/20
-        data-[state=checked]:border-primary data-[state=checked]:bg-primary
-        data-[state=checked]:text-primary-foreground
-        data-[state=indeterminate]:bg-primary
-        data-[state=indeterminate]:text-primary-foreground
+        data-[state=checked]:border-foreground
+        data-[state=checked]:bg-foreground
+        data-[state=indeterminate]:border-foreground
+        data-[state=indeterminate]:bg-foreground
         dark:aria-invalid:ring-destructive/40
       `,
          props.class)"
@@ -53,12 +54,12 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           <slot v-bind="slotProps">
             <i
               v-if="slotProps.modelValue === true" class="
-                i-lucide-check size-3.5
+                i-lucide-check size-4 stroke-3
               "
             />
             <i
               v-else-if="slotProps.modelValue === 'indeterminate'" class="
-                i-lucide-minus size-3.5
+                i-lucide-minus size-4 stroke-3
               "
             />
           </slot>

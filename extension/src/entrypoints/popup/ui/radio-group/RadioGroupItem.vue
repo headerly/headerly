@@ -25,13 +25,14 @@ const forwardedProps = useForwardProps(delegatedProps);
     :class="
       cn(
         `
-          aspect-square size-4 shrink-0 rounded-full border border-input
-          text-primary shadow-xs transition-[color,box-shadow] outline-none
+          aspect-square size-4.5 shrink-0 rounded-full border-2
+          border-muted-foreground/70 bg-transparent text-foreground
+          transition-[border-color,box-shadow] outline-none
           focus-visible:border-ring focus-visible:ring-[3px]
           focus-visible:ring-ring/50
           disabled:cursor-not-allowed disabled:opacity-50
           aria-invalid:border-destructive aria-invalid:ring-destructive/20
-          dark:bg-input/30
+          data-[state=checked]:border-foreground
           dark:aria-invalid:ring-destructive/40
         `,
         props.class,
@@ -54,7 +55,7 @@ const forwardedProps = useForwardProps(delegatedProps);
           :transition="{ duration: 0.15 }"
         >
           <slot>
-            <span class="size-1.5 rounded-full bg-primary" />
+            <span class="size-2.5 rounded-full bg-foreground" />
           </slot>
         </motion.span>
       </AnimatePresence>
