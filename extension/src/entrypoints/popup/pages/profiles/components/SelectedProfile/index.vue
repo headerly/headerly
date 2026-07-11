@@ -108,7 +108,7 @@ const versionBadgeCornerClassNames = [
         "
       />
     </div>
-    <div v-else class="relative min-h-full w-full overflow-hidden">
+    <div v-else class="relative min-h-full w-full">
       <div
         aria-hidden="true"
         class="
