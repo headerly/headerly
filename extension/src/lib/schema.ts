@@ -38,6 +38,7 @@ export const RESOURCE_TYPES = [
   "other",
 ] as const satisfies `${Browser.declarativeNetRequest.ResourceType}`[];
 const resourceTypeSchema = z.enum(RESOURCE_TYPES);
+export type ResourceType = z.infer<typeof resourceTypeSchema>;
 
 export const REQUEST_METHODS = [
   "connect",

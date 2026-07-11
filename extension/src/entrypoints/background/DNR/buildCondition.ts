@@ -1,9 +1,15 @@
 import type { ProfileCoreData } from "..";
+import type { ResourceType } from "@/lib/schema";
 import { match } from "ts-pattern";
 
 interface BuildConditionOptions {
   nativeResourceTypeBehavior: boolean;
 }
+
+const allowAllRequestsResourceTypes = [
+  "main_frame",
+  "sub_frame",
+] as const satisfies ResourceType[];
 
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
@@ -14,7 +20,12 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
   if (!hasResourceTypes && !hasExcludedResourceTypes && !options.nativeResourceTypeBehavior) {
     // If no resource types are specified, match all types.
     // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
-    condition.resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+    const resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+    // DNR restricts allowAllRequests rules to main_frame/sub_frame resource types.
+    // Using all resource types with allowAllRequests causes rule registration to fail.
+    condition.resourceTypes = match(profile.ruleActionType)
+      .with("allowAllRequests", () => allowAllRequestsResourceTypes)
+      .otherwise(() => resourceTypes);
   }
 
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
