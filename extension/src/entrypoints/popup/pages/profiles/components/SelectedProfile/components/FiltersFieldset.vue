@@ -47,6 +47,16 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
     v-model="filters.excludedInitiatorDomains"
     filter-type="excludedInitiatorDomains"
   />
+  <DomainsFilter
+    v-if="filters.topDomains"
+    v-model="filters.topDomains"
+    filter-type="topDomains"
+  />
+  <DomainsFilter
+    v-if="filters.excludedTopDomains"
+    v-model="filters.excludedTopDomains"
+    filter-type="excludedTopDomains"
+  />
   <DomainType
     v-if="filters.domainType"
     v-model="filters.domainType"

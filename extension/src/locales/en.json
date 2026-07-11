@@ -17,13 +17,13 @@
         "description": "Specifies whether the network request is first-party or third-party to the domain from which it originated.",
         "title": "Domain Type"
       },
-      "excludedDomainType": {
-        "description": "Excludes requests based on whether the network request is first-party or third-party to the domain from which it originated. If omitted, all requests are accepted.",
-        "title": "Excluded Domain Type"
-      },
       "excludedInitiatorDomains": {
         "description": "The rule will not match network requests originating from the list of excluded initiator domains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiator domains.",
         "title": "Excluded Initiator Domains"
+      },
+      "excludedTopDomains": {
+        "description": "The rule will not match requests whose associated top-level frame domain matches one from the list of excluded top domains. If omitted, no top-level frame domains are excluded.",
+        "title": "Excluded Top Domains"
       },
       "excludedRequestDomains": {
         "description": "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
@@ -56,6 +56,10 @@
       "requestDomains": {
         "description": "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Request Domains"
+      },
+      "topDomains": {
+        "description": "The rule will only match requests whose associated top-level frame domain matches one from the list of top domains. If omitted, all top-level frame domains are accepted.",
+        "title": "Top Domains"
       },
       "requestMethods": {
         "description": "List of HTTP request methods which the rule can match. An empty list is not allowed. Note: Specifying requestMethods will also exclude non-HTTP(s) requests.",
@@ -140,6 +144,10 @@
         "description": "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         "title": "Excluded Request Domains Filter"
       },
+      "excludedTopDomains": {
+        "description": "The rule will not match network requests when the associated top-level frame's domain matches one from the list of excludedTopDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over topDomains.",
+        "title": "Excluded Top Domains Filter"
+      },
       "initiatorDomains": {
         "description": "The rule will only match network requests originating from the list of initiatorDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Initiator Domains Filter"
@@ -150,7 +158,14 @@
         "description": "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Request Domains Filter"
       },
+      "serviceWorkerFallback": "For requests without an associated top-level frame, the request initiator's domain is used instead.",
       "subdomainsAllowed": "Sub-domains like \"a.example.com\" are also allowed.",
+      "subdomainsExcluded": "Sub-domains of the listed domains are also excluded.",
+      "subdomainsMatched": "Sub-domains of the listed domains are also matched.",
+      "topDomains": {
+        "description": "The rule will only match network requests when the associated top-level frame's domain matches one from the list of topDomains. If the list is omitted, the rule is applied to requests associated with all top-level frame domains. An empty list is not allowed.",
+        "title": "Top Domains Filter"
+      },
       "useCurrentTabDomain": "Use the domain of the current tab"
     },
     "domainType": {

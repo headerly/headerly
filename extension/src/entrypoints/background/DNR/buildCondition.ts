@@ -53,6 +53,8 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         "excludedRequestDomains",
         "initiatorDomains",
         "excludedInitiatorDomains",
+        "topDomains",
+        "excludedTopDomains",
         (k) => {
           const enabledDomains = profile.filters[k]?.items
             .filter(item => item.enabled && item.value.trim())

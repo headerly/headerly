@@ -7,11 +7,11 @@ import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
+import RequestModFieldWithActions from "./components/ActionGroup/index.vue";
+import RedirectUrlGroup from "./components/ActionGroup/RedirectUrlGroup.vue";
 import AlertGroup from "./components/AlertGroup.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
-import ModGroup from "./components/ModGroup/index.vue";
-import RedirectUrlGroup from "./components/ModGroup/RedirectUrlGroup.vue";
 import SyncCookieGroup from "./components/SyncCookieGroup/index.vue";
 
 const { class: className } = defineProps<{
@@ -40,6 +40,8 @@ const hasAnyNonEmptyFilters = computed(() => {
         "excludedRequestDomains",
         "initiatorDomains",
         "excludedInitiatorDomains",
+        "topDomains",
+        "excludedTopDomains",
         (k) => {
           return filters[k]?.items.some(f => Boolean(f.value.trim()) && f.enabled) ?? false;
         },
@@ -106,7 +108,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         v-model="profilesStore.selectedProfile.redirectUrlGroup"
       />
       <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
-        <ModGroup
+        <RequestModFieldWithActions
           v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
           :key="id"
           v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
@@ -121,7 +123,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         />
       </template>
       <template v-if="profilesStore.selectedProfile.responseHeaderModGroups">
-        <ModGroup
+        <RequestModFieldWithActions
           v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
           :key="id"
           v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"

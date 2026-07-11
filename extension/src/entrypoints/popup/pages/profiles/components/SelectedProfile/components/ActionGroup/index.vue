@@ -6,7 +6,7 @@ import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups, useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup, createHeaderMod } from "@/lib/utils";
-import ModField from "./ModFieldWithActions.vue";
+import RequestModFieldWithActions from "./RequestModFieldWithActions.vue";
 
 const group = defineModel<HeaderModGroup>({
   required: true,
@@ -59,7 +59,7 @@ function deleteGroup() {
       />
     </template>
     <template #item="{ index }">
-      <ModField
+      <RequestModFieldWithActions
         v-model:list="group.items"
         v-model:field="group.items[index]!"
         :action-type

@@ -17,13 +17,13 @@
         "description": "指定网络请求相对于其发起域名是一方请求还是三方请求。",
         "title": "域名类型"
       },
-      "excludedDomainType": {
-        "description": "根据网络请求相对于其发起域名是一方请求还是三方请求来排除请求。省略时接受所有请求。",
-        "title": "排除域名类型"
-      },
       "excludedInitiatorDomains": {
         "description": "当请求发起域名匹配 excluded initiator domains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 initiator domains。",
         "title": "排除发起域名"
+      },
+      "excludedTopDomains": {
+        "description": "当关联的顶层框架域名匹配 excluded top domains 列表时，规则不会匹配该请求。省略时不排除任何顶层框架域名。",
+        "title": "排除顶层域名"
       },
       "excludedRequestDomains": {
         "description": "当请求域名匹配 excludedRequestDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 requestDomains。",
@@ -56,6 +56,10 @@
       "requestDomains": {
         "description": "当请求域名匹配 requestDomains 列表中的某一项时，规则才会匹配网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
         "title": "请求域名"
+      },
+      "topDomains": {
+        "description": "当关联的顶层框架域名匹配 top domains 列表中的某一项时，规则才会匹配该请求。省略时接受所有顶层框架域名。",
+        "title": "顶层域名"
       },
       "requestMethods": {
         "description": "规则可以匹配的 HTTP 请求方法列表。不允许空列表。注意：指定 requestMethods 也会排除非 HTTP(S) 请求。",
@@ -140,6 +144,10 @@
         "description": "当请求域名匹配 excludedRequestDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 requestDomains。",
         "title": "排除请求域名过滤器"
       },
+      "excludedTopDomains": {
+        "description": "当关联的顶层框架域名匹配 excludedTopDomains 列表时，规则不会匹配该请求。列表为空或省略时不会排除任何域名。它优先于 topDomains。",
+        "title": "排除顶层域名过滤器"
+      },
       "initiatorDomains": {
         "description": "规则仅匹配来自 initiatorDomains 列表中域名的网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
         "title": "发起域名过滤器"
@@ -150,7 +158,14 @@
         "description": "当请求域名匹配 requestDomains 列表中的某一项时，规则才会匹配网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
         "title": "请求域名过滤器"
       },
+      "serviceWorkerFallback": "对于没有关联顶层框架的请求，会改用请求发起方的域名。",
       "subdomainsAllowed": "也允许类似 \"a.example.com\" 的子域名。",
+      "subdomainsExcluded": "列出域名的子域名也会被排除。",
+      "subdomainsMatched": "列出域名的子域名也会被匹配。",
+      "topDomains": {
+        "description": "当关联的顶层框架域名匹配 topDomains 列表中的某一项时，规则才会匹配网络请求。省略列表时，规则应用于关联所有顶层框架域名的请求。不允许空列表。",
+        "title": "顶层域名过滤器"
+      },
       "useCurrentTabDomain": "使用当前标签页的域名"
     },
     "domainType": {

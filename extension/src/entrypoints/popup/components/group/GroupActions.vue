@@ -75,14 +75,14 @@ function transferGroupType() {
           :collision-padding="20"
           side="top"
           class="
-            prose-sm max-w-lg prose-invert
+            prose-sm max-w-90 prose-invert
             dark:prose
           "
         >
           <template v-if="typeof description === 'string'">
             {{ description }}
           </template>
-          <div v-else-if="Array.isArray(description)" class="space-y-2">
+          <div v-else-if="Array.isArray(description)">
             <p
               v-for="paragraph in description"
               :key="paragraph"
@@ -90,7 +90,7 @@ function transferGroupType() {
               {{ paragraph }}
             </p>
           </div>
-          <div v-else class="max-h-40 overflow-y-auto">
+          <div v-else class="max-h-40 max-w-100 overflow-y-auto">
             <component :is="description" />
           </div>
         </TooltipContent>

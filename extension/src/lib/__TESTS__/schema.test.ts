@@ -162,6 +162,28 @@ describe("profile ID Management", () => {
           },
         ],
       },
+      topDomains: {
+        type: "checkbox",
+        items: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440024",
+            enabled: true,
+            comments: "Top domain",
+            value: "app.example.com",
+          },
+        ],
+      },
+      excludedTopDomains: {
+        type: "radio",
+        items: [
+          {
+            id: "550e8400-e29b-41d4-a716-446655440025",
+            enabled: true,
+            comments: "Excluded top domain",
+            value: "embed.example.com",
+          },
+        ],
+      },
       resourceTypes: [
         {
           id: "550e8400-e29b-41d4-a716-446655440014",
@@ -249,6 +271,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedInitiatorDomains?.items[0]).not.toHaveProperty("id");
       expect(result.filters.requestDomains?.items[0]).not.toHaveProperty("id");
       expect(result.filters.excludedRequestDomains?.items[0]).not.toHaveProperty("id");
+      expect(result.filters.topDomains?.items[0]).not.toHaveProperty("id");
+      expect(result.filters.excludedTopDomains?.items[0]).not.toHaveProperty("id");
       expect(result.filters.resourceTypes?.[0]).not.toHaveProperty("id");
       expect(result.filters.excludedResourceTypes?.[0]).not.toHaveProperty("id");
       expect(result.filters.requestMethods?.[0]).not.toHaveProperty("id");
@@ -281,6 +305,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedInitiatorDomains!.items[0]!.value).toBe("bad-site.com");
       expect(result.filters.requestDomains!.items[0]!.value).toBe("api.example.com");
       expect(result.filters.excludedRequestDomains!.items[0]!.value).toBe("malicious.com");
+      expect(result.filters.topDomains!.items[0]!.value).toBe("app.example.com");
+      expect(result.filters.excludedTopDomains!.items[0]!.value).toBe("embed.example.com");
       expect(result.filters.resourceTypes![0]!.value).toEqual(["script", "stylesheet"]);
       expect(result.filters.excludedResourceTypes![0]!.value).toEqual(["image", "font"]);
       expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
@@ -362,6 +388,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedInitiatorDomains!.items[0]).toHaveProperty("id");
       expect(result.filters.requestDomains!.items[0]).toHaveProperty("id");
       expect(result.filters.excludedRequestDomains!.items[0]).toHaveProperty("id");
+      expect(result.filters.topDomains!.items[0]).toHaveProperty("id");
+      expect(result.filters.excludedTopDomains!.items[0]).toHaveProperty("id");
       expect(result.filters.resourceTypes![0]).toHaveProperty("id");
       expect(result.filters.excludedResourceTypes![0]).toHaveProperty("id");
       expect(result.filters.requestMethods![0]).toHaveProperty("id");
@@ -403,6 +431,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedInitiatorDomains?.items).toHaveLength(1);
       expect(result.filters.requestDomains?.items).toHaveLength(1);
       expect(result.filters.excludedRequestDomains?.items).toHaveLength(1);
+      expect(result.filters.topDomains?.items).toHaveLength(1);
+      expect(result.filters.excludedTopDomains?.items).toHaveLength(1);
       expect(result.filters.resourceTypes).toHaveLength(1);
       expect(result.filters.excludedResourceTypes).toHaveLength(1);
       expect(result.filters.requestMethods).toHaveLength(1);
@@ -426,6 +456,8 @@ describe("profile ID Management", () => {
       expect(restored.filters.excludedInitiatorDomains!.items[0]!.value).toBe(mockProfile.filters.excludedInitiatorDomains!.items[0]!.value);
       expect(restored.filters.requestDomains!.items[0]!.value).toBe(mockProfile.filters.requestDomains!.items[0]!.value);
       expect(restored.filters.excludedRequestDomains!.items[0]!.value).toBe(mockProfile.filters.excludedRequestDomains!.items[0]!.value);
+      expect(restored.filters.topDomains!.items[0]!.value).toBe(mockProfile.filters.topDomains!.items[0]!.value);
+      expect(restored.filters.excludedTopDomains!.items[0]!.value).toBe(mockProfile.filters.excludedTopDomains!.items[0]!.value);
       expect(restored.filters.resourceTypes![0]!.value).toEqual(mockProfile.filters.resourceTypes![0]!.value);
       expect(restored.filters.excludedResourceTypes![0]!.value).toEqual(mockProfile.filters.excludedResourceTypes![0]!.value);
       expect(restored.filters.requestMethods![0]!.value).toEqual(mockProfile.filters.requestMethods![0]!.value);

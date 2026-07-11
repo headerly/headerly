@@ -23,73 +23,68 @@ const domainsFilter = defineModel<DomainsFilter>({
 });
 
 const { filterType } = defineProps<{
-  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains";
+  filterType: "requestDomains" | "excludedRequestDomains" | "initiatorDomains" | "excludedInitiatorDomains" | "topDomains" | "excludedTopDomains";
 }>();
 
 const { t } = useI18n();
 
+function createDomainDescription(
+  description: string,
+  options: {
+    afterSubdomains?: string[];
+    afterCommon?: string[];
+  } = {},
+) {
+  return (
+    <>
+      <p>
+        {description}
+      </p>
+      <ul>
+        <li>{t("condition.domains.subdomainsAllowed")}</li>
+        {options.afterSubdomains?.map(item => <li>{item}</li>)}
+        <li>{t("condition.domains.asciiOnly")}</li>
+        <li>{t("condition.domains.punycode")}</li>
+        {options.afterCommon?.map(item => <li>{item}</li>)}
+      </ul>
+    </>
+  );
+}
+
 const field = computed(() => ({
   requestDomains: {
     title: t("condition.domains.requestDomains.title"),
-    description: (
-      <>
-        <p>
-          {t("condition.domains.requestDomains.description")}
-        </p>
-        <ul>
-          <li>{t("condition.domains.subdomainsAllowed")}</li>
-          <li>{t("condition.domains.asciiOnly")}</li>
-          <li>{t("condition.domains.punycode")}</li>
-        </ul>
-      </>
-    ),
+    description: createDomainDescription(t("condition.domains.requestDomains.description")),
   },
   excludedRequestDomains: {
     title: t("condition.domains.excludedRequestDomains.title"),
-    description: (
-      <>
-        <p>
-          {t("condition.domains.excludedRequestDomains.description")}
-        </p>
-        <ul>
-          <li>{t("condition.domains.subdomainsAllowed")}</li>
-          <li>{t("condition.domains.asciiOnly")}</li>
-          <li>{t("condition.domains.punycode")}</li>
-        </ul>
-      </>
-    ),
+    description: createDomainDescription(t("condition.domains.excludedRequestDomains.description")),
   },
   initiatorDomains: {
     title: t("condition.domains.initiatorDomains.title"),
-    description: (
-      <>
-        <p>
-          {t("condition.domains.initiatorDomains.description")}
-        </p>
-        <ul>
-          <li>{t("condition.domains.subdomainsAllowed")}</li>
-          <li>{t("condition.domains.asciiOnly")}</li>
-          <li>{t("condition.domains.punycode")}</li>
-          <li>{t("condition.domains.matchesInitiator")}</li>
-        </ul>
-      </>
-    ),
+    description: createDomainDescription(t("condition.domains.initiatorDomains.description"), {
+      afterCommon: [t("condition.domains.matchesInitiator")],
+    }),
   },
   excludedInitiatorDomains: {
     title: t("condition.domains.excludedInitiatorDomains.title"),
-    description: (
-      <>
-        <p>
-          {t("condition.domains.excludedInitiatorDomains.description")}
-        </p>
-        <ul>
-          <li>{t("condition.domains.subdomainsAllowed")}</li>
-          <li>{t("condition.domains.asciiOnly")}</li>
-          <li>{t("condition.domains.punycode")}</li>
-          <li>{t("condition.domains.matchesInitiator")}</li>
-        </ul>
-      </>
-    ),
+    description: createDomainDescription(t("condition.domains.excludedInitiatorDomains.description"), {
+      afterCommon: [t("condition.domains.matchesInitiator")],
+    }),
+  },
+  topDomains: {
+    title: t("condition.domains.topDomains.title"),
+    description: createDomainDescription(t("condition.domains.topDomains.description"), {
+      afterSubdomains: [t("condition.domains.subdomainsMatched")],
+      afterCommon: [t("condition.domains.serviceWorkerFallback")],
+    }),
+  },
+  excludedTopDomains: {
+    title: t("condition.domains.excludedTopDomains.title"),
+    description: createDomainDescription(t("condition.domains.excludedTopDomains.description"), {
+      afterSubdomains: [t("condition.domains.subdomainsExcluded")],
+      afterCommon: [t("condition.domains.serviceWorkerFallback")],
+    }),
   },
 }));
 

@@ -153,12 +153,6 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
       }, () => Boolean(
         profilesStore.selectedProfile.filters.domainType,
       )),
-      {
-        key: "excluded-domain-type",
-        title: t("addRuleOptionDialog.items.excludedDomainType.title"),
-        description: t("addRuleOptionDialog.items.excludedDomainType.description"),
-        action: () => {},
-      },
       withConditionAlreadyAddedDisabledState({
         key: "initiator-domains",
         title: t("addRuleOptionDialog.items.initiatorDomains.title"),
@@ -184,20 +178,59 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.excludedInitiatorDomains.title"),
         description: t("addRuleOptionDialog.items.excludedInitiatorDomains.description"),
         action: async () => {
-          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
             type: "checkbox",
             items: [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: getDnrDomainFilterValue(hostname),
+                value: "",
               },
             ],
           };
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedInitiatorDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "top-domains",
+        title: t("addRuleOptionDialog.items.topDomains.title"),
+        description: t("addRuleOptionDialog.items.topDomains.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.topDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: hostname,
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.topDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-top-domains",
+        title: t("addRuleOptionDialog.items.excludedTopDomains.title"),
+        description: t("addRuleOptionDialog.items.excludedTopDomains.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.excludedTopDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: hostname,
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedTopDomains?.items.length,
       )),
       withConditionAlreadyAddedDisabledState({
         key: "request-methods",
@@ -224,7 +257,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
             {
               id: uuidv7(),
               enabled: true,
-              value: ["get"],
+              value: [],
             },
           ];
         },
@@ -256,7 +289,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
             {
               id: uuidv7(),
               enabled: true,
-              value: ["main_frame"],
+              value: [],
             },
           ];
         },
