@@ -336,6 +336,7 @@
       "title": "Edit Rule Priority"
     },
     "search": {
+      "batchManage": "Batch manage",
       "noProfiles": "No profiles found.",
       "placeholder": "Search profiles...",
       "title": "Search profiles"
