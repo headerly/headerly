@@ -338,7 +338,6 @@
     "search": {
       "batchManage": "批量管理",
       "deleteSelectedProfiles": "删除所有已选择的配置",
-      "noProfiles": "未找到配置。",
       "pauseSelectedProfiles": "暂停所有已选择的配置",
       "placeholder": "搜索配置...",
       "resumeSelectedProfiles": "恢复所有已选择的配置",
