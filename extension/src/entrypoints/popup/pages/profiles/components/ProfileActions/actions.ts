@@ -1,8 +1,10 @@
 import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
+import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { createHeaderMod, createRedirectUrl, getCurrentTabHostname } from "@/lib/utils";
 
 export type ActionKey
   = | "toggle"
@@ -54,6 +56,46 @@ function hasActionIds(group: readonly ActionKey[] | "separator") {
 export const profileMoreActionIdGroups = profileActionIdGroups
   .map(group => omitActionId(group, "toggle"))
   .filter(hasActionIds);
+
+export async function handleProfileRuleActionTypeChanged(profile: Profile) {
+  match(profile.ruleActionType)
+    .with("block", "allow", "upgradeScheme", "allowAllRequests", () => {
+      delete profile.requestHeaderModGroups;
+      delete profile.responseHeaderModGroups;
+      delete profile.syncCookieGroups;
+      delete profile.redirectUrlGroup;
+    })
+    .with("modifyHeaders", () => {
+      delete profile.redirectUrlGroup;
+      profile.requestHeaderModGroups ??= [{
+        id: uuidv7(),
+        type: "checkbox",
+        items: [createHeaderMod()],
+      }];
+    })
+    .with("redirect", () => {
+      delete profile.requestHeaderModGroups;
+      delete profile.responseHeaderModGroups;
+      delete profile.syncCookieGroups;
+      if (!profile.redirectUrlGroup?.length) {
+        profile.redirectUrlGroup = [createRedirectUrl()];
+      }
+    })
+    .exhaustive();
+
+  if (Object.keys(profile.filters).length > 0) {
+    return;
+  }
+
+  profile.filters.requestDomains = {
+    type: "checkbox",
+    items: [{
+      id: uuidv7(),
+      enabled: true,
+      value: await getCurrentTabHostname(),
+    }],
+  };
+}
 
 export function useProfileActions() {
   const profilesStore = useProfilesStore();

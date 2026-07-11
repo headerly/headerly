@@ -12,7 +12,11 @@ import {
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { profileActionIdGroups, transformIdsToActions } from "./actions";
+import {
+  handleProfileRuleActionTypeChanged,
+  profileActionIdGroups,
+  transformIdsToActions,
+} from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 
@@ -28,6 +32,10 @@ const actionGroups = transformIdsToActions(profileActionIdGroups);
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
 const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
+
+async function handleChangeType() {
+  await handleProfileRuleActionTypeChanged(profile.value);
+}
 </script>
 
 <template>
@@ -71,6 +79,7 @@ const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
     <ChangeTypeDialog
       ref="changeTypeDialogRef"
       v-model:rule-action-type="profile.ruleActionType"
+      @changed="handleChangeType"
     />
   </ContextMenu>
 </template>

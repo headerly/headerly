@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
-import { match } from "ts-pattern";
-import { uuidv7 } from "uuidv7";
 import { useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
@@ -22,8 +20,9 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useCompactScreen } from "@/composables/useCompactScreen";
-import { cn, createHeaderMod, createRedirectUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
+  handleProfileRuleActionTypeChanged,
   profileActionIdGroups,
   profileMoreActionIdGroups,
   transformIdsToActions,
@@ -51,41 +50,8 @@ const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
 const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
 
-function handleChangeType() {
-  const p = profile.value;
-  match(p.ruleActionType)
-    .with("block", "allow", "upgradeScheme", "allowAllRequests", () => {
-      delete p.requestHeaderModGroups;
-      delete p.responseHeaderModGroups;
-      delete p.syncCookieGroups;
-      delete p.redirectUrlGroup;
-    })
-    .with("modifyHeaders", () => {
-      delete p.redirectUrlGroup;
-      p.requestHeaderModGroups ??= [{
-        id: uuidv7(),
-        type: "checkbox",
-        items: [createHeaderMod()],
-      }];
-    })
-    .with("redirect", () => {
-      delete p.requestHeaderModGroups;
-      delete p.responseHeaderModGroups;
-      delete p.syncCookieGroups;
-      if (!p.redirectUrlGroup?.length) {
-        p.redirectUrlGroup = [createRedirectUrl()];
-      }
-    })
-    .exhaustive();
-
-  // Ensure there is at least one filter
-  if (Object.keys(p.filters).length === 0) {
-    p.filters.urlFilter = [{
-      id: uuidv7(),
-      enabled: true,
-      value: "",
-    }];
-  }
+async function handleChangeType() {
+  await handleProfileRuleActionTypeChanged(profile.value);
 }
 </script>
 
