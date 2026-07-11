@@ -337,8 +337,11 @@
     },
     "search": {
       "batchManage": "Batch manage",
+      "deleteSelectedProfiles": "Delete all selected profiles",
       "noProfiles": "No profiles found.",
+      "pauseSelectedProfiles": "Pause all selected profiles",
       "placeholder": "Search profiles...",
+      "resumeSelectedProfiles": "Resume all selected profiles",
       "title": "Search profiles"
     },
     "sidebar": {

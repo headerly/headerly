@@ -1,12 +1,10 @@
 <script setup lang="tsx">
 import { useEventListener } from "@vueuse/core";
 import { useTemplateRef, watch } from "vue";
-import ProfileOption from "#/components/ProfileOption.vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-
-import ContextMenuWithTrigger from "../../ProfileActions/ContextMenuWithTrigger.vue";
+import ProfileListItem from "./ProfileListItem.vue";
 
 const profilesStore = useProfilesStore();
 
@@ -36,15 +34,6 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
   }
 }
 
-function handleProfileClick(event: MouseEvent, profileId: string) {
-  if (event.shiftKey) {
-    profilesStore.toggleProfileEnabled(profileId);
-    return;
-  }
-
-  profilesStore.manager.selectedProfileId = profileId;
-}
-
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 useSortableAndAutoAnimate({
@@ -65,14 +54,11 @@ useSortableAndAutoAnimate({
       :key="profile.id"
       :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
     >
-      <ContextMenuWithTrigger :profile>
-        <ProfileOption
-          :index
-          :profile
-          @click="event => handleProfileClick(event, profile.id)"
-          @mousedown.middle.prevent="profilesStore.toggleProfileEnabled(profile.id)"
-        />
-      </ContextMenuWithTrigger>
+      <ProfileListItem
+        :index
+        :profile
+        layout="icon"
+      />
     </div>
   </div>
 </template>
