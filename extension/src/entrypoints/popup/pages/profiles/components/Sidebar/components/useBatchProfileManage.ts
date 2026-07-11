@@ -1,6 +1,6 @@
 import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
@@ -10,6 +10,12 @@ export function useBatchProfileManage(getVisibleProfiles: () => Profile[]) {
 
   const batchManage = ref(false);
   const selectedProfileIds = ref<string[]>([]);
+
+  watch(batchManage, (value) => {
+    if (!value) {
+      selectedProfileIds.value = [];
+    }
+  });
 
   const hasSelectedProfiles = computed(() => selectedProfileIds.value.length > 0);
 
@@ -39,9 +45,6 @@ export function useBatchProfileManage(getVisibleProfiles: () => Profile[]) {
 
   function updateBatchManage(value: boolean) {
     batchManage.value = value;
-    if (!value) {
-      selectedProfileIds.value = [];
-    }
   }
 
   function isSelected(profileId: string) {
