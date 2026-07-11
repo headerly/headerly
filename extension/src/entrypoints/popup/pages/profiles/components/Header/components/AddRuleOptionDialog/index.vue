@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AddRuleOptionDialogTabValue } from "./shared";
 import { useEventBus } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -22,22 +23,22 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
-import { openAddModModalKey } from "./open";
+import { openAddRuleOptionDialogKey } from "./open";
 import TabList from "./TabList.vue";
 import { useCreateTabs } from "./tabs";
 
 const { defaultTab, class: className } = defineProps<{
-  defaultTab: "actions" | "conditions";
+  defaultTab: AddRuleOptionDialogTabValue;
   class?: string;
   tooltipText: string;
 }>();
 
-const currentTab = ref<typeof defaultTab>(defaultTab);
+const currentTab = ref<AddRuleOptionDialogTabValue>(defaultTab);
 const isOpen = ref(false);
 const { t } = useI18n();
 const tabs = useCreateTabs();
 
-const bus = useEventBus(openAddModModalKey);
+const bus = useEventBus(openAddRuleOptionDialogKey);
 bus.on(({ target }) => {
   isOpen.value = true;
   currentTab.value = target;

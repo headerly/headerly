@@ -1,5 +1,13 @@
 {
-  "addModModal": {
+  "addRuleOptionDialog": {
+    "disabledTooltip": {
+      "modifyHeadersRuleActionType": "Change the rule action type to Modify Headers to add this action.",
+      "regexFilterBlockedByUrlFilter": "Delete the existing URL filter first. Only one of URL filter or regex filter can be used.",
+      "redirectRuleActionType": "Change the rule action type to Redirect to add this action.",
+      "redirectUrlExists": "Delete the existing redirect URL before adding another one.",
+      "conditionAlreadyAdded": "This type of condition has already been added and cannot be added again.",
+      "urlFilterBlockedByRegexFilter": "Delete the existing regex filter first. Only one of URL filter or regex filter can be used."
+    },
     "items": {
       "cookieSyncRequestHeader": {
         "description": "Sync cookies for a specific website to the request header. New permissions need to be granted.",

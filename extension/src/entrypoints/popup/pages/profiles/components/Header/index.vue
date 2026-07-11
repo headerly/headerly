@@ -24,8 +24,8 @@ import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
 import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
-import AddModModal from "./components/AddModModal/index.vue";
-import { openAddModModalKey } from "./components/AddModModal/open";
+import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
+import { openAddRuleOptionDialogKey } from "./components/AddRuleOptionDialog/open";
 import EmojiPicker from "./components/EmojiPicker.vue";
 
 const { class: className } = defineProps<{
@@ -36,7 +36,7 @@ const profilesStore = useProfilesStore();
 const { t } = useI18n();
 
 const isCompact = useCompactScreen();
-const addModBus = useEventBus(openAddModModalKey);
+const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
 
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
@@ -218,7 +218,7 @@ const defaultTab = computed(() => {
 
       <IconsGroupWithMore :profile="profilesStore.selectedProfile">
         <template #after-main>
-          <AddModModal :tooltip-text="t('profile.header.addActionOrConditionTooltip')" :default-tab />
+          <AddRuleOptionDialog :tooltip-text="t('profile.header.addActionOrConditionTooltip')" :default-tab />
         </template>
         <template #compact-extra>
           <DropdownMenuGroup>
@@ -228,7 +228,7 @@ const defaultTab = computed(() => {
             <DropdownMenuItem :disabled="!profilesStore.canRedo" @click="profilesStore.redo">
               <span>{{ t("common.redo") }}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem @click="addModBus.emit({ target: 'actions' })">
+            <DropdownMenuItem @click="addRuleOptionDialogBus.emit({ target: 'actions' })">
               <span>{{ t("profile.header.addActionOrCondition") }}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>

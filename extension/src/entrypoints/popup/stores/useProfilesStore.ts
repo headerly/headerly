@@ -99,7 +99,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function addModGroup(type: ActionType, groupType: GroupType) {
+  function addHeaderActionGroup(type: ActionType, groupType: GroupType) {
     const profile = selectedProfile.value;
     if (type === "request") {
       profile.requestHeaderModGroups ??= [];
@@ -147,7 +147,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     duplicateProfile,
     deleteProfile,
     toggleProfileEnabled,
-    addModGroup,
+    addHeaderActionGroup,
     addSyncCookieGroup,
     addRedirectUrlGroup,
     undo,

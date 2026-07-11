@@ -1,0 +1,281 @@
+import type { AddRuleOptionDialogItem, AddRuleOptionDialogTab } from "./shared";
+import { uuidv7 } from "uuidv7";
+import { useI18n } from "vue-i18n";
+import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import {
+
+  getCurrentTabHostname,
+  getDnrDomainFilterValue,
+  getDnrUrlFilterValue,
+  getEnabledState,
+  withDisabledState,
+} from "./shared";
+
+export function useCreateConditionTab(): AddRuleOptionDialogTab {
+  const { t } = useI18n();
+  const profilesStore = useProfilesStore();
+
+  function getConditionAlreadyAddedDisabledState(conditionExists: boolean) {
+    if (!conditionExists) {
+      return getEnabledState();
+    }
+
+    return {
+      disabled: true,
+      disabledTooltip: t("addRuleOptionDialog.disabledTooltip.conditionAlreadyAdded"),
+    };
+  }
+
+  function withConditionAlreadyAddedDisabledState<T extends AddRuleOptionDialogItem>(
+    item: T,
+    conditionExists: () => boolean,
+  ) {
+    return withDisabledState(
+      item,
+      () => getConditionAlreadyAddedDisabledState(conditionExists()),
+    );
+  }
+
+  function getUrlFilterDisabledState() {
+    if (profilesStore.selectedProfile.filters.urlFilter?.length) {
+      return getConditionAlreadyAddedDisabledState(true);
+    }
+
+    if (profilesStore.selectedProfile.filters.regexFilter?.length) {
+      return {
+        disabled: true,
+        disabledTooltip: t("addRuleOptionDialog.disabledTooltip.urlFilterBlockedByRegexFilter"),
+      };
+    }
+
+    return getEnabledState();
+  }
+
+  function getRegexFilterDisabledState() {
+    if (profilesStore.selectedProfile.filters.regexFilter?.length) {
+      return getConditionAlreadyAddedDisabledState(true);
+    }
+
+    if (profilesStore.selectedProfile.filters.urlFilter?.length) {
+      return {
+        disabled: true,
+        disabledTooltip: t("addRuleOptionDialog.disabledTooltip.regexFilterBlockedByUrlFilter"),
+      };
+    }
+
+    return getEnabledState();
+  }
+
+  return {
+    label: t("addRuleOptionDialog.tabs.conditions"),
+    value: "conditions",
+    items: [
+      withConditionAlreadyAddedDisabledState({
+        key: "request-domains",
+        title: t("addRuleOptionDialog.items.requestDomains.title"),
+        description: t("addRuleOptionDialog.items.requestDomains.description"),
+        isPopular: true,
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.requestDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: hostname,
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.requestDomains?.items.length,
+      )),
+      withDisabledState({
+        key: "url-filter",
+        title: t("addRuleOptionDialog.items.urlFilter.title"),
+        description: t("addRuleOptionDialog.items.urlFilter.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.urlFilter = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: getDnrUrlFilterValue(hostname),
+            },
+          ];
+        },
+      }, getUrlFilterDisabledState),
+      withDisabledState({
+        key: "regex-filter",
+        title: t("addRuleOptionDialog.items.regexFilter.title"),
+        description: t("addRuleOptionDialog.items.regexFilter.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.regexFilter = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: "",
+            },
+          ];
+        },
+      }, getRegexFilterDisabledState),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-request-domains",
+        title: t("addRuleOptionDialog.items.excludedRequestDomains.title"),
+        description: t("addRuleOptionDialog.items.excludedRequestDomains.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.excludedRequestDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: getDnrDomainFilterValue(hostname),
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedRequestDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "domain-type",
+        title: t("addRuleOptionDialog.items.domainType.title"),
+        description: t("addRuleOptionDialog.items.domainType.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.domainType = {
+            enabled: true,
+            value: "firstParty",
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.domainType,
+      )),
+      {
+        key: "excluded-domain-type",
+        title: t("addRuleOptionDialog.items.excludedDomainType.title"),
+        description: t("addRuleOptionDialog.items.excludedDomainType.description"),
+        action: () => {},
+      },
+      withConditionAlreadyAddedDisabledState({
+        key: "initiator-domains",
+        title: t("addRuleOptionDialog.items.initiatorDomains.title"),
+        description: t("addRuleOptionDialog.items.initiatorDomains.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.initiatorDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: getDnrDomainFilterValue(hostname),
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.initiatorDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-initiator-domains",
+        title: t("addRuleOptionDialog.items.excludedInitiatorDomains.title"),
+        description: t("addRuleOptionDialog.items.excludedInitiatorDomains.description"),
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
+          profilesStore.selectedProfile.filters.excludedInitiatorDomains = {
+            type: "checkbox",
+            items: [
+              {
+                id: uuidv7(),
+                enabled: true,
+                value: getDnrDomainFilterValue(hostname),
+              },
+            ],
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedInitiatorDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "request-methods",
+        title: t("addRuleOptionDialog.items.requestMethods.title"),
+        description: t("addRuleOptionDialog.items.requestMethods.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.requestMethods = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: ["get"],
+            },
+          ];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.requestMethods,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-request-methods",
+        title: t("addRuleOptionDialog.items.excludedRequestMethods.title"),
+        description: t("addRuleOptionDialog.items.excludedRequestMethods.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.excludedRequestMethods = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: ["get"],
+            },
+          ];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedRequestMethods,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "resource-types",
+        title: t("addRuleOptionDialog.items.resourceTypes.title"),
+        description: t("addRuleOptionDialog.items.resourceTypes.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.resourceTypes = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: ["main_frame"],
+            },
+          ];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.resourceTypes,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-resource-types",
+        title: t("addRuleOptionDialog.items.excludedResourceTypes.title"),
+        description: t("addRuleOptionDialog.items.excludedResourceTypes.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.excludedResourceTypes = [
+            {
+              id: uuidv7(),
+              enabled: true,
+              value: ["main_frame"],
+            },
+          ];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedResourceTypes,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "url-regex-filter-case-sensitive",
+        title: t("addRuleOptionDialog.items.urlRegexFilterCaseSensitive.title"),
+        description: t("addRuleOptionDialog.items.urlRegexFilterCaseSensitive.description"),
+        action: () => {
+          profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive = {
+            enabled: true,
+            value: false,
+          };
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.isUrlFilterCaseSensitive,
+      )),
+    ],
+  };
+}

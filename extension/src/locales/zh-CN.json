@@ -1,5 +1,13 @@
 {
-  "addModModal": {
+  "addRuleOptionDialog": {
+    "disabledTooltip": {
+      "modifyHeadersRuleActionType": "将规则操作类型切换为“修改请求/响应头”后即可添加此操作。",
+      "regexFilterBlockedByUrlFilter": "请先删除已有的 URL 过滤器。URL 过滤器和正则过滤器只能使用其中一个。",
+      "redirectRuleActionType": "将规则操作类型切换为“重定向”后即可添加此操作。",
+      "redirectUrlExists": "请先删除已有的重定向 URL，再添加新的重定向 URL。",
+      "conditionAlreadyAdded": "此类型规则已被添加，不能重复添加。",
+      "urlFilterBlockedByRegexFilter": "请先删除已有的正则过滤器。URL 过滤器和正则过滤器只能使用其中一个。"
+    },
     "items": {
       "cookieSyncRequestHeader": {
         "description": "将指定网站的 Cookie 同步到请求头。需要授予新的权限。",

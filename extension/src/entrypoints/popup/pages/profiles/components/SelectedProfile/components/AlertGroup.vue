@@ -12,7 +12,7 @@ import {
 import { Button } from "#/ui/button";
 
 import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
-import { openAddModModalKey } from "../../Header/components/AddModModal/open";
+import { openAddRuleOptionDialogKey } from "../../Header/components/AddRuleOptionDialog/open";
 
 const { empty, hasAnyFilters } = defineProps<{
   empty: boolean;
@@ -32,7 +32,7 @@ const showGlobalRuleWarning = computed(() => {
   return !hasAnyFilters && !empty && hasRegisteredRule;
 });
 
-const bus = useEventBus(openAddModModalKey);
+const bus = useEventBus(openAddRuleOptionDialogKey);
 </script>
 
 <template>
