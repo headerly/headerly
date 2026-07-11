@@ -336,7 +336,7 @@
       "title": "编辑规则优先级"
     },
     "search": {
-      "batchManage": "Batch manage",
+      "batchManage": "批量管理",
       "deleteSelectedProfiles": "删除所有已选择的配置",
       "noProfiles": "未找到配置。",
       "pauseSelectedProfiles": "暂停所有已选择的配置",

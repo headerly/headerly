@@ -150,109 +150,119 @@ function setSelectedProfilesEnabled(enabled: boolean) {
 
     <SheetContent
       side="left" class="
-        flex w-2/5 flex-col gap-0 text-base
+        flex w-2/5 flex-col gap-0 overflow-hidden text-base
         sm:max-w-xs
       "
     >
       <SheetHeader>
         <SheetTitle>{{ t("profile.search.title") }}</SheetTitle>
       </SheetHeader>
-      <div class="flex flex-1 flex-col gap-1">
-        <div class="mx-4 flex items-center justify-between gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Toggle
-                  :model-value="batchManage"
-                  type="button"
-                  class="px-2"
-                  @update:model-value="updateBatchManage"
-                >
-                  <i class="i-lucide-settings-2 size-4.5" />
-                </Toggle>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                {{ t("profile.search.batchManage") }}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <div class="flex min-h-0 flex-1 flex-col gap-1">
+        <div
+          class="
+            sticky top-0 z-10 flex shrink-0 flex-col gap-1 bg-background pb-1
+          "
+        >
+          <div class="mx-4 mb-1 flex items-center justify-between gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Toggle
+                    :model-value="batchManage"
+                    type="button"
+                    class="px-2"
+                    @update:model-value="updateBatchManage"
+                  >
+                    <span class="sr-only">{{ t("profile.search.batchManage") }}</span>
+                    <i class="i-lucide-settings-2 size-4.5" />
+                  </Toggle>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {{ t("profile.search.batchManage") }}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-          <div class="flex items-center gap-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger as="div">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    class="text-destructive"
-                    :disabled="!hasSelectedProfiles"
-                    @click="deleteSelectedProfiles"
-                  >
-                    <span class="sr-only">{{ t("profile.search.deleteSelectedProfiles") }}</span>
-                    <i class="i-lucide-trash size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {{ t("profile.search.deleteSelectedProfiles") }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger as="div">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    :disabled="!hasSelectedProfiles"
-                    @click="setSelectedProfilesEnabled(false)"
-                  >
-                    <span class="sr-only">{{ t("profile.search.pauseSelectedProfiles") }}</span>
-                    <i class="i-lucide-pause size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {{ t("profile.search.pauseSelectedProfiles") }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger as="div">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    :disabled="!hasSelectedProfiles"
-                    @click="setSelectedProfilesEnabled(true)"
-                  >
-                    <span class="sr-only">{{ t("profile.search.resumeSelectedProfiles") }}</span>
-                    <i class="i-lucide-play size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {{ t("profile.search.resumeSelectedProfiles") }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <div class="flex items-center gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as="div">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      class="text-destructive"
+                      :disabled="!hasSelectedProfiles"
+                      @click="deleteSelectedProfiles"
+                    >
+                      <span class="sr-only">{{ t("profile.search.deleteSelectedProfiles") }}</span>
+                      <i class="i-lucide-trash size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    {{ t("profile.search.deleteSelectedProfiles") }}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as="div">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      :disabled="!hasSelectedProfiles"
+                      @click="setSelectedProfilesEnabled(false)"
+                    >
+                      <span class="sr-only">{{ t("profile.search.pauseSelectedProfiles") }}</span>
+                      <i class="i-lucide-pause size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    {{ t("profile.search.pauseSelectedProfiles") }}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as="div">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      :disabled="!hasSelectedProfiles"
+                      @click="setSelectedProfilesEnabled(true)"
+                    >
+                      <span class="sr-only">{{ t("profile.search.resumeSelectedProfiles") }}</span>
+                      <i class="i-lucide-play size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    {{ t("profile.search.resumeSelectedProfiles") }}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+          <div class="relative mx-4">
+            <i
+              class="
+                absolute top-1/2 left-2.5 i-lucide-search size-4.5
+                -translate-y-1/2 opacity-50
+              "
+            />
+            <Input
+              ref="searchInputRef"
+              v-model.lazy.trim="searchKeyword"
+              type="search"
+              :placeholder="t('profile.search.placeholder')"
+              class="pl-8"
+              autofocus
+            />
           </div>
         </div>
-        <div class="relative mx-4">
-          <i
-            class="
-              absolute top-1/2 left-2.5 i-lucide-search size-4.5
-              -translate-y-1/2 opacity-50
-            "
-          />
-          <Input
-            ref="searchInputRef"
-            v-model.lazy.trim="searchKeyword"
-            type="search"
-            :placeholder="t('profile.search.placeholder')"
-            class="pl-8"
-            autofocus
-          />
-        </div>
         <div
-          class="mx-3 flex flex-1 flex-col gap-1 overflow-y-auto px-1"
+          class="
+            mx-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-1 pb-2
+            [scrollbar-width:none]
+          "
         >
           <Button
             v-if="batchManage"
