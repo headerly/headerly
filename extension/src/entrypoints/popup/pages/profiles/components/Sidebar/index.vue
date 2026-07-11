@@ -117,7 +117,10 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                 <DropdownMenuSubTrigger
                   class="cursor-pointer justify-between gap-2"
                   hide-arrow
-                  @click="profilesStore.addProfile(type)"
+                  @click="() => {
+                    profilesStore.addProfile(type)
+                    menuOpen = false
+                  }"
                 >
                   {{ getRuleActionTypeLabel(type) }}
                   <InfoTooltip
