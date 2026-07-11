@@ -2,11 +2,8 @@ import type { AddRuleOptionDialogItem, AddRuleOptionDialogTab } from "./shared";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { getCurrentTabHostname, getDefaultFilterValueByHostname } from "@/lib/utils";
 import {
-
-  getCurrentTabHostname,
-  getDnrDomainFilterValue,
-  getDnrUrlFilterValue,
   getEnabledState,
   withDisabledState,
 } from "./shared";
@@ -101,7 +98,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
             {
               id: uuidv7(),
               enabled: true,
-              value: getDnrUrlFilterValue(hostname),
+              value: getDefaultFilterValueByHostname("urlFilter", hostname),
             },
           ];
         },
@@ -110,12 +107,13 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         key: "regex-filter",
         title: t("addRuleOptionDialog.items.regexFilter.title"),
         description: t("addRuleOptionDialog.items.regexFilter.description"),
-        action: () => {
+        action: async () => {
+          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.regexFilter = [
             {
               id: uuidv7(),
               enabled: true,
-              value: "",
+              value: getDefaultFilterValueByHostname("regexFilter", hostname),
             },
           ];
         },
@@ -125,14 +123,13 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.excludedRequestDomains.title"),
         description: t("addRuleOptionDialog.items.excludedRequestDomains.description"),
         action: async () => {
-          const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.excludedRequestDomains = {
             type: "checkbox",
             items: [
               {
                 id: uuidv7(),
                 enabled: true,
-                value: getDnrDomainFilterValue(hostname),
+                value: "",
               },
             ],
           };
@@ -165,7 +162,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
               {
                 id: uuidv7(),
                 enabled: true,
-                value: getDnrDomainFilterValue(hostname),
+                value: hostname,
               },
             ],
           };

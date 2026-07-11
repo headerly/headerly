@@ -7,7 +7,7 @@ import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie } from "@/lib/utils";
+import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie, getCurrentTabHostname } from "@/lib/utils";
 
 export function findHeaderModGroups(profile: Profile, type: ActionType) {
   return match(type)
@@ -38,10 +38,21 @@ export const useProfilesStore = defineStore("profiles", () => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
   });
 
-  function addProfile(ruleActionType: RuleActionType) {
+  async function addProfile(ruleActionType: RuleActionType) {
+    const currentTabHostname = await getCurrentTabHostname();
     const newProfile = createProfile({
       name: `New Profile ${manager.value.profiles.length + 1}`,
       ruleActionType,
+      filters: {
+        requestDomains: {
+          type: "checkbox",
+          items: [{
+            id: uuidv7(),
+            enabled: true,
+            value: currentTabHostname,
+          }],
+        },
+      },
     });
     manager.value.profiles.push(newProfile);
     manager.value.selectedProfileId = newProfile.id;

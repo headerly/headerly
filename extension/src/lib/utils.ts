@@ -6,6 +6,8 @@ import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { i18n } from "#/i18n";
 
+export type UrlOrRegexFilterType = "urlFilter" | "regexFilter";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -52,11 +54,14 @@ export function createProfile(overrides?: Partial<Profile>) {
     ruleScope: "dynamic",
     ruleActionType,
     filters: {
-      urlFilter: [{
-        id: uuidv7(),
-        enabled: true,
-        value: "",
-      }],
+      requestDomains: {
+        type: "checkbox",
+        items: [{
+          id: uuidv7(),
+          enabled: true,
+          value: "",
+        }],
+      },
     },
     ...(match(ruleActionType)
       .with("modifyHeaders", () => ({
@@ -85,6 +90,33 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
   }
   item.enabled = true;
   list.push(item);
+}
+
+export async function getCurrentTabHostname() {
+  const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  if (!currentTab?.url) {
+    return "";
+  }
+
+  try {
+    const url = new URL(currentTab.url);
+    return match(url.protocol)
+      .with("http:", "https:", () => url.hostname)
+      .otherwise(() => "");
+  } catch {
+    return "";
+  }
+}
+
+function escapeRegexValue(value: string) {
+  return value.replaceAll(/[-\\^$*+?()|.[\]{}:]/g, "\\$&");
+}
+
+export function getDefaultFilterValueByHostname(filterType: UrlOrRegexFilterType, hostname: string) {
+  return match([filterType, Boolean(hostname)] as const)
+    .with(["urlFilter", true], () => `||${hostname}/*`)
+    .with(["regexFilter", true], () => `^https?:\\/\\/${escapeRegexValue(hostname)}\\/.*`)
+    .otherwise(() => "");
 }
 
 export function getRuleActionTypeLabel(type: RuleActionType) {

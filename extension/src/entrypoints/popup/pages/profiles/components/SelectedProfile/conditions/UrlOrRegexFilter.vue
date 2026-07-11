@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup } from "@/lib/utils";
+import { addItemToGroup, getDefaultFilterValueByHostname } from "@/lib/utils";
 
 const list = defineModel<UrlOrRegexFilterItem[]>({
   required: true,
@@ -119,13 +119,8 @@ function newField() {
 
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 
-function escapeRegex(value: string) {
-  // Metacharacters *+?()|
-  return value.replaceAll(/[-\\^$*+?()|.[\]{}:]/g, "\\$&");
-}
-
-function getCurrentTabRootUrlValue() {
-  return `${currentUrl.value!.origin}/`;
+function getCurrentTabHostname() {
+  return currentUrl.value?.hostname ?? "";
 }
 </script>
 
@@ -169,10 +164,8 @@ function getCurrentTabRootUrlValue() {
                   size="icon-xs"
                   :disabled="!canUseCurrentUrl"
                   @click="() => {
-                    const rootUrl = getCurrentTabRootUrlValue();
-                    list[index]!.value = filterType === 'urlFilter'
-                      ? `|${rootUrl}*`
-                      : `^${escapeRegex(rootUrl)}.*`;
+                    const hostname = getCurrentTabHostname();
+                    list[index]!.value = getDefaultFilterValueByHostname(filterType, hostname);
                   }"
                 >
                   <i class="i-lucide-at-sign size-4" />
