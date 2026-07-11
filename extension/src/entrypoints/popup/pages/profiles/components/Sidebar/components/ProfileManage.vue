@@ -28,13 +28,33 @@ const searchKeyword = ref("");
 const debouncedSearchKeyword = refDebounced(searchKeyword, 500);
 const searchInputRef = useTemplateRef<{ focus: () => void }>("searchInputRef");
 
+function collectSearchValues(value: unknown): string[] {
+  if (value == null) {
+    return [];
+  }
+
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(collectSearchValues);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).flatMap(collectSearchValues);
+  }
+
+  return [];
+}
+
 const profileSearchIndex = computed(() => new Fuse(
   profilesStore.manager.profiles.map(profile => ({
     profile,
-    json: JSON.stringify(profile),
+    searchText: collectSearchValues(profile).join(" "),
   })),
   {
-    keys: ["json"],
+    keys: ["searchText"],
     ignoreLocation: true,
   },
 ));
