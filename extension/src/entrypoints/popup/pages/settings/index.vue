@@ -46,7 +46,7 @@ const settings = useCreateSettings();
         :id="setting.anchor"
         :key="setting.fieldsetTitle"
         :name="setting.fieldsetTitle"
-        class="gap-y-4 border bg-primary-foreground p-4 text-base"
+        class="gap-y-4 border p-4 text-base"
       >
         <template #main>
           <div class="flex size-full flex-col gap-2">
@@ -99,7 +99,7 @@ const settings = useCreateSettings();
         </template>
       </Fieldset>
       <Fieldset
-        class="gap-y-4 border bg-primary-foreground p-4 text-base"
+        class="gap-y-4 border p-4 text-base"
         :name="t('settings.groups.troubleshooting')"
       >
         <template #main>

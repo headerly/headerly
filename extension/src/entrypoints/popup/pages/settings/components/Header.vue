@@ -32,7 +32,7 @@ const { t } = useI18n();
 <template>
   <header
     :class="cn(
-      'flex items-center justify-between bg-secondary/33 px-2',
+      'flex items-center justify-between border-b px-2',
       className,
     )"
   >

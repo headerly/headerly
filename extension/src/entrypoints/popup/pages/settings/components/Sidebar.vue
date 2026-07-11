@@ -28,7 +28,13 @@ function handleAnchorClick(anchor: string) {
 <template>
   <aside
     :class="cn(
-      `flex h-full flex-col items-center justify-start border-r py-2`,
+      `
+        flex h-full flex-col items-center justify-start border-r
+        border-r-(--pattern-fg)
+        bg-[repeating-linear-gradient(315deg,var(--pattern-fg)_0,var(--pattern-fg)_1px,transparent_0,transparent_50%)]
+        bg-size-[10px_10px] bg-fixed py-2 [--pattern-fg:var(--color-gray-950)]/5
+        dark:[--pattern-fg:var(--color-white)]/10
+      `,
       className,
     )"
   >
@@ -43,7 +49,7 @@ function handleAnchorClick(anchor: string) {
     <div
       class="
         flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow before:bg-border
+        before:h-px before:w-full before:grow before:bg-border
         before:content-['']
       "
     />

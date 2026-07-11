@@ -21,7 +21,9 @@ const { name } = defineProps<{
       <slot name="name-before" />
       <span data-testid="fieldset-name">{{ name }}</span>
       <div class="flex flex-1 items-center gap-1">
-        <slot name="group-actions" />
+        <slot name="group-actions">
+          <span class="h-0 flex-1 border-t" />
+        </slot>
       </div>
     </legend>
     <div data-testid="fieldset-main">

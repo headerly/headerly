@@ -98,7 +98,10 @@ async function handleDownloadJson() {
     <aside
       class="
         col-start-1 row-span-2 flex h-full flex-col justify-between border-r
-        py-2
+        border-r-(--pattern-fg)
+        bg-[repeating-linear-gradient(315deg,var(--pattern-fg)_0,var(--pattern-fg)_1px,transparent_0,transparent_50%)]
+        bg-size-[10px_10px] bg-fixed py-2 [--pattern-fg:var(--color-gray-950)]/5
+        dark:[--pattern-fg:var(--color-white)]/10
       "
     >
       <Button as-child size="icon-sm" variant="secondary" class="mx-2">
@@ -110,7 +113,7 @@ async function handleDownloadJson() {
       <div
         class="
           flex h-4 items-center self-stretch
-          before:h-0.5 before:w-full before:grow before:bg-border
+          before:h-px before:w-full before:grow before:bg-border
           before:content-['']
         "
       />
