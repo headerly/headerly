@@ -101,7 +101,7 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         "
       />
     </div>
-    <div v-else v-auto-animate class="mt-2 w-full px-2 pb-2">
+    <div v-else v-auto-animate class="w-full px-2 pb-2">
       <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
       <RedirectUrlGroup
         v-if="profilesStore.selectedProfile.redirectUrlGroup"
