@@ -35,14 +35,14 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
         focus:bg-accent focus:text-accent-foreground
         data-disabled:pointer-events-none data-disabled:opacity-50
         data-inset:pl-8
-        data-[variant=destructive]:text-destructive-foreground
+        data-[variant=destructive]:text-destructive
         data-[variant=destructive]:focus:bg-destructive/10
-        data-[variant=destructive]:focus:text-destructive-foreground
-        dark:data-[variant=destructive]:focus:bg-destructive/40
+        data-[variant=destructive]:focus:text-destructive
+        dark:data-[variant=destructive]:focus:bg-destructive/20
         [&_i]:pointer-events-none [&_i]:shrink-0
         [&_i:not([class*=\'size-\'])]:size-4
         [&_i:not([class*=\'text-\'])]:text-muted-foreground
-        data-[variant=destructive]:*:[i]:text-destructive-foreground!
+        data-[variant=destructive]:*:[i]:text-destructive!
       `,
       props.class,
     )"

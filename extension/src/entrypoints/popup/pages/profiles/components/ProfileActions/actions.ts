@@ -26,6 +26,35 @@ export interface ProfileActionItem {
   variant?: "default" | "destructive";
 }
 
+export const profileActionIdGroups = [
+  ["toggle", "duplicate"],
+  "separator",
+  ["comments", "rulePriority", "ruleActionType"],
+  "separator",
+  ["shareProfile"],
+  "separator",
+  ["delete"],
+] as const satisfies readonly (readonly ActionKey[] | "separator")[];
+
+function omitActionId(
+  group: readonly ActionKey[] | "separator",
+  actionId: ActionKey,
+) {
+  return match(group)
+    .with("separator", () => group)
+    .otherwise(ids => ids.filter(id => id !== actionId));
+}
+
+function hasActionIds(group: readonly ActionKey[] | "separator") {
+  return match(group)
+    .with("separator", () => true)
+    .otherwise(ids => ids.length > 0);
+}
+
+export const profileMoreActionIdGroups = profileActionIdGroups
+  .map(group => omitActionId(group, "toggle"))
+  .filter(hasActionIds);
+
 export function useProfileActions() {
   const profilesStore = useProfilesStore();
   const router = useRouter();
@@ -90,7 +119,7 @@ export function useProfileActions() {
   return actions;
 };
 
-export function transformIdsToActions(actionIds: (ActionKey[] | "separator")[]) {
+export function transformIdsToActions(actionIds: readonly (readonly ActionKey[] | "separator")[]) {
   const actions = useProfileActions();
   const id2ActionMap = new Map(actions.map(a => [a.id, a]));
 

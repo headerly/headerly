@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
 import { computed, useTemplateRef } from "vue";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
@@ -13,8 +12,7 @@ import {
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { cn } from "@/lib/utils";
-import { transformIdsToActions } from "./actions";
+import { profileActionIdGroups, transformIdsToActions } from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 
@@ -25,12 +23,7 @@ const props = defineProps<{
 const profilesStore = useProfilesStore();
 const profile = computed(() => profilesStore.manager.profiles.find(p => p.id === props.profile.id)!);
 
-const actionIdGroups = [
-  ["toggle", "duplicate", "delete", "comments", "rulePriority", "ruleActionType"],
-  "separator",
-  ["shareProfile"],
-] as const satisfies (ActionKey[] | "separator")[];
-const actionGroups = transformIdsToActions(actionIdGroups);
+const actionGroups = transformIdsToActions(profileActionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
@@ -55,9 +48,7 @@ const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
           <ContextMenuItem
             v-for="action in actionsOrSeparator"
             :key="action.id"
-            :class="cn(
-              action.variant === 'destructive' && 'text-destructive!',
-            )"
+            :variant="action.variant"
             @click="action.onClick(profile, {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),

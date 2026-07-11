@@ -23,7 +23,12 @@ import {
 } from "#/ui/tooltip";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { cn, createHeaderMod, createRedirectUrl } from "@/lib/utils";
-import { transformIdsToActions, useProfileActions } from "./actions";
+import {
+  profileActionIdGroups,
+  profileMoreActionIdGroups,
+  transformIdsToActions,
+  useProfileActions,
+} from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 
@@ -36,22 +41,11 @@ const { t } = useI18n();
 const isCompact = useCompactScreen();
 
 const actions = useProfileActions();
-const mainActionIds = ["toggle", "delete"] as const satisfies ActionKey[];
+const mainActionIds = ["toggle"] as const satisfies ActionKey[];
 const mainActions = actions.filter(action => mainActionIds.includes(action.id));
 
-const moreActionIdGroups = [
-  ["duplicate", "comments", "rulePriority", "ruleActionType"],
-  "separator",
-  ["shareProfile"],
-] as const satisfies (ActionKey[] | "separator")[];
-const moreActionGroups = transformIdsToActions(moreActionIdGroups);
-
-const compactActionIdGroups = [
-  ["toggle", "delete"],
-  "separator",
-  ...moreActionIdGroups,
-] as const satisfies (ActionKey[] | "separator")[];
-const compactActionGroups = transformIdsToActions(compactActionIdGroups);
+const moreActionGroups = transformIdsToActions(profileMoreActionIdGroups);
+const compactActionGroups = transformIdsToActions(profileActionIdGroups);
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
@@ -160,9 +154,7 @@ function handleChangeType() {
             <DropdownMenuItem
               v-for="action in actionsOrSeparator"
               :key="action.id"
-              :class="cn(
-                action.variant === 'destructive' && `text-destructive!`,
-              )"
+              :variant="action.variant"
               @click="action.onClick(profile, {
                 openComments: () => commentsDialogRef?.open(),
                 openPriority: () => priorityDialogRef?.open(),
