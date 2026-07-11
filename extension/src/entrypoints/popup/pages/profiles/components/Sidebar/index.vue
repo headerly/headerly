@@ -81,7 +81,15 @@ function getRuleActionTypeDescription(type: RuleActionType) {
 
 <template>
   <aside
-    :class="cn(`flex h-full flex-col justify-between border-r py-2`, className)"
+    :class="cn(
+      `
+        flex h-full flex-col justify-between border-r border-r-(--pattern-fg)
+        bg-[repeating-linear-gradient(315deg,var(--pattern-fg)_0,var(--pattern-fg)_1px,transparent_0,transparent_50%)]
+        bg-size-[10px_10px] bg-fixed py-2 [--pattern-fg:var(--color-gray-950)]/5
+        dark:[--pattern-fg:var(--color-white)]/10
+      `,
+      className,
+    )"
   >
     <DropdownMenu v-model:open="menuOpen">
       <DropdownMenuTrigger as-child>
