@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { HeaderMod } from "@/lib/schema";
-import { match } from "ts-pattern";
+import { refDebounced } from "@vueuse/core";
+import Fuse from "fuse.js/basic";
 import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
@@ -13,15 +13,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "#/ui/sheet";
-import { Toggle } from "#/ui/toggle";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import BatchProfileToolbar from "./BatchProfileToolbar.vue";
 import ProfileListItem from "./ProfileListItem.vue";
+import { useBatchProfileManage } from "./useBatchProfileManage";
 
 const open = defineModel<boolean>("open", {
   default: false,
@@ -30,116 +25,51 @@ const profilesStore = useProfilesStore();
 const { t } = useI18n();
 
 const searchKeyword = ref("");
-const batchManage = ref(false);
-const selectedProfileIds = ref<string[]>([]);
+const debouncedSearchKeyword = refDebounced(searchKeyword, 500);
 const searchInputRef = useTemplateRef<{ focus: () => void }>("searchInputRef");
+
+const profileSearchIndex = computed(() => new Fuse(
+  profilesStore.manager.profiles.map(profile => ({
+    profile,
+    json: JSON.stringify(profile),
+  })),
+  {
+    keys: ["json"],
+    ignoreLocation: true,
+  },
+));
+
+const searchResults = computed(() => {
+  const keyword = debouncedSearchKeyword.value.trim();
+  if (!keyword) {
+    return profilesStore.manager.profiles;
+  }
+  return profileSearchIndex.value.search(keyword).map(result => result.item.profile);
+});
+
+const {
+  allVisibleSelected,
+  batchManage,
+  hasSelectedProfiles,
+  selectAllLabel,
+  deleteSelectedProfiles,
+  isSelected,
+  resetBatchManage,
+  setSelectedProfilesEnabled,
+  toggleProfileSelection,
+  toggleSelectAllVisible,
+} = useBatchProfileManage(() => searchResults.value);
 
 watch(open, async (isOpen) => {
   if (!isOpen) {
+    searchKeyword.value = "";
+    resetBatchManage();
     return;
   }
 
   await nextTick();
   searchInputRef.value?.focus();
 }, { flush: "post" });
-
-function matchHeaderMod(mod: HeaderMod) {
-  return mod.name?.toLowerCase().includes(searchKeyword.value.toLowerCase())
-    || (mod.operation !== "remove" && mod.value.toLowerCase().includes(searchKeyword.value.toLowerCase()));
-}
-
-const searchResults = computed(() => {
-  if (!searchKeyword.value) {
-    return profilesStore.manager.profiles;
-  }
-  return profilesStore.manager.profiles.filter(profile =>
-    profile.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
-    || profile.emoji.includes(searchKeyword.value)
-    || profile.id.includes(searchKeyword.value)
-    || profile.requestHeaderModGroups?.some(({ items: mods }) => mods.some(matchHeaderMod))
-    || profile.responseHeaderModGroups?.some(({ items: mods }) => mods.some(matchHeaderMod)),
-  );
-});
-
-const hasSelectedProfiles = computed(() => selectedProfileIds.value.length > 0);
-
-const allVisibleSelected = computed(() => {
-  const visibleProfileIds = searchResults.value.map(profile => profile.id);
-  const selectedVisibleCount = visibleProfileIds.filter(id => selectedProfileIds.value.includes(id)).length;
-  if (selectedVisibleCount === 0) {
-    return false;
-  }
-  if (selectedVisibleCount === visibleProfileIds.length) {
-    return true;
-  }
-  return "indeterminate";
-});
-
-const selectAllLabel = computed(() =>
-  match(allVisibleSelected.value === false || allVisibleSelected.value === "indeterminate")
-    .with(true, () => t("share.selectAll"))
-    .with(false, () => t("share.unselectAll"))
-    .exhaustive(),
-);
-
-function updateBatchManage(value: boolean) {
-  batchManage.value = value;
-  if (!value) {
-    selectedProfileIds.value = [];
-  }
-}
-
-function isSelected(profileId: string) {
-  return selectedProfileIds.value.includes(profileId);
-}
-
-function toggleProfileSelection(profileId: string, selected: boolean) {
-  selectedProfileIds.value = match([selected, isSelected(profileId)] as const)
-    .with([true, false], () => [...selectedProfileIds.value, profileId])
-    .with([false, true], () => selectedProfileIds.value.filter(id => id !== profileId))
-    .otherwise(() => selectedProfileIds.value);
-}
-
-function toggleSelectAllVisible() {
-  const visibleProfileIds = searchResults.value.map(profile => profile.id);
-  if (allVisibleSelected.value === true) {
-    selectedProfileIds.value = selectedProfileIds.value.filter(id => !visibleProfileIds.includes(id));
-    return;
-  }
-
-  selectedProfileIds.value = Array.from(new Set([
-    ...selectedProfileIds.value,
-    ...visibleProfileIds,
-  ]));
-}
-
-function deleteSelectedProfiles() {
-  if (!hasSelectedProfiles.value) {
-    return;
-  }
-
-  const selectedProfiles = profilesStore.manager.profiles
-    .filter(profile => selectedProfileIds.value.includes(profile.id));
-
-  if (selectedProfiles.length === profilesStore.manager.profiles.length) {
-    const firstProfileId = profilesStore.manager.profiles[0]!.id;
-    selectedProfileIds.value
-      .filter(id => id !== firstProfileId)
-      .forEach(id => profilesStore.deleteProfile(id));
-    profilesStore.deleteProfile(firstProfileId);
-    selectedProfileIds.value = [];
-    return;
-  }
-
-  selectedProfiles.forEach(profile => profilesStore.deleteProfile(profile.id));
-  selectedProfileIds.value = [];
-}
-
-function setSelectedProfilesEnabled(enabled: boolean) {
-  profilesStore.manager.profiles
-    .filter(profile => selectedProfileIds.value.includes(profile.id))
-    .forEach(profile => profile.enabled = enabled);
-}
 </script>
 
 <template>
@@ -163,84 +93,13 @@ function setSelectedProfilesEnabled(enabled: boolean) {
             sticky top-0 z-10 flex shrink-0 flex-col gap-1 bg-background pb-1
           "
         >
-          <div class="mx-4 mb-1 flex items-center justify-between gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger as-child>
-                  <Toggle
-                    :model-value="batchManage"
-                    type="button"
-                    class="px-2"
-                    @update:model-value="updateBatchManage"
-                  >
-                    <span class="sr-only">{{ t("profile.search.batchManage") }}</span>
-                    <i class="i-lucide-settings-2 size-4.5" />
-                  </Toggle>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {{ t("profile.search.batchManage") }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <div class="flex items-center gap-1">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger as="div">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      class="text-destructive"
-                      :disabled="!hasSelectedProfiles"
-                      @click="deleteSelectedProfiles"
-                    >
-                      <span class="sr-only">{{ t("profile.search.deleteSelectedProfiles") }}</span>
-                      <i class="i-lucide-trash size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {{ t("profile.search.deleteSelectedProfiles") }}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger as="div">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      :disabled="!hasSelectedProfiles"
-                      @click="setSelectedProfilesEnabled(false)"
-                    >
-                      <span class="sr-only">{{ t("profile.search.pauseSelectedProfiles") }}</span>
-                      <i class="i-lucide-pause size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {{ t("profile.search.pauseSelectedProfiles") }}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger as="div">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      :disabled="!hasSelectedProfiles"
-                      @click="setSelectedProfilesEnabled(true)"
-                    >
-                      <span class="sr-only">{{ t("profile.search.resumeSelectedProfiles") }}</span>
-                      <i class="i-lucide-play size-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {{ t("profile.search.resumeSelectedProfiles") }}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </div>
+          <BatchProfileToolbar
+            v-model:batch-manage="batchManage"
+            :has-selected-profiles
+            @delete-selected-profiles="deleteSelectedProfiles"
+            @pause-selected-profiles="setSelectedProfilesEnabled(false)"
+            @resume-selected-profiles="setSelectedProfilesEnabled(true)"
+          />
           <div class="relative mx-4">
             <i
               class="
@@ -250,7 +109,7 @@ function setSelectedProfilesEnabled(enabled: boolean) {
             />
             <Input
               ref="searchInputRef"
-              v-model.lazy.trim="searchKeyword"
+              v-model.trim="searchKeyword"
               type="search"
               :placeholder="t('profile.search.placeholder')"
               class="pl-8"

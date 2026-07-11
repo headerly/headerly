@@ -52,6 +52,7 @@ catalog:
   es-toolkit: ^1.46.1
   eslint: ^10.3.0
   eslint-plugin-better-tailwindcss: ^4.5.0
+  fuse.js: ^7.4.2
   lefthook: ^2.1.6
   motion-v: ^2.2.1
   oxc-minify: ^0.129.0

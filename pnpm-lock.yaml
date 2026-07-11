@@ -123,6 +123,9 @@ catalogs:
     eslint-plugin-better-tailwindcss:
       specifier: ^4.5.0
       version: 4.5.0
+    fuse.js:
+      specifier: ^7.4.2
+      version: 7.4.2
     lefthook:
       specifier: ^2.1.6
       version: 2.1.6
@@ -263,7 +266,7 @@ importers:
     dependencies:
       vitepress:
         specifier: 'catalog:'
-        version: 2.0.0-alpha.15(@types/node@24.12.3)(change-case@5.4.4)(esbuild@0.28.1)(jiti@2.7.0)(oxc-minify@0.129.0)(postcss@8.5.14)(sortablejs@1.15.7)(typescript@6.0.3)(yaml@2.8.4)
+        version: 2.0.0-alpha.15(@types/node@24.12.3)(change-case@5.4.4)(esbuild@0.28.1)(fuse.js@7.4.2)(jiti@2.7.0)(oxc-minify@0.129.0)(postcss@8.5.14)(sortablejs@1.15.7)(typescript@6.0.3)(yaml@2.8.4)
       vue:
         specifier: 'catalog:'
         version: 3.6.0-beta.14(typescript@6.0.3)
@@ -315,7 +318,7 @@ importers:
         version: 14.3.0(vue@3.6.0-beta.14(typescript@6.0.3))
       '@vueuse/integrations':
         specifier: 'catalog:'
-        version: 14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(sortablejs@1.15.7)(vue@3.6.0-beta.14(typescript@6.0.3))
+        version: 14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(fuse.js@7.4.2)(sortablejs@1.15.7)(vue@3.6.0-beta.14(typescript@6.0.3))
       '@webext-core/messaging':
         specifier: 'catalog:'
         version: 2.3.0
@@ -337,6 +340,9 @@ importers:
       es-toolkit:
         specifier: 'catalog:'
         version: 1.46.1
+      fuse.js:
+        specifier: 'catalog:'
+        version: 7.4.2
       motion-v:
         specifier: 'catalog:'
         version: 2.2.1(@vueuse/core@14.3.0(vue@3.6.0-beta.14(typescript@6.0.3)))(vue@3.6.0-beta.14(typescript@6.0.3))
@@ -3618,6 +3624,10 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+
+  fuse.js@7.4.2:
+    resolution: {integrity: sha512-LVbzjD4WA6UP5B1UnP8wuaXJiLnqMdM/E4fiJXTJ5haJ5b/MBNsK29h2fm6swEoQaVQjvYFWKLE2RanyZIoRVQ==}
+    engines: {node: '>=10'}
 
   fx-runner@1.4.0:
     resolution: {integrity: sha512-rci1g6U0rdTg6bAaBboP7XdRu01dzTAaKXxFf+PUqGuCv6Xu7o8NZdY1D5MvKGIjb6EdS1g3VlXOgksir1uGkg==}
@@ -7944,7 +7954,7 @@ snapshots:
       '@vueuse/shared': 14.3.0(vue@3.6.0-beta.14(typescript@6.0.3))
       vue: 3.6.0-beta.14(typescript@6.0.3)
 
-  '@vueuse/integrations@14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(sortablejs@1.15.7)(vue@3.5.34(typescript@6.0.3))':
+  '@vueuse/integrations@14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(fuse.js@7.4.2)(sortablejs@1.15.7)(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@6.0.3))
       '@vueuse/shared': 14.3.0(vue@3.5.34(typescript@6.0.3))
@@ -7952,9 +7962,10 @@ snapshots:
     optionalDependencies:
       change-case: 5.4.4
       focus-trap: 7.8.0
+      fuse.js: 7.4.2
       sortablejs: 1.15.7
 
-  '@vueuse/integrations@14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(sortablejs@1.15.7)(vue@3.6.0-beta.14(typescript@6.0.3))':
+  '@vueuse/integrations@14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(fuse.js@7.4.2)(sortablejs@1.15.7)(vue@3.6.0-beta.14(typescript@6.0.3))':
     dependencies:
       '@vueuse/core': 14.3.0(vue@3.6.0-beta.14(typescript@6.0.3))
       '@vueuse/shared': 14.3.0(vue@3.6.0-beta.14(typescript@6.0.3))
@@ -7962,6 +7973,7 @@ snapshots:
     optionalDependencies:
       change-case: 5.4.4
       focus-trap: 7.8.0
+      fuse.js: 7.4.2
       sortablejs: 1.15.7
 
   '@vueuse/metadata@14.3.0': {}
@@ -9028,6 +9040,8 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
+
+  fuse.js@7.4.2: {}
 
   fx-runner@1.4.0:
     dependencies:
@@ -11117,7 +11131,7 @@ snapshots:
       jiti: 2.7.0
       yaml: 2.8.4
 
-  vitepress@2.0.0-alpha.15(@types/node@24.12.3)(change-case@5.4.4)(esbuild@0.28.1)(jiti@2.7.0)(oxc-minify@0.129.0)(postcss@8.5.14)(sortablejs@1.15.7)(typescript@6.0.3)(yaml@2.8.4):
+  vitepress@2.0.0-alpha.15(@types/node@24.12.3)(change-case@5.4.4)(esbuild@0.28.1)(fuse.js@7.4.2)(jiti@2.7.0)(oxc-minify@0.129.0)(postcss@8.5.14)(sortablejs@1.15.7)(typescript@6.0.3)(yaml@2.8.4):
     dependencies:
       '@docsearch/css': 4.6.3
       '@docsearch/js': 4.6.3
@@ -11130,7 +11144,7 @@ snapshots:
       '@vue/devtools-api': 8.1.2
       '@vue/shared': 3.5.34
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@6.0.3))
-      '@vueuse/integrations': 14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(sortablejs@1.15.7)(vue@3.5.34(typescript@6.0.3))
+      '@vueuse/integrations': 14.3.0(change-case@5.4.4)(focus-trap@7.8.0)(fuse.js@7.4.2)(sortablejs@1.15.7)(vue@3.5.34(typescript@6.0.3))
       focus-trap: 7.8.0
       mark.js: 8.11.1
       minisearch: 7.2.0
