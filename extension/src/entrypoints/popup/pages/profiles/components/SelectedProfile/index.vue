@@ -71,6 +71,13 @@ const empty = computed(() => {
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
+const extensionVersionLabel = `v${browser.runtime.getManifest().version}`;
+const versionBadgeCornerClassNames = [
+  "-top-0.5 -left-0.5",
+  "-top-0.5 -right-0.5",
+  "-bottom-0.5 -left-0.5",
+  "-bottom-0.5 -right-0.5",
+];
 </script>
 
 <template>
@@ -101,36 +108,64 @@ const disabled = computed(() => !profilesStore.selectedProfile.enabled || !setti
         "
       />
     </div>
-    <div v-else v-auto-animate class="w-full px-2 pb-2">
-      <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
-      <RedirectUrlGroup
-        v-if="profilesStore.selectedProfile.redirectUrlGroup"
-        v-model="profilesStore.selectedProfile.redirectUrlGroup"
-      />
-      <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
-        <RequestModFieldWithActions
-          v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
-          :key="id"
-          v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
-          action-type="request"
+    <div v-else class="relative min-h-full w-full overflow-hidden">
+      <div
+        aria-hidden="true"
+        class="
+          pointer-events-none fixed right-6 bottom-6 px-2 text-sm/6
+          text-primary/35 select-none
+          dark:text-primary/35
+        "
+      >
+        <span
+          class="
+            absolute inset-0 border border-dashed border-primary/20 bg-primary/5
+          "
         />
-      </template>
-      <template v-if="profilesStore.selectedProfile.syncCookieGroups">
-        <SyncCookieGroup
-          v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
-          :key="id"
-          v-model="profilesStore.selectedProfile.syncCookieGroups[index]!"
+        <span class="relative font-mono">{{ extensionVersionLabel }}</span>
+        <svg
+          v-for="cornerClassName in versionBadgeCornerClassNames"
+          :key="cornerClassName"
+          width="5"
+          height="5"
+          viewBox="0 0 5 5"
+          :class="cn('absolute fill-primary/25', cornerClassName)"
+        >
+          <path d="M2 0h1v2h2v1h-2v2h-1v-2h-2v-1h2z" />
+        </svg>
+      </div>
+
+      <div v-auto-animate class="relative z-10 w-full px-2 pb-2">
+        <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
+        <RedirectUrlGroup
+          v-if="profilesStore.selectedProfile.redirectUrlGroup"
+          v-model="profilesStore.selectedProfile.redirectUrlGroup"
         />
-      </template>
-      <template v-if="profilesStore.selectedProfile.responseHeaderModGroups">
-        <RequestModFieldWithActions
-          v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
-          :key="id"
-          v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"
-          action-type="response"
-        />
-      </template>
-      <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
+        <template v-if="profilesStore.selectedProfile.requestHeaderModGroups">
+          <RequestModFieldWithActions
+            v-for="{ id }, index in profilesStore.selectedProfile.requestHeaderModGroups"
+            :key="id"
+            v-model="profilesStore.selectedProfile.requestHeaderModGroups[index]!"
+            action-type="request"
+          />
+        </template>
+        <template v-if="profilesStore.selectedProfile.syncCookieGroups">
+          <SyncCookieGroup
+            v-for="{ id }, index in profilesStore.selectedProfile.syncCookieGroups"
+            :key="id"
+            v-model="profilesStore.selectedProfile.syncCookieGroups[index]!"
+          />
+        </template>
+        <template v-if="profilesStore.selectedProfile.responseHeaderModGroups">
+          <RequestModFieldWithActions
+            v-for="{ id }, index in profilesStore.selectedProfile.responseHeaderModGroups"
+            :key="id"
+            v-model="profilesStore.selectedProfile.responseHeaderModGroups[index]!"
+            action-type="response"
+          />
+        </template>
+        <FiltersFieldset v-if="Object.keys(profilesStore.selectedProfile.filters).length" />
+      </div>
     </div>
   </div>
 </template>

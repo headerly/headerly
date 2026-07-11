@@ -85,6 +85,7 @@ useSortableAndAutoAnimate({
     <Fieldset
       v-auto-animate
       :name
+      class="bg-background"
     >
       <template #name-before>
         <Label v-if="type">

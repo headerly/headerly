@@ -208,7 +208,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
     <div
       class="
         flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow before:bg-border
+        before:h-px before:w-full before:grow before:bg-border
         before:content-['']
       "
     />
@@ -224,7 +224,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
     <div
       class="
         flex h-4 items-center self-stretch
-        before:h-0.5 before:w-full before:grow before:bg-border
+        before:h-px before:w-full before:grow before:bg-border
         before:content-['']
       "
     />
