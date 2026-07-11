@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.12.0](https://github.com/headerly/headerly/compare/v1.11.0...v1.12.0) (2026-07-11)
+
+
+### Features
+
+* **popup:** add a version number to the selected profile background ([f53d494](https://github.com/headerly/headerly/commit/f53d4943786fc097c71af25633b6cd1ba0bb4082))
+* **popup:** add searchable batch profile management ([#57](https://github.com/headerly/headerly/issues/57)) ([88ed274](https://github.com/headerly/headerly/commit/88ed2740ea2b01daa74853d17425127a9451489e))
+* **popup:** make group fieldset legend sticky ([63038e4](https://github.com/headerly/headerly/commit/63038e4d66f7bcd197a80e1e54888fc052ff9f57))
+* **popup:** move delete action into dropdown to prevent misclicks ([b825f02](https://github.com/headerly/headerly/commit/b825f02dbd7bfb566e778154077022fa98690593))
+* **popup:** prefill new profile conditions with current tab domain ([50ca2e9](https://github.com/headerly/headerly/commit/50ca2e971c7ae19730912cd6666bc3bfdca96be9))
+* **profiles:** explain why actions and conditions cannot be added ([8199671](https://github.com/headerly/headerly/commit/8199671dde19f9d0e645ff55d65311d05453909f))
+* supports topDomains and excludedTopDomains conditions ([5146dd3](https://github.com/headerly/headerly/commit/5146dd3cbaf41366d9c978e082bb44c4febab76a))
+
+
+### Bug Fixes
+
+* **DNR:** an error occurred upon creating a profile of type allowAllRequest ([74a34f5](https://github.com/headerly/headerly/commit/74a34f5dbbd907a7a0f16cbb0dacb51b3cf015e4))
+* dropdown was not closed when clicking the secondary menu ([1ba4e5b](https://github.com/headerly/headerly/commit/1ba4e5b45eef9429ea55220ec3d5a8e02d543580))
+* **popup:** add current tab domain filter after rule type changes ([59b39be](https://github.com/headerly/headerly/commit/59b39be98819b8b10bbe192c88a7d258c75d62a3))
+* **popup:** correct regex filter placeholder ([b6197a9](https://github.com/headerly/headerly/commit/b6197a9cec879260b8c509eabcc4a2b00c09fe00))
+* selected profile fieldset legend sticky style is not working ([c220754](https://github.com/headerly/headerly/commit/c2207547cb8e5026a91093e51fbea8ea1d12450e))
+
 ## [1.11.0](https://github.com/headerly/headerly/compare/v1.10.0...v1.11.0) (2026-07-10)
 
 
