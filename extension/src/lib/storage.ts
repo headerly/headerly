@@ -12,7 +12,7 @@ import { createProfile } from "./utils";
 
 export { PROFILE_LATEST_VERSION } from "./const";
 
-interface UseBrowserStorageOptions<T> {
+interface UseExtensionStorageOptions<T> {
   onReady?: (value: T) => void;
   version?: number;
   migrations?: WxtStorageItemOptions<T>["migrations"];
@@ -25,7 +25,7 @@ interface UseBrowserStorageOptions<T> {
  * such as the background service worker and popup pages, so both the direct
  * WXT storage item and the Vue reactive ref stay in sync.
  */
-function useBrowserStorage<T>(key: StorageItemKey, initialValue: T, options?: UseBrowserStorageOptions<T>) {
+function useExtensionStorage<T>(key: StorageItemKey, initialValue: T, options?: UseExtensionStorageOptions<T>) {
   const item = storage.defineItem<T>(key, {
     fallback: initialValue,
     version: options?.version,
@@ -109,30 +109,30 @@ function createDefaultProfileManager() {
 
 const defaultProfileManager = createDefaultProfileManager();
 
-type UseStorageInstanceOptions<T> = Pick<UseBrowserStorageOptions<T>, "onReady">;
+type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, options);
+  return useExtensionStorage<ProfileManager>("local:profileManager", defaultProfileManager, options);
 }
 
 export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
-  return useBrowserStorage<ProfileGroup[]>("local:profileGroups", [], options);
+  return useExtensionStorage<ProfileGroup[]>("local:profileGroups", [], options);
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
-  return useBrowserStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
+  return useExtensionStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
 }
 
 export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<string, string>>) {
-  return useBrowserStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
+  return useExtensionStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
 }
 
 export function usePowerOnStorage() {
-  return useBrowserStorage<boolean>("local:powerOn", true);
+  return useExtensionStorage<boolean>("local:powerOn", true);
 }
 
 export function useNativeResourceTypeBehaviorStorage() {
-  return useBrowserStorage<boolean>("local:nativeResourceTypeBehavior", false);
+  return useExtensionStorage<boolean>("local:nativeResourceTypeBehavior", false);
 }
 
 export function useLanguageStorage() {
