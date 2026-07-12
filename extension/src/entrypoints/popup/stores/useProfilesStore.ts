@@ -6,7 +6,7 @@ import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
-import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
+import { useProfileGroupsStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie, getCurrentTabHostname } from "@/lib/utils";
 
 export function findHeaderModGroups(profile: Profile, type: ActionType) {
@@ -18,31 +18,24 @@ export function findHeaderModGroups(profile: Profile, type: ActionType) {
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
+  const { promise: profileGroupsPromise, resolve: profileGroupsResolve } = Promise.withResolvers();
   const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
   const { promise: profileId2RelatedRuleIdRecordPromise, resolve: profileId2RelatedRuleIdRecordResolve } = Promise.withResolvers();
   const ready = ref(false);
-  Promise.all([
-    managerPromise,
-    profileId2ErrorMessageRecordPromise,
-    profileId2RelatedRuleIdRecordPromise,
-  ]).then(() => ready.value = true);
   const { ref: manager } = useProfileManagerStorage({ onReady: managerResolve });
+  const { ref: profileGroups } = useProfileGroupsStorage({ onReady: profileGroupsResolve });
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
 
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);
-
-  const profileGroups = computed({
-    get() {
-      manager.value.profileGroups ??= [];
-      return manager.value.profileGroups;
-    },
-    set(value: ProfileGroup[]) {
-      manager.value.profileGroups = value;
-    },
-  });
+  Promise.all([
+    managerPromise,
+    profileGroupsPromise,
+    profileId2ErrorMessageRecordPromise,
+    profileId2RelatedRuleIdRecordPromise,
+  ]).then(() => ready.value = true);
 
   const selectedProfile = computed(() => {
     return manager.value.profiles.find(p => p.id === manager.value.selectedProfileId)!;
@@ -200,6 +193,22 @@ export const useProfilesStore = defineStore("profiles", () => {
       .forEach(profile => delete profile.groupId);
   }
 
+  function reorderProfilesByIds(profileIds: string[]) {
+    const profilesById = new Map(manager.value.profiles.map(profile => [profile.id, profile]));
+    const seenProfileIds = new Set<string>();
+    const reorderedProfiles = profileIds.flatMap((profileId) => {
+      const profile = profilesById.get(profileId);
+      if (!profile || seenProfileIds.has(profileId)) {
+        return [];
+      }
+
+      seenProfileIds.add(profileId);
+      return [profile];
+    });
+    const remainingProfiles = manager.value.profiles.filter(profile => !seenProfileIds.has(profile.id));
+    manager.value.profiles.splice(0, manager.value.profiles.length, ...reorderedProfiles, ...remainingProfiles);
+  }
+
   function addHeaderActionGroup(type: ActionType, groupType: GroupType) {
     const profile = selectedProfile.value;
     if (type === "request") {
@@ -254,6 +263,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     duplicateProfile,
     deleteProfile,
     removeProfileFromGroup,
+    reorderProfilesByIds,
     setProfileEnabled,
     toggleProfileEnabled,
     updateProfileGroup,

@@ -1,6 +1,7 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
+import type { ProfileGroup } from "./schema";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
@@ -9,8 +10,6 @@ import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
 import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./utils";
-
-export { PROFILE_LATEST_VERSION } from "./const";
 
 interface UseExtensionStorageOptions<T> {
   onReady?: (value: T) => void;
@@ -24,6 +23,8 @@ interface UseExtensionStorageOptions<T> {
  * Use this helper for storage values that are shared across extension contexts
  * such as the background service worker and popup pages, so both the direct
  * WXT storage item and the Vue reactive ref stay in sync.
+ *
+ * Do not use this hook for settings used exclusively in the popup page! That would be a waste of quota.
  */
 function useExtensionStorage<T>(key: StorageItemKey, initialValue: T, options?: UseExtensionStorageOptions<T>) {
   const item = storage.defineItem<T>(key, {
@@ -103,7 +104,6 @@ function createDefaultProfileManager() {
   const profile = createProfile();
   return {
     profiles: [profile],
-    profileGroups: [],
     selectedProfileId: profile.id,
   } as const satisfies ProfileManager;
 }
@@ -117,6 +117,10 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
     version: PROFILE_LATEST_VERSION,
     ...options,
   });
+}
+
+export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
+  return useExtensionStorage<ProfileGroup[]>("local:profileGroups", [], options);
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {

@@ -8,6 +8,7 @@ interface UseSortableAndAutoAnimateOptions<T> {
   list: T[];
   disabled?: ComputedRef<boolean> | ShallowRef<boolean>;
   handle?: string;
+  onUpdate?: (event: { newIndex: number; oldIndex: number }) => void;
 }
 export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateOptions<T>) {
   let enableAutoAnimate: ((enabled: boolean) => void) | undefined;
@@ -43,6 +44,10 @@ export function useSortableAndAutoAnimate<T>(options: UseSortableAndAutoAnimateO
     selectedClass: "z-10",
     onUpdate: ({ newIndex, oldIndex }) => {
       if (newIndex === undefined || oldIndex === undefined) {
+        return;
+      }
+      if (options.onUpdate) {
+        options.onUpdate({ newIndex, oldIndex });
         return;
       }
       const list = options.list;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Profile, ProfileGroup } from "@/lib/schema";
 import { AnimatePresence, motion } from "motion-v";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import {
@@ -13,25 +14,35 @@ import {
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { Input } from "#/ui/input";
+import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { PROFILE_GROUP_COLORS } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import ProfileListItem from "./ProfileListItem.vue";
 import { getProfileGroupColorClass } from "./utils";
 
-defineProps<{
+const props = defineProps<{
   collapsed: boolean;
   group: ProfileGroup;
   profiles: Profile[];
 }>();
 
 const emit = defineEmits<{
+  (e: "sortProfiles", event: { newIndex: number; oldIndex: number }): void;
   (e: "toggle"): void;
   (e: "setRef", el: HTMLDivElement | null, profileId: string): void;
 }>();
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
+const listContainer = useTemplateRef<HTMLElement>("listContainer");
+
+useSortableAndAutoAnimate({
+  disabled: computed(() => props.collapsed),
+  listContainer,
+  list: props.profiles,
+  onUpdate: event => emit("sortProfiles", event),
+});
 
 function setGroupType(group: ProfileGroup, type: ProfileGroup["type"]) {
   profilesStore.updateProfileGroup(group.id, { type });
@@ -57,6 +68,7 @@ function setGroupType(group: ProfileGroup, type: ProfileGroup["type"]) {
           <Button
             variant="secondary"
             size="icon-sm"
+            data-profile-top-level-sort-handle
             :class="cn(
               `h-6! shrink-0 text-background`,
               getProfileGroupColorClass(group.color),
@@ -135,22 +147,24 @@ function setGroupType(group: ProfileGroup, type: ProfileGroup["type"]) {
         <motion.div
           v-if="!collapsed"
           key="profile-group-items"
-          class="flex flex-col gap-1 overflow-x-visible overflow-y-clip"
+          class="overflow-x-visible overflow-y-clip"
           :initial="{ height: 0, opacity: 0, y: -4 }"
           :animate="{ height: 'auto', opacity: 1, y: 0 }"
           :exit="{ height: 0, opacity: 0, y: -4 }"
           :transition="{ duration: 0.18, ease: 'easeOut' }"
         >
-          <div
-            v-for="(profile, index) in profiles"
-            :key="profile.id"
-            :ref="(el) => emit('setRef', el as HTMLDivElement | null, profile.id)"
-          >
-            <ProfileListItem
-              :index
-              :profile
-              layout="icon"
-            />
+          <div ref="listContainer" class="flex flex-col gap-1">
+            <div
+              v-for="(profile, index) in profiles"
+              :key="profile.id"
+              :ref="(el) => emit('setRef', el as HTMLDivElement | null, profile.id)"
+            >
+              <ProfileListItem
+                :index
+                :profile
+                layout="icon"
+              />
+            </div>
           </div>
         </motion.div>
       </AnimatePresence>
