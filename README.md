@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Headerly is a powerful and reliable browser extension designed for managing HTTP request and response headers. It allows developers and users to quickly set, append, or remove headers and easily customize web traffic.
+Headerly is a powerful and reliable browser extension for managing HTTP request/response headers and Chrome Declarative Net Request (DNR) rules. It helps developers and power users create reusable profiles that modify headers, allow or block requests, upgrade schemes, redirect traffic, and target rules precisely.
 
 As an open-source project, Headerly provides a clean, user-friendly experience without injecting ads into your webpages.
 
@@ -14,21 +14,23 @@ As an open-source project, Headerly provides a clean, user-friendly experience w
 
 ## Key Features
 
-- **DNR API Integration:** Powered by Chrome's modern Declarative Net Request (DNR) API for fast and efficient network request modifications.
-- **Intuitive UI:** A clean popup interface that makes profile management straightforward.
-- **Profile Import & Export:** Import existing configurations and export profiles for backup, sharing, or migration.
-- **Flexible Configuration:** Support for using radio or checkbox modes within a single profile to manage different header rules, with configurable default modes.
-- **Rich Filtering:** Apply rules conditionally based on URL matching, Regex, domains, resource types, and request methods.
-- **Cookie Synchronization:** Sync specific cookies across different requests (requires additional cookies permission).
+- **DNR Action Types:** Create profiles for `modifyHeaders`, `allow`, `block`, `upgradeScheme`, `allowAllRequests`, and simple `redirect` actions.
+- **Request & Response Header Rules:** Set, append, or remove request and response headers, with radio and checkbox groups for mutually exclusive or combinable variants.
+- **Powerful Conditions:** Target rules with URL filters, regex filters, request/initiator/top-level domains, excluded domains, first-party or third-party matching, resource types, request methods, and case-sensitive URL matching.
+- **Profile-Based Workflow:** Create, duplicate, pause, resume, delete, search, batch-manage, comment on, prioritize, and switch the action type of profiles.
+- **Shareable Profiles:** Export one or more profiles as JSON, copy them to the clipboard, save them as a file, or share them with a compressed `headerly.dev/share` link.
+- **Safe Import Flow:** Import profiles from JSON files, pasted JSON, or shared links, with schema validation before applying changes.
+- **Cookie Synchronization:** Sync selected cookies into request headers when needed, with explicit cookies permission and warnings before sharing sensitive data.
+- **Extension Controls & Recovery:** Toggle the extension on/off, view active rule counts in the badge, choose language/theme settings, and reinitialize all DNR rules when troubleshooting.
 
 
 ## Privacy Guarantee
 
-Your privacy is our priority. Because Headerly strictly utilizes the `declarativeNetRequest` API, the browser handles all network modifications internally based on predefined rules. The extension itself has no capability to intercept, read, or analyze your sensitive data, request payloads, or response bodies.
+Your privacy is our priority. Headerly relies on the `declarativeNetRequest` API, so the browser applies matching rules internally. The extension does not intercept, read, or analyze request payloads or response bodies. Cookie synchronization is optional and only runs after you grant the additional cookies permission.
 
 ## Screenshots
 
-![Headerly Screenshot](./.github/social-preview.png)
+![Headerly Screenshot](./.github/social-preview.webp)
 
 
 ## Contribution
