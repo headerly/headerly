@@ -1,13 +1,13 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
+import type { ProfileGroup } from "./schema";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
-import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./utils";
 
 export { PROFILE_LATEST_VERSION } from "./const";
@@ -103,7 +103,6 @@ function createDefaultProfileManager() {
   const profile = createProfile();
   return {
     profiles: [profile],
-    profileGroups: [],
     selectedProfileId: profile.id,
   } as const satisfies ProfileManager;
 }
@@ -113,10 +112,11 @@ const defaultProfileManager = createDefaultProfileManager();
 type UseStorageInstanceOptions<T> = Pick<UseBrowserStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, {
-    version: PROFILE_LATEST_VERSION,
-    ...options,
-  });
+  return useBrowserStorage<ProfileManager>("local:profileManager", defaultProfileManager, options);
+}
+
+export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
+  return useBrowserStorage<ProfileGroup[]>("local:profileGroups", [], options);
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {

@@ -1,4 +1,5 @@
 <script setup lang="tsx">
+import type { Profile, ProfileGroup } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
 import { computed, ref, useTemplateRef, watch } from "vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
@@ -6,6 +7,21 @@ import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnima
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import ProfileGroupBlock from "./ProfileGroupBlock.vue";
 import ProfileListItem from "./ProfileListItem.vue";
+
+interface ProfileBlock {
+  id: string;
+  profile: Profile;
+  type: "profile";
+}
+
+interface GroupBlock {
+  group: ProfileGroup;
+  id: string;
+  profiles: Profile[];
+  type: "group";
+}
+
+type ProfileSidebarBlock = ProfileBlock | GroupBlock;
 
 const profilesStore = useProfilesStore();
 
@@ -38,19 +54,41 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 const collapsedGroupIds = ref(new Set<string>());
-const ungroupedProfiles = computed(() => profilesStore.manager.profiles.filter(profile => !profile.groupId));
-const groupedProfileBlocks = computed(() => profilesStore.profileGroups
-  .map(group => ({
-    group,
-    profiles: profilesStore.manager.profiles.filter(profile => profile.groupId === group.id),
-  }))
-  .filter(block => block.profiles.length > 0));
-const hasGroupedProfiles = computed(() => groupedProfileBlocks.value.length > 0);
+const profileGroupsById = computed(() => new Map(profilesStore.profileGroups.map(group => [group.id, group])));
+const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
+  const addedGroupIds = new Set<string>();
+  return profilesStore.manager.profiles.flatMap((profile): ProfileSidebarBlock[] => {
+    let group: ProfileGroup | undefined;
+    if (profile.groupId) {
+      group = profileGroupsById.value.get(profile.groupId);
+    }
+    if (!group) {
+      return [{
+        id: profile.id,
+        profile,
+        type: "profile",
+      }];
+    }
+
+    if (addedGroupIds.has(group.id)) {
+      return [];
+    }
+
+    addedGroupIds.add(group.id);
+    return [{
+      group,
+      id: group.id,
+      profiles: profilesStore.manager.profiles.filter(candidate => candidate.groupId === group.id),
+      type: "group",
+    }];
+  });
+});
 
 useSortableAndAutoAnimate({
-  disabled: hasGroupedProfiles,
+  handle: "[data-profile-top-level-sort-handle]",
   listContainer,
-  list: profilesStore.manager.profiles,
+  list: sidebarBlocks.value,
+  onUpdate: handleSidebarBlocksSort,
 });
 
 function toggleGroup(groupId: string) {
@@ -61,6 +99,49 @@ function toggleGroup(groupId: string) {
   }
   collapsedGroupIds.value = new Set(collapsedGroupIds.value);
 }
+
+function moveItem<T>(items: T[], oldIndex: number, newIndex: number) {
+  if (oldIndex < 0 || oldIndex >= items.length || newIndex < 0 || newIndex >= items.length) {
+    return items;
+  }
+
+  const nextItems = [...items];
+  const [movedItem] = nextItems.splice(oldIndex, 1);
+  nextItems.splice(newIndex, 0, movedItem!);
+  return nextItems;
+}
+
+function flattenProfileIds(
+  blocks = sidebarBlocks.value,
+) {
+  return blocks.flatMap((block) => {
+    if (block.type === "profile") {
+      return [block.profile.id];
+    }
+
+    return block.profiles.map(profile => profile.id);
+  });
+}
+
+function handleSidebarBlocksSort(event: { newIndex: number; oldIndex: number }) {
+  profilesStore.reorderProfilesByIds(flattenProfileIds(
+    moveItem(sidebarBlocks.value, event.oldIndex, event.newIndex),
+  ));
+}
+
+function handleGroupProfilesSort(groupId: string, event: { newIndex: number; oldIndex: number }) {
+  const blocks = sidebarBlocks.value.map((block) => {
+    if (block.type !== "group" || block.group.id !== groupId) {
+      return block;
+    }
+
+    return {
+      ...block,
+      profiles: moveItem(block.profiles, event.oldIndex, event.newIndex),
+    };
+  });
+  profilesStore.reorderProfilesByIds(flattenProfileIds(blocks));
+}
 </script>
 
 <template>
@@ -70,25 +151,30 @@ function toggleGroup(groupId: string) {
       flex flex-col gap-1 overflow-y-auto px-2 py-1.25 [scrollbar-width:none]
     "
   >
-    <ProfileGroupBlock
-      v-for="block in groupedProfileBlocks"
-      :key="block.group.id"
-      :group="block.group"
-      :profiles="block.profiles"
-      :collapsed="collapsedGroupIds.has(block.group.id)"
-      @toggle="toggleGroup(block.group.id)"
-      @set-ref="setRef"
-    />
     <div
-      v-for="(profile, index) in ungroupedProfiles"
-      :key="profile.id"
-      :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
+      v-for="(block, index) in sidebarBlocks"
+      :key="block.id"
     >
-      <ProfileListItem
-        :index
-        :profile
-        layout="icon"
+      <ProfileGroupBlock
+        v-if="block.type === 'group'"
+        :group="block.group"
+        :profiles="block.profiles"
+        :collapsed="collapsedGroupIds.has(block.group.id)"
+        @toggle="toggleGroup(block.group.id)"
+        @set-ref="setRef"
+        @sort-profiles="handleGroupProfilesSort(block.group.id, $event)"
       />
+      <div
+        v-else
+        :ref="(el) => setRef(el as HTMLDivElement | null, block.profile.id)"
+        data-profile-top-level-sort-handle
+      >
+        <ProfileListItem
+          :index
+          :profile="block.profile"
+          layout="icon"
+        />
+      </div>
     </div>
   </div>
 </template>
