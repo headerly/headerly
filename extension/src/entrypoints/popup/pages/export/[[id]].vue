@@ -150,7 +150,7 @@ async function handleDownloadJson() {
               <i class="i-lucide-chevron-down" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" :collision-padding="8">
+          <DropdownMenuContent align="end" :collision-padding="8" class="z-500">
             <DropdownMenuItem @click="handleCopyShareLink">
               <i class="i-lucide-link" />
               {{ t("share.copyLink") }}
