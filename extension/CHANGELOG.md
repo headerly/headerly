@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/headerly/headerly/compare/v1.12.0...v1.12.1) (2026-07-12)
+
+
+### Bug Fixes
+
+* **popup:** keep profile share dropdown above search bar ([9eec9f7](https://github.com/headerly/headerly/commit/9eec9f732ee055badf8f8165da01881729d04634))
+
 ## [1.12.0](https://github.com/headerly/headerly/compare/v1.11.0...v1.12.0) (2026-07-11)
 
 
