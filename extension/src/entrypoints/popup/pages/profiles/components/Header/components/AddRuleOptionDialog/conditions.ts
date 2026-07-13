@@ -2,7 +2,7 @@ import type { AddRuleOptionDialogItem, AddRuleOptionDialogTab } from "./shared";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { getCurrentTabHostname, getDefaultFilterValueByHostname } from "@/lib/utils";
+import { getCurrentTabHost, getCurrentTabHostname, getDefaultFilterValueByHost } from "@/lib/utils";
 import {
   getEnabledState,
   withDisabledState,
@@ -93,12 +93,12 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.urlFilter.title"),
         description: t("addRuleOptionDialog.items.urlFilter.description"),
         action: async () => {
-          const hostname = await getCurrentTabHostname();
+          const host = await getCurrentTabHost();
           profilesStore.selectedProfile.filters.urlFilter = [
             {
               id: uuidv7(),
               enabled: true,
-              value: getDefaultFilterValueByHostname("urlFilter", hostname),
+              value: getDefaultFilterValueByHost("urlFilter", host),
             },
           ];
         },
@@ -108,12 +108,12 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.regexFilter.title"),
         description: t("addRuleOptionDialog.items.regexFilter.description"),
         action: async () => {
-          const hostname = await getCurrentTabHostname();
+          const host = await getCurrentTabHost();
           profilesStore.selectedProfile.filters.regexFilter = [
             {
               id: uuidv7(),
               enabled: true,
-              value: getDefaultFilterValueByHostname("regexFilter", hostname),
+              value: getDefaultFilterValueByHost("regexFilter", host),
             },
           ];
         },
