@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
 import { useStorage } from "@vueuse/core";
 import { match } from "ts-pattern";
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import Badge from "#/ui/badge/Badge.vue";
@@ -31,7 +31,6 @@ import {
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn, getRuleActionTypeLabel } from "@/lib/utils";
-import ProfileManage from "./components/ProfileManage.vue";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
 const { class: className } = defineProps<{
@@ -41,7 +40,6 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
-const profileSearchOpen = ref(false);
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
 
@@ -50,13 +48,6 @@ function openInFullscreen() {
 }
 
 const menuOpen = ref(false);
-async function openProfileSearch() {
-  // Without this sequence, the sheet closes immediately after opening because
-  // the dropdown moves focus while closing, making search unusable.
-  menuOpen.value = false;
-  await nextTick();
-  profileSearchOpen.value = true;
-}
 
 const ruleActionTypes = [
   "modifyHeaders",
@@ -153,10 +144,6 @@ function getRuleActionTypeDescription(type: RuleActionType) {
               {{ t("profile.sidebar.profiles") }}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem @select.prevent="openProfileSearch">
-                <i class="i-lucide-search size-4 shrink-0" />
-                {{ t("common.search") }}
-              </DropdownMenuItem>
               <DropdownMenuItem as-child>
                 <RouterLink to="/import">
                   <i class="i-lucide-upload size-4 shrink-0" />
@@ -254,7 +241,5 @@ function getRuleActionTypeDescription(type: RuleActionType) {
         </Tooltip>
       </TooltipProvider>
     </div>
-
-    <ProfileManage v-model:open="profileSearchOpen" />
   </aside>
 </template>
