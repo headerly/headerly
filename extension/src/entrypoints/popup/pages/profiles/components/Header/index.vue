@@ -19,11 +19,13 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useCompactScreen } from "@/composables/useCompactScreen";
+import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
 import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
+import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
 import { openAddRuleOptionDialogKey } from "./components/AddRuleOptionDialog/open";
 import EmojiPicker from "./components/EmojiPicker.vue";
@@ -37,6 +39,15 @@ const { t } = useI18n();
 
 const isCompact = useCompactScreen();
 const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
+const profileSearchOpen = ref(false);
+const profileSearchShortcutKeys = useTinykeys(
+  window,
+  "$mod+K",
+  (event) => {
+    event.preventDefault();
+    profileSearchOpen.value = true;
+  },
+);
 
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
@@ -127,22 +138,29 @@ const defaultTab = computed(() => {
         }"
       >
         <span
-          class="max-w-43 min-w-5 truncate"
+          class="
+            max-w-32 min-w-5 truncate
+            lg:max-w-45
+            xl:max-w-60
+            2xl:max-w-80
+          "
         >
           {{ profilesStore.selectedProfile.name }}</span>
       </Button>
       <div v-else class="flex gap-1.5">
         <Input
           v-model.trim="profileNameInput"
-          :class="cn('max-w-45 text-base', profileNameInput.length === 0 && `
-            border-destructive
-          `)"
+          :class="cn(`
+            max-w-45 px-1.5 text-base font-semibold
+            xl:max-w-60
+            2xl:max-w-80
+          `, profileNameInput.length === 0 && `border-destructive`)"
           required
           @keyup.enter="handleEditProfileName"
           @keyup.esc="profileNameEditing = false"
         />
         <Button
-          variant="ghost"
+          variant="secondary"
           size="icon"
           class="flex items-center gap-2 text-base"
           @click="handleEditProfileName"
@@ -196,6 +214,26 @@ const defaultTab = computed(() => {
       </div>
     </div>
     <div class="flex items-center justify-between gap-1 p-1">
+      <Button
+        type="search"
+        variant="secondary"
+        size="sm"
+        class="h-6 gap-1 rounded-full px-2"
+        :aria-label="t('common.search')"
+        @click="profileSearchOpen = true"
+      >
+        <i class="-ml-0.5 i-lucide-search size-3.5 text-accent-foreground/80" />
+        <div class="flex gap-0.5">
+          <span
+            v-for="(key, index) in profileSearchShortcutKeys"
+            :key="index"
+            class="text-xs text-muted-foreground"
+          >
+            {{ key }}
+          </span>
+        </div>
+      </Button>
+
       <template v-if="!isCompact">
         <TooltipProvider v-for="btn in undoAndRedoButtonGroup" :key="btn.key">
           <Tooltip>
@@ -235,5 +273,6 @@ const defaultTab = computed(() => {
         </template>
       </IconsGroupWithMore>
     </div>
+    <ProfileManage v-model:open="profileSearchOpen" />
   </header>
 </template>
