@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.13.0](https://github.com/headerly/headerly/compare/v1.12.1...v1.13.0) (2026-07-13)
+
+
+### Features
+
+* **popup:** move profile search to header with keyboard shortcut ([880c258](https://github.com/headerly/headerly/commit/880c258a360c9092fe813d1964e03b93f4b5e986))
+* **popup:** rename popular option badge to recommended ([c5bc610](https://github.com/headerly/headerly/commit/c5bc610192dfc1183f533943d2f1e5af0239eca6))
+
+
+### Bug Fixes
+
+* **popup:** preserve ports in default URL and regex filters ([01745d2](https://github.com/headerly/headerly/commit/01745d2f46b26793244ff5bf0a62982c414f3d44))
+
 ## [1.12.1](https://github.com/headerly/headerly/compare/v1.12.0...v1.12.1) (2026-07-12)
 
 
