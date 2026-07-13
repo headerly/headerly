@@ -92,30 +92,38 @@ export function addItemToGroup<T extends GroupItem>(list: T[], item: T, type: Gr
   list.push(item);
 }
 
-export async function getCurrentTabHostname() {
+async function getCurrentTabHttpUrl() {
   const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
   if (!currentTab?.url) {
-    return "";
+    return undefined;
   }
 
   try {
     const url = new URL(currentTab.url);
     return match(url.protocol)
-      .with("http:", "https:", () => url.hostname)
-      .otherwise(() => "");
+      .with("http:", "https:", () => url)
+      .otherwise(() => undefined);
   } catch {
-    return "";
+    return undefined;
   }
+}
+
+export async function getCurrentTabHostname() {
+  return (await getCurrentTabHttpUrl())?.hostname ?? "";
+}
+
+export async function getCurrentTabHost() {
+  return (await getCurrentTabHttpUrl())?.host ?? "";
 }
 
 function escapeRegexValue(value: string) {
   return value.replaceAll(/[-\\^$*+?()|.[\]{}:]/g, "\\$&");
 }
 
-export function getDefaultFilterValueByHostname(filterType: UrlOrRegexFilterType, hostname: string) {
-  return match([filterType, Boolean(hostname)] as const)
-    .with(["urlFilter", true], () => `||${hostname}/*`)
-    .with(["regexFilter", true], () => `^https?:\\/\\/${escapeRegexValue(hostname)}\\/.*`)
+export function getDefaultFilterValueByHost(filterType: UrlOrRegexFilterType, host: string) {
+  return match([filterType, Boolean(host)] as const)
+    .with(["urlFilter", true], () => `||${host}/*`)
+    .with(["regexFilter", true], () => `^https?:\\/\\/${escapeRegexValue(host)}\\/.*`)
     .otherwise(() => "");
 }
 

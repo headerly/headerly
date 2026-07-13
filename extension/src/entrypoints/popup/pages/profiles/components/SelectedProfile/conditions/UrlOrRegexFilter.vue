@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, getDefaultFilterValueByHostname } from "@/lib/utils";
+import { addItemToGroup, getDefaultFilterValueByHost } from "@/lib/utils";
 
 const list = defineModel<UrlOrRegexFilterItem[]>({
   required: true,
@@ -121,8 +121,8 @@ function newField() {
 
 const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 
-function getCurrentTabHostname() {
-  return currentUrl.value?.hostname ?? "";
+function getCurrentTabHost() {
+  return currentUrl.value?.host ?? "";
 }
 </script>
 
@@ -166,8 +166,8 @@ function getCurrentTabHostname() {
                   size="icon-xs"
                   :disabled="!canUseCurrentUrl"
                   @click="() => {
-                    const hostname = getCurrentTabHostname();
-                    list[index]!.value = getDefaultFilterValueByHostname(filterType, hostname);
+                    const host = getCurrentTabHost();
+                    list[index]!.value = getDefaultFilterValueByHost(filterType, host);
                   }"
                 >
                   <i class="i-lucide-at-sign size-4" />
