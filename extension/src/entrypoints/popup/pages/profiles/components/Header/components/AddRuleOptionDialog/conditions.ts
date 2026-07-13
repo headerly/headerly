@@ -71,7 +71,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         key: "request-domains",
         title: t("addRuleOptionDialog.items.requestDomains.title"),
         description: t("addRuleOptionDialog.items.requestDomains.description"),
-        isPopular: true,
+        isRecommended: true,
         action: async () => {
           const hostname = await getCurrentTabHostname();
           profilesStore.selectedProfile.filters.requestDomains = {

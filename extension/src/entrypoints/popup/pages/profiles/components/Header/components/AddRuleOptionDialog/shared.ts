@@ -5,7 +5,7 @@ export interface AddRuleOptionDialogItem {
   action: () => void | Promise<void>;
   disabled?: boolean;
   disabledTooltip?: string;
-  isPopular?: boolean;
+  isRecommended?: boolean;
 }
 
 export type AddRuleOptionDialogTabValue = "actions" | "conditions";

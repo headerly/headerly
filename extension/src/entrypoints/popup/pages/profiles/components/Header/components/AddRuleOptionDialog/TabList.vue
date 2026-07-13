@@ -103,9 +103,9 @@ useSortableAndAutoAnimate({
               >
                 <div class="mb-1 flex items-center gap-2 font-semibold">
                   {{ item.title }}
-                  <Badge v-if="item.isPopular" class="gap-1">
-                    <i class="i-lucide-flame size-3" />
-                    {{ t("common.popular") }}
+                  <Badge v-if="item.isRecommended" class="gap-1">
+                    <i class="i-lucide-star size-3" />
+                    {{ t("common.recommended") }}
                   </Badge>
                 </div>
                 <div class="text-left text-xs text-muted-foreground">
