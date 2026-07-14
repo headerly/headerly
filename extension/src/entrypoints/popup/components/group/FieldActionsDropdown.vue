@@ -4,6 +4,7 @@ import { uuidv7 } from "uuidv7";
 import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
+import FieldCommentsButton from "./FieldCommentsButton.vue";
 
 const list = defineModel<T[]>("list", {
   required: true,
@@ -26,6 +28,7 @@ const { index } = defineProps<{
 }>();
 
 const { t } = useI18n();
+const settingsStore = useSettingsStore();
 
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 
@@ -43,10 +46,14 @@ const moreActions = computed(() => [
     label: t("common.comments"),
     onClick: () => commentsDialogRef.value?.open(),
   },
-]);
+].filter(action => action.key !== "comments" || !settingsStore.showCommentsInline));
 </script>
 
 <template>
+  <FieldCommentsButton
+    v-if="settingsStore.showCommentsInline"
+    v-model="field.comments"
+  />
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
       <Button size="icon-xs" variant="secondary">
@@ -71,6 +78,7 @@ const moreActions = computed(() => [
     </DropdownMenuContent>
   </DropdownMenu>
   <CommentsDialog
+    v-if="!settingsStore.showCommentsInline"
     ref="commentsDialogRef"
     v-model="field.comments"
   />

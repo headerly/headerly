@@ -116,6 +116,7 @@
     "loading": "加载中",
     "moreOptions": "更多选项",
     "name": "名称",
+    "noComments": "无备注",
     "noResultsFound": "未找到结果。",
     "notAvailable": "不可用",
     "off": "关",
@@ -383,12 +384,14 @@
   },
   "settings": {
     "descriptions": {
-      "nativeResourceTypeBehavior": "资源类型默认是 'all'，但启用此选项后不会设置为 'all'，没有资源类型条件的规则只会匹配更窄范围的请求。"
+      "nativeResourceTypeBehavior": "资源类型默认是 'all'，但启用此选项后不会设置为 'all'，没有资源类型条件的规则只会匹配更窄范围的请求。",
+      "showCommentsInline": "将每个字段的备注显示在其他操作旁，而不是放在“更多选项”菜单中。"
     },
     "fieldLabel": "{label}：",
     "fields": {
       "language": "语言",
       "nativeResourceTypeBehavior": "使用原生 DNR 资源类型行为",
+      "showCommentsInline": "在字段外侧显示备注",
       "theme": "主题"
     },
     "groups": {

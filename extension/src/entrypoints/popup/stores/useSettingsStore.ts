@@ -5,6 +5,7 @@ import {
   useLanguageStorage,
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
+  useShowCommentsInlineStorage,
 } from "@/lib/storage";
 
 export const useSettingsStore = defineStore("settings", () => {
@@ -15,6 +16,7 @@ export const useSettingsStore = defineStore("settings", () => {
     powerOn: usePowerOnStorage(),
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
     language: useLanguageStorage(),
+    showCommentsInline: useShowCommentsInlineStorage(),
   } as const;
 
   const isModified = computed(() => {
