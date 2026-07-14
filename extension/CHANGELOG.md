@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.14.0](https://github.com/headerly/headerly/compare/v1.13.0...v1.14.0) (2026-07-14)
+
+
+### Features
+
+* **popup:** add inline field comments display setting ([9b46ebd](https://github.com/headerly/headerly/commit/9b46ebd09e9ee832cdd7ea69d1143cf20cb15dce))
+
+
+### Bug Fixes
+
+* **popup:** the example in the URL filter placeholder is inaccurate ([ee98f97](https://github.com/headerly/headerly/commit/ee98f979ffe88e88542dae5d37884da47dca3e6b))
+
 ## [1.13.0](https://github.com/headerly/headerly/compare/v1.12.1...v1.13.0) (2026-07-13)
 
 
