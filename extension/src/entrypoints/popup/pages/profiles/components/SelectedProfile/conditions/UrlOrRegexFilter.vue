@@ -41,7 +41,7 @@ const urlFilterTokens = {
 const field = computed(() => ({
   urlFilter: {
     title: t("condition.urlFilter.title"),
-    placeholder: "|https://example.com/*",
+    placeholder: "||example.com/*",
     description: (
       <>
         <p>
