@@ -142,3 +142,7 @@ export function useLanguageStorage() {
     .otherwise(() => "en" as const);
   return useLocalStorage<SupportLocale>("language", initialLanguage);
 }
+
+export function useShowCommentsInlineStorage() {
+  return useLocalStorage<boolean>("show-comments-inline", false);
+}

@@ -63,6 +63,12 @@ export function useCreateSettings() {
           ] satisfies { label: string; value: BasicColorSchema }[],
           key: "theme",
         },
+        {
+          type: "checkbox",
+          label: t("settings.fields.showCommentsInline"),
+          key: "showCommentsInline",
+          description: t("settings.descriptions.showCommentsInline"),
+        },
       ],
     },
     {
