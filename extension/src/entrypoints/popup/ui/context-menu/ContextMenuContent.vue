@@ -5,6 +5,7 @@ import { reactiveOmit } from "@vueuse/core";
 import {
   ContextMenuContent,
   ContextMenuPortal,
+  injectContextMenuRootContext,
   useForwardPropsEmits,
 } from "reka-ui";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,11 @@ const emits = defineEmits<ContextMenuContentEmits>();
 const delegatedProps = reactiveOmit(props, "class");
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const rootContext = injectContextMenuRootContext();
+
+defineExpose({
+  close: () => rootContext.onOpenChange(false),
+});
 </script>
 
 <template>

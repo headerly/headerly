@@ -8,6 +8,7 @@ import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
+import { PROFILE_GROUP_COLOR_PRESETS } from "./const";
 import { createProfile } from "./utils";
 
 export { PROFILE_LATEST_VERSION } from "./const";
@@ -116,7 +117,30 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
 }
 
 export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
-  return useExtensionStorage<ProfileGroup[]>("local:profileGroups", [], options);
+  return useExtensionStorage<ProfileGroup[]>("local:profileGroups", [], {
+    ...options,
+    version: 2,
+    migrations: {
+      2: (groups: ProfileGroup[]) => {
+        const legacyColors: Record<string, string> = {
+          slate: PROFILE_GROUP_COLOR_PRESETS[0],
+          blue: PROFILE_GROUP_COLOR_PRESETS[1],
+          red: PROFILE_GROUP_COLOR_PRESETS[2],
+          yellow: PROFILE_GROUP_COLOR_PRESETS[3],
+          green: PROFILE_GROUP_COLOR_PRESETS[4],
+          pink: PROFILE_GROUP_COLOR_PRESETS[5],
+          purple: PROFILE_GROUP_COLOR_PRESETS[6],
+          cyan: PROFILE_GROUP_COLOR_PRESETS[7],
+          orange: PROFILE_GROUP_COLOR_PRESETS[8],
+        };
+
+        return groups.map(group => ({
+          ...group,
+          color: legacyColors[group.color] ?? group.color,
+        }));
+      },
+    },
+  });
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
