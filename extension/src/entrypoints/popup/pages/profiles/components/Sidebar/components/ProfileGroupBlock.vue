@@ -3,6 +3,7 @@ import type { Profile, ProfileGroup } from "@/lib/schema";
 import { AnimatePresence, motion } from "motion-v";
 import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
+import InfoTooltip from "#/components/InfoTooltip.vue";
 import { Button } from "#/ui/button";
 import {
   ContextMenu,
@@ -14,10 +15,17 @@ import {
 import { Input } from "#/ui/input";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import { ToggleGroup, ToggleGroupItem } from "#/ui/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/ui/tooltip";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
 import { cn } from "@/lib/utils";
+import ProfileGroupDisplayName from "../../ProfileGroupDisplayName.vue";
 import ProfileListItem from "./ProfileListItem.vue";
 
 const props = defineProps<{
@@ -35,8 +43,23 @@ const emit = defineEmits<{
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
 const contextMenuContent = useTemplateRef<InstanceType<typeof ContextMenuContent>>("contextMenuContent");
+const contextMenuTriggerButton = useTemplateRef<InstanceType<typeof Button>>("contextMenuTriggerButton");
 const groupNameInput = useTemplateRef<InstanceType<typeof Input>>("groupNameInput");
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
+const hasEnabledProfile = computed(() => props.profiles.some(profile => profile.enabled));
+const hasRememberedProfiles = computed(() => {
+  const profileIds = new Set(props.profiles.map(profile => profile.id));
+  return props.group.lastEnabledProfileIds?.some(profileId => profileIds.has(profileId)) ?? false;
+});
+const profileGroupToggleLabel = computed(() => {
+  if (hasEnabledProfile.value) {
+    return t("profileGroup.actions.pauseAndRemember");
+  }
+  if (hasRememberedProfiles.value) {
+    return t("profileGroup.actions.resumeRemembered");
+  }
+  return t("profileGroup.actions.resume");
+});
 
 useSortableAndAutoAnimate({
   disabled: computed(() => props.collapsed),
@@ -73,6 +96,23 @@ function focusFirstMenuItem(event: KeyboardEvent) {
     ?.querySelector<HTMLElement>("[data-slot=\"context-menu-item\"]:not([data-disabled])")
     ?.focus({ preventScroll: true });
 }
+
+function openContextMenu() {
+  const trigger = contextMenuTriggerButton.value?.$el as HTMLElement | undefined;
+  if (!trigger)
+    return;
+
+  const rect = trigger.getBoundingClientRect();
+  trigger.dispatchEvent(new MouseEvent("contextmenu", {
+    bubbles: true,
+    cancelable: true,
+    clientX: rect.right,
+    clientY: rect.top,
+    view: window,
+  }));
+}
+
+defineExpose({ openContextMenu });
 </script>
 
 <template>
@@ -90,6 +130,7 @@ function focusFirstMenuItem(event: KeyboardEvent) {
       <ContextMenu>
         <ContextMenuTrigger as-child>
           <Button
+            ref="contextMenuTriggerButton"
             variant="secondary"
             size="icon-sm"
             data-profile-top-level-sort-handle
@@ -97,21 +138,32 @@ function focusFirstMenuItem(event: KeyboardEvent) {
             :style="{ backgroundColor: group.color }"
             @click="emit('toggle')"
           >
-            <i
-              :class="cn(
-                'i-lucide-chevron-up size-4 transition-transform',
-                collapsed && 'rotate-180',
-              )"
-            />
-            <span class="sr-only">
-              {{ collapsed ? t("group.expand") : t("group.collapse") }}
-            </span>
+            <TooltipProvider ignore-non-keyboard-focus>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <div class="flex size-full items-center justify-center">
+                    <i
+                      :class="cn(
+                        'i-lucide-chevron-up size-4 transition-transform',
+                        collapsed && 'rotate-180',
+                      )"
+                    />
+                    <span class="sr-only">
+                      {{ collapsed ? t("group.expand") : t("group.collapse") }}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <ProfileGroupDisplayName :group :profiles />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent
           ref="contextMenuContent"
           :collision-padding="32"
-          class="w-56 p-0"
+          class="w-64 p-0"
           @open-auto-focus="focusGroupNameInput"
         >
           <div class="space-y-3 p-3">
@@ -184,6 +236,27 @@ function focusFirstMenuItem(event: KeyboardEvent) {
             {{ t("profileGroup.actions.newProfile") }}
           </ContextMenuItem>
           <ContextMenuSeparator />
+          <ContextMenuItem
+            class="justify-between gap-2"
+            @click="profilesStore.toggleProfileGroupEnabled(group.id)"
+          >
+            <span class="flex items-center gap-2">
+              <i
+                :class="cn(
+                  'size-4',
+                  hasEnabledProfile ? 'i-lucide-pause' : 'i-lucide-play',
+                )"
+              />
+              {{ profileGroupToggleLabel }}
+            </span>
+            <span v-if="hasRememberedProfiles" @click.stop @pointerdown.stop>
+              <InfoTooltip
+                :description="hasEnabledProfile
+                  ? t('profileGroup.actions.pauseAndRememberDescription')
+                  : t('profileGroup.actions.resumeRememberedDescription')"
+              />
+            </span>
+          </ContextMenuItem>
           <ContextMenuItem @click="profiles.forEach(profile => profilesStore.removeProfileFromGroup(profile.id))">
             <i class="i-lucide-ungroup size-4" />
             {{ t("profileGroup.actions.ungroup") }}

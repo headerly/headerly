@@ -1,6 +1,7 @@
 import type { GroupType, HeaderModGroup, Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { useDebouncedRefHistory } from "@vueuse/core";
+import { countBy, minBy } from "es-toolkit";
 import { defineStore } from "pinia";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
@@ -23,6 +24,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
   const { promise: profileId2RelatedRuleIdRecordPromise, resolve: profileId2RelatedRuleIdRecordResolve } = Promise.withResolvers();
   const ready = ref(false);
+  const newProfileGroupIdToEdit = ref<string>();
   const { ref: manager } = useProfileManagerStorage({ onReady: managerResolve });
   const { ref: profileGroups } = useProfileGroupsStorage({ onReady: profileGroupsResolve });
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
@@ -125,20 +127,68 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (!targetProfile)
       return;
 
-    targetProfile.enabled = enabled;
     const group = getProfileGroup(targetProfile.groupId);
+    const enabledChanged = targetProfile.enabled !== enabled;
+    const otherProfilesToDisable: Profile[] = [];
     if (enabled && group?.type === "radio") {
-      manager.value.profiles
-        .filter(profile => profile.groupId === group.id && profile.id !== targetProfile.id)
-        .forEach(profile => profile.enabled = false);
+      otherProfilesToDisable.push(...manager.value.profiles.filter(
+        profile => profile.groupId === group.id && profile.id !== targetProfile.id && profile.enabled,
+      ));
+    }
+
+    targetProfile.enabled = enabled;
+    otherProfilesToDisable.forEach(profile => profile.enabled = false);
+    if (group && (enabledChanged || otherProfilesToDisable.length > 0)) {
+      delete group.lastEnabledProfileIds;
     }
   }
 
+  function toggleProfileGroupEnabled(groupId: string) {
+    const group = getProfileGroup(groupId);
+    if (!group)
+      return;
+
+    const profiles = manager.value.profiles.filter(profile => profile.groupId === group.id);
+    const enabledProfiles = profiles.filter(profile => profile.enabled);
+    if (enabledProfiles.length > 0) {
+      group.lastEnabledProfileIds = enabledProfiles.map(profile => profile.id);
+      profiles.forEach(profile => profile.enabled = false);
+      return;
+    }
+
+    const defaultEnabledProfileIds = match(group.type)
+      .with("checkbox", () => profiles.map(profile => profile.id))
+      .with("radio", () => profiles.slice(0, 1).map(profile => profile.id))
+      .exhaustive();
+    const profileIdSet = new Set(profiles.map(profile => profile.id));
+    let rememberedProfileIds = group.lastEnabledProfileIds?.filter(profileId => profileIdSet.has(profileId));
+    if (!rememberedProfileIds?.length) {
+      rememberedProfileIds = defaultEnabledProfileIds;
+    }
+    const rememberedProfileIdSet = new Set(rememberedProfileIds);
+    const firstRememberedProfile = profiles.find(profile => rememberedProfileIdSet.has(profile.id));
+
+    profiles.forEach((profile) => {
+      profile.enabled = match(group.type)
+        .with("checkbox", () => rememberedProfileIdSet.has(profile.id))
+        .with("radio", () => profile.id === firstRememberedProfile?.id)
+        .exhaustive();
+    });
+    group.lastEnabledProfileIds = profiles
+      .filter(profile => profile.enabled)
+      .map(profile => profile.id);
+  }
+
   function createProfileGroup(overrides?: Partial<ProfileGroup>) {
+    const colorUsageCounts = countBy(profileGroups.value, group => group.color);
+    const leastUsedPresetColor = minBy(
+      PROFILE_GROUP_COLOR_PRESETS,
+      color => colorUsageCounts[color] ?? 0,
+    );
     const group = {
       id: uuidv7(),
-      name: `Group ${profileGroups.value.length + 1}`,
-      color: PROFILE_GROUP_COLOR_PRESETS[0],
+      name: "",
+      color: leastUsedPresetColor,
       type: "checkbox",
       ...(overrides ?? {}),
     } as const satisfies ProfileGroup;
@@ -161,6 +211,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   function addProfileToNewGroup(profileId: string) {
     const group = createProfileGroup();
     addProfileToGroup(profileId, group.id);
+    newProfileGroupIdToEdit.value = group.id;
     return group;
   }
 
@@ -179,7 +230,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     Object.assign(group, value);
     if (value.type === "radio") {
       const enabledProfiles = manager.value.profiles.filter(profile => profile.groupId === group.id && profile.enabled);
-      enabledProfiles.slice(1).forEach(profile => profile.enabled = false);
+      const profilesToDisable = enabledProfiles.slice(1);
+      profilesToDisable.forEach(profile => profile.enabled = false);
+      if (profilesToDisable.length > 0) {
+        delete group.lastEnabledProfileIds;
+      }
     }
   }
 
@@ -249,6 +304,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     profileGroups,
     profileId2RelatedRuleIdRecord,
     profileId2ErrorMessageRecord,
+    newProfileGroupIdToEdit,
     canUndo,
     canRedo,
     ready,
@@ -266,6 +322,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     removeProfileFromGroup,
     reorderProfilesByIds,
     setProfileEnabled,
+    toggleProfileGroupEnabled,
     toggleProfileEnabled,
     updateProfileGroup,
     addHeaderActionGroup,

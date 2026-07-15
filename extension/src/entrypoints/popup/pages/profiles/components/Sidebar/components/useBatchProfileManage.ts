@@ -96,7 +96,7 @@ export function useBatchProfileManage(getVisibleProfiles: () => Profile[]) {
   function setSelectedProfilesEnabled(enabled: boolean) {
     profilesStore.manager.profiles
       .filter(profile => selectedProfileIds.value.includes(profile.id))
-      .forEach(profile => profile.enabled = enabled);
+      .forEach(profile => profilesStore.setProfileEnabled(profile.id, enabled));
   }
 
   return {

@@ -25,6 +25,7 @@ export const profileGroupSchema = z.object({
   name: z.string(),
   color: z.string(),
   type: groupTypeSchema,
+  lastEnabledProfileIds: z.array(z.string()).optional(),
 });
 export type ProfileGroup = z.infer<typeof profileGroupSchema>;
 
