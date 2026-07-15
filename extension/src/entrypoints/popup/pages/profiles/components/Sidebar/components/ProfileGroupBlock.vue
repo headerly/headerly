@@ -68,11 +68,78 @@ useSortableAndAutoAnimate({
   onUpdate: event => emit("sortProfiles", event),
 });
 
-function setGroupType(group: ProfileGroup, type: ProfileGroup["type"]) {
+function updateProfileGroup(value: Partial<Pick<ProfileGroup, "color" | "name" | "type">>) {
+  const group = profilesStore.getProfileGroup(props.group.id);
+  if (!group)
+    return;
+
+  Object.assign(group, value);
+  if (value.type !== "radio")
+    return;
+
+  const enabledProfiles = profilesStore.manager.profiles
+    .filter(profile => profile.groupId === group.id && profile.enabled);
+  const profilesToDisable = enabledProfiles.slice(1);
+  profilesToDisable.forEach(profile => profile.enabled = false);
+  if (profilesToDisable.length > 0) {
+    delete group.lastEnabledProfileIds;
+  }
+}
+
+function setGroupType(type: ProfileGroup["type"]) {
   if (type !== "radio" && type !== "checkbox")
     return;
 
-  profilesStore.updateProfileGroup(group.id, { type });
+  updateProfileGroup({ type });
+}
+
+function toggleProfileGroupEnabled() {
+  const group = profilesStore.getProfileGroup(props.group.id);
+  if (!group)
+    return;
+
+  const profiles = profilesStore.manager.profiles.filter(profile => profile.groupId === group.id);
+  const enabledProfiles = profiles.filter(profile => profile.enabled);
+  if (enabledProfiles.length > 0) {
+    group.lastEnabledProfileIds = enabledProfiles.map(profile => profile.id);
+    profiles.forEach(profile => profile.enabled = false);
+    return;
+  }
+
+  let defaultEnabledProfileIds = profiles.slice(0, 1).map(profile => profile.id);
+  if (group.type === "checkbox") {
+    defaultEnabledProfileIds = profiles.map(profile => profile.id);
+  }
+  const profileIdSet = new Set(profiles.map(profile => profile.id));
+  let rememberedProfileIds = group.lastEnabledProfileIds?.filter(profileId => profileIdSet.has(profileId));
+  if (!rememberedProfileIds?.length) {
+    rememberedProfileIds = defaultEnabledProfileIds;
+  }
+  const rememberedProfileIdSet = new Set(rememberedProfileIds);
+  const firstRememberedProfile = profiles.find(profile => rememberedProfileIdSet.has(profile.id));
+
+  profiles.forEach((profile) => {
+    if (group.type === "checkbox") {
+      profile.enabled = rememberedProfileIdSet.has(profile.id);
+    } else {
+      profile.enabled = profile.id === firstRememberedProfile?.id;
+    }
+  });
+  group.lastEnabledProfileIds = profiles
+    .filter(profile => profile.enabled)
+    .map(profile => profile.id);
+}
+
+function deleteProfileGroup() {
+  const profileIds = profilesStore.manager.profiles
+    .filter(profile => profile.groupId === props.group.id)
+    .map(profile => profile.id);
+  profileIds.forEach(profileId => profilesStore.deleteProfile(profileId));
+
+  const groupIndex = profilesStore.profileGroups.findIndex(group => group.id === props.group.id);
+  if (groupIndex !== -1 && !profilesStore.manager.profiles.some(profile => profile.groupId === props.group.id)) {
+    profilesStore.profileGroups.splice(groupIndex, 1);
+  }
 }
 
 function focusGroupNameInput(event: Event) {
@@ -179,13 +246,13 @@ defineExpose({ openContextMenu });
               @click.stop
               @keydown.enter.stop.prevent="closeContextMenu"
               @keydown.tab.stop
-              @update:model-value="profilesStore.updateProfileGroup(group.id, { name: $event })"
+              @update:model-value="updateProfileGroup({ name: $event })"
             />
             <RadioGroup
               :model-value="group.color"
               class="grid grid-cols-9 gap-1.5"
               @keydown.stop
-              @update:model-value="profilesStore.updateProfileGroup(group.id, { color: $event as ProfileGroup['color'] })"
+              @update:model-value="updateProfileGroup({ color: $event as ProfileGroup['color'] })"
             >
               <RadioGroupItem
                 v-for="(color, index) in PROFILE_GROUP_COLOR_PRESETS"
@@ -219,7 +286,7 @@ defineExpose({ openContextMenu });
             :model-value="group.type"
             class="grid w-full grid-cols-2 px-1"
             @keydown.tab="focusFirstMenuItem"
-            @update:model-value="setGroupType(group, $event as ProfileGroup['type'])"
+            @update:model-value="setGroupType($event as ProfileGroup['type'])"
           >
             <ToggleGroupItem value="radio" class="min-w-0">
               <i class="i-lucide-circle-dot size-4" />
@@ -238,7 +305,7 @@ defineExpose({ openContextMenu });
           <ContextMenuSeparator />
           <ContextMenuItem
             class="justify-between gap-2"
-            @click="profilesStore.toggleProfileGroupEnabled(group.id)"
+            @click="toggleProfileGroupEnabled"
           >
             <span class="flex items-center gap-2">
               <i
@@ -261,7 +328,7 @@ defineExpose({ openContextMenu });
             <i class="i-lucide-ungroup size-4" />
             {{ t("profileGroup.actions.ungroup") }}
           </ContextMenuItem>
-          <ContextMenuItem variant="destructive" @click="profilesStore.deleteProfileGroup(group.id)">
+          <ContextMenuItem variant="destructive" @click="deleteProfileGroup">
             <i class="i-lucide-trash size-4" />
             {{ t("profileGroup.actions.delete") }}
           </ContextMenuItem>

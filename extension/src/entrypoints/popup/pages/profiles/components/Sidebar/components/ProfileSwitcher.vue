@@ -151,8 +151,24 @@ function flattenProfileIds(
   });
 }
 
+function reorderProfilesByIds(profileIds: string[]) {
+  const profilesById = new Map(profilesStore.manager.profiles.map(profile => [profile.id, profile]));
+  const seenProfileIds = new Set<string>();
+  const reorderedProfiles = profileIds.flatMap((profileId) => {
+    const profile = profilesById.get(profileId);
+    if (!profile || seenProfileIds.has(profileId)) {
+      return [];
+    }
+
+    seenProfileIds.add(profileId);
+    return [profile];
+  });
+  const remainingProfiles = profilesStore.manager.profiles.filter(profile => !seenProfileIds.has(profile.id));
+  profilesStore.manager.profiles.splice(0, profilesStore.manager.profiles.length, ...reorderedProfiles, ...remainingProfiles);
+}
+
 function handleSidebarBlocksSort(event: { newIndex: number; oldIndex: number }) {
-  profilesStore.reorderProfilesByIds(flattenProfileIds(
+  reorderProfilesByIds(flattenProfileIds(
     moveItem(sidebarBlocks.value, event.oldIndex, event.newIndex),
   ));
 }
@@ -168,7 +184,7 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
       profiles: moveItem(block.profiles, event.oldIndex, event.newIndex),
     };
   });
-  profilesStore.reorderProfilesByIds(flattenProfileIds(blocks));
+  reorderProfilesByIds(flattenProfileIds(blocks));
 }
 </script>
 

@@ -4,6 +4,7 @@ import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { createHeaderMod, createRedirectUrl, getCurrentTabHostname } from "@/lib/utils";
 
 export type ActionKey
@@ -102,6 +103,17 @@ export function useProfileActions() {
   const router = useRouter();
   const { t } = useI18n();
 
+  function duplicateProfile(profile: Profile) {
+    const targetIndex = profilesStore.manager.profiles.findIndex(candidate => candidate.id === profile.id);
+    if (targetIndex === -1)
+      return;
+
+    const newProfile = addProfileIds(stripProfileIds(profile));
+    newProfile.groupId = profile.groupId;
+    profilesStore.manager.profiles.splice(targetIndex + 1, 0, newProfile);
+    profilesStore.manager.selectedProfileId = newProfile.id;
+  }
+
   const actions = [
     {
       id: "toggle",
@@ -119,7 +131,7 @@ export function useProfileActions() {
       id: "duplicate",
       label: () => t("common.duplicate"),
       icon: () => "i-lucide-copy",
-      onClick: p => profilesStore.duplicateProfile(p.id),
+      onClick: duplicateProfile,
     },
     {
       id: "delete",
