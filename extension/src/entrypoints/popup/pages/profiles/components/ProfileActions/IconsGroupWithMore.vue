@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
+import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
 import { Button } from "#/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +12,9 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
 import {
@@ -20,6 +24,7 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useCompactScreen } from "@/composables/useCompactScreen";
+import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { cn } from "@/lib/utils";
 import {
   handleProfileRuleActionTypeChanged,
@@ -36,8 +41,16 @@ const profile = defineModel<Profile>("profile", {
 });
 
 const { t } = useI18n();
+const profilesStore = useProfilesStore();
 
 const isCompact = useCompactScreen();
+const isProfileInGroup = computed(() => profilesStore.getProfileGroup(profile.value.groupId) !== undefined);
+const profilesByGroupId = computed(() => new Map(
+  profilesStore.profileGroups.map((group) => {
+    const profiles = profilesStore.manager.profiles.filter(profile => profile.groupId === group.id);
+    return [group.id, profiles];
+  }),
+));
 
 const actions = useProfileActions();
 const mainActionIds = ["toggle"] as const satisfies ActionKey[];
@@ -130,6 +143,45 @@ async function handleChangeType() {
               <span>{{ action.label(profile) }}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
+          <template v-if="index === 0">
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  {{ t("profile.actions.addToGroup") }}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent class="min-w-44">
+                  <DropdownMenuItem
+                    class="pl-6.5"
+                    @click="profilesStore.addProfileToNewGroup(profile.id)"
+                  >
+                    {{ t("profile.actions.createNewGroup") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator v-if="profilesStore.profileGroups.length > 0" />
+                  <DropdownMenuItem
+                    v-for="group in profilesStore.profileGroups"
+                    :key="group.id"
+                    @click="profilesStore.addProfileToGroup(profile.id, group.id)"
+                  >
+                    <span
+                      class="size-2.5 shrink-0 rounded-full"
+                      :style="{ backgroundColor: group.color }"
+                    />
+                    <ProfileGroupDisplayName
+                      :group
+                      :profiles="profilesByGroupId.get(group.id) ?? []"
+                    />
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuItem
+                v-if="isProfileInGroup"
+                @click="profilesStore.removeProfileFromGroup(profile.id)"
+              >
+                {{ t("profile.actions.removeFromGroup") }}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </template>
         </template>
       </DropdownMenuContent>
     </DropdownMenu>

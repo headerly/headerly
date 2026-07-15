@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import type { Profile, ProfileGroup } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -54,6 +54,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 const collapsedGroupIds = ref(new Set<string>());
+const groupBlockRefs = new Map<string, InstanceType<typeof ProfileGroupBlock>>();
 const profileGroupsById = computed(() => new Map(profilesStore.profileGroups.map(group => [group.id, group])));
 const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
   const addedGroupIds = new Set<string>();
@@ -84,6 +85,25 @@ const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
   });
 });
 
+watch(
+  () => profilesStore.newProfileGroupIdToEdit,
+  async (groupId) => {
+    if (!groupId)
+      return;
+
+    await nextTick();
+    requestAnimationFrame(() => {
+      const groupBlock = groupBlockRefs.get(groupId);
+      if (!groupBlock)
+        return;
+
+      groupBlock.openContextMenu();
+      profilesStore.newProfileGroupIdToEdit = undefined;
+    });
+  },
+  { flush: "post" },
+);
+
 useSortableAndAutoAnimate({
   handle: "[data-profile-top-level-sort-handle]",
   listContainer,
@@ -98,6 +118,14 @@ function toggleGroup(groupId: string) {
     collapsedGroupIds.value.add(groupId);
   }
   collapsedGroupIds.value = new Set(collapsedGroupIds.value);
+}
+
+function setGroupBlockRef(groupId: string, instance: InstanceType<typeof ProfileGroupBlock> | null) {
+  if (instance) {
+    groupBlockRefs.set(groupId, instance);
+  } else {
+    groupBlockRefs.delete(groupId);
+  }
 }
 
 function moveItem<T>(items: T[], oldIndex: number, newIndex: number) {
@@ -157,6 +185,10 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
     >
       <ProfileGroupBlock
         v-if="block.type === 'group'"
+        :ref="(instance) => setGroupBlockRef(
+          block.group.id,
+          instance as InstanceType<typeof ProfileGroupBlock> | null,
+        )"
         :group="block.group"
         :profiles="block.profiles"
         :collapsed="collapsedGroupIds.has(block.group.id)"

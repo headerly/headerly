@@ -311,10 +311,11 @@
       "newGroup": "新建分组",
       "openSecondaryOperations": "打开更多操作下拉菜单",
       "pause": "暂停",
+      "removeFromGroup": "移出分组",
       "resume": "恢复",
       "ruleActionType": "规则操作类型",
       "share": "分享",
-      "ungroup": "移出分组"
+      "unnamedGroupLabel": "\"{profileName}\" | \"{profileName} 和其他 {remainingCount} 个配置\" | \"{profileName} 和其他 {remainingCount} 个配置\""
     },
     "alert": {
       "globalRuleDescription": "添加一个条件以避免问题。",
@@ -368,6 +369,11 @@
     "actions": {
       "delete": "删除分组",
       "newProfile": "在分组中新建配置",
+      "pauseAndRemember": "暂停并记忆",
+      "pauseAndRememberDescription": "暂停分组并记住当前启用的配置；恢复分组时只会启用这些配置。在其他位置更改配置状态会清除该记忆。",
+      "resume": "恢复分组",
+      "resumeRemembered": "恢复记忆项",
+      "resumeRememberedDescription": "恢复暂停时记住的配置。复选分组会恢复全部记忆项，单选分组只恢复第一项。在其他位置更改配置状态会清除该记忆。",
       "ungroup": "取消分组"
     },
     "namePlaceholder": "命名此分组"
