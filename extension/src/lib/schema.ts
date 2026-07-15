@@ -172,7 +172,7 @@ const profileSchema = z.object({
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
-  groupId: z.string().optional(),
+  groupId: uuidSchema.optional(),
   comments: z.string().optional(),
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
