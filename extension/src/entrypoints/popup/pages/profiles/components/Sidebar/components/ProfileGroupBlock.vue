@@ -271,7 +271,7 @@ defineExpose({ openContextMenu });
         <motion.div
           v-if="!collapsed"
           key="profile-group-items"
-          class="overflow-x-visible overflow-y-clip"
+          class="-mt-1 overflow-x-visible overflow-y-clip pt-1"
           :initial="{ height: 0, opacity: 0, y: -4 }"
           :animate="{ height: 'auto', opacity: 1, y: 0 }"
           :exit="{ height: 0, opacity: 0, y: -4 }"
