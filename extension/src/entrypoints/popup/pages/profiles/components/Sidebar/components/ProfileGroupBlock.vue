@@ -239,9 +239,9 @@ defineExpose({ openContextMenu });
               :model-value="group.name"
               :placeholder="t('profileGroup.namePlaceholder')"
               class="
-                h-9 rounded-lg border-2 border-border/80 bg-background/30 px-3
+                h-9 rounded-lg border-2 border-border bg-background/30 px-3
                 text-sm shadow-none ring-0 outline-none
-                focus-visible:ring-0 focus-visible:outline-primary!
+                focus-visible:border-primary! focus-visible:ring-0
               "
               @click.stop
               @keydown.enter.stop.prevent="closeContextMenu"
