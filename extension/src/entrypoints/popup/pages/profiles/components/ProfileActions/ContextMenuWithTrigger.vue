@@ -16,7 +16,6 @@ import {
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { getProfileGroupColorClass } from "../Sidebar/components/utils";
 import {
   handleProfileRuleActionTypeChanged,
   profileActionIdGroups,
@@ -82,9 +81,8 @@ async function handleChangeType() {
                 @click="profilesStore.addProfileToGroup(profile.id, group.id)"
               >
                 <span
-                  class="size-2.5 shrink-0 rounded-full" :class="[
-                    getProfileGroupColorClass(group.color),
-                  ]"
+                  class="size-2.5 shrink-0 rounded-full"
+                  :style="{ backgroundColor: group.color }"
                 />
                 <span class="truncate">{{ group.name }}</span>
               </ContextMenuItem>

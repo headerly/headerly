@@ -5,6 +5,7 @@ import { defineStore } from "pinia";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
+import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileGroupsStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie, getCurrentTabHostname } from "@/lib/utils";
@@ -137,7 +138,7 @@ export const useProfilesStore = defineStore("profiles", () => {
     const group = {
       id: uuidv7(),
       name: `Group ${profileGroups.value.length + 1}`,
-      color: "slate",
+      color: PROFILE_GROUP_COLOR_PRESETS[0],
       type: "checkbox",
       ...(overrides ?? {}),
     } as const satisfies ProfileGroup;

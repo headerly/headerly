@@ -20,25 +20,10 @@ export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
 
-const profileGroupColorSchema = z.enum([
-  "slate",
-  "blue",
-  "red",
-  "yellow",
-  "green",
-  "pink",
-  "purple",
-  "cyan",
-  "orange",
-]);
-export type ProfileGroupColor = z.infer<typeof profileGroupColorSchema>;
-
-export const PROFILE_GROUP_COLORS = profileGroupColorSchema.options;
-
 export const profileGroupSchema = z.object({
   id: uuidSchema,
   name: z.string(),
-  color: profileGroupColorSchema,
+  color: z.string(),
   type: groupTypeSchema,
 });
 export type ProfileGroup = z.infer<typeof profileGroupSchema>;
