@@ -274,14 +274,14 @@ export const useProfilesStore = defineStore("profiles", () => {
   }
 
   function deleteProfileGroup(groupId: string) {
-    const groupIndex = profileGroups.value.findIndex(group => group.id === groupId);
-    if (groupIndex === -1)
+    if (!getProfileGroup(groupId))
       return;
 
-    profileGroups.value.splice(groupIndex, 1);
-    manager.value.profiles
+    const profileIds = manager.value.profiles
       .filter(profile => profile.groupId === groupId)
-      .forEach(profile => delete profile.groupId);
+      .map(profile => profile.id);
+    profileIds.forEach(profileId => deleteProfile(profileId));
+    deleteProfileGroupIfEmpty(groupId);
   }
 
   function reorderProfilesByIds(profileIds: string[]) {
