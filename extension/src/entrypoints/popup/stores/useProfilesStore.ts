@@ -1,22 +1,12 @@
-import type { GroupType, HeaderModGroup, Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
-import type { ActionType } from "@/lib/types";
+import type { Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { countBy, minBy } from "es-toolkit";
 import { defineStore } from "pinia";
-import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
-import { addProfileIds, stripProfileIds } from "@/lib/schema";
 import { useProfileGroupsStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createHeaderMod, createProfile, createRedirectUrl, createSyncCookie, getCurrentTabHostname } from "@/lib/utils";
-
-export function findHeaderModGroups(profile: Profile, type: ActionType) {
-  return match(type)
-    .with("request", () => profile.requestHeaderModGroups)
-    .with("response", () => profile.responseHeaderModGroups)
-    .exhaustive();
-}
+import { createProfile, getCurrentTabHostname } from "@/lib/utils";
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
@@ -91,20 +81,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     manager.value.selectedProfileId = newProfile.id;
   }
 
-  function duplicateProfile(profileId?: string) {
-    const targetProfileId = profileId ?? manager.value.selectedProfileId;
-    const targetProfile = manager.value.profiles.find(p => p.id === targetProfileId);
-    if (!targetProfile)
-      return;
-
-    // Using `stripProfileIds` and `addProfileIds` ensures deep cloning and generation of fresh UUIDs for nested arrays.
-    const newProfile = addProfileIds(stripProfileIds(targetProfile));
-    newProfile.groupId = targetProfile.groupId;
-    const targetIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
-    manager.value.profiles.splice(targetIndex + 1, 0, newProfile);
-    manager.value.selectedProfileId = newProfile.id;
-  }
-
   function deleteProfile(profileId?: string) {
     const targetProfileId = profileId ?? manager.value.selectedProfileId;
 
@@ -169,42 +145,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function toggleProfileGroupEnabled(groupId: string) {
-    const group = getProfileGroup(groupId);
-    if (!group)
-      return;
-
-    const profiles = manager.value.profiles.filter(profile => profile.groupId === group.id);
-    const enabledProfiles = profiles.filter(profile => profile.enabled);
-    if (enabledProfiles.length > 0) {
-      group.lastEnabledProfileIds = enabledProfiles.map(profile => profile.id);
-      profiles.forEach(profile => profile.enabled = false);
-      return;
-    }
-
-    const defaultEnabledProfileIds = match(group.type)
-      .with("checkbox", () => profiles.map(profile => profile.id))
-      .with("radio", () => profiles.slice(0, 1).map(profile => profile.id))
-      .exhaustive();
-    const profileIdSet = new Set(profiles.map(profile => profile.id));
-    let rememberedProfileIds = group.lastEnabledProfileIds?.filter(profileId => profileIdSet.has(profileId));
-    if (!rememberedProfileIds?.length) {
-      rememberedProfileIds = defaultEnabledProfileIds;
-    }
-    const rememberedProfileIdSet = new Set(rememberedProfileIds);
-    const firstRememberedProfile = profiles.find(profile => rememberedProfileIdSet.has(profile.id));
-
-    profiles.forEach((profile) => {
-      profile.enabled = match(group.type)
-        .with("checkbox", () => rememberedProfileIdSet.has(profile.id))
-        .with("radio", () => profile.id === firstRememberedProfile?.id)
-        .exhaustive();
-    });
-    group.lastEnabledProfileIds = profiles
-      .filter(profile => profile.enabled)
-      .map(profile => profile.id);
-  }
-
   function createProfileGroup(overrides?: Partial<ProfileGroup>) {
     const colorUsageCounts = countBy(profileGroups.value, group => group.color);
     const leastUsedPresetColor = minBy(
@@ -257,82 +197,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     }
   }
 
-  function updateProfileGroup(groupId: string, value: Partial<Pick<ProfileGroup, "color" | "name" | "type">>) {
-    const group = getProfileGroup(groupId);
-    if (!group)
-      return;
-
-    Object.assign(group, value);
-    if (value.type === "radio") {
-      const enabledProfiles = manager.value.profiles.filter(profile => profile.groupId === group.id && profile.enabled);
-      const profilesToDisable = enabledProfiles.slice(1);
-      profilesToDisable.forEach(profile => profile.enabled = false);
-      if (profilesToDisable.length > 0) {
-        delete group.lastEnabledProfileIds;
-      }
-    }
-  }
-
-  function deleteProfileGroup(groupId: string) {
-    if (!getProfileGroup(groupId))
-      return;
-
-    const profileIds = manager.value.profiles
-      .filter(profile => profile.groupId === groupId)
-      .map(profile => profile.id);
-    profileIds.forEach(profileId => deleteProfile(profileId));
-    deleteProfileGroupIfEmpty(groupId);
-  }
-
-  function reorderProfilesByIds(profileIds: string[]) {
-    const profilesById = new Map(manager.value.profiles.map(profile => [profile.id, profile]));
-    const seenProfileIds = new Set<string>();
-    const reorderedProfiles = profileIds.flatMap((profileId) => {
-      const profile = profilesById.get(profileId);
-      if (!profile || seenProfileIds.has(profileId)) {
-        return [];
-      }
-
-      seenProfileIds.add(profileId);
-      return [profile];
-    });
-    const remainingProfiles = manager.value.profiles.filter(profile => !seenProfileIds.has(profile.id));
-    manager.value.profiles.splice(0, manager.value.profiles.length, ...reorderedProfiles, ...remainingProfiles);
-  }
-
-  function addHeaderActionGroup(type: ActionType, groupType: GroupType) {
-    const profile = selectedProfile.value;
-    if (type === "request") {
-      profile.requestHeaderModGroups ??= [];
-    } else {
-      profile.responseHeaderModGroups ??= [];
-    }
-    const groups = findHeaderModGroups(profile, type)!;
-    const mod = createHeaderMod();
-    const newGroup = {
-      id: uuidv7(),
-      type: groupType,
-      items: [mod],
-    } as const satisfies HeaderModGroup;
-    groups.push(newGroup);
-  }
-
-  function addSyncCookieGroup() {
-    const cookie = createSyncCookie();
-    selectedProfile.value.syncCookieGroups ??= [];
-    selectedProfile.value.syncCookieGroups.push({
-      id: uuidv7(),
-      type: "checkbox",
-      items: [cookie],
-    });
-  }
-
-  function addRedirectUrlGroup() {
-    if (!selectedProfile.value.redirectUrlGroup?.length) {
-      selectedProfile.value.redirectUrlGroup = [createRedirectUrl()];
-    }
-  }
-
   return {
     // State
     manager,
@@ -350,18 +214,9 @@ export const useProfilesStore = defineStore("profiles", () => {
     addProfile,
     addProfileToGroup,
     addProfileToNewGroup,
-    deleteProfileGroup,
-    duplicateProfile,
     deleteProfile,
     removeProfileFromGroup,
-    reorderProfilesByIds,
-    setProfileEnabled,
-    toggleProfileGroupEnabled,
     toggleProfileEnabled,
-    updateProfileGroup,
-    addHeaderActionGroup,
-    addSyncCookieGroup,
-    addRedirectUrlGroup,
     undo,
     redo,
   };
