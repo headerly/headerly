@@ -2,9 +2,9 @@ import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
+import { hasRegisterableAction } from "@/lib/profileRule";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
-import { buildAction } from "./DNR/buildAction";
-import { updateRules } from "./DNR/registerRule";
+import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
@@ -43,7 +43,8 @@ export default defineBackground({
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
 
-    // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
+    // Session rules can disappear while their profiles remain enabled. Reconcile persisted
+    // registration state without automatically recreating those rules.
     updateBadgeWhenRestarted();
     // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
     browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
@@ -59,6 +60,22 @@ export default defineBackground({
         } else {
           await unregisterAllRules();
         }
+      });
+    });
+    onMessage("reinitializeProfileRule", ({ data: profileId }) => {
+      return profileManagerMutex.runExclusive(async () => {
+        const powerOn = await powerOnItem.getValue();
+        const profile = (await profileManagerItem.getValue()).profiles.find(
+          candidate => candidate.id === profileId,
+        );
+        if (!powerOn || !profile?.enabled || !hasRegisterableAction(profile)) {
+          return;
+        }
+        await updateRules({
+          deleted: [],
+          created: [],
+          modified: [pickProfileFields(profile)],
+        });
       });
     });
     onMessage("openSharedProfilesImport", async ({ data: query, sender }) => {
@@ -80,9 +97,20 @@ export default defineBackground({
       const changes = {
         deleted: [],
         modified: [],
-        created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
+        created: manager.profiles.filter(p => p.enabled && hasRegisterableAction(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
+    }
+
+    function updateBadgeWhenRestarted() {
+      profileManagerMutex.runExclusive(async () => {
+        await reconcileRuleRegistrationState();
+        if (await powerOnItem.getValue()) {
+          await updateBadgeCount();
+        } else {
+          setIconAndBadgeForDisabled();
+        }
+      });
     }
   },
 });
@@ -96,6 +124,7 @@ const NEED_WATCH_KEYS = [
   "redirectUrlGroup",
   "priority",
   "ruleActionType",
+  "ruleScope",
 ] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
@@ -108,19 +137,6 @@ export interface ProfileChanges {
 
 function pickProfileFields(profile: Profile) {
   return pick(profile, CORE_KEYS);
-}
-
-function hasNonBlankActionFormValues(profile: ProfileCoreData): boolean {
-  // `buildAction` converts header arrays with `headers.length === 0` to `undefined`.
-  const action = buildAction(profile);
-  return match(action)
-    .with({ type: "modifyHeaders" }, ({ requestHeaders, responseHeaders }) => {
-      return requestHeaders !== undefined || responseHeaders !== undefined;
-    })
-    .with({ type: "redirect" }, ({ redirect }) => {
-      return redirect.url !== undefined;
-    })
-    .otherwise(() => true);
 }
 
 function diffProfiles(
@@ -139,7 +155,7 @@ function diffProfiles(
     const oldPickedProfile = oldPickedProfileMap.get(oldProfile.id)!;
     if (!newPickedProfileMap.has(oldPickedProfile.id)
       && oldPickedProfile.enabled
-      && hasNonBlankActionFormValues(oldPickedProfile)) {
+      && hasRegisterableAction(oldPickedProfile)) {
       deleted.push(oldPickedProfile);
     }
   }
@@ -148,8 +164,8 @@ function diffProfiles(
   for (const newProfile of newProfiles) {
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
-    const wasActive = Boolean(oldPickedProfile?.enabled && hasNonBlankActionFormValues(oldPickedProfile));
-    const isActive = newPickedProfile.enabled && hasNonBlankActionFormValues(newPickedProfile);
+    const wasActive = Boolean(oldPickedProfile?.enabled && hasRegisterableAction(oldPickedProfile));
+    const isActive = newPickedProfile.enabled && hasRegisterableAction(newPickedProfile);
     const isModified = Boolean(oldPickedProfile
       && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS)));
 
@@ -169,13 +185,4 @@ function diffProfiles(
   }
 
   return { deleted, modified, created };
-}
-
-async function updateBadgeWhenRestarted() {
-  const powerOn = await usePowerOnStorage().item.getValue();
-  if (powerOn) {
-    await updateBadgeCount();
-  } else {
-    setIconAndBadgeForDisabled();
-  }
 }

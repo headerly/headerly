@@ -216,6 +216,22 @@ describe("profile ID Management", () => {
           value: ["delete", "patch"],
         },
       ],
+      tabIds: [
+        {
+          id: "550e8400-e29b-41d4-a716-446655440026",
+          enabled: true,
+          comments: "Only this tab",
+          value: 42,
+        },
+      ],
+      excludedTabIds: [
+        {
+          id: "550e8400-e29b-41d4-a716-446655440027",
+          enabled: true,
+          comments: "Requests without a tab",
+          value: -1,
+        },
+      ],
       domainType: {
         enabled: true,
         value: "firstParty",
@@ -277,6 +293,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedResourceTypes?.[0]).not.toHaveProperty("id");
       expect(result.filters.requestMethods?.[0]).not.toHaveProperty("id");
       expect(result.filters.excludedRequestMethods?.[0]).not.toHaveProperty("id");
+      expect(result.filters.tabIds?.[0]).not.toHaveProperty("id");
+      expect(result.filters.excludedTabIds?.[0]).not.toHaveProperty("id");
 
       // Check that fields without ids are still present
       expect(result.filters.domainType).toBeDefined();
@@ -311,6 +329,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedResourceTypes![0]!.value).toEqual(["image", "font"]);
       expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
       expect(result.filters.excludedRequestMethods![0]!.value).toEqual(["delete", "patch"]);
+      expect(result.filters.tabIds![0]!.value).toBe(42);
+      expect(result.filters.excludedTabIds![0]!.value).toBe(-1);
       expect(result.filters.domainType!.value).toBe("firstParty");
       expect(result.filters.isUrlFilterCaseSensitive!.value).toBe(true);
     });
@@ -394,6 +414,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedResourceTypes![0]).toHaveProperty("id");
       expect(result.filters.requestMethods![0]).toHaveProperty("id");
       expect(result.filters.excludedRequestMethods![0]).toHaveProperty("id");
+      expect(result.filters.tabIds![0]).toHaveProperty("id");
+      expect(result.filters.excludedTabIds![0]).toHaveProperty("id");
 
       // Verify all ids are valid UUIDs
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -437,6 +459,8 @@ describe("profile ID Management", () => {
       expect(result.filters.excludedResourceTypes).toHaveLength(1);
       expect(result.filters.requestMethods).toHaveLength(1);
       expect(result.filters.excludedRequestMethods).toHaveLength(1);
+      expect(result.filters.tabIds).toHaveLength(1);
+      expect(result.filters.excludedTabIds).toHaveLength(1);
 
       // Verify all complex values are preserved correctly
       expect(result.filters.resourceTypes![0]!.value).toEqual(["script", "stylesheet"]);
@@ -462,6 +486,8 @@ describe("profile ID Management", () => {
       expect(restored.filters.excludedResourceTypes![0]!.value).toEqual(mockProfile.filters.excludedResourceTypes![0]!.value);
       expect(restored.filters.requestMethods![0]!.value).toEqual(mockProfile.filters.requestMethods![0]!.value);
       expect(restored.filters.excludedRequestMethods![0]!.value).toEqual(mockProfile.filters.excludedRequestMethods![0]!.value);
+      expect(restored.filters.tabIds![0]!.value).toBe(mockProfile.filters.tabIds![0]!.value);
+      expect(restored.filters.excludedTabIds![0]!.value).toBe(mockProfile.filters.excludedTabIds![0]!.value);
       expect(restored.filters.domainType!.value).toBe(mockProfile.filters.domainType!.value);
       expect(restored.filters.isUrlFilterCaseSensitive!.value).toBe(mockProfile.filters.isUrlFilterCaseSensitive!.value);
 
@@ -470,6 +496,7 @@ describe("profile ID Management", () => {
       expect(restored.filters.regexFilter![0]!.id).not.toBe(mockProfile.filters.regexFilter![0]!.id);
       expect(restored.filters.initiatorDomains!.items[0]!.id).not.toBe(mockProfile.filters.initiatorDomains!.items[0]!.id);
       expect(restored.filters.resourceTypes![0]!.id).not.toBe(mockProfile.filters.resourceTypes![0]!.id);
+      expect(restored.filters.tabIds![0]!.id).not.toBe(mockProfile.filters.tabIds![0]!.id);
     });
 
     it("should handle empty filter arrays correctly", () => {

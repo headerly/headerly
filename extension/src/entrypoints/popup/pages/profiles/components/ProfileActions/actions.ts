@@ -13,6 +13,7 @@ export type ActionKey
     | "comments"
     | "rulePriority"
     | "ruleActionType"
+    | "ruleScope"
     | "shareProfile";
 
 export interface ProfileActionItem {
@@ -23,6 +24,7 @@ export interface ProfileActionItem {
     openComments?: () => void;
     openPriority?: () => void;
     openChangeRuleActionType?: () => void;
+    openChangeRuleScope?: () => void;
   }) => void;
   disabled?: (profile: Profile) => boolean;
   variant?: "default" | "destructive";
@@ -31,7 +33,7 @@ export interface ProfileActionItem {
 export const profileActionIdGroups = [
   ["toggle", "duplicate"],
   "separator",
-  ["comments", "rulePriority", "ruleActionType"],
+  ["comments", "rulePriority", "ruleActionType", "ruleScope"],
   "separator",
   ["shareProfile"],
   "separator",
@@ -97,6 +99,13 @@ export async function handleProfileRuleActionTypeChanged(profile: Profile) {
   };
 }
 
+export function handleProfileRuleScopeChanged(profile: Profile) {
+  if (profile.ruleScope === "dynamic") {
+    delete profile.filters.tabIds;
+    delete profile.filters.excludedTabIds;
+  }
+}
+
 export function useProfileActions() {
   const profilesStore = useProfilesStore();
   const router = useRouter();
@@ -150,6 +159,11 @@ export function useProfileActions() {
         return t("profile.actions.ruleActionType");
       },
       onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
+    },
+    {
+      id: "ruleScope",
+      label: () => t("profile.actions.ruleScope"),
+      onClick: (_, opts) => opts?.openChangeRuleScope?.(),
     },
     {
       id: "shareProfile",

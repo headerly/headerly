@@ -1,5 +1,5 @@
 import type { ClassValue } from "clsx";
-import type { GroupItem, GroupType, HeaderMod, Profile, RedirectUrlGroupItem, RuleActionType, SyncCookie } from "./schema";
+import type { GroupItem, GroupType, HeaderMod, Profile, RedirectUrlGroupItem, RuleActionType, RuleType, SyncCookie } from "./schema";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { match } from "ts-pattern";
@@ -112,6 +112,11 @@ export async function getCurrentTabHostname() {
   return (await getCurrentTabHttpUrl())?.hostname ?? "";
 }
 
+export async function getCurrentTabId() {
+  const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  return currentTab?.id;
+}
+
 export async function getCurrentTabHost() {
   return (await getCurrentTabHttpUrl())?.host ?? "";
 }
@@ -149,6 +154,21 @@ export function getRuleActionTypeIcon(type: RuleActionType) {
     redirect: "i-lucide-corner-right-down",
   } as const;
   return iconMap[type];
+}
+
+export function getRuleScopeLabel(scope: RuleType) {
+  const { t } = i18n.global;
+  return match(scope)
+    .with("dynamic", () => t("ruleScope.dynamic"))
+    .with("session", () => t("ruleScope.session"))
+    .exhaustive();
+}
+
+export function getRuleScopeIcon(scope: RuleType) {
+  return match(scope)
+    .with("dynamic", () => "i-lucide-database")
+    .with("session", () => "i-lucide-timer-reset")
+    .exhaustive();
 }
 
 export async function ensureCookiesPermission() {

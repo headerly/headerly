@@ -46,6 +46,14 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
           condition[k] = enabledItems;
         }
       })
+      .with("tabIds", "excludedTabIds", (k) => {
+        const enabledTabIds = profile.filters[k]
+          ?.filter(item => item.enabled)
+          .map(item => item.value);
+        if (enabledTabIds && enabledTabIds.length > 0) {
+          condition[k] = [...new Set(enabledTabIds)];
+        }
+      })
       .with("urlFilter", "regexFilter", (k) => {
         // A DNR rule cannot have both urlFilter and regexFilter.
         // If both are present, regexFilter takes precedence.

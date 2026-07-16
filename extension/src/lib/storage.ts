@@ -1,13 +1,13 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
+import type { Profile, RuleType } from "./schema";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
-import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./utils";
 
 export { PROFILE_LATEST_VERSION } from "./const";
@@ -111,15 +111,44 @@ const defaultProfileManager = createDefaultProfileManager();
 
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
+export interface RuleRegistration {
+  ruleId: number;
+  ruleScope: RuleType;
+}
+
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
   return useExtensionStorage<ProfileManager>("local:profileManager", defaultProfileManager, {
-    version: PROFILE_LATEST_VERSION,
     ...options,
+    version: 2,
+    migrations: {
+      2: (manager: ProfileManager & { profiles: Array<Profile & { ruleScope?: RuleType }> }) => ({
+        ...manager,
+        profiles: manager.profiles.map(profile => ({
+          ...profile,
+          ruleScope: profile.ruleScope ?? "dynamic",
+        })),
+      }),
+    },
   });
 }
 
-export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
-  return useExtensionStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
+export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, RuleRegistration>>) {
+  return useExtensionStorage<Record<string, RuleRegistration>>("local:profileId2RelatedRuleIdRecord", {}, {
+    ...options,
+    version: 2,
+    migrations: {
+      2: (record: Record<string, number | RuleRegistration>) => {
+        return Object.fromEntries(
+          Object.entries(record).map(([profileId, registration]) => [
+            profileId,
+            match(registration)
+              .with(P.number, ruleId => ({ ruleId, ruleScope: "dynamic" as const }))
+              .otherwise(value => value),
+          ]),
+        );
+      },
+    },
+  });
 }
 
 export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<string, string>>) {
