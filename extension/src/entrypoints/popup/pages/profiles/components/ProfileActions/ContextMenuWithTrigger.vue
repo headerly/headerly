@@ -14,11 +14,13 @@ import {
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import {
   handleProfileRuleActionTypeChanged,
+  handleProfileRuleScopeChanged,
   profileActionIdGroups,
   transformIdsToActions,
 } from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
+import RuleScopeDialog from "./RuleScopeDialog.vue";
 
 const props = defineProps<{
   profile: Profile;
@@ -32,9 +34,14 @@ const actionGroups = transformIdsToActions(profileActionIdGroups);
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
 const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
+const ruleScopeDialogRef = useTemplateRef("ruleScopeDialogRef");
 
 async function handleChangeType() {
   await handleProfileRuleActionTypeChanged(profile.value);
+}
+
+function handleChangeRuleScope() {
+  handleProfileRuleScopeChanged(profile.value);
 }
 </script>
 
@@ -61,6 +68,7 @@ async function handleChangeType() {
               openComments: () => commentsDialogRef?.open(),
               openPriority: () => priorityDialogRef?.open(),
               openChangeRuleActionType: () => changeTypeDialogRef?.open(),
+              openChangeRuleScope: () => ruleScopeDialogRef?.open(),
             })"
           >
             {{ action.label(profile) }}
@@ -80,6 +88,11 @@ async function handleChangeType() {
       ref="changeTypeDialogRef"
       v-model:rule-action-type="profile.ruleActionType"
       @changed="handleChangeType"
+    />
+    <RuleScopeDialog
+      ref="ruleScopeDialogRef"
+      v-model="profile.ruleScope"
+      @changed="handleChangeRuleScope"
     />
   </ContextMenu>
 </template>

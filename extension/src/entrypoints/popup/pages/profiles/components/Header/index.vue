@@ -23,7 +23,7 @@ import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
-import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
+import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel, getRuleScopeIcon, getRuleScopeLabel } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
@@ -107,6 +107,11 @@ const undoAndRedoButtonGroup = [
 const actionTypeBadge = computed(() => ({
   icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
   label: getRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
+}));
+
+const ruleScopeBadge = computed(() => ({
+  icon: getRuleScopeIcon(profilesStore.selectedProfile.ruleScope ?? "dynamic"),
+  label: getRuleScopeLabel(profilesStore.selectedProfile.ruleScope ?? "dynamic"),
 }));
 
 const defaultTab = computed(() => {
@@ -208,6 +213,24 @@ const defaultTab = computed(() => {
             </TooltipTrigger>
             <TooltipContent side="bottom" class="md:hidden">
               {{ t("profile.header.ruleActionType", { type: actionTypeBadge.label }) }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Badge variant="outline">
+                <i :class="ruleScopeBadge.icon" />
+                <span
+                  class="
+                    hidden
+                    md:inline
+                  "
+                >{{ ruleScopeBadge.label }}</span>
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" class="md:hidden">
+              {{ t("profile.header.ruleScope", { scope: ruleScopeBadge.label }) }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

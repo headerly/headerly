@@ -5,6 +5,7 @@
       "regexFilterBlockedByUrlFilter": "请先删除已有的 URL 过滤器。URL 过滤器和正则过滤器只能使用其中一个。",
       "redirectRuleActionType": "将规则操作类型切换为“重定向”后即可添加此操作。",
       "redirectUrlExists": "请先删除已有的重定向 URL，再添加新的重定向 URL。",
+      "sessionRuleScope": "将规则范围切换为“会话”后即可添加此条件。",
       "conditionAlreadyAdded": "此类型规则已被添加，不能重复添加。",
       "urlFilterBlockedByRegexFilter": "请先删除已有的正则过滤器。URL 过滤器和正则过滤器只能使用其中一个。"
     },
@@ -36,6 +37,10 @@
       "excludedResourceTypes": {
         "description": "规则不会匹配的资源类型列表。resourceTypes 和 excludedResourceTypes 只能指定其中一个。如果两者都未指定，则会阻止除 main_frame 外的所有资源类型。",
         "title": "排除资源类型"
+      },
+      "excludedTabIds": {
+        "description": "规则不会匹配来自所列标签页 ID 的请求。仅会话规则支持此条件。",
+        "title": "排除标签页 ID"
       },
       "initiatorDomains": {
         "description": "规则仅匹配来自 initiator domains 列表中域名的网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
@@ -72,6 +77,10 @@
       "simpleRedirectUrl": {
         "description": "将匹配的请求重定向到指定 URL。",
         "title": "简单重定向 URL"
+      },
+      "tabIds": {
+        "description": "规则仅匹配来自所列标签页 ID 的请求。仅会话规则支持此条件。",
+        "title": "标签页 ID"
       },
       "urlFilter": {
         "description": "规则仅匹配 URL 包含任一指定子串的网络请求。省略列表时，规则应用于所有 URL 的请求。不允许空列表。urlFilter 和 regexFilter 只能指定其中一个。",
@@ -180,6 +189,10 @@
     "excludedResourceTypes": {
       "title": "排除资源类型"
     },
+    "excludedTabIds": {
+      "description": "规则不会匹配来自任一所列标签页 ID 的请求。",
+      "title": "排除标签页 ID"
+    },
     "regexFilter": {
       "description": "用于匹配网络请求 URL 的正则表达式。",
       "syntaxPrefix": "它遵循",
@@ -210,6 +223,13 @@
       "title": "资源类型"
     },
     "selectPlaceholder": "选择{name}...",
+    "tabIds": {
+      "description": "规则仅匹配来自所列标签页 ID 的请求。",
+      "noTabId": "使用 -1 可匹配并非来自标签页的请求。",
+      "sessionOnly": "此条件仅支持会话规则。浏览器会话结束后，标签页 ID 将失效。",
+      "title": "标签页 ID",
+      "useCurrentTabId": "使用当前标签页 ID"
+    },
     "urlFilter": {
       "anchor": " - 锚点：匹配 URL 开头或结尾。",
       "domainAnchor": " - 域名锚点：匹配子域名或域名开头。",
@@ -310,13 +330,23 @@
       "pause": "暂停",
       "resume": "恢复",
       "ruleActionType": "规则操作类型",
+      "ruleScope": "规则范围",
       "share": "分享"
     },
     "alert": {
       "globalRuleDescription": "添加一个条件以避免问题。",
       "globalRuleTitle": "此配置会影响所有请求，可能导致网站异常。",
       "ignoreWarning": "忽略警告",
-      "registrationErrorTitle": "此配置注册规则时发生错误。"
+      "registrationErrorTitle": "此配置注册规则时发生错误。",
+      "reinitializeSessionRule": "重新注册会话规则",
+      "sessionRuleMissingDescription": "关闭浏览器或扩展更新时，会话规则会被清除。请重新注册此配置以在当前会话中使用。",
+      "sessionRuleMissingTitle": "此会话规则尚未注册。"
+    },
+    "changeScope": {
+      "description": "动态规则可跨浏览器会话保留；会话规则会在关闭浏览器或扩展更新时被清除。",
+      "dynamicRemovesTabConditions": "切换为“动态”会移除“标签页 ID”和“排除标签页 ID”条件。",
+      "placeholder": "选择规则范围",
+      "title": "更改规则范围"
     },
     "changeType": {
       "description": "为此配置选择新的操作类型。切换类型可能会移除现有操作。",
@@ -330,7 +360,8 @@
       "priority": "优先级",
       "priorityLabel": "优先级：",
       "priorityValue": "优先级：{priority}",
-      "ruleActionType": "规则操作类型：{type}"
+      "ruleActionType": "规则操作类型：{type}",
+      "ruleScope": "规则范围：{scope}"
     },
     "priority": {
       "description": "优先级定义规则的冲突解决策略。当多个规则匹配同一请求时，系统会优先执行权重更高的规则。",
@@ -381,6 +412,14 @@
     "modifyHeaders": "修改请求头",
     "redirect": "重定向",
     "upgradeScheme": "升级协议"
+  },
+  "ruleScope": {
+    "description": {
+      "dynamic": "可跨浏览器会话和扩展更新保留，推荐用于大多数配置。",
+      "session": "仅存储在当前浏览器会话的内存中。“标签页 ID”条件必须使用此范围，并且失效后需要手动重新注册。"
+    },
+    "dynamic": "动态",
+    "session": "会话"
   },
   "settings": {
     "descriptions": {

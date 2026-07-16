@@ -5,6 +5,7 @@
       "regexFilterBlockedByUrlFilter": "Delete the existing URL filter first. Only one of URL filter or regex filter can be used.",
       "redirectRuleActionType": "Change the rule action type to Redirect to add this action.",
       "redirectUrlExists": "Delete the existing redirect URL before adding another one.",
+      "sessionRuleScope": "Change the rule scope to Session to add this condition.",
       "conditionAlreadyAdded": "This type of condition has already been added and cannot be added again.",
       "urlFilterBlockedByRegexFilter": "Delete the existing regex filter first. Only one of URL filter or regex filter can be used."
     },
@@ -36,6 +37,10 @@
       "excludedResourceTypes": {
         "description": "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         "title": "Excluded Resource Types"
+      },
+      "excludedTabIds": {
+        "description": "The rule will not match requests from the listed tab IDs. Only session rules support this condition.",
+        "title": "Excluded Tab IDs"
       },
       "initiatorDomains": {
         "description": "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
@@ -72,6 +77,10 @@
       "simpleRedirectUrl": {
         "description": "Redirect matched requests to a specific URL.",
         "title": "Simple Redirect URL"
+      },
+      "tabIds": {
+        "description": "The rule will only match requests from the listed tab IDs. Only session rules support this condition.",
+        "title": "Tab IDs"
       },
       "urlFilter": {
         "description": "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
@@ -180,6 +189,10 @@
     "excludedResourceTypes": {
       "title": "Excluded Resource Types"
     },
+    "excludedTabIds": {
+      "description": "The rule will not match requests originating from any listed tab ID.",
+      "title": "Excluded Tab IDs"
+    },
     "regexFilter": {
       "description": "Regular expression to match against the network request url.",
       "syntaxPrefix": "This follows the",
@@ -210,6 +223,13 @@
       "title": "Resource Types"
     },
     "selectPlaceholder": "Select {name}...",
+    "tabIds": {
+      "description": "The rule will only match requests originating from a listed tab ID.",
+      "noTabId": "Use -1 to match requests that do not originate from a tab.",
+      "sessionOnly": "This condition is only supported by session rules. Tab IDs become invalid when the browser session ends.",
+      "title": "Tab IDs",
+      "useCurrentTabId": "Use the current tab ID"
+    },
     "urlFilter": {
       "anchor": " - Anchor: marks start or end of the URL.",
       "domainAnchor": " - Domain anchor: matches start of a (sub)domain.",
@@ -310,13 +330,23 @@
       "pause": "Pause",
       "resume": "Resume",
       "ruleActionType": "Rule action type",
+      "ruleScope": "Rule scope",
       "share": "Share"
     },
     "alert": {
       "globalRuleDescription": "Add a condition to avoid issues.",
       "globalRuleTitle": "This profile affects every request and might break sites.",
       "ignoreWarning": "Ignore warning",
-      "registrationErrorTitle": "This profile caused an error when registering rules."
+      "registrationErrorTitle": "This profile caused an error when registering rules.",
+      "reinitializeSessionRule": "Re-register session rule",
+      "sessionRuleMissingDescription": "Session rules are cleared when the browser closes or the extension updates. Re-register this profile to use it in the current session.",
+      "sessionRuleMissingTitle": "This session rule is not registered."
+    },
+    "changeScope": {
+      "description": "Dynamic rules persist across browser sessions. Session rules are cleared when the browser closes or the extension updates.",
+      "dynamicRemovesTabConditions": "Changing to Dynamic will remove Tab IDs and Excluded Tab IDs conditions.",
+      "placeholder": "Select a scope",
+      "title": "Change Rule Scope"
     },
     "changeType": {
       "description": "Select a new action type for this profile. Switching types may remove existing actions.",
@@ -330,7 +360,8 @@
       "priority": "Priority",
       "priorityLabel": "Priority: ",
       "priorityValue": "Priority: {priority}",
-      "ruleActionType": "Rule action type: {type}"
+      "ruleActionType": "Rule action type: {type}",
+      "ruleScope": "Rule scope: {scope}"
     },
     "priority": {
       "description": "Priority defines the conflict resolution strategy for rules. When multiple rules match a single request, the system executes the rule with the higher weight as a priority.",
@@ -381,6 +412,14 @@
     "modifyHeaders": "Modify headers",
     "redirect": "Redirect",
     "upgradeScheme": "Upgrade scheme"
+  },
+  "ruleScope": {
+    "description": {
+      "dynamic": "Persists across browser sessions and extension updates. Recommended for most profiles.",
+      "session": "Stored in memory for the current browser session. Required for Tab IDs conditions and must be manually re-registered after it expires."
+    },
+    "dynamic": "Dynamic",
+    "session": "Session"
   },
   "settings": {
     "descriptions": {
