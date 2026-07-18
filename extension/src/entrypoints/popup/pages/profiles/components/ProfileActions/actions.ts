@@ -220,7 +220,8 @@ function useProfileMenuActions() {
   const profilesStore = useProfilesStore();
   const { t } = useI18n();
 
-  function getAddToGroupActions(_profile: Profile): ProfileActionSubmenuEntry[] {
+  function getAddToGroupActions(profile: Profile): ProfileActionSubmenuEntry[] {
+    const availableGroups = profilesStore.profileGroups.filter(group => group.id !== profile.groupId);
     const actions: ProfileActionSubmenuEntry[] = [{
       type: "action",
       id: "createNewGroup",
@@ -229,14 +230,14 @@ function useProfileMenuActions() {
       onClick: profile => profilesStore.addProfileToNewGroup(profile.id),
     }];
 
-    if (profilesStore.profileGroups.length > 0) {
+    if (availableGroups.length > 0) {
       actions.push({
         type: "separator",
         id: "profileGroupsSeparator",
       });
     }
 
-    actions.push(...profilesStore.profileGroups.map((group): ProfileActionItem => ({
+    actions.push(...availableGroups.map((group): ProfileActionItem => ({
       type: "action",
       id: `addToGroup-${group.id}`,
       label: () => group.name,
