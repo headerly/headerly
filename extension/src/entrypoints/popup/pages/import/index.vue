@@ -8,9 +8,10 @@ import JsonEditor from "#/components/JsonEditor/index.vue";
 import { Button } from "#/ui/button";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { ensureCookiesPermission } from "@/lib/permissions";
 import { decodeProfileSharePayload } from "@/lib/profileShare";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
-import { cn, ensureCookiesPermission } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 const route = useRoute();

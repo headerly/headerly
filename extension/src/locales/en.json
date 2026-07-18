@@ -305,12 +305,16 @@
   },
   "profile": {
     "actions": {
+      "addToGroup": "Add profile to group",
+      "createNewGroup": "Create new group",
       "delete": "Delete",
       "openSecondaryOperations": "Open Secondary Operations Dropdown",
       "pause": "Pause",
+      "removeFromGroup": "Remove from group",
       "resume": "Resume",
       "ruleActionType": "Rule action type",
-      "share": "Share"
+      "share": "Share",
+      "unnamedGroupLabel": "\"{profileName}\" | \"{profileName} and {remainingCount} other profile\" | \"{profileName} and {remainingCount} other profiles\""
     },
     "alert": {
       "globalRuleDescription": "Add a condition to avoid issues.",
@@ -359,6 +363,19 @@
       "turnOff": "Turn off extension",
       "turnOn": "Turn on extension"
     }
+  },
+  "profileGroup": {
+    "actions": {
+      "delete": "Delete group",
+      "newProfile": "New profile in group",
+      "pauseAndRemember": "Pause and remember",
+      "pauseAndRememberDescription": "Pause the group and remember its enabled profiles. Only those profiles will be enabled when the group is resumed. Changing a profile's status elsewhere clears this memory.",
+      "resume": "Resume group",
+      "resumeRemembered": "Resume saved profiles",
+      "resumeRememberedDescription": "Resume the profiles remembered when the group was paused. Checkbox groups restore every remembered profile; radio groups restore the first remembered profile. Changing a profile's status elsewhere clears this memory.",
+      "ungroup": "Ungroup"
+    },
+    "namePlaceholder": "Name this group"
   },
   "redirectUrl": {
     "delete": "Delete this redirect URL",

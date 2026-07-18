@@ -4,7 +4,8 @@ import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, createSyncCookie } from "@/lib/utils";
+import { addItemToGroup } from "@/lib/group";
+import { createSyncCookie } from "@/lib/profileFactory";
 import CookieFieldWithActions from "./CookieFieldWithActions.vue";
 
 const group = defineModel<SyncCookieGroup>({

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDefaultFilterValueByHost } from "../utils";
+import { getDefaultFilterValueByHost } from "../filter";
 
 describe("getDefaultFilterValueByHost", () => {
   it("preserves the port in URL filters", () => {

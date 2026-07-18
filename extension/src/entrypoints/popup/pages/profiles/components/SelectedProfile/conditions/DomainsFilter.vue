@@ -16,7 +16,8 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup } from "@/lib/utils";
+import { addItemToGroup } from "@/lib/group";
+import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 
 const domainsFilter = defineModel<DomainsFilter>({
   required: true,
@@ -127,7 +128,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
 
 <template>
   <Group
-    :id="`${profilesStore.selectedProfile.id}:${filterType}`"
+    :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, filterType)"
     v-model:list="domainsFilter.items"
     :name="field[filterType].title"
     :type="domainsFilter.type"

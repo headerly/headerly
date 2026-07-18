@@ -23,7 +23,9 @@ export default antfu(
   {
     // Remember to specify the file glob here, otherwise it might cause the vue plugin to handle non-vue files
     files: ["**/*.{ts,vue}"],
+
     rules: {
+      "max-lines": ["error", 300],
       "antfu/no-top-level-await": "off",
       "no-restricted-syntax": [
         "error",
@@ -38,6 +40,7 @@ export default antfu(
       ],
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
+      "vue/v-for-delimiter-style": ["error", "in"],
       "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
       "vue/no-duplicate-class-names": "error",
       "vue/prefer-use-template-ref": "error",

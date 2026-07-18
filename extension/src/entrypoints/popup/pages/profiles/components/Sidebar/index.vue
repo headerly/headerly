@@ -6,6 +6,7 @@ import { match } from "ts-pattern";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import InfoTooltip from "#/components/InfoTooltip.vue";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 import Badge from "#/ui/badge/Badge.vue";
 
 import { Button } from "#/ui/button";
@@ -30,7 +31,7 @@ import {
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn, getRuleActionTypeLabel } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
 const { class: className } = defineProps<{
@@ -40,6 +41,7 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
+const ruleActionTypeMap = useRuleActionType();
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
 
@@ -121,7 +123,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                     menuOpen = false
                   }"
                 >
-                  {{ getRuleActionTypeLabel(type) }}
+                  {{ ruleActionTypeMap[type].label }}
                   <InfoTooltip
                     :description="getRuleActionTypeDescription(type)"
                   />

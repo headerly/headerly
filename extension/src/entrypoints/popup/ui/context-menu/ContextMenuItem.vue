@@ -6,6 +6,7 @@ import {
   ContextMenuItem,
   useForwardPropsEmits,
 } from "reka-ui";
+import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
 const props = withDefaults(defineProps<ContextMenuItemProps & {
@@ -18,12 +19,20 @@ const props = withDefaults(defineProps<ContextMenuItemProps & {
 const emits = defineEmits<ContextMenuItemEmits>();
 
 const delegatedProps = reactiveOmit(props, "class");
-
 const forwarded = useForwardPropsEmits(delegatedProps, emits);
+const item = useTemplateRef<InstanceType<typeof ContextMenuItem>>("item");
+
+function focus(options?: FocusOptions) {
+  const element = item.value?.$el as HTMLElement | undefined;
+  element?.focus(options);
+}
+
+defineExpose({ focus });
 </script>
 
 <template>
   <ContextMenuItem
+    ref="item"
     data-slot="context-menu-item"
     :data-inset="inset ? '' : undefined"
     :data-variant="variant"

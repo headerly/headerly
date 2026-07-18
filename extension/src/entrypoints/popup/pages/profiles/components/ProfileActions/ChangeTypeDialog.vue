@@ -2,6 +2,7 @@
 import type { RuleActionType } from "@/lib/schema";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import { getRuleActionTypeLabel } from "@/lib/utils";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {
   required: true,
@@ -31,6 +31,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const ruleActionTypeMap = useRuleActionType();
 
 const openState = ref(false);
 const typeInput = ref<RuleActionType>(ruleActionType.value);
@@ -49,7 +50,7 @@ const options = computed(() => ([
   "allowAllRequests",
 ] as const satisfies RuleActionType[]).map(value => ({
   value,
-  label: getRuleActionTypeLabel(value),
+  label: ruleActionTypeMap[value].label,
 })));
 
 function handleConfirm() {

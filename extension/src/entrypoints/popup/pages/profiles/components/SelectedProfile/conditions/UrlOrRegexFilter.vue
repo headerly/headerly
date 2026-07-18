@@ -16,7 +16,9 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, getDefaultFilterValueByHost } from "@/lib/utils";
+import { getDefaultFilterValueByHost } from "@/lib/filter";
+import { addItemToGroup } from "@/lib/group";
+import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 
 const list = defineModel<UrlOrRegexFilterItem[]>({
   required: true,
@@ -128,7 +130,7 @@ function getCurrentTabHost() {
 
 <template>
   <Group
-    :id="`${profilesStore.selectedProfile.id}:${filterType}`"
+    :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, filterType)"
     v-model:list="list"
     :name="field[filterType].title"
     type="radio"

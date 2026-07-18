@@ -4,6 +4,7 @@ import { useEventBus, useEventListener } from "@vueuse/core";
 import { match } from "ts-pattern";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 import { Button } from "#/ui/button";
 import {
   DropdownMenuGroup,
@@ -23,7 +24,7 @@ import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
-import { cn, getRuleActionTypeIcon, getRuleActionTypeLabel } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
@@ -36,6 +37,7 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
+const ruleActionTypeMap = useRuleActionType();
 
 const isCompact = useCompactScreen();
 const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
@@ -104,10 +106,7 @@ const undoAndRedoButtonGroup = [
   },
 ] as const;
 
-const actionTypeBadge = computed(() => ({
-  icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
-  label: getRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
-}));
+const actionTypeBadge = computed(() => ruleActionTypeMap[profilesStore.selectedProfile.ruleActionType]);
 
 const defaultTab = computed(() => {
   return match(profilesStore.selectedProfile.ruleActionType)

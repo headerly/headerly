@@ -18,7 +18,7 @@ Run from repository root:
 
 ## Architecture
 
-Headerly is a Chrome/Edge extension built with WXT framework that manages HTTP request/response headers using the Declarative Net Request (DNR) API.
+Headerly is a Chrome extension built with WXT framework that manages HTTP request/response headers using the Declarative Net Request (DNR) API.
 
 ### Core Components
 
@@ -32,14 +32,14 @@ Headerly is a Chrome/Edge extension built with WXT framework that manages HTTP r
 **Popup UI** (`extension/src/entrypoints/popup/`)
 - Vue 3 SPA with Vue Router for multi-page interface
 - Pinia stores (`useProfilesStore`, `useSettingsStore`) manage state
-- Uses `@vueuse/integrations` for reactive `chrome.storage` binding
+- Uses the storage wrappers in `extension/src/lib/storage.ts` for reactive persistence
 - Supports profile management, header modification, and filtering configuration
 
 **Pages**
 - `profiles/` - Main interface for managing and editing header modification profiles
 - `settings/` - Extension-wide configuration and DNR rule troubleshooting/reinitialization
 - `export/` - JSON-based profile export with preview, clipboard copy, and file download
-- `about/` - Extension metadata, version info, and project links
+- `import/` - Versioned JSON profile import and shared-profile entry point
 
 **DNR Rule Generation**
 - `buildCondition.ts` - Converts profile filters to DNR condition objects
@@ -50,25 +50,30 @@ Headerly is a Chrome/Edge extension built with WXT framework that manages HTTP r
 - Uses WXT's `storage.defineItem()` for type-safe chrome.storage access
 - Debounces writes (200ms) to avoid conflicts in multi-tab scenarios
 - Provides both reactive refs (for popup) and direct item access (for background)
-- Manages: profiles, settings, error messages, rule ID mappings
+- Stores profiles, profile groups, and selection together in the versioned `ProfileManager`
 
 ### Profile Schema
 
 Profiles are the core data model (`extension/src/lib/schema.ts`):
-- UUIDv7-based IDs for all entities (profiles, groups, items)
+- UUIDv7-based IDs for profiles, profile groups, and nested items
 - Zod schemas for runtime validation
 - Support for request/response header modifications
 - Rich filtering: URL patterns, regex, domains, resource types, methods
-- Two operation types: `radio` (one item active) and `checkbox` (multiple items active)
+- Nested action/condition groups support `radio` (one item active) and `checkbox` (multiple items active)
+- `Profile.groupId` optionally links a profile to a top-level `ProfileGroup`; profiles remain stored in the canonical flat profile array
 - Import/export via `stripProfileIds()` / `addProfileIds()` for ID management
+
+### Profile Groups
+
+- `radio` groups permit one enabled profile; `checkbox` groups permit multiple. Pause/resume state is stored in `lastEnabledProfileIds`
+- Group and profile state share the same undo/redo snapshot; storage migration version 2 initializes `profileGroups`
+- Profile import/export omits groups and membership, and group-only metadata changes must not trigger DNR updates
 
 ### Message Protocol
 
-Type-safe messaging between background and popup (`extension/src/entrypoints/background/message.ts`):
-- `updateProfileErrorMessage` - Sync registration errors to popup
-- `updateProfileRelatedRuleId` - Sync profile ID to DNR rule ID mappings
-- `unregisterAllRules` - Cleanup when extension disabled
-- `reinitializeAllRules` - Manual recovery from failures
+Type-safe messaging between extension contexts and the background (`extension/src/entrypoints/background/message.ts`).
+
+Registration errors and profile-to-rule ID mappings are synchronized through storage records rather than messages.
 
 ### Key Patterns
 
@@ -82,14 +87,14 @@ Type-safe messaging between background and popup (`extension/src/entrypoints/bac
 
 **Storage Synchronization**
 - Background watches storage via `item.watch()` for reactive updates
-- Popup uses `@vueuse/integrations` for reactive storage binding
+- Popup uses `@vueuse/core`'s `useStorageAsync()` through the wrappers in `storage.ts`
 - Manual sync via `item.watch()` in storage layer ensures multi-tab consistency
 
 **Rule Update Flow**
-1. Profile storage changes trigger background watch
-2. `diffProfiles()` computes changes (created/modified/deleted) from the old and new profile values passed by `item.watch()`
+1. `ProfileManager` storage changes trigger the background watcher, which extracts only the old and new profile arrays
+2. `diffProfiles()` computes changes (created/modified/deleted) from those profile arrays
 3. Mutex-serialized `updateRules()` applies changes
-4. Error/status updates sent to popup via messages
+4. Error and profile-to-rule status records are updated in shared storage
 5. Badge count updated
 
 **Error Handling**

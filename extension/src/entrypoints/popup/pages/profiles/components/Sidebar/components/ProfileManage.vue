@@ -164,6 +164,7 @@ watch(open, async (isOpen) => {
               class="w-full"
             >
               <ProfileListItem
+                :context-menu-disabled="batchManage"
                 :index
                 :profile
                 layout="row"

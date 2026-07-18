@@ -21,7 +21,7 @@ export function useScrollToProfile(options: UseScrollToProfileOptions = {}) {
     if (el === null) {
       profileRefs.value.delete(profileId);
     } else {
-      profileRefs.value.set(profileId, el as HTMLDivElement);
+      profileRefs.value.set(profileId, el);
     }
   }
 

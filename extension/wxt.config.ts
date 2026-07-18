@@ -71,7 +71,6 @@ export default defineConfig({
       }),
     ],
     build: {
-      target: "esnext",
       rolldownOptions: {
         output: {
           codeSplitting: {

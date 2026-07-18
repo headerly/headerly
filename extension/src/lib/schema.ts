@@ -1,12 +1,12 @@
 import { uuidv7 } from "uuidv7";
 import { z } from "zod";
-import { PROFILE_LATEST_VERSION } from "./const";
+import { PROFILE_IMPORT_SCHEMA_VERSION } from "./const";
 
-const uuidSchema = z.uuid().default(() => uuidv7());
+const uuidSchemaWithDefault = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
   enabled: z.boolean(),
   comments: z.string().optional(),
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
 });
 export type GroupItem = z.infer<typeof groupItemSchema>;
 
@@ -19,6 +19,15 @@ export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
+
+export const profileGroupSchema = z.object({
+  id: uuidSchemaWithDefault,
+  name: z.string(),
+  color: z.string(),
+  type: groupTypeSchema,
+  lastEnabledProfileIds: z.array(z.uuid()).optional(),
+});
+export type ProfileGroup = z.infer<typeof profileGroupSchema>;
 
 export const RESOURCE_TYPES = [
   "main_frame",
@@ -89,7 +98,7 @@ const headerModSchema = z.union([
 export type HeaderMod = z.infer<typeof headerModSchema>;
 
 const headerModGroupSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   type: groupTypeSchema,
   items: z.array(headerModSchema),
 });
@@ -131,7 +140,7 @@ const syncCookieSchema = groupItemSchema.extend({
 export type SyncCookie = z.infer<typeof syncCookieSchema>;
 
 const syncCookieGroupSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   type: groupTypeSchema,
   items: z.array(syncCookieSchema),
 });
@@ -159,10 +168,11 @@ const ruleTypeSchema = z.enum(["dynamic", "session"]);
 export type RuleType = z.infer<typeof ruleTypeSchema>;
 
 const profileSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
+  groupId: z.uuid().optional(),
   comments: z.string().optional(),
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
@@ -219,7 +229,7 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedRequestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
 });
 
-export const profileWithoutIdsZodSchema = profileSchema.omit({ id: true }).extend({
+export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({
   requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),
@@ -232,7 +242,7 @@ export type ProfileWithoutIds = z.infer<typeof profileWithoutIdsZodSchema>;
 const profilesWithoutIdsArrayZodSchema = z.array(profileWithoutIdsZodSchema).min(1);
 
 export const profileExchangeZodSchema = z.object({
-  version: z.literal(PROFILE_LATEST_VERSION),
+  version: z.literal(PROFILE_IMPORT_SCHEMA_VERSION),
   profiles: profilesWithoutIdsArrayZodSchema,
 });
 export type ProfileExchange = z.infer<typeof profileExchangeZodSchema>;
@@ -249,7 +259,7 @@ export function stripProfileIds(profile: Profile) {
 
 export function createProfileExchange(profiles: Profile[]): ProfileExchange {
   return profileExchangeZodSchema.parse({
-    version: PROFILE_LATEST_VERSION,
+    version: PROFILE_IMPORT_SCHEMA_VERSION,
     profiles: profiles.map(stripProfileIds),
   });
 }

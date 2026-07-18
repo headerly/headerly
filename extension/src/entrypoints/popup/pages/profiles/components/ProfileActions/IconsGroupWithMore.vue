@@ -8,8 +8,6 @@ import { Button } from "#/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
@@ -30,6 +28,7 @@ import {
 } from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
+import ProfileActionsMenuItems from "./ProfileActionsMenuItems.vue";
 
 const profile = defineModel<Profile>("profile", {
   required: true,
@@ -112,25 +111,14 @@ async function handleChangeType() {
           <slot name="compact-extra" />
           <DropdownMenuSeparator />
         </template>
-        <template v-for="(actionsOrSeparator, index) in (isCompact ? compactActionGroups : moreActionGroups)" :key="index">
-          <DropdownMenuSeparator v-if="actionsOrSeparator === 'separator'" />
-          <DropdownMenuGroup
-            v-else
-          >
-            <DropdownMenuItem
-              v-for="action in actionsOrSeparator"
-              :key="action.id"
-              :variant="action.variant"
-              @click="action.onClick(profile, {
-                openComments: () => commentsDialogRef?.open(),
-                openPriority: () => priorityDialogRef?.open(),
-                openChangeRuleActionType: () => changeTypeDialogRef?.open(),
-              })"
-            >
-              <span>{{ action.label(profile) }}</span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </template>
+        <ProfileActionsMenuItems
+          :action-groups="isCompact ? compactActionGroups : moreActionGroups"
+          menu-type="dropdown"
+          :profile
+          @open-change-rule-action-type="changeTypeDialogRef?.open()"
+          @open-comments="commentsDialogRef?.open()"
+          @open-priority="priorityDialogRef?.open()"
+        />
       </DropdownMenuContent>
     </DropdownMenu>
 

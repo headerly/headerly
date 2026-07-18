@@ -5,10 +5,6 @@ import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import {
   ContextMenu,
   ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "#/ui/context-menu";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -19,8 +15,10 @@ import {
 } from "./actions";
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
+import ProfileActionsMenuItems from "./ProfileActionsMenuItems.vue";
 
 const props = defineProps<{
+  disabled?: boolean;
   profile: Profile;
 }>();
 
@@ -40,33 +38,24 @@ async function handleChangeType() {
 
 <template>
   <ContextMenu>
-    <ContextMenuTrigger as-child>
+    <ContextMenuTrigger
+      as-child
+      :disabled
+    >
       <slot />
     </ContextMenuTrigger>
     <ContextMenuContent
       :collision-padding="32"
       class="min-w-40"
     >
-      <ContextMenuLabel class="max-w-36 truncate">
-        {{ profile.name }}
-      </ContextMenuLabel>
-      <template v-for="(actionsOrSeparator, index) in actionGroups" :key="index">
-        <ContextMenuSeparator v-if="actionsOrSeparator === 'separator'" />
-        <ContextMenuGroup v-else>
-          <ContextMenuItem
-            v-for="action in actionsOrSeparator"
-            :key="action.id"
-            :variant="action.variant"
-            @click="action.onClick(profile, {
-              openComments: () => commentsDialogRef?.open(),
-              openPriority: () => priorityDialogRef?.open(),
-              openChangeRuleActionType: () => changeTypeDialogRef?.open(),
-            })"
-          >
-            {{ action.label(profile) }}
-          </ContextMenuItem>
-        </ContextMenuGroup>
-      </template>
+      <ProfileActionsMenuItems
+        :action-groups
+        menu-type="context"
+        :profile
+        @open-change-rule-action-type="changeTypeDialogRef?.open()"
+        @open-comments="commentsDialogRef?.open()"
+        @open-priority="priorityDialogRef?.open()"
+      />
     </ContextMenuContent>
     <CommentsDialog
       ref="commentsDialogRef"
