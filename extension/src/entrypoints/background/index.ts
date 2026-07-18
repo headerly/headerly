@@ -3,10 +3,10 @@ import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
 import { buildAction } from "./DNR/buildAction";
 import { updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
-import { setIconAndBadgeForDisabled, updateBadgeCount } from "./DNR/util";
 import { onMessage } from "./message";
 import { setupSyncCookies } from "./syncCookies";
 
@@ -23,10 +23,9 @@ export default defineBackground({
       profileManagerMutex.runExclusive(async () => {
         if (powerOn) {
           await treatAllProfilesAsCreated();
-          browser.action.setIcon({ path: `/${browser.runtime.getManifest().icons![32]!}` });
         } else {
           await unregisterAllRules();
-          setIconAndBadgeForDisabled();
+          await setIconAndBadgeForDisabled();
         }
       });
     });
@@ -169,13 +168,4 @@ function diffProfiles(
   }
 
   return { deleted, modified, created };
-}
-
-async function updateBadgeWhenRestarted() {
-  const powerOn = await usePowerOnStorage().item.getValue();
-  if (powerOn) {
-    await updateBadgeCount();
-  } else {
-    setIconAndBadgeForDisabled();
-  }
 }

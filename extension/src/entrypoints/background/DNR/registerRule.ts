@@ -1,9 +1,9 @@
 import type { ProfileChanges } from "../index";
 import { match, P } from "ts-pattern";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
+import { updateBadgeCount } from "./badge";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
-import { updateBadgeCount } from "./util";
 
 const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
 const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRecordStorage();
