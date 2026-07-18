@@ -20,7 +20,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
 
-  const profileGroups = computed(() => manager.value.profileGroups!);
+  const profileGroups = computed(() => manager.value.profileGroups);
 
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);
