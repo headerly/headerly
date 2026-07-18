@@ -2,11 +2,11 @@ import { uuidv7 } from "uuidv7";
 import { z } from "zod";
 import { PROFILE_LATEST_VERSION } from "./const";
 
-const uuidSchema = z.uuid().default(() => uuidv7());
+const uuidSchemaWithDefault = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
   enabled: z.boolean(),
   comments: z.string().optional(),
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
 });
 export type GroupItem = z.infer<typeof groupItemSchema>;
 
@@ -21,11 +21,11 @@ const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
 
 export const profileGroupSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   name: z.string(),
   color: z.string(),
   type: groupTypeSchema,
-  lastEnabledProfileIds: z.array(z.string()).optional(),
+  lastEnabledProfileIds: z.array(z.uuid()).optional(),
 });
 export type ProfileGroup = z.infer<typeof profileGroupSchema>;
 
@@ -98,7 +98,7 @@ const headerModSchema = z.union([
 export type HeaderMod = z.infer<typeof headerModSchema>;
 
 const headerModGroupSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   type: groupTypeSchema,
   items: z.array(headerModSchema),
 });
@@ -140,7 +140,7 @@ const syncCookieSchema = groupItemSchema.extend({
 export type SyncCookie = z.infer<typeof syncCookieSchema>;
 
 const syncCookieGroupSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   type: groupTypeSchema,
   items: z.array(syncCookieSchema),
 });
@@ -168,11 +168,11 @@ const ruleTypeSchema = z.enum(["dynamic", "session"]);
 export type RuleType = z.infer<typeof ruleTypeSchema>;
 
 const profileSchema = z.object({
-  id: uuidSchema,
+  id: uuidSchemaWithDefault,
   name: z.string(),
   enabled: z.boolean(),
   emoji: z.string(),
-  groupId: uuidSchema.optional(),
+  groupId: z.uuid().optional(),
   comments: z.string().optional(),
   ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
