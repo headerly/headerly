@@ -3,7 +3,7 @@ import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
 import type { ProfileGroup } from "./schema";
 import type { ProfileManager } from "./types";
-import { useDebounceFn, useStorage, useStorageAsync } from "@vueuse/core";
+import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
 import { toRaw } from "vue";
@@ -26,7 +26,7 @@ interface UseExtensionStorageOptions<T> {
  *
  * Do not use this hook for settings used exclusively in the popup page! That would be a waste of quota.
  */
-function useExtensionStorage<T>(key: StorageItemKey, initialValue: T, options?: UseExtensionStorageOptions<T>) {
+function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, options?: UseExtensionStorageOptions<T>) {
   const item = storage.defineItem<T>(key, {
     fallback: initialValue,
     version: options?.version,
@@ -93,9 +93,9 @@ function useExtensionStorage<T>(key: StorageItemKey, initialValue: T, options?: 
  * Use this helper when a storage value is only consumed by user interface
  * contexts, such as popup pages, to avoid unnecessary `chrome.storage` usage.
  */
-function useLocalStorage<T>(key: string, initialValue: T, options?: UseStorageOptions<T>) {
+function useLocalStorageWrapper<T>(key: string, initialValue: T, options?: UseStorageOptions<T>) {
   return {
-    ref: useStorage<T>(key, initialValue, localStorage, options),
+    ref: useLocalStorage<T>(key, initialValue, options),
     initialValue,
   } as const;
 }
@@ -113,30 +113,30 @@ const defaultProfileManager = createDefaultProfileManager();
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useExtensionStorage<ProfileManager>("local:profileManager", defaultProfileManager, {
+  return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
     version: PROFILE_LATEST_VERSION,
     ...options,
   });
 }
 
 export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
-  return useExtensionStorage<ProfileGroup[]>("local:profileGroups", [], options);
+  return useExtensionStorageWrapper<ProfileGroup[]>("local:profileGroups", [], options);
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
-  return useExtensionStorage<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
+  return useExtensionStorageWrapper<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
 }
 
 export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<string, string>>) {
-  return useExtensionStorage<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
+  return useExtensionStorageWrapper<Record<string, string>>("local:profileId2ErrorMessageRecord", {}, options);
 }
 
 export function usePowerOnStorage() {
-  return useExtensionStorage<boolean>("local:powerOn", true);
+  return useExtensionStorageWrapper<boolean>("local:powerOn", true);
 }
 
 export function useNativeResourceTypeBehaviorStorage() {
-  return useExtensionStorage<boolean>("local:nativeResourceTypeBehavior", false);
+  return useExtensionStorageWrapper<boolean>("local:nativeResourceTypeBehavior", false);
 }
 
 export function useLanguageStorage() {
@@ -144,9 +144,9 @@ export function useLanguageStorage() {
   const initialLanguage = match(SUPPORT_LOCALES.includes(browserLanguage))
     .with(true, () => browserLanguage as SupportLocale)
     .otherwise(() => "en" as const);
-  return useLocalStorage<SupportLocale>("language", initialLanguage);
+  return useLocalStorageWrapper<SupportLocale>("language", initialLanguage);
 }
 
 export function useShowCommentsInlineStorage() {
-  return useLocalStorage<boolean>("show-comments-inline", false);
+  return useLocalStorageWrapper<boolean>("show-comments-inline", false);
 }

@@ -1,5 +1,5 @@
 import type { Ref, WritableComputedRef } from "vue";
-import { useStorage } from "@vueuse/core";
+import { useLocalStorage } from "@vueuse/core";
 import { pick } from "es-toolkit";
 import { computed } from "vue";
 
@@ -11,7 +11,7 @@ type OpenStateRecord = Record<string, boolean>;
 const openStateRecords = new Map<string, Ref<OpenStateRecord>>();
 
 function getOpenStateRecord(storageKey: string) {
-  return openStateRecords.getOrInsertComputed(storageKey, () => useStorage<OpenStateRecord>(storageKey, {}, localStorage));
+  return openStateRecords.getOrInsertComputed(storageKey, () => useLocalStorage<OpenStateRecord>(storageKey, {}));
 }
 
 export function useLocalStorageOpenState(
