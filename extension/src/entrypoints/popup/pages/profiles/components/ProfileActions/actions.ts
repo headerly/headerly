@@ -1,4 +1,4 @@
-import type { Profile } from "@/lib/schema";
+import type { Profile, ProfileGroup } from "@/lib/schema";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
@@ -17,31 +17,66 @@ export type ActionKey
     | "ruleActionType"
     | "shareProfile";
 
+type ProfileMenuActionKey = ActionKey | "addToGroup" | "removeFromGroup";
+
+interface ProfileActionOptions {
+  openChangeRuleActionType?: () => void;
+  openComments?: () => void;
+  openPriority?: () => void;
+}
+
+interface ProfileGroupActionContent {
+  type: "profileGroup";
+  group: ProfileGroup;
+  profiles: Profile[];
+}
+
 export interface ProfileActionItem {
-  id: ActionKey;
+  type: "action";
+  id: string;
   label: (profile: Profile) => string;
   icon?: (profile: Profile) => string;
-  onClick: (profile: Profile, options?: {
-    openComments?: () => void;
-    openPriority?: () => void;
-    openChangeRuleActionType?: () => void;
-  }) => void;
+  onClick: (profile: Profile, options?: ProfileActionOptions) => void;
+  content?: ProfileGroupActionContent;
   disabled?: (profile: Profile) => boolean;
+  inset?: boolean;
+  visible?: (profile: Profile) => boolean;
   variant?: "default" | "destructive";
 }
 
+export interface ProfileActionSeparator {
+  type: "separator";
+  id: string;
+}
+
+export interface ProfileActionSubmenu {
+  type: "submenu";
+  id: string;
+  label: (profile: Profile) => string;
+  children: (profile: Profile) => ProfileActionSubmenuEntry[];
+}
+
+export type ProfileActionSubmenuEntry = ProfileActionItem | ProfileActionSeparator;
+export type ProfileActionMenuEntry = ProfileActionItem | ProfileActionSubmenu;
+export type ProfileActionGroup = readonly ProfileActionMenuEntry[] | "separator";
+
+type ProfileActionDefinition = ProfileActionItem & { id: ActionKey };
+type ProfileActionMenuDefinition = ProfileActionMenuEntry & { id: ProfileMenuActionKey };
+
 export const profileActionIdGroups = [
   ["toggle", "duplicate"],
+  "separator",
+  ["addToGroup", "removeFromGroup"],
   "separator",
   ["comments", "rulePriority", "ruleActionType"],
   "separator",
   ["shareProfile"],
   "separator",
   ["delete"],
-] as const satisfies readonly (readonly ActionKey[] | "separator")[];
+] as const satisfies readonly (readonly ProfileMenuActionKey[] | "separator")[];
 
 function omitActionId(
-  group: readonly ActionKey[] | "separator",
+  group: readonly ProfileMenuActionKey[] | "separator",
   actionId: ActionKey,
 ) {
   return match(group)
@@ -49,7 +84,7 @@ function omitActionId(
     .otherwise(ids => ids.filter(id => id !== actionId));
 }
 
-function hasActionIds(group: readonly ActionKey[] | "separator") {
+function hasActionIds(group: readonly ProfileMenuActionKey[] | "separator") {
   return match(group)
     .with("separator", () => true)
     .otherwise(ids => ids.length > 0);
@@ -117,6 +152,7 @@ export function useProfileActions() {
 
   const actions = [
     {
+      type: "action",
       id: "toggle",
       label: p => match(p.enabled)
         .with(true, () => t("profile.actions.pause"))
@@ -129,12 +165,14 @@ export function useProfileActions() {
       onClick: p => profilesStore.toggleProfileEnabled(p.id),
     },
     {
+      type: "action",
       id: "duplicate",
       label: () => t("common.duplicate"),
       icon: () => "i-lucide-copy",
       onClick: duplicateProfile,
     },
     {
+      type: "action",
       id: "delete",
       label: () => match(profilesStore.manager.profiles.length === 1)
         .with(true, () => t("common.reset"))
@@ -148,16 +186,19 @@ export function useProfileActions() {
       variant: "destructive",
     },
     {
+      type: "action",
       id: "comments",
       label: () => t("common.comments"),
       onClick: (_, opts) => opts?.openComments?.(),
     },
     {
+      type: "action",
       id: "rulePriority",
       label: () => t("profile.header.priority"),
       onClick: (_, opts) => opts?.openPriority?.(),
     },
     {
+      type: "action",
       id: "ruleActionType",
       label: () => {
         return t("profile.actions.ruleActionType");
@@ -165,17 +206,75 @@ export function useProfileActions() {
       onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
     },
     {
+      type: "action",
       id: "shareProfile",
       label: () => t("profile.actions.share"),
       onClick: p => router.push(`/export/${p.id}`),
     },
-  ] satisfies ProfileActionItem[];
+  ] satisfies ProfileActionDefinition[];
 
   return actions;
 };
 
-export function transformIdsToActions(actionIds: readonly (readonly ActionKey[] | "separator")[]) {
-  const actions = useProfileActions();
+function useProfileMenuActions() {
+  const profilesStore = useProfilesStore();
+  const { t } = useI18n();
+
+  function getAddToGroupActions(_profile: Profile): ProfileActionSubmenuEntry[] {
+    const actions: ProfileActionSubmenuEntry[] = [{
+      type: "action",
+      id: "createNewGroup",
+      label: () => t("profile.actions.createNewGroup"),
+      inset: true,
+      onClick: profile => profilesStore.addProfileToNewGroup(profile.id),
+    }];
+
+    if (profilesStore.profileGroups.length > 0) {
+      actions.push({
+        type: "separator",
+        id: "profileGroupsSeparator",
+      });
+    }
+
+    actions.push(...profilesStore.profileGroups.map((group): ProfileActionItem => ({
+      type: "action",
+      id: `addToGroup-${group.id}`,
+      label: () => group.name,
+      content: {
+        type: "profileGroup",
+        group,
+        profiles: profilesStore.manager.profiles.filter(profile => profile.groupId === group.id),
+      },
+      onClick: profile => profilesStore.addProfileToGroup(profile.id, group.id),
+    })));
+
+    return actions;
+  }
+
+  const actions = [
+    ...useProfileActions(),
+    {
+      type: "submenu",
+      id: "addToGroup",
+      label: () => t("profile.actions.addToGroup"),
+      children: getAddToGroupActions,
+    },
+    {
+      type: "action",
+      id: "removeFromGroup",
+      label: () => t("profile.actions.removeFromGroup"),
+      visible: profile => profilesStore.getProfileGroup(profile.groupId) !== undefined,
+      onClick: profile => profilesStore.removeProfileFromGroup(profile.id),
+    },
+  ] satisfies ProfileActionMenuDefinition[];
+
+  return actions;
+}
+
+export function transformIdsToActions(
+  actionIds: readonly (readonly ProfileMenuActionKey[] | "separator")[],
+): ProfileActionGroup[] {
+  const actions = useProfileMenuActions();
   const id2ActionMap = new Map(actions.map(a => [a.id, a]));
 
   const actionGroups = actionIds.map(group =>
