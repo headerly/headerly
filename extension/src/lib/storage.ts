@@ -9,7 +9,7 @@ import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
 import { PROFILE_LATEST_VERSION } from "./const";
-import { createProfile } from "./utils";
+import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
   onReady?: (value: T) => void;

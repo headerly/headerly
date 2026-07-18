@@ -5,7 +5,8 @@ import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { findHeaderModGroups } from "#/pages/profiles/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { createHeaderMod, createRedirectUrl, createSyncCookie, ensureCookiesPermission } from "@/lib/utils";
+import { ensureCookiesPermission } from "@/lib/permissions";
+import { createHeaderMod, createRedirectUrl, createSyncCookie } from "@/lib/profileFactory";
 import { getEnabledState, withDisabledState } from "./shared";
 
 export function useCreateActionTab(): AddRuleOptionDialogTab {

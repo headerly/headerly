@@ -2,6 +2,7 @@
 import type { RuleActionType } from "@/lib/schema";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 import { Button } from "#/ui/button";
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#/ui/select";
-import { getRuleActionTypeLabel } from "@/lib/utils";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {
   required: true,
@@ -31,6 +31,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { getRuleActionTypeLabel } = useRuleActionType();
 
 const openState = ref(false);
 const typeInput = ref<RuleActionType>(ruleActionType.value);

@@ -6,7 +6,8 @@ import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups } from "#/pages/profiles/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, createHeaderMod } from "@/lib/utils";
+import { addItemToGroup } from "@/lib/group";
+import { createHeaderMod } from "@/lib/profileFactory";
 import RequestModFieldWithActions from "./RequestModFieldWithActions.vue";
 
 const group = defineModel<HeaderModGroup>({
@@ -45,7 +46,7 @@ function deleteGroup() {
 
 <template>
   <Group
-    :id="`${group.id}:${actionType}-HeaderModGroup`"
+    :id="group.id"
     v-model:list="group.items"
     :type="group.type"
     :name="actionType === 'request' ? t('headerMod.requestHeaders') : t('headerMod.responseHeaders')"

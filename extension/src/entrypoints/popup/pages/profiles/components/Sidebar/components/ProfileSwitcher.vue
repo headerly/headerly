@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import type { Profile, ProfileGroup } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
-import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
+import { computed, nextTick, useTemplateRef, watch } from "vue";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -53,7 +53,6 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
-const collapsedGroupIds = ref(new Set<string>());
 const groupBlockRefs = new Map<string, InstanceType<typeof ProfileGroupBlock>>();
 const profileGroupsById = computed(() => new Map(profilesStore.profileGroups.map(group => [group.id, group])));
 const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
@@ -110,15 +109,6 @@ useSortableAndAutoAnimate({
   list: sidebarBlocks.value,
   onUpdate: handleSidebarBlocksSort,
 });
-
-function toggleGroup(groupId: string) {
-  if (collapsedGroupIds.value.has(groupId)) {
-    collapsedGroupIds.value.delete(groupId);
-  } else {
-    collapsedGroupIds.value.add(groupId);
-  }
-  collapsedGroupIds.value = new Set(collapsedGroupIds.value);
-}
 
 function setGroupBlockRef(groupId: string, instance: InstanceType<typeof ProfileGroupBlock> | null) {
   if (instance) {
@@ -207,8 +197,6 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
         )"
         :group="block.group"
         :profiles="block.profiles"
-        :collapsed="collapsedGroupIds.has(block.group.id)"
-        @toggle="toggleGroup(block.group.id)"
         @set-ref="setRef"
         @sort-profiles="handleGroupProfilesSort(block.group.id, $event)"
       />

@@ -10,7 +10,8 @@ import GroupActions from "#/components/group/GroupActions.vue";
 import Button from "#/ui/button/Button.vue";
 import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup } from "@/lib/utils";
+import { addItemToGroup } from "@/lib/group";
+import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 
 // Define specific item types
 type ResourceTypeItem = GroupItem & {
@@ -117,7 +118,7 @@ type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes
 
 <template>
   <Group
-    :id="`${profilesStore.selectedProfile.id}:${type}`"
+    :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, type)"
     v-model:list="list"
     :name
     type="radio"

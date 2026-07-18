@@ -1,6 +1,5 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/schema";
-import { StorageSerializers, useStorage } from "@vueuse/core";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
@@ -10,6 +9,10 @@ import { Checkbox } from "#/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/ui/collapsible";
 import { Label } from "#/ui/label";
 import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
+import {
+  GROUP_OPEN_STATES_STORAGE_KEY,
+  useLocalStorageOpenState,
+} from "@/composables/useLocalStorageOpenState";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import Fieldset from "./Fieldset.vue";
 import SortableItem from "./SortableItem.vue";
@@ -29,22 +32,10 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const closedGroupIds = useStorage<Set<string>>("group-collapsible:closed-group-ids", new Set(), localStorage, {
-  serializer: StorageSerializers.set,
-});
-
-const open = computed({
-  get: () => !closedGroupIds.value.has(id),
-  set: (isOpen: boolean) => {
-    const nextClosedGroupIds = new Set(closedGroupIds.value);
-    if (isOpen) {
-      nextClosedGroupIds.delete(id);
-    } else {
-      nextClosedGroupIds.add(id);
-    }
-    closedGroupIds.value = nextClosedGroupIds;
-  },
-});
+const open = useLocalStorageOpenState(
+  id,
+  GROUP_OPEN_STATES_STORAGE_KEY,
+);
 
 watch(() => list.value.length, (newLength) => {
   if (newLength === 0) {

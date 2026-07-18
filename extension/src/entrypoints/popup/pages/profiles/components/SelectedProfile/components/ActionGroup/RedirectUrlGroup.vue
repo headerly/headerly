@@ -14,7 +14,8 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { addItemToGroup, createRedirectUrl } from "@/lib/utils";
+import { addItemToGroup } from "@/lib/group";
+import { createRedirectUrl } from "@/lib/profileFactory";
 
 const list = defineModel<RedirectUrlGroupItem[]>({
   required: true,
@@ -35,7 +36,7 @@ function deleteGroup() {
 
 <template>
   <Group
-    :id="`${profilesStore.selectedProfile.id}:redirectUrlGroup`"
+    :id="profilesStore.selectedProfile.id"
     v-model:list="list"
     type="radio"
     :name="t('redirectUrl.title')"
