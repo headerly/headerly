@@ -157,6 +157,8 @@ function reorderProfilesByIds(profileIds: string[]) {
   profilesStore.manager.profiles.splice(0, profilesStore.manager.profiles.length, ...reorderedProfiles, ...remainingProfiles);
 }
 
+// Keep each group's displayed profile order consistent with the canonical flat profiles array
+// by flattening the reordered sidebar blocks back into `manager.profiles`.
 function handleSidebarBlocksSort(event: { newIndex: number; oldIndex: number }) {
   reorderProfilesByIds(flattenProfileIds(
     moveItem(sidebarBlocks.value, event.oldIndex, event.newIndex),
