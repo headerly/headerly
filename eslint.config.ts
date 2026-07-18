@@ -38,6 +38,7 @@ export default antfu(
       ],
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
+      "vue/v-for-delimiter-style": ["error", "in"],
       "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
       "vue/no-duplicate-class-names": "error",
       "vue/prefer-use-template-ref": "error",
