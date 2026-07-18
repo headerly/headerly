@@ -40,6 +40,7 @@ const profilesStore = useProfilesStore();
 const { t } = useI18n();
 const contextMenuContent = useTemplateRef<InstanceType<typeof ContextMenuContent>>("contextMenuContent");
 const contextMenuTriggerButton = useTemplateRef<InstanceType<typeof Button>>("contextMenuTriggerButton");
+const firstMenuItem = useTemplateRef<InstanceType<typeof ContextMenuItem>>("firstMenuItem");
 const groupNameInput = useTemplateRef<InstanceType<typeof Input>>("groupNameInput");
 const {
   deleteProfileGroup,
@@ -66,11 +67,7 @@ function focusFirstMenuItem(event: KeyboardEvent) {
     return;
 
   event.preventDefault();
-  const toggleGroup = event.currentTarget as HTMLElement;
-  const menuContent = toggleGroup.closest<HTMLElement>("[data-slot=\"context-menu-content\"]");
-  menuContent
-    ?.querySelector<HTMLElement>("[data-slot=\"context-menu-item\"]:not([data-disabled])")
-    ?.focus({ preventScroll: true });
+  firstMenuItem.value?.focus({ preventScroll: true });
 }
 
 function openContextMenu() {
@@ -196,7 +193,10 @@ defineExpose({ open: openContextMenu });
         </ToggleGroupItem>
       </ToggleGroup>
       <ContextMenuSeparator />
-      <ContextMenuItem @click="profilesStore.addProfile('modifyHeaders', group.id)">
+      <ContextMenuItem
+        ref="firstMenuItem"
+        @click="profilesStore.addProfile('modifyHeaders', group.id)"
+      >
         <i class="i-lucide-plus-square size-4" />
         {{ t("profileGroup.actions.newProfile") }}
       </ContextMenuItem>
