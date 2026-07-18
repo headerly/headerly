@@ -68,7 +68,6 @@ const profileGroupToggleLabel = computed(() => {
 });
 
 useSortableAndAutoAnimate({
-  disabled: computed(() => !open.value),
   listContainer,
   list: props.profiles,
   onUpdate: event => emit("sortProfiles", event),
