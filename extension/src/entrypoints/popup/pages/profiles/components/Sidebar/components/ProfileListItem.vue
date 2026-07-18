@@ -13,9 +13,10 @@ import { cn } from "@/lib/utils";
 import ContextMenuWithTrigger from "../../ProfileActions/ContextMenuWithTrigger.vue";
 
 const props = withDefaults(defineProps<{
-  profile: Profile;
+  contextMenuDisabled?: boolean;
   index: number;
   layout?: "icon" | "row";
+  profile: Profile;
   switchable?: boolean;
 }>(), {
   layout: "icon",
@@ -56,7 +57,10 @@ function handleMiddleClick() {
 </script>
 
 <template>
-  <ContextMenuWithTrigger :profile>
+  <ContextMenuWithTrigger
+    :disabled="contextMenuDisabled"
+    :profile
+  >
     <Button
       :size="layout === 'icon' ? 'icon-sm' : 'default'"
       :variant="layout === 'icon'

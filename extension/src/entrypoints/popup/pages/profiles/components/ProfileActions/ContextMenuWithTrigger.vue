@@ -18,6 +18,7 @@ import PriorityDialog from "./PriorityDialog.vue";
 import ProfileActionsMenuItems from "./ProfileActionsMenuItems.vue";
 
 const props = defineProps<{
+  disabled?: boolean;
   profile: Profile;
 }>();
 
@@ -37,7 +38,10 @@ async function handleChangeType() {
 
 <template>
   <ContextMenu>
-    <ContextMenuTrigger as-child>
+    <ContextMenuTrigger
+      as-child
+      :disabled
+    >
       <slot />
     </ContextMenuTrigger>
     <ContextMenuContent
