@@ -7,26 +7,25 @@ import { computed, ref } from "vue";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
 import { getCurrentTabHostname } from "@/lib/currentTab";
 import { createProfile } from "@/lib/profileFactory";
-import { useProfileGroupsStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
+import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();
-  const { promise: profileGroupsPromise, resolve: profileGroupsResolve } = Promise.withResolvers();
   const { promise: profileId2ErrorMessageRecordPromise, resolve: profileId2ErrorMessageRecordResolve } = Promise.withResolvers();
   const { promise: profileId2RelatedRuleIdRecordPromise, resolve: profileId2RelatedRuleIdRecordResolve } = Promise.withResolvers();
   const ready = ref(false);
   const newProfileGroupIdToEdit = ref<string>();
   const { ref: manager } = useProfileManagerStorage({ onReady: managerResolve });
-  const { ref: profileGroups } = useProfileGroupsStorage({ onReady: profileGroupsResolve });
   const { ref: profileId2ErrorMessageRecord } = useProfileId2ErrorMessageRecordStorage({ onReady: profileId2ErrorMessageRecordResolve });
   const { ref: profileId2RelatedRuleIdRecord } = useProfileId2RelatedRuleIdRecordStorage({ onReady: profileId2RelatedRuleIdRecordResolve });
   const { undo, canUndo, redo, canRedo, clear } = useDebouncedRefHistory(manager, { deep: true });
+
+  const profileGroups = computed(() => manager.value.profileGroups!);
 
   // Clear history when the storage is ready to avoid undoing to empty state.
   managerPromise.then(clear);
   Promise.all([
     managerPromise,
-    profileGroupsPromise,
     profileId2ErrorMessageRecordPromise,
     profileId2RelatedRuleIdRecordPromise,
   ]).then(() => {

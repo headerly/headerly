@@ -1,13 +1,13 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
-import type { ProfileGroup } from "./schema";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
+import { PROFILE_MANAGER_STORAGE_VERSION } from "./const";
 import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
@@ -102,6 +102,7 @@ function useLocalStorageWrapper<T>(key: string, initialValue: T, options?: UseSt
 function createDefaultProfileManager() {
   const profile = createProfile();
   return {
+    profileGroups: [],
     profiles: [profile],
     selectedProfileId: profile.id,
   } as const satisfies ProfileManager;
@@ -112,15 +113,18 @@ const defaultProfileManager = createDefaultProfileManager();
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, options);
-}
-
-/**
- * Profile groups are currently only used by the popup UI, but keeping them in extension storage
- * preserves the option to access and manipulate them directly from the background in the future.
- */
-export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
-  return useExtensionStorageWrapper<ProfileGroup[]>("local:profileGroups", [], options);
+  return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
+    migrations: {
+      2: (oldValue: ProfileManager) => {
+        return {
+          ...oldValue,
+          profileGroups: [],
+        };
+      },
+    },
+    version: PROFILE_MANAGER_STORAGE_VERSION,
+    ...options,
+  });
 }
 
 export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
