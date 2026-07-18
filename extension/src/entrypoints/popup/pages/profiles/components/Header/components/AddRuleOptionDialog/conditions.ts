@@ -2,7 +2,8 @@ import type { AddRuleOptionDialogItem, AddRuleOptionDialogTab } from "./shared";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { getCurrentTabHost, getCurrentTabHostname, getDefaultFilterValueByHost } from "@/lib/utils";
+import { getCurrentTabHost, getCurrentTabHostname } from "@/lib/currentTab";
+import { getDefaultFilterValueByHost } from "@/lib/filter";
 import {
   getEnabledState,
   withDisabledState,

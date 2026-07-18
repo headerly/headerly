@@ -5,8 +5,9 @@ import { defineStore } from "pinia";
 import { uuidv7 } from "uuidv7";
 import { computed, ref } from "vue";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
+import { getCurrentTabHostname } from "@/lib/currentTab";
+import { createProfile } from "@/lib/profileFactory";
 import { useProfileGroupsStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage, useProfileManagerStorage } from "@/lib/storage";
-import { createProfile, getCurrentTabHostname } from "@/lib/utils";
 
 export const useProfilesStore = defineStore("profiles", () => {
   const { promise: managerPromise, resolve: managerResolve } = Promise.withResolvers();

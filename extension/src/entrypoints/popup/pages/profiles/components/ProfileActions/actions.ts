@@ -4,8 +4,9 @@ import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { getCurrentTabHostname } from "@/lib/currentTab";
+import { createHeaderMod, createRedirectUrl } from "@/lib/profileFactory";
 import { addProfileIds, stripProfileIds } from "@/lib/schema";
-import { createHeaderMod, createRedirectUrl, getCurrentTabHostname } from "@/lib/utils";
 
 export type ActionKey
   = | "toggle"

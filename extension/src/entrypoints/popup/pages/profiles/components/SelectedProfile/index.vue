@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import type { Profile } from "@/lib/schema";
 
 import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
+import { getObjectKeysWithTypeAssert } from "@/lib/object";
 import { cn } from "@/lib/utils";
 import RequestModFieldWithActions from "./components/ActionGroup/index.vue";
 import RedirectUrlGroup from "./components/ActionGroup/RedirectUrlGroup.vue";
@@ -21,7 +21,7 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const hasAnyNonEmptyFilters = computed(() => {
   const filters = profilesStore.selectedProfile.filters;
-  return (Object.keys(filters) as (keyof Profile["filters"])[]).some((key) => {
+  return (getObjectKeysWithTypeAssert(filters)).some((key) => {
     return match(key)
       .with("urlFilter", "regexFilter", (k) => {
         return filters[k]?.some(f => Boolean(f.value) && f.enabled) ?? false;

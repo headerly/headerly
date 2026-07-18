@@ -21,6 +21,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import {
+  PROFILE_GROUP_OPEN_STATES_STORAGE_KEY,
+  useLocalStorageOpenState,
+} from "@/composables/useLocalStorageOpenState";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
@@ -29,19 +33,21 @@ import ProfileGroupDisplayName from "../../ProfileGroupDisplayName.vue";
 import ProfileListItem from "./ProfileListItem.vue";
 
 const props = defineProps<{
-  collapsed: boolean;
   group: ProfileGroup;
   profiles: Profile[];
 }>();
 
 const emit = defineEmits<{
   (e: "sortProfiles", event: { newIndex: number; oldIndex: number }): void;
-  (e: "toggle"): void;
   (e: "setRef", el: HTMLDivElement | null, profileId: string): void;
 }>();
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
+const open = useLocalStorageOpenState(
+  props.group.id,
+  PROFILE_GROUP_OPEN_STATES_STORAGE_KEY,
+);
 const contextMenuContent = useTemplateRef<InstanceType<typeof ContextMenuContent>>("contextMenuContent");
 const contextMenuTriggerButton = useTemplateRef<InstanceType<typeof Button>>("contextMenuTriggerButton");
 const groupNameInput = useTemplateRef<InstanceType<typeof Input>>("groupNameInput");
@@ -62,7 +68,7 @@ const profileGroupToggleLabel = computed(() => {
 });
 
 useSortableAndAutoAnimate({
-  disabled: computed(() => props.collapsed),
+  disabled: computed(() => !open.value),
   listContainer,
   list: props.profiles,
   onUpdate: event => emit("sortProfiles", event),
@@ -188,9 +194,9 @@ defineExpose({ openContextMenu });
       class="shrink-0 origin-top rounded-full"
       :style="{ backgroundColor: group.color }"
       :initial="false"
-      :animate="collapsed
-        ? { width: 0, opacity: 0, marginLeft: -6, scaleY: 0 }
-        : { width: 3, opacity: 1, marginLeft: -9, scaleY: 1 }"
+      :animate="open
+        ? { width: 3, opacity: 1, marginLeft: -9, scaleY: 1 }
+        : { width: 0, opacity: 0, marginLeft: -6, scaleY: 0 }"
       :transition="{ duration: 0.18, ease: 'easeOut' }"
     />
     <div class="flex min-w-0 flex-1 flex-col gap-1">
@@ -203,7 +209,7 @@ defineExpose({ openContextMenu });
             data-profile-top-level-sort-handle
             class="h-6! shrink-0 text-background"
             :style="{ backgroundColor: group.color }"
-            @click="emit('toggle')"
+            @click="open = !open"
           >
             <TooltipProvider ignore-non-keyboard-focus>
               <Tooltip>
@@ -212,11 +218,11 @@ defineExpose({ openContextMenu });
                     <i
                       :class="cn(
                         'i-lucide-chevron-up size-4 transition-transform',
-                        collapsed && 'rotate-180',
+                        !open && 'rotate-180',
                       )"
                     />
                     <span class="sr-only">
-                      {{ collapsed ? t("group.expand") : t("group.collapse") }}
+                      {{ open ? t("group.collapse") : t("group.expand") }}
                     </span>
                   </div>
                 </TooltipTrigger>
@@ -336,7 +342,7 @@ defineExpose({ openContextMenu });
       </ContextMenu>
       <AnimatePresence :initial="false">
         <motion.div
-          v-if="!collapsed"
+          v-if="open"
           key="profile-group-items"
           class="-mt-1 overflow-x-visible overflow-y-clip pt-1"
           :initial="{ height: 0, opacity: 0, y: -4 }"

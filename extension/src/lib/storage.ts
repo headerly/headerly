@@ -9,7 +9,7 @@ import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
 import { PROFILE_GROUP_COLOR_PRESETS } from "./const";
-import { createProfile } from "./utils";
+import { createProfile } from "./profileFactory";
 
 export { PROFILE_LATEST_VERSION } from "./const";
 
