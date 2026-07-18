@@ -21,15 +21,11 @@ export default antfu(
     },
   },
   {
-    files: ["**/*.{ts,vue}"],
-    rules: {
-      "max-lines": ["error", 300],
-    },
-  },
-  {
     // Remember to specify the file glob here, otherwise it might cause the vue plugin to handle non-vue files
     files: ["**/*.{ts,vue}"],
+
     rules: {
+      "max-lines": ["error", 300],
       "antfu/no-top-level-await": "off",
       "no-restricted-syntax": [
         "error",
