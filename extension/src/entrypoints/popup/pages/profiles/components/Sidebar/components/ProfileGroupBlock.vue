@@ -235,17 +235,17 @@ defineExpose({ openContextMenu });
         <ContextMenuContent
           ref="contextMenuContent"
           :collision-padding="32"
-          class="w-64 p-0"
+          class="w-64"
           @open-auto-focus="focusGroupNameInput"
         >
-          <div class="space-y-3 p-3">
+          <div class="space-y-3 p-2">
             <Input
               ref="groupNameInput"
               :model-value="group.name"
               :placeholder="t('profileGroup.namePlaceholder')"
               class="
-                h-9 rounded-lg border-2 border-border bg-background/30 px-3
-                text-sm shadow-none ring-0 outline-none
+                h-9 rounded-lg border-2 border-border bg-background/30 text-sm
+                shadow-none ring-0 outline-none
                 focus-visible:border-primary! focus-visible:ring-0
               "
               @click.stop
@@ -278,7 +278,7 @@ defineExpose({ openContextMenu });
                   "
                 >
                   <span
-                    class="size-2 rounded-full"
+                    class="size-2.25 rounded-full"
                     :style="{ backgroundColor: color }"
                   />
                 </span>
@@ -289,15 +289,17 @@ defineExpose({ openContextMenu });
           <ToggleGroup
             type="single"
             :model-value="group.type"
-            class="grid w-full grid-cols-2 px-1"
+            class="grid w-full grid-cols-2"
             @keydown.tab="focusFirstMenuItem"
             @update:model-value="setGroupType($event as ProfileGroup['type'])"
           >
-            <ToggleGroupItem value="radio" class="min-w-0">
+            <ToggleGroupItem
+              value="radio" class="h-8 min-w-0 rounded-sm"
+            >
               <i class="i-lucide-circle-dot size-4" />
               {{ t("common.radio") }}
             </ToggleGroupItem>
-            <ToggleGroupItem value="checkbox" class="min-w-0">
+            <ToggleGroupItem value="checkbox" class="h-8 min-w-0 rounded-sm">
               <i class="i-lucide-square-check-big size-4" />
               {{ t("common.checkbox") }}
             </ToggleGroupItem>
