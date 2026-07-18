@@ -57,15 +57,20 @@ export function useProfileGroupActions(props: {
     const profiles = profilesStore.manager.profiles.filter(profile => profile.groupId === group.id);
     const enabledProfiles = profiles.filter(profile => profile.enabled);
     if (enabledProfiles.length > 0) {
+      // Pausing a group records its current selection so it can be restored later.
       group.lastEnabledProfileIds = enabledProfiles.map(profile => profile.id);
       profiles.forEach(profile => profile.enabled = false);
       return;
     }
 
+    // Without a previous selection, radio groups resume the first profile while checkbox groups
+    // resume every profile.
     let defaultEnabledProfileIds = profiles.slice(0, 1).map(profile => profile.id);
     if (group.type === "checkbox") {
       defaultEnabledProfileIds = profiles.map(profile => profile.id);
     }
+
+    // Ignore remembered profiles that have since been removed from this group.
     const profileIdSet = new Set(profiles.map(profile => profile.id));
     let rememberedProfileIds = group.lastEnabledProfileIds?.filter(profileId => profileIdSet.has(profileId));
     if (!rememberedProfileIds?.length) {
@@ -78,9 +83,11 @@ export function useProfileGroupActions(props: {
       if (group.type === "checkbox") {
         profile.enabled = rememberedProfileIdSet.has(profile.id);
       } else {
+        // Radio groups can restore at most one remembered profile.
         profile.enabled = profile.id === firstRememberedProfile?.id;
       }
     });
+
     group.lastEnabledProfileIds = profiles
       .filter(profile => profile.enabled)
       .map(profile => profile.id);

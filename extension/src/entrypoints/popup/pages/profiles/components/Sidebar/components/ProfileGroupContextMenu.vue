@@ -138,7 +138,6 @@ defineExpose({ open: openContextMenu });
             shadow-none ring-0 outline-none
             focus-visible:border-primary! focus-visible:ring-0
           "
-          @click.stop
           @keydown.enter.stop.prevent="closeContextMenu"
           @keydown.tab.stop
           @update:model-value="updateProfileGroup({ name: $event })"
