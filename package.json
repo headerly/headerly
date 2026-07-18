@@ -2,7 +2,7 @@
   "name": "headerly",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@11.0.9",
+  "packageManager": "pnpm@11.14.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/headerly/headerly.git"
