@@ -37,7 +37,7 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
-const { getRuleActionTypeIcon, getRuleActionTypeLabel } = useRuleActionType();
+const ruleActionTypeMap = useRuleActionType();
 
 const isCompact = useCompactScreen();
 const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
@@ -106,10 +106,7 @@ const undoAndRedoButtonGroup = [
   },
 ] as const;
 
-const actionTypeBadge = computed(() => ({
-  icon: getRuleActionTypeIcon(profilesStore.selectedProfile.ruleActionType),
-  label: getRuleActionTypeLabel(profilesStore.selectedProfile.ruleActionType),
-}));
+const actionTypeBadge = computed(() => ruleActionTypeMap[profilesStore.selectedProfile.ruleActionType]);
 
 const defaultTab = computed(() => {
   return match(profilesStore.selectedProfile.ruleActionType)

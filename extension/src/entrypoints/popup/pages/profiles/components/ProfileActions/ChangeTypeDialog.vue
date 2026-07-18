@@ -31,7 +31,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const { getRuleActionTypeLabel } = useRuleActionType();
+const ruleActionTypeMap = useRuleActionType();
 
 const openState = ref(false);
 const typeInput = ref<RuleActionType>(ruleActionType.value);
@@ -50,7 +50,7 @@ const options = computed(() => ([
   "allowAllRequests",
 ] as const satisfies RuleActionType[]).map(value => ({
   value,
-  label: getRuleActionTypeLabel(value),
+  label: ruleActionTypeMap[value].label,
 })));
 
 function handleConfirm() {

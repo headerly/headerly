@@ -41,7 +41,7 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
-const { getRuleActionTypeLabel } = useRuleActionType();
+const ruleActionTypeMap = useRuleActionType();
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
 
@@ -123,7 +123,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                     menuOpen = false
                   }"
                 >
-                  {{ getRuleActionTypeLabel(type) }}
+                  {{ ruleActionTypeMap[type].label }}
                   <InfoTooltip
                     :description="getRuleActionTypeDescription(type)"
                   />
