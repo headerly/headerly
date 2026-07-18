@@ -1,6 +1,6 @@
 import { uuidv7 } from "uuidv7";
 import { z } from "zod";
-import { PROFILE_LATEST_VERSION } from "./const";
+import { PROFILE_IMPORT_SCHEMA_VERSION } from "./const";
 
 const uuidSchemaWithDefault = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
@@ -242,7 +242,7 @@ export type ProfileWithoutIds = z.infer<typeof profileWithoutIdsZodSchema>;
 const profilesWithoutIdsArrayZodSchema = z.array(profileWithoutIdsZodSchema).min(1);
 
 export const profileExchangeZodSchema = z.object({
-  version: z.literal(PROFILE_LATEST_VERSION),
+  version: z.literal(PROFILE_IMPORT_SCHEMA_VERSION),
   profiles: profilesWithoutIdsArrayZodSchema,
 });
 export type ProfileExchange = z.infer<typeof profileExchangeZodSchema>;
@@ -259,7 +259,7 @@ export function stripProfileIds(profile: Profile) {
 
 export function createProfileExchange(profiles: Profile[]): ProfileExchange {
   return profileExchangeZodSchema.parse({
-    version: PROFILE_LATEST_VERSION,
+    version: PROFILE_IMPORT_SCHEMA_VERSION,
     profiles: profiles.map(stripProfileIds),
   });
 }

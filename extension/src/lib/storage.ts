@@ -8,7 +8,6 @@ import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
-import { PROFILE_LATEST_VERSION } from "./const";
 import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
@@ -113,12 +112,13 @@ const defaultProfileManager = createDefaultProfileManager();
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
-  return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
-    version: PROFILE_LATEST_VERSION,
-    ...options,
-  });
+  return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, options);
 }
 
+/**
+ * Profile groups are currently only used by the popup UI, but keeping them in extension storage
+ * preserves the option to access and manipulate them directly from the background in the future.
+ */
 export function useProfileGroupsStorage(options?: UseStorageInstanceOptions<ProfileGroup[]>) {
   return useExtensionStorageWrapper<ProfileGroup[]>("local:profileGroups", [], options);
 }

@@ -1,6 +1,6 @@
 import type { DOMAIN_TYPES, Profile, REQUEST_METHODS, RESOURCE_TYPES, RULE_ACTION_TYPES } from "../schema";
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { PROFILE_LATEST_VERSION } from "../const";
+import { PROFILE_IMPORT_SCHEMA_VERSION } from "../const";
 import {
   addProfileIds,
   createProfileExchange,
@@ -322,7 +322,7 @@ describe("profile ID Management", () => {
     it("should export profiles with latest version outside profile data", () => {
       const result = createProfileExchange([mockProfile]);
 
-      expect(result.version).toBe(PROFILE_LATEST_VERSION);
+      expect(result.version).toBe(PROFILE_IMPORT_SCHEMA_VERSION);
       expect(result.profiles).toHaveLength(1);
       expect(result.profiles[0]).not.toHaveProperty("id");
       expect(result.profiles[0]).not.toHaveProperty("version");
@@ -334,7 +334,7 @@ describe("profile ID Management", () => {
 
       expect(profileExchangeZodSchema.safeParse({
         ...exported,
-        version: PROFILE_LATEST_VERSION + 1,
+        version: PROFILE_IMPORT_SCHEMA_VERSION + 1,
       }).success).toBe(false);
     });
 

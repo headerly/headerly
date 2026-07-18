@@ -1,4 +1,4 @@
-export const PROFILE_LATEST_VERSION = 1;
+export const PROFILE_IMPORT_SCHEMA_VERSION = 1;
 
 export const PROFILE_GROUP_COLOR_PRESETS = [
   "#dadce0",
