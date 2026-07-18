@@ -29,8 +29,10 @@ export const useProfilesStore = defineStore("profiles", () => {
     profileId2ErrorMessageRecordPromise,
     profileId2RelatedRuleIdRecordPromise,
   ]).then(() => {
-    deleteEmptyProfileGroups();
     ready.value = true;
+
+    // Clean up empty profile groups on load to avoid leaving orphaned groups in storage.
+    deleteEmptyProfileGroups();
   });
 
   const selectedProfile = computed(() => {
@@ -39,16 +41,6 @@ export const useProfilesStore = defineStore("profiles", () => {
 
   function getProfileGroup(groupId?: string) {
     return profileGroups.value.find(group => group.id === groupId);
-  }
-
-  function deleteProfileGroupIfEmpty(groupId?: string) {
-    if (!groupId || manager.value.profiles.some(profile => profile.groupId === groupId))
-      return;
-
-    const groupIndex = profileGroups.value.findIndex(group => group.id === groupId);
-    if (groupIndex !== -1) {
-      profileGroups.value.splice(groupIndex, 1);
-    }
   }
 
   function deleteEmptyProfileGroups() {
@@ -88,13 +80,11 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (manager.value.profiles.length === 1) {
       const targetProfileIndex = manager.value.profiles.findIndex(p => p.id === targetProfileId);
       const targetProfile = manager.value.profiles[targetProfileIndex]!;
-      const previousGroupId = targetProfile.groupId;
       // Don't using `Object.assign` to ensure reactivity.
       manager.value.profiles[targetProfileIndex] = createProfile({
         id: targetProfile.id,
         ruleActionType: targetProfile.ruleActionType,
       });
-      deleteProfileGroupIfEmpty(previousGroupId);
       return;
     }
 
@@ -104,7 +94,6 @@ export const useProfilesStore = defineStore("profiles", () => {
 
     const prevNearestProfileId = manager.value.profiles[current - 1]?.id;
     const nextNearestProfileId = manager.value.profiles[current + 1]?.id;
-    const previousGroupId = manager.value.profiles[current]!.groupId;
 
     // Don't using `Array.filter` to ensure reactivity.
     manager.value.profiles.splice(current, 1);
@@ -113,7 +102,6 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (targetProfileId === manager.value.selectedProfileId) {
       manager.value.selectedProfileId = prevNearestProfileId ?? nextNearestProfileId!;
     }
-    deleteProfileGroupIfEmpty(previousGroupId);
   }
 
   function toggleProfileEnabled(profileId?: string) {
@@ -168,13 +156,9 @@ export const useProfilesStore = defineStore("profiles", () => {
     if (!profile || !group)
       return;
 
-    const previousGroupId = profile.groupId;
     profile.groupId = group.id;
     if (group.type === "radio" && profile.enabled) {
       setProfileEnabled(profile.id, true);
-    }
-    if (previousGroupId !== group.id) {
-      deleteProfileGroupIfEmpty(previousGroupId);
     }
   }
 
@@ -191,9 +175,7 @@ export const useProfilesStore = defineStore("profiles", () => {
   function removeProfileFromGroup(profileId: string) {
     const profile = manager.value.profiles.find(p => p.id === profileId);
     if (profile) {
-      const previousGroupId = profile.groupId;
       delete profile.groupId;
-      deleteProfileGroupIfEmpty(previousGroupId);
     }
   }
 
