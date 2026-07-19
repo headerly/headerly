@@ -1,6 +1,6 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { useEventBus, useEventListener } from "@vueuse/core";
+import { useEventBus } from "@vueuse/core";
 import { match } from "ts-pattern";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,6 +13,7 @@ import {
 import {
   Input,
 } from "#/ui/input";
+import { Kbd, KbdGroup } from "#/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +21,6 @@ import {
   TooltipTrigger,
 } from "#/ui/tooltip";
 import { useCompactScreen } from "@/composables/useCompactScreen";
-import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { Badge } from "@/entrypoints/popup/ui/badge";
@@ -30,6 +30,7 @@ import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
 import { openAddRuleOptionDialogKey } from "./components/AddRuleOptionDialog/open";
 import EmojiPicker from "./components/EmojiPicker.vue";
+import { useHeaderShortcuts } from "./useHeaderShortcuts";
 
 const { class: className } = defineProps<{
   class?: HTMLAttributes["class"];
@@ -42,14 +43,6 @@ const ruleActionTypeMap = useRuleActionType();
 const isCompact = useCompactScreen();
 const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
 const profileSearchOpen = ref(false);
-const profileSearchShortcutKeys = useTinykeys(
-  window,
-  "$mod+K",
-  (event) => {
-    event.preventDefault();
-    profileSearchOpen.value = true;
-  },
-);
 
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
@@ -62,30 +55,36 @@ function handleEditProfileName() {
 
 const settingsStore = useSettingsStore();
 
-useEventListener(window, "keydown", (event: KeyboardEvent) => {
-  if (document.activeElement?.matches("input, textarea")) {
-    return;
-  }
+const actionTypeBadge = computed(() => ruleActionTypeMap[profilesStore.selectedProfile.ruleActionType]);
 
-  const metaKey = event.ctrlKey || event.metaKey;
-  if (metaKey && !event.shiftKey && event.key.toLowerCase() === "z" && profilesStore.canUndo) {
-    event.preventDefault();
-    profilesStore.undo();
-  } else if (metaKey && event.shiftKey && event.key.toLowerCase() === "z" && profilesStore.canRedo) {
-    event.preventDefault();
-    profilesStore.redo();
-  }
+const defaultTab = computed(() => {
+  return match(profilesStore.selectedProfile.ruleActionType)
+    .with("modifyHeaders", "redirect", () => "actions" as const)
+    .otherwise(() => "conditions" as const);
+});
+
+const {
+  addRuleOptionShortcutKeys,
+  profileSearchShortcutKeys,
+  redoShortcutKeys,
+  toggleProfileShortcutKeys,
+  undoShortcutKeys,
+} = useHeaderShortcuts({
+  canRedo: () => profilesStore.canRedo,
+  canUndo: () => profilesStore.canUndo,
+  openAddRuleOptionDialog: () => addRuleOptionDialogBus.emit({ target: defaultTab.value }),
+  openProfileSearch: () => profileSearchOpen.value = true,
+  redo: profilesStore.redo,
+  toggleProfile: () => profilesStore.toggleProfileEnabled(profilesStore.selectedProfile.id),
+  undo: profilesStore.undo,
 });
 
 const undoAndRedoButtonGroup = [
   {
     key: "undo",
     icon: "i-lucide-undo-2",
-    tooltip: (
-      <p>
-        {t("common.undo")}
-      </p>
-    ),
+    label: t("common.undo"),
+    shortcutKeys: undoShortcutKeys,
     get disabled() {
       return !profilesStore.canUndo;
     },
@@ -94,25 +93,14 @@ const undoAndRedoButtonGroup = [
   {
     key: "redo",
     icon: "i-lucide-redo-2",
-    tooltip: (
-      <p>
-        {t("common.redo")}
-      </p>
-    ),
+    label: t("common.redo"),
+    shortcutKeys: redoShortcutKeys,
     get disabled() {
       return !profilesStore.canRedo;
     },
     onClick: profilesStore.redo,
   },
 ] as const;
-
-const actionTypeBadge = computed(() => ruleActionTypeMap[profilesStore.selectedProfile.ruleActionType]);
-
-const defaultTab = computed(() => {
-  return match(profilesStore.selectedProfile.ruleActionType)
-    .with("modifyHeaders", "redirect", () => "actions" as const)
-    .otherwise(() => "conditions" as const);
-});
 </script>
 
 <template>
@@ -241,32 +229,57 @@ const defaultTab = computed(() => {
                 variant="secondary"
                 size="icon-sm"
                 :disabled="btn.disabled"
+                :aria-label="btn.label"
                 @click="btn.onClick"
               >
                 <i :class="cn(btn.icon, 'size-4')" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <component :is="btn.tooltip" />
+            <TooltipContent side="bottom" class="flex items-center gap-2">
+              <span>{{ btn.label }}</span>
+              <KbdGroup class="z-50">
+                <Kbd v-for="key in btn.shortcutKeys" :key>
+                  {{ key }}
+                </Kbd>
+              </KbdGroup>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </template>
 
-      <IconsGroupWithMore :profile="profilesStore.selectedProfile">
+      <IconsGroupWithMore
+        :profile="profilesStore.selectedProfile"
+        :toggle-shortcut-keys="toggleProfileShortcutKeys"
+      >
         <template #after-main>
-          <AddRuleOptionDialog :tooltip-text="t('profile.header.addActionOrConditionTooltip')" :default-tab />
+          <AddRuleOptionDialog
+            :default-tab
+            :shortcut-keys="addRuleOptionShortcutKeys"
+            :tooltip-text="t('profile.header.addActionOrConditionTooltip')"
+          />
         </template>
         <template #compact-extra>
           <DropdownMenuGroup>
-            <DropdownMenuItem :disabled="!profilesStore.canUndo" @click="profilesStore.undo">
-              <span>{{ t("common.undo") }}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem :disabled="!profilesStore.canRedo" @click="profilesStore.redo">
-              <span>{{ t("common.redo") }}</span>
+            <DropdownMenuItem
+              v-for="btn in undoAndRedoButtonGroup"
+              :key="btn.key"
+              :disabled="btn.disabled"
+              @click="btn.onClick"
+            >
+              <span>{{ btn.label }}</span>
+              <KbdGroup class="z-50 ml-auto">
+                <Kbd v-for="key in btn.shortcutKeys" :key>
+                  {{ key }}
+                </Kbd>
+              </KbdGroup>
             </DropdownMenuItem>
             <DropdownMenuItem @click="addRuleOptionDialogBus.emit({ target: 'actions' })">
               <span>{{ t("profile.header.addActionOrCondition") }}</span>
+              <KbdGroup class="z-50 ml-auto">
+                <Kbd v-for="key in addRuleOptionShortcutKeys" :key>
+                  {{ key }}
+                </Kbd>
+              </KbdGroup>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </template>

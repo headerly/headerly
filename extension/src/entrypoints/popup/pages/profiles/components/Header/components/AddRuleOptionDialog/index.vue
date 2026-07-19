@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "#/ui/dialog";
+import { Kbd, KbdGroup } from "#/ui/kbd";
 import {
   Tabs,
   TabsContent,
@@ -30,6 +31,7 @@ import { useCreateTabs } from "./tabs";
 const { defaultTab, class: className } = defineProps<{
   defaultTab: AddRuleOptionDialogTabValue;
   class?: string;
+  shortcutKeys?: string[];
   tooltipText: string;
 }>();
 
@@ -64,8 +66,13 @@ bus.on(({ target }) => {
             </Button>
           </DialogTrigger>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {{ tooltipText }}
+        <TooltipContent side="bottom" class="flex items-center gap-2">
+          <span>{{ tooltipText }}</span>
+          <KbdGroup v-if="shortcutKeys?.length" class="z-50">
+            <Kbd v-for="key in shortcutKeys" :key>
+              {{ key }}
+            </Kbd>
+          </KbdGroup>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -128,7 +128,7 @@ function handleMiddleClick() {
                 v-if="!profile.enabled"
                 class="
                   absolute right-0 bottom-0 i-lucide-pause size-4 -translate-1/2
-                  opacity-80
+                  opacity-100
                 "
               />
             </div>
@@ -171,7 +171,7 @@ function handleMiddleClick() {
             v-if="!profile.enabled"
             class="
               absolute right-0 bottom-0 i-lucide-pause size-3 -translate-1/2
-              opacity-80
+              opacity-100
             "
           />
         </span>

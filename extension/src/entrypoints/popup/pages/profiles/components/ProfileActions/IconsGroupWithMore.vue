@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
+import { Kbd, KbdGroup } from "#/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
@@ -33,6 +34,10 @@ import ProfileActionsMenuItems from "./ProfileActionsMenuItems.vue";
 const profile = defineModel<Profile>("profile", {
   required: true,
 });
+
+const { toggleShortcutKeys = [] } = defineProps<{
+  toggleShortcutKeys?: string[];
+}>();
 
 const { t } = useI18n();
 
@@ -80,8 +85,13 @@ async function handleChangeType() {
               />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {{ action.label(profile) }}
+          <TooltipContent side="bottom" class="flex items-center gap-2">
+            <span>{{ action.label(profile) }}</span>
+            <KbdGroup v-if="action.id === 'toggle'" class="z-50">
+              <Kbd v-for="key in toggleShortcutKeys" :key>
+                {{ key }}
+              </Kbd>
+            </KbdGroup>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

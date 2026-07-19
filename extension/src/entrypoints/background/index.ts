@@ -10,6 +10,8 @@ import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 import { setupSyncCookies } from "./syncCookies";
 
+const TOGGLE_EXTENSION_COMMAND = "toggle-extension";
+
 export default defineBackground({
   type: "module",
   main() {
@@ -17,6 +19,15 @@ export default defineBackground({
     const { item: profileManagerItem } = useProfileManagerStorage();
     // Serialize all DNR rule operations to prevent concurrent access.
     const profileManagerMutex = new Mutex();
+    browser.commands.onCommand.addListener((command) => {
+      if (command !== TOGGLE_EXTENSION_COMMAND) {
+        return;
+      }
+      profileManagerMutex.runExclusive(async () => {
+        const powerOn = await powerOnItem.getValue();
+        await powerOnItem.setValue(!powerOn);
+      });
+    });
     // `storage.watch` must be registered synchronously at the top level of the service worker;
     // asynchronous registration will cause the service worker to lose events while in an inactive state.
     powerOnItem.watch((powerOn) => {

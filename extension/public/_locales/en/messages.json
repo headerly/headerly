@@ -4,5 +4,8 @@
   },
   "extensionDescription": {
     "message": "Manage and customize HTTP request & response headers with ease. Quickly set, append, or remove headers."
+  },
+  "toggleExtensionCommandDescription": {
+    "message": "Turn Headerly on or off"
   }
 }

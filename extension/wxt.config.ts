@@ -17,6 +17,11 @@ export default defineConfig({
     description: "__MSG_extensionDescription__",
     name: "__MSG_extensionName__",
     homepage_url: "https://github.com/headerly/headerly",
+    commands: {
+      "toggle-extension": {
+        description: "__MSG_toggleExtensionCommandDescription__",
+      },
+    },
     permissions: [
       "storage",
       "declarativeNetRequest",
