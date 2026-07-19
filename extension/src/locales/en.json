@@ -227,6 +227,7 @@
     }
   },
   "emoji": {
+    "remove": "Remove emoji",
     "categories": {
       "activities": "Activities",
       "animalsNature": "Animals & Nature",

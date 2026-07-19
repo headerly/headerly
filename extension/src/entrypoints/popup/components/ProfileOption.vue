@@ -41,9 +41,22 @@ const isSelected = computed(() => profilesStore.manager.selectedProfileId === pr
           <div class="relative flex size-full items-center justify-center">
             <slot />
             <span
-              :class="cn({ 'opacity-30': !profile.enabled })"
+              :class="cn(
+                'flex max-w-full min-w-0 items-center justify-center',
+                { 'opacity-30': !profile.enabled },
+              )"
             >
-              {{ profile.emoji }}
+              <template v-if="profile.emoji">
+                {{ profile.emoji }}
+              </template>
+              <span
+                v-else class="
+                  max-w-full overflow-hidden px-0.5 text-xs leading-none
+                  whitespace-nowrap
+                "
+              >
+                {{ profile.name }}
+              </span>
             </span>
             <span
               v-if="profilesStore.profileId2ErrorMessageRecord[profile.id] || profilesStore.profileId2RelatedRuleIdRecord[profile.id]"

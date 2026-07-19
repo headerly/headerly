@@ -227,6 +227,7 @@
     }
   },
   "emoji": {
+    "remove": "删除表情符号",
     "categories": {
       "activities": "活动",
       "animalsNature": "动物与自然",

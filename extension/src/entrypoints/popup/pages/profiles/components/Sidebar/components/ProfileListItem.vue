@@ -86,8 +86,23 @@ function handleMiddleClick() {
         <Tooltip>
           <TooltipTrigger as-child>
             <div class="relative flex size-full items-center justify-center">
-              <span :class="cn({ 'opacity-30': !profile.enabled })">
-                {{ profile.emoji }}
+              <span
+                :class="cn(
+                  'flex max-w-full min-w-0 items-center justify-center',
+                  { 'opacity-60': !profile.enabled },
+                )"
+              >
+                <template v-if="profile.emoji">
+                  {{ profile.emoji }}
+                </template>
+                <span
+                  v-else class="
+                    max-w-full overflow-hidden px-0.5 text-xs leading-none
+                    whitespace-nowrap
+                  "
+                >
+                  {{ profile.name }}
+                </span>
               </span>
               <span
                 v-if="hasError || hasRegisteredRule"
@@ -108,6 +123,7 @@ function handleMiddleClick() {
                 v-if="!profile.enabled"
                 class="
                   absolute right-0 bottom-0 i-lucide-pause size-4 -translate-1/2
+                  opacity-80
                 "
               />
             </div>
@@ -125,8 +141,11 @@ function handleMiddleClick() {
             leading-none
           "
         >
-          <span :class="cn({ 'opacity-30': !profile.enabled })">
-            {{ profile.emoji }}
+          <span :class="cn('flex items-center justify-center', { 'opacity-60': !profile.enabled })">
+            <template v-if="profile.emoji">
+              {{ profile.emoji }}
+            </template>
+            <i v-else class="i-lucide-circle-off size-4 text-muted-foreground" />
           </span>
           <span
             v-if="hasError || hasRegisteredRule"
@@ -147,6 +166,7 @@ function handleMiddleClick() {
             v-if="!profile.enabled"
             class="
               absolute right-0 bottom-0 i-lucide-pause size-3 -translate-1/2
+              opacity-80
             "
           />
         </span>
