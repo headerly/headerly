@@ -108,10 +108,7 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
 
     // For modified profiles, remove old rule first
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = match(changes.modified.includes(profile))
-      .with(true, () => record[profile.id])
-      .with(false, () => undefined)
-      .exhaustive();
+    const deleteRuleId = changes.modified.includes(profile) ? record[profile.id] : undefined;
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: match(deleteRuleId)

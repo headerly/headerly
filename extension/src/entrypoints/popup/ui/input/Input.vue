@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { match } from "ts-pattern";
 import { useTemplateRef } from "vue";
 import { cn } from "@/lib/utils";
 
@@ -21,10 +20,7 @@ const inputRef = useTemplateRef<HTMLInputElement>("inputRef");
 
 function emitUpdate(event: Event) {
   const value = (event.target as HTMLInputElement).value;
-  emits("update:modelValue", match(props.modelModifiers.trim === true)
-    .with(true, () => value.trim())
-    .with(false, () => value)
-    .exhaustive());
+  emits("update:modelValue", props.modelModifiers.trim === true ? value.trim() : value);
 }
 
 defineExpose({

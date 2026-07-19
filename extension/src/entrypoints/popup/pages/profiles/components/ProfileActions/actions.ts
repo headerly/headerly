@@ -154,14 +154,8 @@ export function useProfileActions() {
     {
       type: "action",
       id: "toggle",
-      label: p => match(p.enabled)
-        .with(true, () => t("profile.actions.pause"))
-        .with(false, () => t("profile.actions.resume"))
-        .exhaustive(),
-      icon: p => match(p.enabled)
-        .with(true, () => "i-lucide-pause")
-        .with(false, () => "i-lucide-play")
-        .exhaustive(),
+      label: p => p.enabled ? t("profile.actions.pause") : t("profile.actions.resume"),
+      icon: p => p.enabled ? "i-lucide-pause" : "i-lucide-play",
       onClick: p => profilesStore.toggleProfileEnabled(p.id),
     },
     {
@@ -174,14 +168,8 @@ export function useProfileActions() {
     {
       type: "action",
       id: "delete",
-      label: () => match(profilesStore.manager.profiles.length === 1)
-        .with(true, () => t("common.reset"))
-        .with(false, () => t("profile.actions.delete"))
-        .exhaustive(),
-      icon: () => match(profilesStore.manager.profiles.length === 1)
-        .with(true, () => "i-lucide-refresh-ccw")
-        .with(false, () => "i-lucide-trash")
-        .exhaustive(),
+      label: () => profilesStore.manager.profiles.length === 1 ? t("common.reset") : t("profile.actions.delete"),
+      icon: () => profilesStore.manager.profiles.length === 1 ? "i-lucide-refresh-ccw" : "i-lucide-trash",
       onClick: p => profilesStore.deleteProfile(p.id),
       variant: "destructive",
     },

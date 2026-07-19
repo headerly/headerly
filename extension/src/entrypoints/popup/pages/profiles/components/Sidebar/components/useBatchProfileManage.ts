@@ -32,10 +32,9 @@ export function useBatchProfileManage(getVisibleProfiles: () => Profile[]) {
   });
 
   const selectAllLabel = computed(() =>
-    match(allVisibleSelected.value === false || allVisibleSelected.value === "indeterminate")
-      .with(true, () => t("share.selectAll"))
-      .with(false, () => t("share.unselectAll"))
-      .exhaustive(),
+    allVisibleSelected.value === false || allVisibleSelected.value === "indeterminate"
+      ? t("share.selectAll")
+      : t("share.unselectAll"),
   );
 
   function resetBatchManage() {

@@ -11,7 +11,6 @@ import {
   setSearchQuery,
 } from "@codemirror/search";
 import { runScopeHandlers } from "@codemirror/view";
-import { match } from "ts-pattern";
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
@@ -95,10 +94,7 @@ function runSearchCommand(command: SearchCommand) {
 }
 
 function handleSearchSubmit(event: KeyboardEvent) {
-  runSearchCommand(match(event.shiftKey)
-    .with(true, () => findPrevious)
-    .with(false, () => findNext)
-    .exhaustive());
+  runSearchCommand(event.shiftKey ? findPrevious : findNext);
 }
 
 function handleReplaceSubmit() {

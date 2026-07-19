@@ -26,18 +26,15 @@ export default antfu(
 
     rules: {
       "max-lines": ["error", 300],
-      "antfu/no-top-level-await": "off",
+      "no-nested-ternary": "error",
       "no-restricted-syntax": [
         "error",
         {
           selector: "SwitchStatement",
           message: "Use ts-pattern match instead.",
         },
-        {
-          selector: "ConditionalExpression",
-          message: "Use ts-pattern match instead.",
-        },
       ],
+      "no-unneeded-ternary": "error",
       "style/brace-style": ["error", "1tbs"],
       "vue/brace-style": ["error", "1tbs"],
       "vue/v-for-delimiter-style": ["error", "in"],
@@ -45,6 +42,13 @@ export default antfu(
       "vue/no-duplicate-class-names": "error",
       "vue/prefer-use-template-ref": "error",
       "vue/no-import-compiler-macros": "error",
+      "vue/no-restricted-syntax": [
+        "error",
+        {
+          selector: "ConditionalExpression ConditionalExpression",
+          message: "Do not nest ternary expressions.",
+        },
+      ],
       "vue/no-v-html": "error",
       "vue/define-macros-order": [
         "error",

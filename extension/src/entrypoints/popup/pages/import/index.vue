@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { match } from "ts-pattern";
 import { ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -64,10 +63,7 @@ async function confirmImport() {
 
     profilesStore.manager.profiles.push(...profiles.map(addProfileIds));
 
-    const profileCountLabel = match(profiles.length === 1)
-      .with(true, () => t("import.profile"))
-      .with(false, () => t("import.profiles"))
-      .exhaustive();
+    const profileCountLabel = profiles.length === 1 ? t("import.profile") : t("import.profiles");
     toast.success(t("import.toast.success", { count: profiles.length, label: profileCountLabel }));
     await router.push("/profiles");
   } catch (error) {

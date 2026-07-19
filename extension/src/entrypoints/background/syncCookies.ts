@@ -3,7 +3,6 @@ import type { SyncCookie } from "@/lib/schema";
 import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
 import { isEqual } from "es-toolkit";
-import { match } from "ts-pattern";
 
 const SYNC_COOKIE_FLUSH_DELAY_MS = 500;
 
@@ -171,10 +170,7 @@ function syncChangedCookieValue(
   removed: boolean,
 ) {
   const nextManager = structuredClone(manager);
-  const nextValue = match(removed)
-    .with(true, () => "")
-    .with(false, () => changedCookie.value)
-    .exhaustive();
+  const nextValue = removed ? "" : changedCookie.value;
   let changed = false;
 
   for (const profile of nextManager.profiles) {
@@ -188,10 +184,7 @@ function syncChangedCookieValue(
     }
   }
 
-  return match(changed)
-    .with(true, () => nextManager)
-    .with(false, () => manager)
-    .exhaustive();
+  return changed ? nextManager : manager;
 }
 
 async function syncCurrentCookieValues(manager: ProfileManager) {
@@ -216,10 +209,7 @@ async function syncCurrentCookieValues(manager: ProfileManager) {
     }
   }
 
-  return match(changed)
-    .with(true, () => nextManager)
-    .with(false, () => manager)
-    .exhaustive();
+  return changed ? nextManager : manager;
 }
 
 function getCachedCookieValue(cache: Map<string, Promise<string>>, cookie: SyncCookie) {

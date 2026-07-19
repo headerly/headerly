@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
+import { match } from "ts-pattern";
 import { computed } from "vue";
 import { Button } from "#/ui/button";
 import {
@@ -33,6 +34,12 @@ const profilesStore = useProfilesStore();
 const isSelected = computed(() => profilesStore.manager.selectedProfileId === props.profile.id);
 const hasError = computed(() => Boolean(profilesStore.profileId2ErrorMessageRecord[props.profile.id]));
 const hasRegisteredRule = computed(() => Boolean(profilesStore.profileId2RelatedRuleIdRecord[props.profile.id]));
+const buttonVariant = computed(() => match([props.layout, isSelected.value] as const)
+  .with(["icon", true], () => "default" as const)
+  .with(["icon", false], () => "secondary" as const)
+  .with(["row", true], () => "secondary" as const)
+  .with(["row", false], () => "ghost" as const)
+  .exhaustive());
 
 function handleClick(event: MouseEvent) {
   if (!props.switchable) {
@@ -63,9 +70,7 @@ function handleMiddleClick() {
   >
     <Button
       :size="layout === 'icon' ? 'icon-sm' : 'default'"
-      :variant="layout === 'icon'
-        ? (isSelected ? 'default' : 'secondary')
-        : (isSelected ? 'secondary' : 'ghost')"
+      :variant="buttonVariant"
       :class="cn(
         'relative select-none',
         layout === 'icon' && 'flex text-xl',

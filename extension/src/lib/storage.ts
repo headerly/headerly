@@ -4,7 +4,6 @@ import type { SupportLocale } from "#/i18n";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
-import { match } from "ts-pattern";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
 import { PROFILE_MANAGER_STORAGE_VERSION } from "./const";
@@ -145,9 +144,7 @@ export function useNativeResourceTypeBehaviorStorage() {
 
 export function useLanguageStorage() {
   const browserLanguage = browser.i18n.getUILanguage().replace("_", "-");
-  const initialLanguage = match(SUPPORT_LOCALES.includes(browserLanguage))
-    .with(true, () => browserLanguage as SupportLocale)
-    .otherwise(() => "en" as const);
+  const initialLanguage = SUPPORT_LOCALES.includes(browserLanguage) ? browserLanguage as SupportLocale : "en";
   return useLocalStorageWrapper<SupportLocale>("language", initialLanguage);
 }
 

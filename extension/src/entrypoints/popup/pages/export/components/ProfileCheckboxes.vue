@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ProfileOption from "#/components/ProfileOption.vue";
@@ -44,10 +43,7 @@ const allChecked = computed({
     return "indeterminate";
   },
   set(value) {
-    const newProfiles = match(value === true)
-      .with(true, () => profilesStore.manager.profiles)
-      .with(false, () => [])
-      .exhaustive();
+    const newProfiles = value === true ? profilesStore.manager.profiles : [];
     model.value = newProfiles;
     emit("change", newProfiles);
   },
@@ -60,10 +56,7 @@ function isSelected(profile: Profile) {
 function toggleProfile(profile: Profile, checked: unknown) {
   let newProfiles: Profile[];
   if (checked === true) {
-    newProfiles = match(isSelected(profile))
-      .with(true, () => model.value)
-      .with(false, () => [...model.value, profile])
-      .exhaustive();
+    newProfiles = isSelected(profile) ? model.value : [...model.value, profile];
   } else {
     newProfiles = model.value.filter(p => p.id !== profile.id);
   }
@@ -72,10 +65,9 @@ function toggleProfile(profile: Profile, checked: unknown) {
 }
 
 const selectAllLabel = computed(() =>
-  match(allChecked.value === false || allChecked.value === "indeterminate")
-    .with(true, () => t("share.selectAll"))
-    .with(false, () => t("share.unselectAll"))
-    .exhaustive(),
+  allChecked.value === false || allChecked.value === "indeterminate"
+    ? t("share.selectAll")
+    : t("share.unselectAll"),
 );
 </script>
 
