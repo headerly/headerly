@@ -63,17 +63,30 @@ export function useCreateSettings() {
           ] satisfies { label: string; value: BasicColorSchema }[],
           key: "theme",
         },
+      ],
+    },
+    {
+      fieldsetTitle: t("settings.groups.profiles"),
+      anchor: "profiles",
+      anchorIcon: "i-lucide-sliders-horizontal",
+      fields: [
         {
           type: "checkbox",
           label: t("settings.fields.showCommentsInline"),
           key: "showCommentsInline",
           description: t("settings.descriptions.showCommentsInline"),
         },
+        {
+          type: "checkbox",
+          label: t("settings.fields.hideRecentlyAdded"),
+          key: "hideRecentlyAdded",
+          description: t("settings.descriptions.hideRecentlyAdded"),
+        },
       ],
     },
     {
-      fieldsetTitle: t("settings.groups.profiles"),
-      anchor: "profiles",
+      fieldsetTitle: t("settings.groups.declarativeNetRequest"),
+      anchor: "declarativeNetRequest",
       anchorIcon: "i-lucide-code-xml",
       fields: [
         {

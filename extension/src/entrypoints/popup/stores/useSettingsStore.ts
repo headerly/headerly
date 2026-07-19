@@ -2,6 +2,7 @@ import { useColorMode } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { computed } from "vue";
 import {
+  useHideRecentlyAddedStorage,
   useLanguageStorage,
   useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
@@ -17,6 +18,7 @@ export const useSettingsStore = defineStore("settings", () => {
     nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
     language: useLanguageStorage(),
     showCommentsInline: useShowCommentsInlineStorage(),
+    hideRecentlyAdded: useHideRecentlyAddedStorage(),
   } as const;
 
   const isModified = computed(() => {

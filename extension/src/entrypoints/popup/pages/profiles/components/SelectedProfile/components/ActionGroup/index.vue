@@ -7,6 +7,7 @@ import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups } from "#/pages/profiles/utils";
 import { useRecentHeaderNames } from "@/composables/useRecentHeaderNames";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { addItemToGroup } from "@/lib/group";
 import { createHeaderMod } from "@/lib/profileFactory";
 import RecentHeaderNames from "./RecentHeaderNames.vue";
@@ -21,6 +22,7 @@ const { actionType } = defineProps<{
 }>();
 
 const profilesStore = useProfilesStore();
+const settingsStore = useSettingsStore();
 const { t } = useI18n();
 const {
   recentHeaderNames,
@@ -70,6 +72,7 @@ function deleteGroup() {
     </template>
     <template #items-before>
       <RecentHeaderNames
+        v-if="!settingsStore.hideRecentlyAdded"
         :names="recentHeaderNames"
         class="mb-2"
         @add="addNewField"

@@ -407,11 +407,13 @@
   },
   "settings": {
     "descriptions": {
+      "hideRecentlyAdded": "Hide shortcuts for recently added request and response header names.",
       "nativeResourceTypeBehavior": "Resource type defaults to 'all', but enabling this option will not set it to 'all', and rules without a resource type condition will match only a narrower range of requests.",
       "showCommentsInline": "Show each field's comments next to its other actions instead of in the More Actions menu."
     },
     "fieldLabel": "{label}:",
     "fields": {
+      "hideRecentlyAdded": "Hide recently added headers",
       "language": "Language",
       "nativeResourceTypeBehavior": "Use native DNR resource type behavior",
       "showCommentsInline": "Show field comments inline",
@@ -419,6 +421,7 @@
     },
     "groups": {
       "appearance": "Appearance",
+      "declarativeNetRequest": "Declarative Net Request",
       "profiles": "Profiles",
       "troubleshooting": "Troubleshooting"
     },

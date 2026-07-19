@@ -151,3 +151,7 @@ export function useLanguageStorage() {
 export function useShowCommentsInlineStorage() {
   return useLocalStorageWrapper<boolean>("show-comments-inline", false);
 }
+
+export function useHideRecentlyAddedStorage() {
+  return useLocalStorageWrapper<boolean>("hide-recently-added", false);
+}
