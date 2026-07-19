@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.15.0](https://github.com/headerly/headerly/compare/v1.14.0...v1.15.0) (2026-07-19)
+
+
+### Features
+
+* add recent header shortcuts ([9d2cb81](https://github.com/headerly/headerly/commit/9d2cb81c1bc975fe3a1b413ba70671b3816cefcc))
+* **popup:** gray out the popup icon when no profiles are active ([0b68407](https://github.com/headerly/headerly/commit/0b68407929336a5e2f46662ba69be991550005c0))
+* **popup:** show profile names in sidebar when emojis are removed ([66953c4](https://github.com/headerly/headerly/commit/66953c4f38b375093472f0f9473217c53bf8a512))
+* **profiles:** allows associating profiles with groups ([#58](https://github.com/headerly/headerly/issues/58)) ([5514e47](https://github.com/headerly/headerly/commit/5514e4789faba5ccd349f45b7ad221d2c1b9a18e))
+
 ## [1.14.0](https://github.com/headerly/headerly/compare/v1.13.0...v1.14.0) (2026-07-14)
 
 
