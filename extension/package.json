@@ -1,7 +1,7 @@
 {
   "name": "extension",
   "type": "module",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
