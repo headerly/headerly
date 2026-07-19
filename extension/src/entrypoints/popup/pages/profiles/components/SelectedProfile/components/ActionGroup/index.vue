@@ -5,9 +5,11 @@ import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { findHeaderModGroups } from "#/pages/profiles/utils";
+import { useRecentHeaderNames } from "@/composables/useRecentHeaderNames";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { createHeaderMod } from "@/lib/profileFactory";
+import RecentHeaderNames from "./RecentHeaderNames.vue";
 import RequestModFieldWithActions from "./RequestModFieldWithActions.vue";
 
 const group = defineModel<HeaderModGroup>({
@@ -20,10 +22,16 @@ const { actionType } = defineProps<{
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
+const {
+  recentHeaderNames,
+  addRecentHeaderName,
+  removeRecentHeaderName,
+} = useRecentHeaderNames(actionType);
 
-function addNewField() {
-  const mod = createHeaderMod();
+function addNewField(name = "") {
+  const mod = createHeaderMod({ name });
   addItemToGroup(group.value.items, mod, group.value.type);
+  addRecentHeaderName(name);
 }
 
 function deleteGroup() {
@@ -60,12 +68,21 @@ function deleteGroup() {
         @new-field="addNewField"
       />
     </template>
+    <template #items-before>
+      <RecentHeaderNames
+        :names="recentHeaderNames"
+        class="mb-2"
+        @add="addNewField"
+        @remove="removeRecentHeaderName"
+      />
+    </template>
     <template #item="{ index }">
       <RequestModFieldWithActions
         v-model:list="group.items"
         v-model:field="group.items[index]!"
         :action-type
         :index
+        @name-committed="addRecentHeaderName"
       />
     </template>
   </Group>

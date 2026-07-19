@@ -269,6 +269,11 @@
       "remove": "Remove",
       "set": "Set"
     },
+    "recent": {
+      "add": "Add {name} header",
+      "remove": "Remove {name} from recent headers",
+      "title": "Recent: "
+    },
     "requestHeaders": "Request Headers",
     "responseHeaders": "Response Headers",
     "switchTo": "Switch to {operation}"

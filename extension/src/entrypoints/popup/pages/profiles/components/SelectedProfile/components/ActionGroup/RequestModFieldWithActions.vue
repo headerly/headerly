@@ -42,7 +42,35 @@ const { actionType, index } = defineProps<{
   index: number;
 }>();
 
+const emit = defineEmits<{
+  (e: "nameCommitted", name: string): void;
+}>();
+
 const { t } = useI18n();
+
+let selectingAutocompleteOption: boolean = false;
+
+function normalizeAndCommitHeaderName(name: string) {
+  field.value.name = name.trim().toLocaleLowerCase();
+  if (field.value.name)
+    emit("nameCommitted", field.value.name);
+}
+
+function commitHeaderName() {
+  if (!selectingAutocompleteOption)
+    normalizeAndCommitHeaderName(field.value.name);
+}
+
+function startSelectingAutocompleteOption() {
+  selectingAutocompleteOption = true;
+}
+
+function selectAutocompleteOption(value: unknown) {
+  if (typeof value === "string")
+    normalizeAndCommitHeaderName(value);
+
+  selectingAutocompleteOption = false;
+}
 
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
@@ -99,9 +127,7 @@ function getOperationLabel(operation: HeaderModOperation) {
         <Combobox
           :model-value="field.name"
           :class="cn('flex-1', field.operation === 'remove' && `col-span-2`)"
-          @update:model-value="(val) => {
-            if (typeof val === 'string') field.name = val;
-          }"
+          @update:model-value="selectAutocompleteOption"
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
@@ -111,9 +137,7 @@ function getOperationLabel(operation: HeaderModOperation) {
                 w-full text-base
                 placeholder:italic
               "
-              @change="() => {
-                field.name = field.name.trim().toLocaleLowerCase();
-              }"
+              @change="commitHeaderName"
             />
           </ComboboxAnchor>
 
@@ -123,6 +147,7 @@ function getOperationLabel(operation: HeaderModOperation) {
                 v-for="option in autocompleteList"
                 :key="option"
                 :value="option"
+                @pointerdown="startSelectingAutocompleteOption"
               >
                 {{ option }}
               </ComboboxItem>

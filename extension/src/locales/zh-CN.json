@@ -269,6 +269,11 @@
       "remove": "移除",
       "set": "设置"
     },
+    "recent": {
+      "add": "添加 Header：{name}",
+      "remove": "从最近记录中删除 {name}",
+      "title": "最近："
+    },
     "requestHeaders": "请求头",
     "responseHeaders": "响应头",
     "switchTo": "切换到 {operation}"

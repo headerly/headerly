@@ -119,6 +119,7 @@ useSortableAndAutoAnimate({
       </template>
       <template #main>
         <CollapsibleContent class="overflow-visible">
+          <slot name="items-before" />
           <component
             :is="type === 'radio' ? RadioGroup : 'div'"
             v-bind="type === 'radio'
