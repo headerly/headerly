@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.0](https://github.com/headerly/headerly/compare/v1.15.0...v1.16.0) (2026-07-19)
+
+
+### Features
+
+* add extension keyboard shortcuts ([90b51ab](https://github.com/headerly/headerly/commit/90b51ab2a75e859240b29f5f03fb9ad8df2f9fd1))
+* add setting to hide recent headers ([e5cde2a](https://github.com/headerly/headerly/commit/e5cde2a3cd8a1542746697e2de565a37d13bb93c))
+
 ## [1.15.0](https://github.com/headerly/headerly/compare/v1.14.0...v1.15.0) (2026-07-19)
 
 
