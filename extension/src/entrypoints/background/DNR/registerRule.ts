@@ -106,9 +106,11 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       action,
     } as const satisfies Browser.declarativeNetRequest.Rule;
 
-    // For modified profiles, remove old rule first
+    // Treat creation as an upsert too. A full re-registration and a queued
+    // profile-created storage event can otherwise register the same profile
+    // twice and leave the first rule without a profile-to-rule mapping.
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = changes.modified.includes(profile) ? record[profile.id] : undefined;
+    const deleteRuleId = record[profile.id];
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: match(deleteRuleId)
@@ -173,4 +175,47 @@ function findMissingPositive(numbers: number[]) {
   let i = 1;
   while (set.has(i)) i++;
   return i;
+}
+
+/**
+ * Repairs the non-atomic boundary between DNR storage and extension storage.
+ *
+ * The service worker can stop after a DNR update succeeds but before the
+ * corresponding profile-to-rule mapping is persisted (or vice versa). DNR
+ * rules survive that restart, so reconcile both sides when the worker starts.
+ */
+export async function reconcileRuleRegistrationState(registerableProfileIds: Iterable<string>) {
+  const [rules, registrationRecord] = await Promise.all([
+    browser.declarativeNetRequest.getDynamicRules(),
+    profileId2RelatedRuleIdRecordItem.getValue(),
+  ]);
+  const existingRuleIds = new Set(rules.map(rule => rule.id));
+  const registerableProfileIdSet = new Set(registerableProfileIds);
+  const validRegistrationRecord = Object.fromEntries(
+    Object.entries(registrationRecord).filter(([profileId, ruleId]) =>
+      registerableProfileIdSet.has(profileId) && existingRuleIds.has(ruleId),
+    ),
+  );
+  const registeredRuleIds = new Set(Object.values(validRegistrationRecord));
+  const unrelatedRuleIds = rules
+    .map(rule => rule.id)
+    .filter(ruleId => !registeredRuleIds.has(ruleId));
+
+  // Keep stale mappings until their rules are definitely gone. If DNR removal
+  // fails, the next worker start can still identify and retry those rules.
+  if (unrelatedRuleIds.length > 0) {
+    await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: unrelatedRuleIds });
+  }
+  if (!isSameRecord(registrationRecord, validRegistrationRecord)) {
+    await profileId2RelatedRuleIdRecordItem.setValue(validRegistrationRecord);
+  }
+}
+
+function isSameRecord(
+  left: Record<string, number>,
+  right: Record<string, number>,
+) {
+  const leftEntries = Object.entries(left);
+  return leftEntries.length === Object.keys(right).length
+    && leftEntries.every(([key, value]) => right[key] === value);
 }

@@ -5,7 +5,7 @@ import { match, P } from "ts-pattern";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
 import { buildAction } from "./DNR/buildAction";
-import { updateRules } from "./DNR/registerRule";
+import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 import { setupSyncCookies } from "./syncCookies";
@@ -53,11 +53,12 @@ export default defineBackground({
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
 
-    // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
-    updateBadgeWhenRestarted();
+    // DNR updates and their profile mappings cannot be persisted atomically.
+    // Reconcile them whenever the service worker restarts before updating the badge.
+    reconcileRulesAndUpdateBadge();
     // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
-    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
-    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
+    browser.runtime.onStartup.addListener(reconcileRulesAndUpdateBadge);
+    browser.runtime.onInstalled.addListener(reconcileRulesAndUpdateBadge);
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
@@ -93,6 +94,23 @@ export default defineBackground({
         created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
       } as const satisfies ProfileChanges;
       await updateRules(changes);
+    }
+
+    function reconcileRulesAndUpdateBadge() {
+      return profileManagerMutex.runExclusive(async () => {
+        if (await powerOnItem.getValue()) {
+          const manager = await profileManagerItem.getValue();
+          const registerableProfileIds = manager.profiles
+            .filter(profile => profile.enabled && hasNonBlankActionFormValues(profile))
+            .map(profile => profile.id);
+          await reconcileRuleRegistrationState(registerableProfileIds);
+        } else {
+          // Also recover if the worker stopped after power was persisted as off
+          // but before its rules and registration records were removed.
+          await unregisterAllRules();
+        }
+        await updateBadgeWhenRestarted();
+      });
     }
   },
 });

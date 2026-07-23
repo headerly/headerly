@@ -6,12 +6,11 @@ const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRe
 export async function unregisterAllRules() {
   const oldRules = await browser.declarativeNetRequest.getDynamicRules();
   const oldRuleIds = oldRules.map(r => r.id);
-  if (!oldRuleIds.length) {
-    return;
+  if (oldRuleIds.length > 0) {
+    await browser.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: oldRuleIds,
+    });
   }
-  await browser.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: oldRuleIds,
-  });
 
   await Promise.all([
     profileId2ErrorMessageRecordItem.setValue({}),
