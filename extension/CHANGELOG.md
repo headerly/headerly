@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/headerly/headerly/compare/v1.16.0...v1.16.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* raise minimum Chrome version to 145 ([662f1de](https://github.com/headerly/headerly/commit/662f1dea6903f3cf14e6ed17229361e77bfb8af3))
+
 ## [1.16.0](https://github.com/headerly/headerly/compare/v1.15.0...v1.16.0) (2026-07-19)
 
 
