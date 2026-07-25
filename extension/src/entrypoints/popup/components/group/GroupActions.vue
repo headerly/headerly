@@ -49,14 +49,14 @@ function transferGroupType() {
       <Tooltip>
         <TooltipTrigger as-child>
           <Button as-child size="icon-xs" variant="secondary">
-            <a
-              :href="documentationLink"
+            <RouterLink
+              :to="documentationLink"
               target="_blank"
               rel="noreferrer"
               :aria-label="t('group.actions.openDocumentation')"
             >
               <i class="i-lucide-book-open size-4" />
-            </a>
+            </RouterLink>
           </Button>
         </TooltipTrigger>
         <TooltipContent side="top">
