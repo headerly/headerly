@@ -112,7 +112,7 @@ Registration errors and profile-to-rule ID mappings are synchronized through sto
 - **Validation:** Zod for schema validation and type inference
 - **Storage:** Chrome Storage API with VueUse reactive integration
 - **Testing:** Vitest (unit), Playwright (E2E)
-- **Build:** Vite, TypeScript 6.x
+- **Build:** Vite, TypeScript 7.x
 - **Linting:** ESLint with `@antfu/eslint-config`
 - **Utils:** TS Pattern, ES Toolkit, VueUse, Type Fest
 - **Icons:** @egoist/tailwindcss-icons with lucide, use `<i class="i-lucide-..." />` syntax
