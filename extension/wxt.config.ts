@@ -32,7 +32,7 @@ export default defineConfig({
     optional_permissions: [
       "cookies",
     ],
-    minimum_chrome_version: "140",
+    minimum_chrome_version: "145",
   },
   webExt: {
     disabled: true,
