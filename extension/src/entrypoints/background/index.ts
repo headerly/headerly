@@ -5,7 +5,7 @@ import { match, P } from "ts-pattern";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
 import { buildAction } from "./DNR/buildAction";
-import { updateRules } from "./DNR/registerRule";
+import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 import { setupSyncCookies } from "./syncCookies";
@@ -47,17 +47,18 @@ export default defineBackground({
           if (changes.deleted.length === 0 && changes.modified.length === 0 && changes.created.length === 0) {
             return;
           }
-          await updateRules(changes);
+          await updateRulesAndReconcile(changes);
         }
       });
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
 
-    // Update the badge when the service worker is restarted, such as toggle extension on/off in chrome://extensions
-    updateBadgeWhenRestarted();
+    // Clean up orphaned DNR rules that are not associated with any profile
+    // whenever the service worker restarts, then update the badge.
+    reconcileRulesAndUpdateBadge();
     // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
-    browser.runtime.onStartup.addListener(updateBadgeWhenRestarted);
-    browser.runtime.onInstalled.addListener(updateBadgeWhenRestarted);
+    browser.runtime.onStartup.addListener(reconcileRulesAndUpdateBadge);
+    browser.runtime.onInstalled.addListener(reconcileRulesAndUpdateBadge);
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
@@ -84,15 +85,47 @@ export default defineBackground({
       await browser.tabs.create({ url: importUrl });
     });
 
+    const getRegisterableProfiles = (profiles: Profile[]) => {
+      return profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p));
+    };
+
     async function treatAllProfilesAsCreated() {
       const manager = await profileManagerItem.getValue();
       // When power on, treat all profiles as created
       const changes = {
         deleted: [],
         modified: [],
-        created: manager.profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p)).map(pickProfileFields),
+        created: getRegisterableProfiles(manager.profiles).map(pickProfileFields),
       } as const satisfies ProfileChanges;
-      await updateRules(changes);
+      await updateRulesAndReconcile(changes);
+    }
+
+    async function updateRulesAndReconcile(changes: ProfileChanges) {
+      try {
+        await updateRules(changes);
+      } finally {
+        await reconcileCurrentRulesAndUpdateBadge();
+      }
+    }
+
+    async function reconcileCurrentRulesAndUpdateBadge() {
+      const manager = await profileManagerItem.getValue();
+      const registerableProfileIds = getRegisterableProfiles(manager.profiles).map(profile => profile.id);
+      await reconcileRuleRegistrationState(registerableProfileIds);
+      await updateBadgeWhenRestarted();
+    }
+
+    function reconcileRulesAndUpdateBadge() {
+      return profileManagerMutex.runExclusive(async () => {
+        if (await powerOnItem.getValue()) {
+          await reconcileCurrentRulesAndUpdateBadge();
+        } else {
+          // Also recover if the worker stopped after power was persisted as off
+          // but before its rules and registration records were removed.
+          await unregisterAllRules();
+          await updateBadgeWhenRestarted();
+        }
+      });
     }
   },
 });
