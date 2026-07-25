@@ -1,7 +1,7 @@
 import type { ProfileChanges } from "../index";
+import { isEqual } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
-import { updateBadgeCount } from "./badge";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
 
@@ -42,17 +42,16 @@ export async function updateRules(changes: ProfileChanges) {
       profileId2ErrorRecord[result.value.profileId] = String(result.value.error);
     }
   }
-  await Promise.all([
-    handleRegistrationRelatedRuleIdChange({
-      upsertRecord: profileId2RelatedRuleIdRecord,
-      deleteIds: deleteRelatedRuleIds,
-    }),
-    handleRegistrationErrorMessageChange({
-      upsertRecord: profileId2ErrorRecord,
-      deleteIds: deleteErrorMessageIds,
-    }),
-    updateBadgeCount(),
-  ]);
+  // Persist the rule mapping first so reconciliation never races an unfinished
+  // mapping write if the error-record update fails.
+  await handleRegistrationRelatedRuleIdChange({
+    upsertRecord: profileId2RelatedRuleIdRecord,
+    deleteIds: deleteRelatedRuleIds,
+  });
+  await handleRegistrationErrorMessageChange({
+    upsertRecord: profileId2ErrorRecord,
+    deleteIds: deleteErrorMessageIds,
+  });
 }
 
 interface RuleUpdateResult {
@@ -106,9 +105,8 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
       action,
     } as const satisfies Browser.declarativeNetRequest.Rule;
 
-    // For modified profiles, remove old rule first
     const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = changes.modified.includes(profile) ? record[profile.id] : undefined;
+    const deleteRuleId = record[profile.id];
 
     const result = await browser.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: match(deleteRuleId)
@@ -173,4 +171,38 @@ function findMissingPositive(numbers: number[]) {
   let i = 1;
   while (set.has(i)) i++;
   return i;
+}
+
+/**
+ * Repairs the non-atomic boundary between DNR storage and extension storage.
+ *
+ * The service worker can stop after a DNR update succeeds but before the
+ * corresponding profile-to-rule mapping is persisted (or vice versa). DNR
+ * rules survive that restart, so reconcile both sides when the worker starts.
+ */
+export async function reconcileRuleRegistrationState(registerableProfileIds: Iterable<string>) {
+  const [rules, registrationRecord] = await Promise.all([
+    browser.declarativeNetRequest.getDynamicRules(),
+    profileId2RelatedRuleIdRecordItem.getValue(),
+  ]);
+  const existingRuleIds = new Set(rules.map(rule => rule.id));
+  const registerableProfileIdSet = new Set(registerableProfileIds);
+  const validRegistrationRecord = Object.fromEntries(
+    Object.entries(registrationRecord).filter(([profileId, ruleId]) =>
+      registerableProfileIdSet.has(profileId) && existingRuleIds.has(ruleId),
+    ),
+  );
+  const registeredRuleIds = new Set(Object.values(validRegistrationRecord));
+  const unrelatedRuleIds = rules
+    .map(rule => rule.id)
+    .filter(ruleId => !registeredRuleIds.has(ruleId));
+
+  // Keep stale mappings until their rules are definitely gone. If DNR removal
+  // fails, the next worker start can still identify and retry those rules.
+  if (unrelatedRuleIds.length > 0) {
+    await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: unrelatedRuleIds });
+  }
+  if (!isEqual(registrationRecord, validRegistrationRecord)) {
+    await profileId2RelatedRuleIdRecordItem.setValue(validRegistrationRecord);
+  }
 }
