@@ -21,7 +21,7 @@ const ruleScopeMap = useRuleScope();
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-1">
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger as-child>
