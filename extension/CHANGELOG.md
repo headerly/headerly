@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/headerly/headerly/compare/v1.16.1...v1.16.2) (2026-07-25)
+
+
+### Bug Fixes
+
+* auto clean up orphaned DNR rules that are no longer associated with any registerable profile ([#67](https://github.com/headerly/headerly/issues/67)) ([e4bd7b4](https://github.com/headerly/headerly/commit/e4bd7b43a5744ef3966a6832c540e9e96aac9432))
+
 ## [1.16.1](https://github.com/headerly/headerly/compare/v1.16.0...v1.16.1) (2026-07-23)
 
 
