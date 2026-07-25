@@ -15,12 +15,14 @@ export type ActionKey
     | "comments"
     | "rulePriority"
     | "ruleActionType"
+    | "ruleScope"
     | "shareProfile";
 
 type ProfileMenuActionKey = ActionKey | "addToGroup" | "removeFromGroup";
 
 interface ProfileActionOptions {
   openChangeRuleActionType?: () => void;
+  openChangeRuleScope?: () => void;
   openComments?: () => void;
   openPriority?: () => void;
 }
@@ -68,7 +70,7 @@ export const profileActionIdGroups = [
   "separator",
   ["addToGroup", "removeFromGroup"],
   "separator",
-  ["comments", "rulePriority", "ruleActionType"],
+  ["comments", "rulePriority", "ruleActionType", "ruleScope"],
   "separator",
   ["shareProfile"],
   "separator",
@@ -93,7 +95,6 @@ function hasActionIds(group: readonly ProfileMenuActionKey[] | "separator") {
 export const profileMoreActionIdGroups = profileActionIdGroups
   .map(group => omitActionId(group, "toggle"))
   .filter(hasActionIds);
-
 export async function handleProfileRuleActionTypeChanged(profile: Profile) {
   match(profile.ruleActionType)
     .with("block", "allow", "upgradeScheme", "allowAllRequests", () => {
@@ -132,6 +133,13 @@ export async function handleProfileRuleActionTypeChanged(profile: Profile) {
       value: await getCurrentTabHostname(),
     }],
   };
+}
+
+export function handleProfileRuleScopeChanged(profile: Profile) {
+  if (profile.ruleScope === "dynamic") {
+    delete profile.filters.tabIds;
+    delete profile.filters.excludedTabIds;
+  }
 }
 
 export function useProfileActions() {
@@ -188,10 +196,14 @@ export function useProfileActions() {
     {
       type: "action",
       id: "ruleActionType",
-      label: () => {
-        return t("profile.actions.ruleActionType");
-      },
+      label: () => t("profile.actions.ruleActionType"),
       onClick: (_, opts) => opts?.openChangeRuleActionType?.(),
+    },
+    {
+      type: "action",
+      id: "ruleScope",
+      label: () => t("profile.actions.ruleScope"),
+      onClick: (_, opts) => opts?.openChangeRuleScope?.(),
     },
     {
       type: "action",

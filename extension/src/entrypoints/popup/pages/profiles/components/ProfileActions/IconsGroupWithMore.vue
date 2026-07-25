@@ -22,6 +22,7 @@ import { useCompactScreen } from "@/composables/useCompactScreen";
 import { cn } from "@/lib/utils";
 import {
   handleProfileRuleActionTypeChanged,
+  handleProfileRuleScopeChanged,
   profileActionIdGroups,
   profileMoreActionIdGroups,
   transformIdsToActions,
@@ -30,6 +31,7 @@ import {
 import ChangeTypeDialog from "./ChangeTypeDialog.vue";
 import PriorityDialog from "./PriorityDialog.vue";
 import ProfileActionsMenuItems from "./ProfileActionsMenuItems.vue";
+import RuleScopeDialog from "./RuleScopeDialog.vue";
 
 const profile = defineModel<Profile>("profile", {
   required: true,
@@ -53,9 +55,14 @@ const compactActionGroups = transformIdsToActions(profileActionIdGroups);
 const commentsDialogRef = useTemplateRef("commentsDialogRef");
 const priorityDialogRef = useTemplateRef("priorityDialogRef");
 const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
+const ruleScopeDialogRef = useTemplateRef("ruleScopeDialogRef");
 
 async function handleChangeType() {
   await handleProfileRuleActionTypeChanged(profile.value);
+}
+
+function handleChangeRuleScope() {
+  handleProfileRuleScopeChanged(profile.value);
 }
 </script>
 
@@ -77,6 +84,7 @@ async function handleChangeType() {
                 openComments: () => commentsDialogRef?.open(),
                 openPriority: () => priorityDialogRef?.open(),
                 openChangeRuleActionType: () => changeTypeDialogRef?.open(),
+                openChangeRuleScope: () => ruleScopeDialogRef?.open(),
               })"
             >
               <i
@@ -126,6 +134,7 @@ async function handleChangeType() {
           menu-type="dropdown"
           :profile
           @open-change-rule-action-type="changeTypeDialogRef?.open()"
+          @open-change-rule-scope="ruleScopeDialogRef?.open()"
           @open-comments="commentsDialogRef?.open()"
           @open-priority="priorityDialogRef?.open()"
         />
@@ -144,6 +153,11 @@ async function handleChangeType() {
       ref="changeTypeDialogRef"
       v-model:rule-action-type="profile.ruleActionType"
       @changed="handleChangeType"
+    />
+    <RuleScopeDialog
+      ref="ruleScopeDialogRef"
+      v-model="profile.ruleScope"
+      @changed="handleChangeRuleScope"
     />
   </div>
 </template>

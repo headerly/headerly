@@ -14,6 +14,10 @@ const groupItemWithValueSchema = groupItemSchema.extend({
   value: z.string(),
 });
 
+const groupItemWithNumberSchema = groupItemSchema.extend({
+  value: z.number().int().min(-1),
+});
+
 const redirectUrlGroupItemSchema = groupItemWithValueSchema;
 export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 
@@ -121,6 +125,9 @@ const requestMethodsFilterSchema = groupItemSchema.extend({
   value: z.array(requestMethodSchema),
 });
 
+const tabIdFilterSchema = groupItemWithNumberSchema;
+export type TabIdFilterItem = z.infer<typeof tabIdFilterSchema>;
+
 const domainTypeFilterSchema = z.object({
   enabled: z.boolean(),
   value: domainTypeValueSchema,
@@ -159,6 +166,8 @@ const filterSchema = z.object({
   excludedResourceTypes: z.array(resourceTypesFilterSchema).optional(),
   requestMethods: z.array(requestMethodsFilterSchema).optional(),
   excludedRequestMethods: z.array(requestMethodsFilterSchema).optional(),
+  tabIds: z.array(tabIdFilterSchema).optional(),
+  excludedTabIds: z.array(tabIdFilterSchema).optional(),
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });
@@ -213,6 +222,7 @@ const domainsFilterWithoutIdSchema = domainsFilterSchema.extend({
 
 const resourceTypesFilterWithoutIdSchema = resourceTypesFilterSchema.omit({ id: true });
 const requestMethodsFilterWithoutIdSchema = requestMethodsFilterSchema.omit({ id: true });
+const tabIdFilterWithoutIdSchema = tabIdFilterSchema.omit({ id: true });
 
 const filterWithoutIdSchema = filterSchema.extend({
   urlFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
@@ -227,6 +237,8 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedResourceTypes: z.array(resourceTypesFilterWithoutIdSchema).optional(),
   requestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
   excludedRequestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
+  tabIds: z.array(tabIdFilterWithoutIdSchema).optional(),
+  excludedTabIds: z.array(tabIdFilterWithoutIdSchema).optional(),
 });
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({

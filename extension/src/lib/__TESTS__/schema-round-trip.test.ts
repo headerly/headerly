@@ -20,8 +20,12 @@ describe("filters field comprehensive tests", () => {
     expect(result.filters.excludedResourceTypes).toHaveLength(1);
     expect(result.filters.requestMethods).toHaveLength(1);
     expect(result.filters.excludedRequestMethods).toHaveLength(1);
+    expect(result.filters.tabIds).toHaveLength(1);
+    expect(result.filters.excludedTabIds).toHaveLength(1);
     expect(result.filters.resourceTypes![0]!.value).toEqual(["script", "stylesheet"]);
     expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
+    expect(result.filters.tabIds![0]!.value).toBe(42);
+    expect(result.filters.excludedTabIds![0]!.value).toBe(-1);
     expect(result.filters.initiatorDomains!.type).toBe("checkbox");
     expect(result.filters.excludedInitiatorDomains!.type).toBe("radio");
   });
@@ -41,12 +45,16 @@ describe("filters field comprehensive tests", () => {
     expect(restored.filters.excludedResourceTypes![0]!.value).toEqual(mockProfile.filters.excludedResourceTypes![0]!.value);
     expect(restored.filters.requestMethods![0]!.value).toEqual(mockProfile.filters.requestMethods![0]!.value);
     expect(restored.filters.excludedRequestMethods![0]!.value).toEqual(mockProfile.filters.excludedRequestMethods![0]!.value);
+    expect(restored.filters.tabIds![0]!.value).toBe(mockProfile.filters.tabIds![0]!.value);
+    expect(restored.filters.excludedTabIds![0]!.value).toBe(mockProfile.filters.excludedTabIds![0]!.value);
     expect(restored.filters.domainType!.value).toBe(mockProfile.filters.domainType!.value);
     expect(restored.filters.isUrlFilterCaseSensitive!.value).toBe(mockProfile.filters.isUrlFilterCaseSensitive!.value);
     expect(restored.filters.urlFilter![0]!.id).not.toBe(mockProfile.filters.urlFilter![0]!.id);
     expect(restored.filters.regexFilter![0]!.id).not.toBe(mockProfile.filters.regexFilter![0]!.id);
     expect(restored.filters.initiatorDomains!.items[0]!.id).not.toBe(mockProfile.filters.initiatorDomains!.items[0]!.id);
     expect(restored.filters.resourceTypes![0]!.id).not.toBe(mockProfile.filters.resourceTypes![0]!.id);
+    expect(restored.filters.tabIds![0]!.id).not.toBe(mockProfile.filters.tabIds![0]!.id);
+    expect(restored.filters.excludedTabIds![0]!.id).not.toBe(mockProfile.filters.excludedTabIds![0]!.id);
   });
 
   it("should handle empty filter arrays correctly", () => {
@@ -83,6 +91,7 @@ describe("profile ID round trips", () => {
     expect(restoredProfile.emoji).toBe(mockProfile.emoji);
     expect(restoredProfile.comments).toBe(mockProfile.comments);
     expect(restoredProfile.priority).toBe(mockProfile.priority);
+    expect(restoredProfile.ruleScope).toBe(mockProfile.ruleScope);
     expect(restoredProfile.requestHeaderModGroups![0]!.type).toBe(mockProfile.requestHeaderModGroups![0]!.type);
     expect(restoredProfile.requestHeaderModGroups![0]!.items[0]!.name).toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.name);
     expect(restoredProfile.requestHeaderModGroups![0]!.items[0]!.operation).toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.operation);

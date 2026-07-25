@@ -20,6 +20,11 @@ export async function getCurrentTabHostname() {
   return (await getCurrentTabHttpUrl())?.hostname ?? "";
 }
 
+export async function getCurrentTabId() {
+  const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  return currentTab?.id;
+}
+
 export async function getCurrentTabHost() {
   return (await getCurrentTabHttpUrl())?.host ?? "";
 }

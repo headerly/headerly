@@ -1,6 +1,6 @@
 export const PROFILE_IMPORT_SCHEMA_VERSION = 1;
 
-export const PROFILE_MANAGER_STORAGE_VERSION = 2;
+export const PROFILE_MANAGER_STORAGE_VERSION = 3;
 
 export const PROFILE_GROUP_COLOR_PRESETS = [
   "#dadce0",

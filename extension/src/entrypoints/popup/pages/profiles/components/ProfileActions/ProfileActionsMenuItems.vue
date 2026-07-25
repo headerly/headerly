@@ -31,6 +31,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   openChangeRuleActionType: [];
+  openChangeRuleScope: [];
   openComments: [];
   openPriority: [];
 }>();
@@ -60,6 +61,7 @@ function handleAction(action: ProfileActionItem) {
     openComments: () => emit("openComments"),
     openPriority: () => emit("openPriority"),
     openChangeRuleActionType: () => emit("openChangeRuleActionType"),
+    openChangeRuleScope: () => emit("openChangeRuleScope"),
   });
 }
 

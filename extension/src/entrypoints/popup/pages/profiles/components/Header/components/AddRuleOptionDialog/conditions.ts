@@ -5,6 +5,7 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabHost, getCurrentTabHostname } from "@/lib/currentTab";
 import { getDefaultFilterValueByHost } from "@/lib/filter";
 import { withDisabledState } from "./shared";
+import { useCreateTabIdConditionItems } from "./tabIdConditions";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
 
 export function useCreateConditionTab(): AddRuleOptionDialogTab {
@@ -15,6 +16,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
     getUrlFilterDisabledState,
     withConditionAlreadyAddedDisabledState,
   } = useConditionDisabledStates();
+  const tabIdConditionItems = useCreateTabIdConditionItems();
 
   return {
     label: t("addRuleOptionDialog.tabs.conditions"),
@@ -246,6 +248,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedResourceTypes,
       )),
+      ...tabIdConditionItems,
       withConditionAlreadyAddedDisabledState({
         key: "url-regex-filter-case-sensitive",
         title: t("addRuleOptionDialog.items.urlRegexFilterCaseSensitive.title"),

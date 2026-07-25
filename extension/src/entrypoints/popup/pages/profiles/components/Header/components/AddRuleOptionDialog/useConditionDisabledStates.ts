@@ -62,6 +62,7 @@ export function useConditionDisabledStates() {
   }
 
   return {
+    getConditionAlreadyAddedDisabledState,
     getRegexFilterDisabledState,
     getUrlFilterDisabledState,
     withConditionAlreadyAddedDisabledState,

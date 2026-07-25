@@ -1,6 +1,8 @@
 import type { ProfileChanges } from "../index";
+import type { RuleType } from "@/lib/schema";
+import type { RuleRegistration } from "@/lib/storage";
 import { isEqual } from "es-toolkit";
-import { match, P } from "ts-pattern";
+import { match } from "ts-pattern";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
@@ -20,26 +22,21 @@ export async function updateRules(changes: ProfileChanges) {
     upsertRules({ created: changes.created, modified: changes.modified }),
   ]);
 
-  const allResults = [...deleteResults, ...updateResults];
-
   const profileId2ErrorRecord: Record<string, string> = {};
   const deleteErrorMessageIds: string[] = [];
-  const profileId2RelatedRuleIdRecord: Record<string, number> = {};
+  const profileId2RelatedRuleIdRecord: Record<string, RuleRegistration> = {};
   const deleteRelatedRuleIds: string[] = [];
-  for (const result of allResults) {
-    if (result.status !== "fulfilled") {
-      continue;
+  for (const result of [...deleteResults, ...updateResults]) {
+    if (result.deleteRegistration) {
+      deleteRelatedRuleIds.push(result.profileId);
     }
-    if (result.value.deleteRuleId) {
-      deleteRelatedRuleIds.push(result.value.profileId);
+    if (result.newRegistration) {
+      profileId2RelatedRuleIdRecord[result.profileId] = result.newRegistration;
     }
-    if (result.value.newRuleId) {
-      profileId2RelatedRuleIdRecord[result.value.profileId] = result.value.newRuleId;
-    }
-    if (result.value.success) {
-      deleteErrorMessageIds.push(result.value.profileId);
+    if (result.success) {
+      deleteErrorMessageIds.push(result.profileId);
     } else {
-      profileId2ErrorRecord[result.value.profileId] = String(result.value.error);
+      profileId2ErrorRecord[result.profileId] = String(result.error);
     }
   }
   // Persist the rule mapping first so reconciliation never races an unfinished
@@ -58,95 +55,116 @@ interface RuleUpdateResult {
   success: boolean;
   profileId: string;
   error?: unknown;
-  deleteRuleId?: number;
-  newRuleId?: number;
-};
+  deleteRegistration?: boolean;
+  newRegistration?: RuleRegistration;
+}
 
 async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
-  const results: Array<PromiseSettledResult<RuleUpdateResult>> = [];
+  const results: RuleUpdateResult[] = [];
+  const registrationRecord = await profileId2RelatedRuleIdRecordItem.getValue();
 
-  // Handle deleted profiles - only remove rules
   for (const deletedProfile of changes.deleted) {
-    const profileId2RelatedRuleIdRecord = await profileId2RelatedRuleIdRecordItem.getValue();
-    const ruleId = profileId2RelatedRuleIdRecord[deletedProfile.id];
-    await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: match(ruleId)
-        .with(P.number, id => [id])
-        .otherwise(() => undefined),
-    });
-    results.push({
-      status: "fulfilled",
-      value: {
+    const registration = registrationRecord[deletedProfile.id];
+    if (!registration) {
+      results.push({
         success: true,
         profileId: deletedProfile.id,
-        deleteRuleId: ruleId,
-      },
-    });
+        deleteRegistration: true,
+      });
+      continue;
+    }
+
+    const result = await updateScopedRules(registration.ruleScope, {
+      removeRuleIds: [registration.ruleId],
+    }).then(() => ({
+      success: true,
+      profileId: deletedProfile.id,
+      deleteRegistration: true,
+    } as const)).catch(error => ({
+      success: false,
+      profileId: deletedProfile.id,
+      error,
+    } as const));
+    results.push(result);
   }
 
   return results;
 }
 
 async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">) {
-  const results: Array<PromiseSettledResult<RuleUpdateResult>> = [];
-
-  // Handle created and modified profiles - add new rules (modified also removes old ones)
+  const results: RuleUpdateResult[] = [];
   const profilesToRegister = [...changes.created, ...changes.modified];
   const { item: nativeResourceTypeBehaviorItem } = useNativeResourceTypeBehaviorStorage();
   const nativeResourceTypeBehavior = await nativeResourceTypeBehaviorItem.getValue();
-  for (const profile of profilesToRegister) {
-    const condition = buildCondition(profile, { nativeResourceTypeBehavior });
-    const action = buildAction(profile);
+  const registrationRecord = await profileId2RelatedRuleIdRecordItem.getValue();
 
+  for (const profile of profilesToRegister) {
+    const ruleScope = profile.ruleScope ?? "dynamic";
+    // Treat creation as an upsert too. A full re-registration and a queued
+    // profile-created event can otherwise register the same profile twice.
+    const previousRegistration = registrationRecord[profile.id];
     const rule = {
-      id: await getNewRuleId(),
+      id: await getNewRuleId(ruleScope),
       priority: profile.priority ?? 1,
-      condition,
-      action,
+      condition: buildCondition(profile, { nativeResourceTypeBehavior }),
+      action: buildAction(profile),
     } as const satisfies Browser.declarativeNetRequest.Rule;
 
-    const record = await profileId2RelatedRuleIdRecordItem.getValue();
-    const deleteRuleId = record[profile.id];
+    let previousRuleRemoved = false;
+    try {
+      if (previousRegistration && previousRegistration.ruleScope !== ruleScope) {
+        await updateScopedRules(previousRegistration.ruleScope, {
+          removeRuleIds: [previousRegistration.ruleId],
+        });
+        previousRuleRemoved = true;
+      }
 
-    const result = await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: match(deleteRuleId)
-        .with(P.number, id => [id])
-        .otherwise(() => undefined),
-      addRules: [rule],
-    }).then(() => {
-      return {
+      await updateScopedRules(ruleScope, {
+        removeRuleIds: match(previousRegistration)
+          .with({ ruleScope }, registration => [registration.ruleId])
+          .otherwise(() => undefined),
+        addRules: [rule],
+      });
+      results.push({
         success: true,
         profileId: profile.id,
-        newRuleId: rule.id,
-      } as const;
-    }).catch(async (error) => {
-      // If updating the old rule failed, try to remove it again to avoid dangling rules.
-      if (deleteRuleId) {
-        await browser.declarativeNetRequest.updateDynamicRules({
-          removeRuleIds: [deleteRuleId],
-        });
+        newRegistration: {
+          ruleId: rule.id,
+          ruleScope,
+        },
+      });
+    } catch (error) {
+      if (previousRegistration?.ruleScope === ruleScope) {
+        try {
+          await updateScopedRules(ruleScope, {
+            removeRuleIds: [previousRegistration.ruleId],
+          });
+          previousRuleRemoved = true;
+        } catch {}
       }
-      return {
+      results.push({
         success: false,
         profileId: profile.id,
-        deleteRuleId,
+        deleteRegistration: previousRuleRemoved,
         error,
-      } as const;
-    });
-
-    results.push({ status: "fulfilled", value: result });
+      });
+    }
   }
 
   return results;
 }
 
-async function handleRegistrationRelatedRuleIdChange(options: { upsertRecord?: Record<string, number>; deleteIds?: string[] }) {
+async function handleRegistrationRelatedRuleIdChange(options: {
+  upsertRecord?: Record<string, RuleRegistration>;
+  deleteIds?: string[];
+}) {
   const { upsertRecord = {}, deleteIds = [] } = options;
   const currentRecord = await profileId2RelatedRuleIdRecordItem.getValue();
-  const newRecord = { ...currentRecord, ...upsertRecord };
+  const newRecord = { ...currentRecord };
   for (const id of deleteIds) {
     delete newRecord[id];
   }
+  Object.assign(newRecord, upsertRecord);
   await profileId2RelatedRuleIdRecordItem.setValue(newRecord);
 }
 
@@ -160,10 +178,9 @@ async function handleRegistrationErrorMessageChange(options: { upsertRecord?: Re
   await profileId2ErrorMessageRecordItem.setValue(newRecord);
 }
 
-async function getNewRuleId() {
-  const existingRules = await browser.declarativeNetRequest.getDynamicRules();
-  const existingIds = existingRules.map(r => r.id);
-  return findMissingPositive(existingIds);
+async function getNewRuleId(ruleScope: RuleType) {
+  const existingRules = await getScopedRules(ruleScope);
+  return findMissingPositive(existingRules.map(rule => rule.id));
 }
 
 function findMissingPositive(numbers: number[]) {
@@ -173,35 +190,77 @@ function findMissingPositive(numbers: number[]) {
   return i;
 }
 
+function getScopedRules(ruleScope: RuleType) {
+  return match(ruleScope)
+    .with("dynamic", () => browser.declarativeNetRequest.getDynamicRules())
+    .with("session", () => browser.declarativeNetRequest.getSessionRules())
+    .exhaustive();
+}
+
+function updateScopedRules(
+  ruleScope: RuleType,
+  options: Browser.declarativeNetRequest.UpdateRuleOptions,
+) {
+  return match(ruleScope)
+    .with("dynamic", () => browser.declarativeNetRequest.updateDynamicRules(options))
+    .with("session", () => browser.declarativeNetRequest.updateSessionRules(options))
+    .exhaustive();
+}
+
 /**
  * Repairs the non-atomic boundary between DNR storage and extension storage.
  *
  * The service worker can stop after a DNR update succeeds but before the
  * corresponding profile-to-rule mapping is persisted (or vice versa). DNR
- * rules survive that restart, so reconcile both sides when the worker starts.
+ * rules survive that restart, so reconcile both sides after every update and
+ * whenever the worker starts.
  */
 export async function reconcileRuleRegistrationState(registerableProfileIds: Iterable<string>) {
-  const [rules, registrationRecord] = await Promise.all([
+  const [dynamicRules, sessionRules, registrationRecord] = await Promise.all([
     browser.declarativeNetRequest.getDynamicRules(),
+    browser.declarativeNetRequest.getSessionRules(),
     profileId2RelatedRuleIdRecordItem.getValue(),
   ]);
-  const existingRuleIds = new Set(rules.map(rule => rule.id));
+  const existingRuleIds = {
+    dynamic: new Set(dynamicRules.map(rule => rule.id)),
+    session: new Set(sessionRules.map(rule => rule.id)),
+  } satisfies Record<RuleType, Set<number>>;
   const registerableProfileIdSet = new Set(registerableProfileIds);
   const validRegistrationRecord = Object.fromEntries(
-    Object.entries(registrationRecord).filter(([profileId, ruleId]) =>
-      registerableProfileIdSet.has(profileId) && existingRuleIds.has(ruleId),
+    Object.entries(registrationRecord).filter(([profileId, registration]) =>
+      registerableProfileIdSet.has(profileId)
+      && existingRuleIds[registration.ruleScope].has(registration.ruleId),
     ),
   );
-  const registeredRuleIds = new Set(Object.values(validRegistrationRecord));
-  const unrelatedRuleIds = rules
+  const registeredRuleIds = {
+    dynamic: new Set<number>(),
+    session: new Set<number>(),
+  } satisfies Record<RuleType, Set<number>>;
+  for (const registration of Object.values(validRegistrationRecord)) {
+    registeredRuleIds[registration.ruleScope].add(registration.ruleId);
+  }
+  const unrelatedDynamicRuleIds = dynamicRules
     .map(rule => rule.id)
-    .filter(ruleId => !registeredRuleIds.has(ruleId));
+    .filter(ruleId => !registeredRuleIds.dynamic.has(ruleId));
+  const unrelatedSessionRuleIds = sessionRules
+    .map(rule => rule.id)
+    .filter(ruleId => !registeredRuleIds.session.has(ruleId));
 
   // Keep stale mappings until their rules are definitely gone. If DNR removal
-  // fails, the next worker start can still identify and retry those rules.
-  if (unrelatedRuleIds.length > 0) {
-    await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: unrelatedRuleIds });
+  // fails, the next reconciliation can still identify and retry those rules.
+  const operations: Promise<unknown>[] = [];
+  if (unrelatedDynamicRuleIds.length > 0) {
+    operations.push(updateScopedRules("dynamic", {
+      removeRuleIds: unrelatedDynamicRuleIds,
+    }));
   }
+  if (unrelatedSessionRuleIds.length > 0) {
+    operations.push(updateScopedRules("session", {
+      removeRuleIds: unrelatedSessionRuleIds,
+    }));
+  }
+  await Promise.all(operations);
+
   if (!isEqual(registrationRecord, validRegistrationRecord)) {
     await profileId2RelatedRuleIdRecordItem.setValue(validRegistrationRecord);
   }

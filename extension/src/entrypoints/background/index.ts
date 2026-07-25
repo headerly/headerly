@@ -2,9 +2,9 @@ import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
+import { hasRegisterableAction } from "@/lib/profileRule";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
 import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
-import { buildAction } from "./DNR/buildAction";
 import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
@@ -72,6 +72,22 @@ export default defineBackground({
         }
       });
     });
+    onMessage("reinitializeProfileRule", ({ data: profileId }) => {
+      return profileManagerMutex.runExclusive(async () => {
+        const powerOn = await powerOnItem.getValue();
+        const profile = (await profileManagerItem.getValue()).profiles.find(
+          candidate => candidate.id === profileId,
+        );
+        if (!powerOn || !profile?.enabled || !hasRegisterableAction(profile)) {
+          return;
+        }
+        await updateRulesAndReconcile({
+          deleted: [],
+          created: [],
+          modified: [pickProfileFields(profile)],
+        });
+      });
+    });
     onMessage("openSharedProfilesImport", async ({ data: query, sender }) => {
       const importUrl = browser.runtime.getURL(`/popup.html#/import${query}`);
       if (sender.tab?.id !== undefined) {
@@ -86,7 +102,7 @@ export default defineBackground({
     });
 
     const getRegisterableProfiles = (profiles: Profile[]) => {
-      return profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p));
+      return profiles.filter(p => p.enabled && hasRegisterableAction(p));
     };
 
     async function treatAllProfilesAsCreated() {
@@ -139,6 +155,7 @@ const NEED_WATCH_KEYS = [
   "redirectUrlGroup",
   "priority",
   "ruleActionType",
+  "ruleScope",
 ] as const satisfies (keyof Profile)[];
 const CORE_KEYS = [...NEED_WATCH_KEYS, "id"] as const satisfies (keyof Profile)[];
 export type ProfileCoreData = Pick<Profile, typeof CORE_KEYS[number]>;
@@ -151,19 +168,6 @@ export interface ProfileChanges {
 
 function pickProfileFields(profile: Profile) {
   return pick(profile, CORE_KEYS);
-}
-
-function hasNonBlankActionFormValues(profile: ProfileCoreData): boolean {
-  // `buildAction` converts header arrays with `headers.length === 0` to `undefined`.
-  const action = buildAction(profile);
-  return match(action)
-    .with({ type: "modifyHeaders" }, ({ requestHeaders, responseHeaders }) => {
-      return requestHeaders !== undefined || responseHeaders !== undefined;
-    })
-    .with({ type: "redirect" }, ({ redirect }) => {
-      return redirect.url !== undefined;
-    })
-    .otherwise(() => true);
 }
 
 function diffProfiles(
@@ -182,7 +186,7 @@ function diffProfiles(
     const oldPickedProfile = oldPickedProfileMap.get(oldProfile.id)!;
     if (!newPickedProfileMap.has(oldPickedProfile.id)
       && oldPickedProfile.enabled
-      && hasNonBlankActionFormValues(oldPickedProfile)) {
+      && hasRegisterableAction(oldPickedProfile)) {
       deleted.push(oldPickedProfile);
     }
   }
@@ -191,8 +195,8 @@ function diffProfiles(
   for (const newProfile of newProfiles) {
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
-    const wasActive = Boolean(oldPickedProfile?.enabled && hasNonBlankActionFormValues(oldPickedProfile));
-    const isActive = newPickedProfile.enabled && hasNonBlankActionFormValues(newPickedProfile);
+    const wasActive = Boolean(oldPickedProfile?.enabled && hasRegisterableAction(oldPickedProfile));
+    const isActive = newPickedProfile.enabled && hasRegisterableAction(newPickedProfile);
     const isModified = Boolean(oldPickedProfile
       && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS)));
 

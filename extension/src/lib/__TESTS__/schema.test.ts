@@ -65,6 +65,8 @@ describe("stripProfileIds", () => {
     expect(result.filters.excludedResourceTypes?.[0]).not.toHaveProperty("id");
     expect(result.filters.requestMethods?.[0]).not.toHaveProperty("id");
     expect(result.filters.excludedRequestMethods?.[0]).not.toHaveProperty("id");
+    expect(result.filters.tabIds?.[0]).not.toHaveProperty("id");
+    expect(result.filters.excludedTabIds?.[0]).not.toHaveProperty("id");
     expect(result.filters.domainType).toBeDefined();
     expect(result.filters.isUrlFilterCaseSensitive).toBeDefined();
   });
@@ -93,6 +95,8 @@ describe("stripProfileIds", () => {
     expect(result.filters.excludedResourceTypes![0]!.value).toEqual(["image", "font"]);
     expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
     expect(result.filters.excludedRequestMethods![0]!.value).toEqual(["delete", "patch"]);
+    expect(result.filters.tabIds![0]!.value).toBe(42);
+    expect(result.filters.excludedTabIds![0]!.value).toBe(-1);
     expect(result.filters.domainType!.value).toBe("firstParty");
     expect(result.filters.isUrlFilterCaseSensitive!.value).toBe(true);
   });
@@ -163,6 +167,8 @@ describe("addProfileIds", () => {
     expect(result.filters.excludedResourceTypes![0]).toHaveProperty("id");
     expect(result.filters.requestMethods![0]).toHaveProperty("id");
     expect(result.filters.excludedRequestMethods![0]).toHaveProperty("id");
+    expect(result.filters.tabIds![0]).toHaveProperty("id");
+    expect(result.filters.excludedTabIds![0]).toHaveProperty("id");
     expect(result.requestHeaderModGroups![0]!.id).toMatch(uuidRegex);
     expect(result.requestHeaderModGroups![0]!.items[0]!.id).toMatch(uuidRegex);
     expect(result.filters.urlFilter![0]!.id).toMatch(uuidRegex);
@@ -170,6 +176,8 @@ describe("addProfileIds", () => {
     expect(result.filters.initiatorDomains!.items[0]!.id).toMatch(uuidRegex);
     expect(result.filters.resourceTypes![0]!.id).toMatch(uuidRegex);
     expect(result.filters.requestMethods![0]!.id).toMatch(uuidRegex);
+    expect(result.filters.tabIds![0]!.id).toMatch(uuidRegex);
+    expect(result.filters.excludedTabIds![0]!.id).toMatch(uuidRegex);
     expect(result.redirectUrlGroup![0]!.id).toMatch(uuidRegex);
   });
 
@@ -180,5 +188,7 @@ describe("addProfileIds", () => {
     expect(result.requestHeaderModGroups![0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.id);
     expect(result.requestHeaderModGroups![0]!.items[0]!.id).not.toBe(mockProfile.requestHeaderModGroups![0]!.items[0]!.id);
     expect(result.redirectUrlGroup![0]!.id).not.toBe(mockProfile.redirectUrlGroup![0]!.id);
+    expect(result.filters.tabIds![0]!.id).not.toBe(mockProfile.filters.tabIds![0]!.id);
+    expect(result.filters.excludedTabIds![0]!.id).not.toBe(mockProfile.filters.excludedTabIds![0]!.id);
   });
 });
