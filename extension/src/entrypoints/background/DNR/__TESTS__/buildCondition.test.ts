@@ -1,4 +1,4 @@
-import type { ProfileCoreData } from "../..";
+import type { ProfileCoreData } from "../../diffProfiles";
 import { describe, expect, it } from "vitest";
 import { buildCondition } from "../buildCondition";
 

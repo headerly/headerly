@@ -189,7 +189,7 @@ function removeTagByValue(value: string) {
                     v-for="item in visibleItems.hidden"
                     :key="item.value"
                     :item
-                    variant="compact"
+                    class="max-w-64"
                     @hover="emit('optionHover', item.value)"
                     @remove="removeTagByValue"
                   />

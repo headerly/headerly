@@ -1,4 +1,4 @@
-import type { ProfileCoreData } from "..";
+import type { ProfileCoreData } from "../diffProfiles";
 import { match } from "ts-pattern";
 
 /**

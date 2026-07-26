@@ -1,4 +1,4 @@
-import type { ProfileChanges } from "../index";
+import type { ProfileChanges } from "../diffProfiles";
 import type { RuleScope } from "../profileRule";
 import type { RuleRegistration } from "@/lib/storage";
 import { isEqual } from "es-toolkit";

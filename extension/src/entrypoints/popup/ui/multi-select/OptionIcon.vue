@@ -33,7 +33,7 @@ function handleError() {
 </script>
 
 <template>
-  <span :class="cn('relative block shrink-0 overflow-hidden rounded-sm', props.class)">
+  <span :class="cn('relative block shrink-0 overflow-hidden', props.class)">
     <i
       v-if="fallbackIcon && (!icon || imageFailed)"
       aria-hidden="true"

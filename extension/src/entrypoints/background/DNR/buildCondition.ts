@@ -1,4 +1,4 @@
-import type { ProfileCoreData } from "..";
+import type { ProfileCoreData } from "../diffProfiles";
 import type { ResourceType } from "@/lib/schema";
 import { uniq } from "es-toolkit";
 import { match } from "ts-pattern";

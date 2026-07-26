@@ -26,7 +26,7 @@ interface TagItem {
 interface SelectableTagProps {
   item: TagItem;
   index?: number;
-  variant?: "default" | "compact" | "more";
+  variant?: "default" | "more";
   class?: HTMLAttributes["class"];
 }
 
@@ -89,7 +89,7 @@ function handleRemove() {
           </TagsInputItemDelete>
         </TagsInputItem>
       </TooltipTrigger>
-      <TooltipContent side="top" :class="item.tooltipClass">
+      <TooltipContent side="top" :collision-padding="8" :class="item.tooltipClass">
         {{ item.tooltip || item.label }}
       </TooltipContent>
     </Tooltip>
@@ -107,42 +107,4 @@ function handleRemove() {
   >
     <TagsInputItemText />
   </TagsInputItem>
-
-  <TooltipProvider
-    v-else-if="variant === 'compact'"
-  >
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <div
-          class="
-            group inline-flex h-6 cursor-default items-center gap-1 rounded-md
-            border bg-secondary px-2 text-xs font-medium
-            text-secondary-foreground
-          "
-          @pointerenter="emit('hover', item.value)"
-        >
-          <OptionIcon
-            v-if="item.icon || item.fallbackIcon"
-            :icon="item.icon"
-            :fallback-icon="item.fallbackIcon"
-            class="size-3"
-          />
-          <span>{{ item.label }}</span>
-          <button
-            class="
-              ml-1 flex size-4 items-center justify-center
-              text-muted-foreground/80 transition-colors
-              hover:text-foreground
-            "
-            @click="handleRemove"
-          >
-            <i class="i-lucide-x size-3" />
-          </button>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent side="top" :class="item.tooltipClass">
-        {{ item.tooltip || item.label }}
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
 </template>

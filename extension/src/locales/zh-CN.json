@@ -38,7 +38,7 @@
         "title": "排除资源类型"
       },
       "excludedTabIds": {
-        "description": "规则不会匹配来自所选标签页的请求。包含标签页绑定的规则会注册为会话规则。",
+        "description": "规则不会匹配来自所选标签页的请求。标签页绑定在浏览器重启后失效。",
         "title": "排除标签页"
       },
       "initiatorDomains": {
@@ -78,7 +78,7 @@
         "title": "简单重定向 URL"
       },
       "tabIds": {
-        "description": "规则仅匹配来自所选标签页的请求。包含标签页绑定的规则会注册为会话规则。",
+        "description": "规则仅匹配来自所选标签页的请求。标签页绑定在浏览器重启后失效。",
         "title": "标签页"
       },
       "urlFilter": {
@@ -223,11 +223,11 @@
     },
     "selectPlaceholder": "选择{name}...",
     "tabIds": {
-      "description": "规则仅匹配来自所选标签页的请求。浏览器会话结束后，标签页 ID 将失效。",
+      "description": "规则仅匹配来自所选标签页的请求。浏览器重启后，所选标签页将失效。",
       "quickSelect": "快速替换所选标签页",
       "selectPlaceholder": "选择标签页...",
       "title": "标签页",
-      "unavailableTab": "标签页在当前浏览器会话中不可用",
+      "unavailableTab": "标签页不可用，可能已被关闭或浏览器已重启",
       "untitledTab": "未命名标签页",
       "useCurrentGroup": "使用当前分组",
       "useCurrentTab": "使用当前标签页",

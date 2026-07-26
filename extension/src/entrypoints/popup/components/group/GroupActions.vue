@@ -75,17 +75,20 @@ function transferGroupType() {
           :collision-padding="20"
           side="top"
           class="
-            prose-sm max-w-90 prose-invert
+            prose-sm prose-invert
             dark:prose
           "
         >
           <template v-if="typeof description === 'string'">
-            {{ description }}
+            <p class="max-w-100">
+              {{ description }}
+            </p>
           </template>
           <div v-else-if="Array.isArray(description)">
             <p
               v-for="paragraph in description"
               :key="paragraph"
+              class="max-w-100"
             >
               {{ paragraph }}
             </p>
