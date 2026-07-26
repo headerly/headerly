@@ -2,7 +2,7 @@ import type { Mutex } from "async-mutex";
 import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
 
-const TAB_ID_CLEANUP_DELAY_MS = 100;
+const TAB_ID_CLEANUP_DELAY_MS = 500;
 const TAB_ID_FILTER_KEYS = ["tabIds", "excludedTabIds"] as const;
 
 /** Removes closed tab IDs from persisted profile filters. */
@@ -40,7 +40,7 @@ export function setupTabIdCleanup(options: {
   }
 }
 
-export function removeClosedTabIds(
+function removeClosedTabIds(
   manager: ProfileManager,
   removedTabIds: ReadonlySet<number>,
 ) {
