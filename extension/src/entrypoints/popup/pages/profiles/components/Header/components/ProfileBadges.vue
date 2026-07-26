@@ -69,7 +69,6 @@ const ruleActionTypeMap = useRuleActionType();
           <Badge
             as="button"
             type="button"
-            variant="secondary"
             class="
               cursor-pointer
               hover:bg-secondary/90
