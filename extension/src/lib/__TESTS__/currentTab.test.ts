@@ -9,7 +9,6 @@ describe("isControllableTab", () => {
   it.each([
     "https://example.com/path",
     "http://localhost:3000/",
-    "file:///tmp/example.html",
   ])("accepts a controllable URL: %s", (url) => {
     expect(isControllableTab(createTab(42, url))).toBe(true);
   });
@@ -20,6 +19,7 @@ describe("isControllableTab", () => {
     "chrome-extension://extension-id/popup.html",
     "about:blank",
     "data:text/plain,example",
+    "file:///tmp/example.html",
   ])("rejects an internal or unsupported URL: %s", (url) => {
     expect(isControllableTab(createTab(42, url))).toBe(false);
   });

@@ -1,6 +1,4 @@
-import { match } from "ts-pattern";
-
-const CONTROLLABLE_TAB_PROTOCOLS = new Set(["http:", "https:", "file:"]);
+const CONTROLLABLE_TAB_PROTOCOLS = ["http:", "https:"];
 
 export function isControllableTab(
   tab: Browser.tabs.Tab,
@@ -10,7 +8,7 @@ export function isControllableTab(
   }
 
   try {
-    return CONTROLLABLE_TAB_PROTOCOLS.has(new URL(tab.url).protocol);
+    return CONTROLLABLE_TAB_PROTOCOLS.includes(new URL(tab.url).protocol);
   } catch {
     return false;
   }
@@ -29,9 +27,7 @@ async function getCurrentTabHttpUrl() {
 
   try {
     const url = new URL(currentTab.url);
-    return match(url.protocol)
-      .with("http:", "https:", () => url)
-      .otherwise(() => undefined);
+    return CONTROLLABLE_TAB_PROTOCOLS.includes(url.protocol) ? url : undefined;
   } catch {
     return undefined;
   }
