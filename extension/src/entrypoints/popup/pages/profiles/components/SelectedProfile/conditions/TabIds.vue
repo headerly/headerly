@@ -63,7 +63,6 @@ async function newField() {
       <GroupActions
         v-model:list="list"
         :description="field[filterType].description"
-        documentation-link="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#type-RuleCondition"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
