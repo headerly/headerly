@@ -125,8 +125,18 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
           profileGroups: [],
         };
       },
+      3: (oldValue: ProfileManager) => {
+        return {
+          ...oldValue,
+          profiles: oldValue.profiles.map((profile) => {
+            const migratedProfile = { ...profile } as typeof profile & { ruleScope?: unknown };
+            delete migratedProfile.ruleScope;
+            return migratedProfile;
+          }),
+        };
+      },
     },
-    version: 2,
+    version: 3,
     ...options,
   });
 }
