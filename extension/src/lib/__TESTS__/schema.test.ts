@@ -109,6 +109,15 @@ describe("profile import/export", () => {
     expect(() => profileExchangeZodSchema.parse(result)).not.toThrow();
   });
 
+  it("should omit tab ID filters from exported profiles", () => {
+    const result = createProfileExchange([mockProfile]);
+
+    expect(result.profiles[0]!.filters).not.toHaveProperty("tabIds");
+    expect(result.profiles[0]!.filters).not.toHaveProperty("excludedTabIds");
+    expect(mockProfile.filters.tabIds).toBeDefined();
+    expect(mockProfile.filters.excludedTabIds).toBeDefined();
+  });
+
   it("should reject export payloads with mismatched version", () => {
     const exported = createProfileExchange([mockProfile]);
 

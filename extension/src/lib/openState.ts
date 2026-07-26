@@ -52,6 +52,8 @@ export function getGroupOpenStateIds(profiles: Profile[]) {
                 "excludedResourceTypes",
                 "requestMethods",
                 "excludedRequestMethods",
+                "tabIds",
+                "excludedTabIds",
                 (filterGroupType: ProfileFilterGroupType) => {
                   if (profile.filters[filterGroupType]) {
                     ids.add(getProfileFilterGroupOpenStateId(profile.id, filterGroupType));

@@ -1,0 +1,95 @@
+<script setup lang="ts">
+import type { TabIdsFilterItem } from "@/lib/schema";
+import { uuidv7 } from "uuidv7";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
+import Group from "#/components/group/Group.vue";
+import GroupActions from "#/components/group/GroupActions.vue";
+import { Button } from "#/ui/button";
+import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { getCurrentTabId } from "@/lib/currentTab";
+import { addItemToGroup } from "@/lib/group";
+import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
+import TabIdSelect from "../components/TabIdSelect.vue";
+
+const list = defineModel<TabIdsFilterItem[]>({ required: true });
+
+const { filterType } = defineProps<{
+  filterType: "tabIds" | "excludedTabIds";
+}>();
+
+const profilesStore = useProfilesStore();
+const { t } = useI18n();
+
+const field = computed(() => ({
+  tabIds: {
+    title: t("condition.tabIds.title"),
+    description: t("condition.tabIds.description"),
+  },
+  excludedTabIds: {
+    title: t("condition.excludedTabIds.title"),
+    description: t("condition.excludedTabIds.description"),
+  },
+}));
+
+function deleteGroup() {
+  delete profilesStore.selectedProfile.filters[filterType];
+}
+
+async function createTabIdsFilterItem() {
+  const currentTabId = await getCurrentTabId();
+  return {
+    id: uuidv7(),
+    enabled: true,
+    value: currentTabId === undefined ? [] : [currentTabId],
+  } satisfies TabIdsFilterItem;
+}
+
+async function newField() {
+  addItemToGroup(list.value, await createTabIdsFilterItem(), "radio");
+}
+</script>
+
+<template>
+  <Group
+    :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, filterType)"
+    v-model:list="list"
+    :name="field[filterType].title"
+    type="radio"
+    @delete-empty-group="deleteGroup"
+  >
+    <template #group-actions>
+      <GroupActions
+        v-model:list="list"
+        :description="field[filterType].description"
+        documentation-link="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#type-RuleCondition"
+        @delete-group="deleteGroup"
+        @new-field="newField"
+      />
+    </template>
+    <template #item="{ index }">
+      <div class="flex min-w-0 flex-1 items-center gap-1">
+        <TabIdSelect
+          v-if="list[index]"
+          v-model="list[index].value"
+        />
+        <div class="flex gap-0.5">
+          <Button
+            size="icon-xs"
+            variant="secondary"
+            @click="list.splice(index, 1)"
+          >
+            <span class="sr-only">{{ t("common.deleteCondition") }}</span>
+            <i class="i-lucide-x size-4" />
+          </Button>
+          <ActionsDropdown
+            v-model:list="list"
+            v-model:field="list[index]!"
+            :index
+          />
+        </div>
+      </div>
+    </template>
+  </Group>
+</template>

@@ -1,10 +1,10 @@
 import type { ProfileChanges } from "../index";
-import type { RuleScope } from "@/lib/profileRule";
+import type { RuleScope } from "../profileRule";
 import type { RuleRegistration } from "@/lib/storage";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
-import { deriveRuleScope, RULE_SCOPES } from "@/lib/profileRule";
 import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
+import { deriveRuleScope, RULE_SCOPES } from "../profileRule";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
 

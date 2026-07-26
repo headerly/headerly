@@ -1,7 +1,7 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
+import type { RuleScope } from "##/background/profileRule";
 import type { SupportLocale } from "#/i18n";
-import type { RuleScope } from "./profileRule";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";

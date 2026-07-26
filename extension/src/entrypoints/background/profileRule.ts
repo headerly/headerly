@@ -1,4 +1,4 @@
-import type { Profile } from "./schema";
+import type { Profile } from "@/lib/schema";
 import { match } from "ts-pattern";
 
 export const RULE_SCOPES = ["dynamic", "session"] as const;
@@ -9,6 +9,11 @@ export function deriveRuleScope(condition: Browser.declarativeNetRequest.RuleCon
   return condition.tabIds !== undefined || condition.excludedTabIds !== undefined
     ? "session"
     : "dynamic";
+}
+
+export function hasTemporaryTabBinding(profile: Pick<Profile, "filters">) {
+  return [profile.filters.tabIds, profile.filters.excludedTabIds]
+    .some(items => items?.some(item => item.enabled && item.value.length > 0));
 }
 
 type ProfileActionData = Pick<

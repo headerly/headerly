@@ -1,7 +1,28 @@
 import { match } from "ts-pattern";
 
-async function getCurrentTabHttpUrl() {
+const CONTROLLABLE_TAB_PROTOCOLS = new Set(["http:", "https:", "file:"]);
+
+export function isControllableTab(
+  tab: Browser.tabs.Tab,
+): tab is Browser.tabs.Tab & { id: number; url: string } {
+  if (tab.id === undefined || !tab.url) {
+    return false;
+  }
+
+  try {
+    return CONTROLLABLE_TAB_PROTOCOLS.has(new URL(tab.url).protocol);
+  } catch {
+    return false;
+  }
+}
+
+export async function getCurrentTab() {
   const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true });
+  return currentTab;
+}
+
+async function getCurrentTabHttpUrl() {
+  const currentTab = await getCurrentTab();
   if (!currentTab?.url) {
     return undefined;
   }
@@ -18,6 +39,10 @@ async function getCurrentTabHttpUrl() {
 
 export async function getCurrentTabHostname() {
   return (await getCurrentTabHttpUrl())?.hostname ?? "";
+}
+
+export async function getCurrentTabId() {
+  return (await getCurrentTab())?.id;
 }
 
 export async function getCurrentTabHost() {

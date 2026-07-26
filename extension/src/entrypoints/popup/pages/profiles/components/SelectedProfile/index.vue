@@ -31,6 +31,8 @@ const hasAnyNonEmptyFilters = computed(() => {
         "excludedRequestMethods",
         "resourceTypes",
         "excludedResourceTypes",
+        "tabIds",
+        "excludedTabIds",
         (k) => {
           return filters[k]?.some(f => f.enabled && f.value.length > 0) ?? false;
         },

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
-import { reconcileRuleRegistrationState } from "../registerRule";
+import { reconcileRuleRegistrationState, updateRules } from "../registerRule";
 
 const profileId = "550e8400-e29b-41d4-a716-446655440000";
 let dynamicRules: Browser.declarativeNetRequest.Rule[] = [];
@@ -74,5 +74,38 @@ describe("reconcileRuleRegistrationState", () => {
 
     expect(registrationRecord).toEqual({});
     expect(sessionRules).toHaveLength(0);
+  });
+});
+
+describe("updateRules", () => {
+  it("registers a tab-bound profile as a session rule", async () => {
+    await updateRules({
+      deleted: [],
+      modified: [],
+      created: [{
+        id: profileId,
+        enabled: true,
+        ruleActionType: "block",
+        filters: {
+          resourceTypes: [{
+            id: "550e8400-e29b-41d4-a716-446655440002",
+            enabled: true,
+            value: ["main_frame"],
+          }],
+          tabIds: [{
+            id: "550e8400-e29b-41d4-a716-446655440001",
+            enabled: true,
+            value: [42],
+          }],
+        },
+      }],
+    });
+
+    expect(dynamicRules).toHaveLength(0);
+    expect(sessionRules).toHaveLength(1);
+    expect(sessionRules[0]!.condition.tabIds).toEqual([42]);
+    expect(await useProfileId2RelatedRuleIdRecordStorage().item.getValue()).toEqual({
+      [profileId]: { ruleId: 1, ruleScope: "session" },
+    });
   });
 });

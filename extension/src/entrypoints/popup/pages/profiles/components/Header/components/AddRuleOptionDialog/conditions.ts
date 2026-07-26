@@ -2,7 +2,7 @@ import type { AddRuleOptionDialogTab } from "./shared";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { getCurrentTabHost, getCurrentTabHostname } from "@/lib/currentTab";
+import { getCurrentTabHost, getCurrentTabHostname, getCurrentTabId } from "@/lib/currentTab";
 import { getDefaultFilterValueByHost } from "@/lib/filter";
 import { withDisabledState } from "./shared";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
@@ -40,6 +40,22 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.requestDomains?.items.length,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "tab-ids",
+        title: t("addRuleOptionDialog.items.tabIds.title"),
+        description: t("addRuleOptionDialog.items.tabIds.description"),
+        isRecommended: true,
+        action: async () => {
+          const currentTabId = await getCurrentTabId();
+          profilesStore.selectedProfile.filters.tabIds = [{
+            id: uuidv7(),
+            enabled: true,
+            value: currentTabId === undefined ? [] : [currentTabId],
+          }];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.tabIds,
       )),
       withDisabledState({
         key: "url-filter",
@@ -245,6 +261,21 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedResourceTypes,
+      )),
+      withConditionAlreadyAddedDisabledState({
+        key: "excluded-tab-ids",
+        title: t("addRuleOptionDialog.items.excludedTabIds.title"),
+        description: t("addRuleOptionDialog.items.excludedTabIds.description"),
+        action: async () => {
+          const currentTabId = await getCurrentTabId();
+          profilesStore.selectedProfile.filters.excludedTabIds = [{
+            id: uuidv7(),
+            enabled: true,
+            value: currentTabId === undefined ? [] : [currentTabId],
+          }];
+        },
+      }, () => Boolean(
+        profilesStore.selectedProfile.filters.excludedTabIds,
       )),
       withConditionAlreadyAddedDisabledState({
         key: "url-regex-filter-case-sensitive",

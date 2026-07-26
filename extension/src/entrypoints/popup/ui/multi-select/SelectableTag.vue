@@ -5,11 +5,22 @@ import {
   TagsInputItemDelete,
   TagsInputItemText,
 } from "reka-ui";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/ui/tooltip";
 import { cn } from "@/lib/utils";
+import OptionIcon from "./OptionIcon.vue";
 
 interface TagItem {
   label: string;
   value: string;
+  icon?: string;
+  fallbackIcon?: string;
+  tooltip?: string;
+  tooltipClass?: string;
 }
 
 interface SelectableTagProps {
@@ -26,6 +37,7 @@ const props = withDefaults(defineProps<SelectableTagProps>(), {
 const emit = defineEmits<{
   remove: [value: string];
   removeByIndex: [index: number];
+  hover: [value: string];
 }>();
 
 function handleRemove() {
@@ -38,34 +50,50 @@ function handleRemove() {
 </script>
 
 <template>
-  <TagsInputItem
-    v-if="variant === 'default'"
-    :value="item.label"
-    :class="cn(`
-      relative inline-flex h-7 max-w-26 shrink-0 cursor-default items-center
-      rounded-md border bg-background ps-2 pe-7 pl-2 text-xs font-medium
-      text-secondary-foreground transition-all
-      hover:bg-background
-      disabled:pointer-events-none disabled:cursor-not-allowed
-      disabled:opacity-50
-      data-fixed:pe-2
-    `, props.class)"
-  >
-    <TagsInputItemText class="truncate" />
-    <TagsInputItemDelete
-      class="
-        absolute -inset-y-px -end-px flex size-7 items-center justify-center
-        rounded-e-md border border-transparent p-0 text-muted-foreground/80
-        outline-hidden transition-[color,box-shadow] outline-none
-        hover:text-foreground
-        focus-visible:border-ring focus-visible:ring-[3px]
-        focus-visible:ring-ring/50
-      "
-      @click="handleRemove"
-    >
-      <i class="i-lucide-x size-4" aria-hidden="true" />
-    </TagsInputItemDelete>
-  </TagsInputItem>
+  <TooltipProvider v-if="variant === 'default'">
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <TagsInputItem
+          :value="item.label"
+          :class="cn(`
+            relative inline-flex h-7 max-w-26 shrink-0 cursor-default
+            items-center gap-1 rounded-md border bg-secondary ps-2 pe-7 pl-2
+            text-xs font-medium text-secondary-foreground transition-all
+            hover:bg-secondary/66
+            disabled:pointer-events-none disabled:cursor-not-allowed
+            disabled:opacity-50
+            data-fixed:pe-2
+          `, props.class)"
+          @pointerenter="emit('hover', item.value)"
+        >
+          <OptionIcon
+            v-if="item.icon || item.fallbackIcon"
+            :icon="item.icon"
+            :fallback-icon="item.fallbackIcon"
+            class="size-4"
+          />
+          <TagsInputItemText class="truncate" />
+          <TagsInputItemDelete
+            class="
+              absolute -inset-y-px -end-px flex size-7 items-center
+              justify-center rounded-e-md border border-transparent p-0
+              text-muted-foreground/80 outline-hidden
+              transition-[color,box-shadow] outline-none
+              hover:text-foreground
+              focus-visible:border-ring focus-visible:ring-[3px]
+              focus-visible:ring-ring/50
+            "
+            @click="handleRemove"
+          >
+            <i class="i-lucide-x size-4" aria-hidden="true" />
+          </TagsInputItemDelete>
+        </TagsInputItem>
+      </TooltipTrigger>
+      <TooltipContent side="top" :class="item.tooltipClass">
+        {{ item.tooltip || item.label }}
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 
   <TagsInputItem
     v-else-if="variant === 'more'"
@@ -80,23 +108,41 @@ function handleRemove() {
     <TagsInputItemText />
   </TagsInputItem>
 
-  <div
+  <TooltipProvider
     v-else-if="variant === 'compact'"
-    class="
-      group inline-flex h-6 cursor-default items-center rounded-md border
-      bg-background px-2 text-xs font-medium text-secondary-foreground
-    "
   >
-    <span>{{ item.label }}</span>
-    <button
-      class="
-        ml-1 flex size-4 items-center justify-center text-muted-foreground/80
-        transition-colors
-        hover:text-foreground
-      "
-      @click="handleRemove"
-    >
-      <i class="i-lucide-x size-3" />
-    </button>
-  </div>
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <div
+          class="
+            group inline-flex h-6 cursor-default items-center gap-1 rounded-md
+            border bg-secondary px-2 text-xs font-medium
+            text-secondary-foreground
+          "
+          @pointerenter="emit('hover', item.value)"
+        >
+          <OptionIcon
+            v-if="item.icon || item.fallbackIcon"
+            :icon="item.icon"
+            :fallback-icon="item.fallbackIcon"
+            class="size-3"
+          />
+          <span>{{ item.label }}</span>
+          <button
+            class="
+              ml-1 flex size-4 items-center justify-center
+              text-muted-foreground/80 transition-colors
+              hover:text-foreground
+            "
+            @click="handleRemove"
+          >
+            <i class="i-lucide-x size-3" />
+          </button>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="top" :class="item.tooltipClass">
+        {{ item.tooltip || item.label }}
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 </template>

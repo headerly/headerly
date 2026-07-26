@@ -3,13 +3,14 @@ import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { hasRegisterableAction } from "@/lib/profileRule";
 import { usePowerOnStorage, useProfileId2ErrorMessageRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
 import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
+import { hasRegisterableAction, hasTemporaryTabBinding } from "./profileRule";
 import { setupSyncCookies } from "./syncCookies";
+import { setupTabIdCleanup } from "./tabIdCleanup";
 
 export default defineBackground({
   type: "module",
@@ -52,14 +53,22 @@ export default defineBackground({
       });
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
+    setupTabIdCleanup({ profileManagerMutex, profileManagerItem });
 
     // Converge persisted profiles and the DNR rulesets whenever the worker starts.
     // Existing rules survive an ordinary worker restart, so only missing rules are added.
     ensureRulesAndUpdateBadge();
-    // Also converge on explicit browser and extension lifecycle events. The mutex makes
-    // overlapping startup triggers safe and the reconciliation keeps this idempotent.
+    // Tab IDs belong to a single browser session, so a browser restart must not
+    // recreate missing session rules from persisted IDs. Dynamic rules can still
+    // be repaired normally.
     browser.runtime.onStartup.addListener(ensureRulesAndUpdateBadge);
-    browser.runtime.onInstalled.addListener(ensureRulesAndUpdateBadge);
+    browser.runtime.onInstalled.addListener((details) => {
+      if (details.reason === "update") {
+        reRegisterTabBoundRulesAndUpdateBadge();
+      } else {
+        ensureRulesAndUpdateBadge();
+      }
+    });
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
@@ -125,7 +134,9 @@ export default defineBackground({
           const validRegistrationRecord = await reconcileRuleRegistrationState(registerableProfileIds);
           const errorRecord = await profileId2ErrorMessageRecordItem.getValue();
           const missingProfiles = registerableProfiles.filter(profile =>
-            !validRegistrationRecord[profile.id] && !errorRecord[profile.id],
+            !hasTemporaryTabBinding(profile)
+            && !validRegistrationRecord[profile.id]
+            && !errorRecord[profile.id],
           );
           if (missingProfiles.length > 0) {
             await updateRules({
@@ -142,6 +153,49 @@ export default defineBackground({
           await unregisterAllRules();
           await updateBadgeWhenRestarted();
         }
+      });
+    }
+
+    function reRegisterTabBoundRulesAndUpdateBadge() {
+      return profileManagerMutex.runExclusive(async () => {
+        if (!await powerOnItem.getValue()) {
+          await unregisterAllRules();
+          await updateBadgeWhenRestarted();
+          return;
+        }
+
+        const manager = await profileManagerItem.getValue();
+        const registerableProfiles = getRegisterableProfiles(manager.profiles).map(pickProfileFields);
+        const tabBoundProfiles = registerableProfiles.filter(hasTemporaryTabBinding);
+
+        // Chrome clears session rules when an extension is updated. Tab IDs are
+        // still valid inside that browser session, so rebuild every tab-bound
+        // profile even if a stale registration record remains in local storage.
+        if (tabBoundProfiles.length > 0) {
+          await updateRules({
+            deleted: [],
+            created: [],
+            modified: tabBoundProfiles,
+          });
+        }
+
+        const registerableProfileIds = registerableProfiles.map(profile => profile.id);
+        const validRegistrationRecord = await reconcileRuleRegistrationState(registerableProfileIds);
+        const errorRecord = await profileId2ErrorMessageRecordItem.getValue();
+        const missingDynamicProfiles = registerableProfiles.filter(profile =>
+          !hasTemporaryTabBinding(profile)
+          && !validRegistrationRecord[profile.id]
+          && !errorRecord[profile.id],
+        );
+        if (missingDynamicProfiles.length > 0) {
+          await updateRules({
+            deleted: [],
+            modified: [],
+            created: missingDynamicProfiles,
+          });
+          await reconcileRuleRegistrationState(registerableProfileIds);
+        }
+        await updateBadgeWhenRestarted();
       });
     }
   },

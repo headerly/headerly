@@ -188,6 +188,22 @@ export const mockProfile: Profile = {
         value: ["delete", "patch"],
       },
     ],
+    tabIds: [
+      {
+        id: "550e8400-e29b-41d4-a716-446655440026",
+        enabled: true,
+        comments: "Tabs",
+        value: [42, 43],
+      },
+    ],
+    excludedTabIds: [
+      {
+        id: "550e8400-e29b-41d4-a716-446655440027",
+        enabled: true,
+        comments: "Excluded tabs",
+        value: [44],
+      },
+    ],
     domainType: {
       enabled: true,
       value: "firstParty",

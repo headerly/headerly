@@ -22,20 +22,28 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "#/ui/popover";
+import { Skeleton } from "#/ui/skeleton";
+import OptionIcon from "./OptionIcon.vue";
 import SelectableTag from "./SelectableTag.vue";
 
 interface Option {
   label: string;
   value: string;
+  tagLabel?: string;
+  icon?: string;
+  fallbackIcon?: string;
+  tooltip?: string;
+  tooltipClass?: string;
   disabled?: boolean;
 }
 
 interface MultiSelectProps {
-  defaultOptions?: Option[];
+  defaultOptions?: readonly Option[];
   /** manually controlled options */
-  options: Option[];
+  options: readonly Option[];
   placeholder?: string;
   hideClearAllButton?: boolean;
+  loading?: boolean;
 }
 
 const query = defineModel<string>("query", {
@@ -48,6 +56,10 @@ const modelValue = defineModel<string[]>("modelValue", {
 
 const props = defineProps<MultiSelectProps>();
 
+const emit = defineEmits<{
+  optionHover: [value: string];
+}>();
+
 const { t } = useI18n();
 
 const { contains } = useFilter({ sensitivity: "base" });
@@ -57,7 +69,7 @@ const maxVisibleTags = computed(() => Math.max(1, Math.floor((width.value - 100)
 
 const filteredOptions = computed(() =>
   props.options.filter(option =>
-    contains(option.value, query.value),
+    contains(option.value, query.value) || contains(option.label, query.value),
   ),
 );
 
@@ -67,7 +79,11 @@ const selectedItems = computed(() =>
     const option = props.options.find(opt => opt.value === value);
     return {
       value,
-      label: option?.label || value,
+      label: option?.tagLabel || option?.label || value,
+      icon: option?.icon,
+      fallbackIcon: option?.fallbackIcon,
+      tooltip: option?.tooltip,
+      tooltipClass: option?.tooltipClass,
     };
   }),
 );
@@ -118,6 +134,7 @@ function removeTagByValue(value: string) {
     open-on-focus
     multiple
     class="flex flex-1"
+    :disabled="loading"
   >
     <ComboboxAnchor class="flex-1">
       <TagsInputRoot
@@ -138,13 +155,23 @@ function removeTagByValue(value: string) {
           'pe-9': !hideClearAllButton,
         }"
       >
-        <div class="flex min-w-0 items-center gap-1">
+        <Skeleton
+          v-if="loading"
+          role="status"
+          class="absolute inset-1 rounded-sm bg-background!"
+          :aria-label="t('common.loading')"
+        />
+        <div
+          class="flex min-w-0 items-center gap-1"
+          :class="{ invisible: loading }"
+        >
           <SelectableTag
             v-for="(item, index) in visibleItems.visible"
             :key="item.value"
             :item
             :index
             variant="default"
+            @hover="emit('optionHover', item.value)"
             @remove-by-index="removeTag"
           />
 
@@ -163,6 +190,7 @@ function removeTagByValue(value: string) {
                     :key="item.value"
                     :item
                     variant="compact"
+                    @hover="emit('optionHover', item.value)"
                     @remove="removeTagByValue"
                   />
                 </div>
@@ -185,7 +213,7 @@ function removeTagByValue(value: string) {
           </ComboboxInput>
         </div>
         <button
-          v-if="!hideClearAllButton && modelValue.length"
+          v-if="!loading && !hideClearAllButton && modelValue.length"
           type="button"
           class="
             absolute inset-e-0 top-0 flex size-9 items-center justify-center
@@ -223,8 +251,15 @@ function removeTagByValue(value: string) {
             'bg-accent/50': modelValue.includes(option.value),
           }"
           @click="() => addOption(option)"
+          @pointerenter="emit('optionHover', option.value)"
         >
-          {{ option.label }}
+          <OptionIcon
+            v-if="option.icon || option.fallbackIcon"
+            :icon="option.icon"
+            :fallback-icon="option.fallbackIcon"
+            class="size-4"
+          />
+          <span class="truncate">{{ option.label }}</span>
 
           <ComboboxItemIndicator v-if="modelValue.includes(option.value)">
             <i class="ml-auto i-lucide-check size-4" />
