@@ -81,11 +81,11 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
       success: true,
       profileId: deletedProfile.id,
       deleteRegistration: true,
-    } as const)).catch(error => ({
+    })).catch(error => ({
       success: false,
       profileId: deletedProfile.id,
       error,
-    } as const));
+    }));
     results.push(result);
   }
 
@@ -113,14 +113,13 @@ async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">
     } as const satisfies Browser.declarativeNetRequest.Rule;
 
     let previousRuleRemoved = false;
+    if (previousRegistration && previousRegistration.ruleScope !== ruleScope) {
+      await updateScopedRules(previousRegistration.ruleScope, {
+        removeRuleIds: [previousRegistration.ruleId],
+      });
+      previousRuleRemoved = true;
+    }
     try {
-      if (previousRegistration && previousRegistration.ruleScope !== ruleScope) {
-        await updateScopedRules(previousRegistration.ruleScope, {
-          removeRuleIds: [previousRegistration.ruleId],
-        });
-        previousRuleRemoved = true;
-      }
-
       await updateScopedRules(ruleScope, {
         removeRuleIds: match(previousRegistration)
           .with({ ruleScope }, registration => [registration.ruleId])
