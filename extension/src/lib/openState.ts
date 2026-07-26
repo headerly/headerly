@@ -69,7 +69,6 @@ export function getGroupOpenStateIds(profiles: Profile[]) {
           "emoji",
           "groupId",
           "comments",
-          "ruleScope",
           "ruleActionType",
           "priority",
           () => {},

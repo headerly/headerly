@@ -42,7 +42,6 @@ export function createProfile(overrides?: Partial<Profile>) {
     name: "New Profile 1",
     enabled: true,
     emoji: "📃",
-    ruleScope: "dynamic",
     ruleActionType,
     filters: {
       requestDomains: {

@@ -7,6 +7,7 @@ import turboConsole from "unplugin-turbo-console/vite";
 import vueDevtools from "vite-plugin-vue-devtools";
 import vueRouter from "vue-router/vite";
 import { defineConfig } from "wxt";
+import { extensionCommands } from "./src/lib/commands";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -17,11 +18,7 @@ export default defineConfig({
     description: "__MSG_extensionDescription__",
     name: "__MSG_extensionName__",
     homepage_url: "https://github.com/headerly/headerly",
-    commands: {
-      "toggle-extension": {
-        description: "__MSG_toggleExtensionCommandDescription__",
-      },
-    },
+    commands: extensionCommands,
     permissions: [
       "storage",
       "declarativeNetRequest",

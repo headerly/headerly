@@ -1,32 +1,32 @@
+import type { ExtensionCommandId } from "@/lib/commands";
 import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
-import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";
+import { hasRegisterableAction } from "@/lib/profileRule";
+import { usePowerOnStorage, useProfileId2ErrorMessageRecordStorage, useProfileManagerStorage } from "@/lib/storage";
 import { setIconAndBadgeForDisabled, updateBadgeWhenRestarted } from "./DNR/badge";
-import { buildAction } from "./DNR/buildAction";
 import { reconcileRuleRegistrationState, updateRules } from "./DNR/registerRule";
 import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 import { setupSyncCookies } from "./syncCookies";
-
-const TOGGLE_EXTENSION_COMMAND = "toggle-extension";
 
 export default defineBackground({
   type: "module",
   main() {
     const { item: powerOnItem } = usePowerOnStorage();
     const { item: profileManagerItem } = useProfileManagerStorage();
+    const { item: profileId2ErrorMessageRecordItem } = useProfileId2ErrorMessageRecordStorage();
     // Serialize all DNR rule operations to prevent concurrent access.
     const profileManagerMutex = new Mutex();
     browser.commands.onCommand.addListener((command) => {
-      if (command !== TOGGLE_EXTENSION_COMMAND) {
-        return;
-      }
-      profileManagerMutex.runExclusive(async () => {
-        const powerOn = await powerOnItem.getValue();
-        await powerOnItem.setValue(!powerOn);
-      });
+      match(command as ExtensionCommandId)
+        .with("toggle-extension", async () => {
+          profileManagerMutex.runExclusive(async () => {
+            const powerOn = await powerOnItem.getValue();
+            await powerOnItem.setValue(!powerOn);
+          });
+        });
     });
     // `storage.watch` must be registered synchronously at the top level of the service worker;
     // asynchronous registration will cause the service worker to lose events while in an inactive state.
@@ -53,12 +53,13 @@ export default defineBackground({
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
 
-    // Clean up orphaned DNR rules that are not associated with any profile
-    // whenever the service worker restarts, then update the badge.
-    reconcileRulesAndUpdateBadge();
-    // The following two scenarios will not activate the Service Worker, resulting in the loss of the badge.
-    browser.runtime.onStartup.addListener(reconcileRulesAndUpdateBadge);
-    browser.runtime.onInstalled.addListener(reconcileRulesAndUpdateBadge);
+    // Converge persisted profiles and the DNR rulesets whenever the worker starts.
+    // Existing rules survive an ordinary worker restart, so only missing rules are added.
+    ensureRulesAndUpdateBadge();
+    // Also converge on explicit browser and extension lifecycle events. The mutex makes
+    // overlapping startup triggers safe and the reconciliation keeps this idempotent.
+    browser.runtime.onStartup.addListener(ensureRulesAndUpdateBadge);
+    browser.runtime.onInstalled.addListener(ensureRulesAndUpdateBadge);
 
     // Manually Recover from a Failure
     onMessage("reinitializeAllRules", () => {
@@ -86,7 +87,7 @@ export default defineBackground({
     });
 
     const getRegisterableProfiles = (profiles: Profile[]) => {
-      return profiles.filter(p => p.enabled && hasNonBlankActionFormValues(p));
+      return profiles.filter(p => p.enabled && hasRegisterableAction(p));
     };
 
     async function treatAllProfilesAsCreated() {
@@ -115,10 +116,26 @@ export default defineBackground({
       await updateBadgeWhenRestarted();
     }
 
-    function reconcileRulesAndUpdateBadge() {
+    function ensureRulesAndUpdateBadge() {
       return profileManagerMutex.runExclusive(async () => {
         if (await powerOnItem.getValue()) {
-          await reconcileCurrentRulesAndUpdateBadge();
+          const manager = await profileManagerItem.getValue();
+          const registerableProfiles = getRegisterableProfiles(manager.profiles).map(pickProfileFields);
+          const registerableProfileIds = registerableProfiles.map(profile => profile.id);
+          const validRegistrationRecord = await reconcileRuleRegistrationState(registerableProfileIds);
+          const errorRecord = await profileId2ErrorMessageRecordItem.getValue();
+          const missingProfiles = registerableProfiles.filter(profile =>
+            !validRegistrationRecord[profile.id] && !errorRecord[profile.id],
+          );
+          if (missingProfiles.length > 0) {
+            await updateRules({
+              deleted: [],
+              modified: [],
+              created: missingProfiles,
+            });
+            await reconcileRuleRegistrationState(registerableProfileIds);
+          }
+          await updateBadgeWhenRestarted();
         } else {
           // Also recover if the worker stopped after power was persisted as off
           // but before its rules and registration records were removed.
@@ -153,19 +170,6 @@ function pickProfileFields(profile: Profile) {
   return pick(profile, CORE_KEYS);
 }
 
-function hasNonBlankActionFormValues(profile: ProfileCoreData): boolean {
-  // `buildAction` converts header arrays with `headers.length === 0` to `undefined`.
-  const action = buildAction(profile);
-  return match(action)
-    .with({ type: "modifyHeaders" }, ({ requestHeaders, responseHeaders }) => {
-      return requestHeaders !== undefined || responseHeaders !== undefined;
-    })
-    .with({ type: "redirect" }, ({ redirect }) => {
-      return redirect.url !== undefined;
-    })
-    .otherwise(() => true);
-}
-
 function diffProfiles(
   oldProfiles: Profile[],
   newProfiles: Profile[],
@@ -182,7 +186,7 @@ function diffProfiles(
     const oldPickedProfile = oldPickedProfileMap.get(oldProfile.id)!;
     if (!newPickedProfileMap.has(oldPickedProfile.id)
       && oldPickedProfile.enabled
-      && hasNonBlankActionFormValues(oldPickedProfile)) {
+      && hasRegisterableAction(oldPickedProfile)) {
       deleted.push(oldPickedProfile);
     }
   }
@@ -191,8 +195,8 @@ function diffProfiles(
   for (const newProfile of newProfiles) {
     const oldPickedProfile = oldPickedProfileMap.get(newProfile.id);
     const newPickedProfile = pickProfileFields(newProfile);
-    const wasActive = Boolean(oldPickedProfile?.enabled && hasNonBlankActionFormValues(oldPickedProfile));
-    const isActive = newPickedProfile.enabled && hasNonBlankActionFormValues(newPickedProfile);
+    const wasActive = Boolean(oldPickedProfile?.enabled && hasRegisterableAction(oldPickedProfile));
+    const isActive = newPickedProfile.enabled && hasRegisterableAction(newPickedProfile);
     const isModified = Boolean(oldPickedProfile
       && !isEqual(pick(oldPickedProfile, NEED_WATCH_KEYS), pick(newPickedProfile, NEED_WATCH_KEYS)));
 

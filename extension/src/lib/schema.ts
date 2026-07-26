@@ -164,9 +164,6 @@ const filterSchema = z.object({
 });
 export type Filter = z.infer<typeof filterSchema>;
 
-const ruleTypeSchema = z.enum(["dynamic", "session"]);
-export type RuleType = z.infer<typeof ruleTypeSchema>;
-
 const profileSchema = z.object({
   id: uuidSchemaWithDefault,
   name: z.string(),
@@ -174,7 +171,6 @@ const profileSchema = z.object({
   emoji: z.string(),
   groupId: z.uuid().optional(),
   comments: z.string().optional(),
-  ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
   priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema).optional(),

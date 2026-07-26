@@ -1,8 +1,11 @@
 import { usePowerOnStorage } from "@/lib/storage";
 
 export async function updateBadgeCount() {
-  const registeredRules = await browser.declarativeNetRequest.getDynamicRules();
-  const registeredRuleCount = registeredRules.length;
+  const [dynamicRules, sessionRules] = await Promise.all([
+    browser.declarativeNetRequest.getDynamicRules(),
+    browser.declarativeNetRequest.getSessionRules(),
+  ]);
+  const registeredRuleCount = dynamicRules.length + sessionRules.length;
   if (registeredRuleCount > 0) {
     await Promise.all([
       browser.action.setBadgeTextColor({ color: "white" }),

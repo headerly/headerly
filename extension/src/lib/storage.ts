@@ -1,12 +1,12 @@
 import type { SerializerAsync, StorageLikeAsync, UseStorageOptions } from "@vueuse/core";
 import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { SupportLocale } from "#/i18n";
+import type { RuleScope } from "./profileRule";
 import type { ProfileManager } from "./types";
 import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
-import { PROFILE_MANAGER_STORAGE_VERSION } from "./const";
 import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
@@ -111,6 +111,11 @@ const defaultProfileManager = createDefaultProfileManager();
 
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
+export interface RuleRegistration {
+  ruleId: number;
+  ruleScope: RuleScope;
+}
+
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
   return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
     migrations: {
@@ -121,13 +126,26 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
         };
       },
     },
-    version: PROFILE_MANAGER_STORAGE_VERSION,
+    version: 2,
     ...options,
   });
 }
 
-export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, number>>) {
-  return useExtensionStorageWrapper<Record<string, number>>("local:profileId2RelatedRuleIdRecord", {}, options);
+export function useProfileId2RelatedRuleIdRecordStorage(options?: UseStorageInstanceOptions<Record<string, RuleRegistration>>) {
+  return useExtensionStorageWrapper<Record<string, RuleRegistration>>("local:profileId2RelatedRuleIdRecord", {}, {
+    migrations: {
+      2: (oldValue: Record<string, number>) => {
+        return Object.fromEntries(
+          Object.entries(oldValue).map(([profileId, registration]) => [
+            profileId,
+            { ruleId: registration, ruleScope: "dynamic" as const },
+          ]),
+        );
+      },
+    },
+    version: 2,
+    ...options,
+  });
 }
 
 export function useProfileId2ErrorMessageRecordStorage(options?: UseStorageInstanceOptions<Record<string, string>>) {
