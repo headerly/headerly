@@ -17,6 +17,8 @@ const model = defineModel<number[]>({ required: true });
 const { t } = useI18n();
 const tabs = ref<Browser.tabs.Tab[]>([]);
 const tabsLoaded = ref(false);
+const currentTabIsControllable = ref(false);
+const currentTabGroupId = ref<number>();
 let lastTabsQueryAt = 0;
 
 const selectedValues = computed({
@@ -73,9 +75,15 @@ async function refreshTabs(force = false) {
   }
   lastTabsQueryAt = now;
   try {
-    tabs.value = (await browser.tabs.query({}))
+    const [queriedTabs, currentTab] = await Promise.all([
+      browser.tabs.query({}),
+      getCurrentTab(),
+    ]);
+    tabs.value = queriedTabs
       .filter(isControllableTab)
       .sort((a, b) => a.windowId - b.windowId || a.index - b.index);
+    currentTabIsControllable.value = currentTab !== undefined && isControllableTab(currentTab);
+    currentTabGroupId.value = currentTab?.groupId;
   } finally {
     tabsLoaded.value = true;
   }
@@ -162,23 +170,24 @@ onMounted(() => refreshTabs(true));
         <Button
           size="icon-xs"
           variant="secondary"
+          :disabled="!currentTabIsControllable"
           :aria-label="t('condition.tabIds.quickSelect')"
         >
           <i class="i-lucide-chevrons-down-up size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" class="min-w-44" :collision-padding="8">
-        <DropdownMenuItem @click="useCurrentWindow">
-          <i class="i-lucide-panels-top-left size-4" />
-          {{ t("condition.tabIds.useCurrentWindow") }}
+        <DropdownMenuItem @click="useCurrentTab">
+          {{ t("condition.tabIds.useCurrentTab") }}
         </DropdownMenuItem>
-        <DropdownMenuItem @click="useCurrentGroup">
-          <i class="i-lucide-group size-4" />
+        <DropdownMenuItem
+          :disabled="currentTabGroupId === undefined || currentTabGroupId === -1"
+          @click="useCurrentGroup"
+        >
           {{ t("condition.tabIds.useCurrentGroup") }}
         </DropdownMenuItem>
-        <DropdownMenuItem @click="useCurrentTab">
-          <i class="i-lucide-square-mouse-pointer size-4" />
-          {{ t("condition.tabIds.useCurrentTab") }}
+        <DropdownMenuItem @click="useCurrentWindow">
+          {{ t("condition.tabIds.useCurrentWindow") }}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
