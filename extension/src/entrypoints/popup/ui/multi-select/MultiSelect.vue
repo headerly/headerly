@@ -149,6 +149,7 @@ function removeTagByValue(value: string) {
           has-disabled:opacity-50
           has-aria-invalid:border-destructive
           has-aria-invalid:ring-destructive/20
+          dark:bg-input/30
           dark:has-aria-invalid:ring-destructive/40
         "
         :class="{
