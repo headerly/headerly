@@ -37,6 +37,10 @@
         "description": "List of resource types which the rule won't match. Only one of resourceTypes and excludedResourceTypes should be specified. If neither is specified, all resource types except main_frame are blocked.",
         "title": "Excluded Resource Types"
       },
+      "excludedTabIds": {
+        "description": "The rule will not match requests from the selected tabs. Tab bindings become invalid after the browser restarts.",
+        "title": "Excluded Tabs"
+      },
       "initiatorDomains": {
         "description": "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Initiator Domains"
@@ -72,6 +76,10 @@
       "simpleRedirectUrl": {
         "description": "Redirect matched requests to a specific URL.",
         "title": "Simple Redirect URL"
+      },
+      "tabIds": {
+        "description": "The rule will only match requests from the selected tabs. Tab bindings become invalid after the browser restarts.",
+        "title": "Tabs"
       },
       "urlFilter": {
         "description": "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
@@ -180,6 +188,10 @@
     "excludedResourceTypes": {
       "title": "Excluded Resource Types"
     },
+    "excludedTabIds": {
+      "description": "The rule will not match requests originating from any selected tab.",
+      "title": "Excluded Tabs"
+    },
     "regexFilter": {
       "description": "Regular expression to match against the network request url.",
       "syntaxPrefix": "This follows the",
@@ -210,6 +222,17 @@
       "title": "Resource Types"
     },
     "selectPlaceholder": "Select {name}...",
+    "tabIds": {
+      "description": "The rule only matches requests originating from a selected tab. Selected tabs become invalid after the browser restarts.",
+      "quickSelect": "Quickly replace selected tabs",
+      "selectPlaceholder": "Select tabs...",
+      "title": "Tabs",
+      "unavailableTab": "Tab is unavailable because it was closed or the browser was restarted",
+      "untitledTab": "Untitled tab",
+      "useCurrentGroup": "Use current group",
+      "useCurrentTab": "Use current tab",
+      "useCurrentWindow": "Use current window"
+    },
     "urlFilter": {
       "anchor": " - Anchor: marks start or end of the URL.",
       "domainAnchor": " - Domain anchor: matches start of a (sub)domain.",

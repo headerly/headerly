@@ -1,5 +1,6 @@
-import type { ProfileCoreData } from "..";
+import type { ProfileCoreData } from "../diffProfiles";
 import type { ResourceType } from "@/lib/schema";
+import { uniq } from "es-toolkit";
 import { match } from "ts-pattern";
 
 interface BuildConditionOptions {
@@ -14,20 +15,6 @@ const allowAllRequestsResourceTypes = [
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
 
-  const hasResourceTypes = profile.filters.resourceTypes?.some(item => item.enabled && item.value.length > 0);
-  const hasExcludedResourceTypes = profile.filters.excludedResourceTypes?.some(item => item.enabled && item.value.length > 0);
-
-  if (!hasResourceTypes && !hasExcludedResourceTypes && !options.nativeResourceTypeBehavior) {
-    // If no resource types are specified, match all types.
-    // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
-    const resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
-    // DNR restricts allowAllRequests rules to main_frame/sub_frame resource types.
-    // Using all resource types with allowAllRequests causes rule registration to fail.
-    condition.resourceTypes = match(profile.ruleActionType)
-      .with("allowAllRequests", () => allowAllRequestsResourceTypes)
-      .otherwise(() => resourceTypes);
-  }
-
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
     match(key)
       .with("resourceTypes", "excludedResourceTypes", (k) => {
@@ -35,7 +22,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
           ?.filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
-          condition[k] = enabledItems;
+          condition[k] = uniq(enabledItems);
         }
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
@@ -43,7 +30,15 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
           ?.filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
-          condition[k] = enabledItems;
+          condition[k] = uniq(enabledItems);
+        }
+      })
+      .with("tabIds", "excludedTabIds", (k) => {
+        const enabledTabIds = profile.filters[k]
+          ?.filter(item => item.enabled)
+          .flatMap(item => item.value);
+        if (enabledTabIds && enabledTabIds.length > 0) {
+          condition[k] = uniq(enabledTabIds);
         }
       })
       .with("urlFilter", "regexFilter", (k) => {
@@ -71,7 +66,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
             .filter(item => item.enabled && item.value.trim())
             .map(item => item.value.trim());
           if (enabledDomains && enabledDomains.length > 0) {
-            condition[k] = enabledDomains;
+            condition[k] = uniq(enabledDomains);
           }
         },
       )
@@ -90,17 +85,26 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
       .exhaustive();
   });
 
+  const hasResourceTypes = condition.resourceTypes !== undefined;
+  const hasExcludedResourceTypes = condition.excludedResourceTypes !== undefined;
+
+  if (!hasResourceTypes && !hasExcludedResourceTypes && !options.nativeResourceTypeBehavior) {
+    // If no resource types are specified, match all types.
+    // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
+    const resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
+    // DNR restricts allowAllRequests rules to main_frame/sub_frame resource types.
+    // Using all resource types with allowAllRequests causes rule registration to fail.
+    condition.resourceTypes = match(profile.ruleActionType)
+      .with("allowAllRequests", () => allowAllRequestsResourceTypes)
+      .otherwise(() => resourceTypes);
+  }
+
   // Always exclude the extension itself from its own rules to prevent lockout.
   const extensionId = browser.runtime.id;
-  if (condition.excludedInitiatorDomains) {
-    if (!condition.excludedInitiatorDomains.includes(extensionId)) {
-      condition.excludedInitiatorDomains.push(extensionId);
-    }
-  } else if (!condition.initiatorDomains?.includes(extensionId)) {
-    // If initiatorDomains is set and includes extensionId, we don't want to exclude it.
-    // But if it's not set, we add it to excludedInitiatorDomains.
-    condition.excludedInitiatorDomains = [extensionId];
-  }
+  condition.excludedInitiatorDomains = uniq([
+    ...(condition.excludedInitiatorDomains ?? []),
+    extensionId,
+  ]);
 
   return condition;
 }

@@ -52,6 +52,8 @@ export function getGroupOpenStateIds(profiles: Profile[]) {
                 "excludedResourceTypes",
                 "requestMethods",
                 "excludedRequestMethods",
+                "tabIds",
+                "excludedTabIds",
                 (filterGroupType: ProfileFilterGroupType) => {
                   if (profile.filters[filterGroupType]) {
                     ids.add(getProfileFilterGroupOpenStateId(profile.id, filterGroupType));
@@ -69,7 +71,6 @@ export function getGroupOpenStateIds(profiles: Profile[]) {
           "emoji",
           "groupId",
           "comments",
-          "ruleScope",
           "ruleActionType",
           "priority",
           () => {},

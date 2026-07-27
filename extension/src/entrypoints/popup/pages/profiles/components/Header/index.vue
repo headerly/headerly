@@ -2,9 +2,8 @@
 import type { HTMLAttributes } from "vue";
 import { useEventBus } from "@vueuse/core";
 import { match } from "ts-pattern";
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRuleActionType } from "#/composables/useRuleActionType";
 import { Button } from "#/ui/button";
 import {
   DropdownMenuGroup,
@@ -23,13 +22,13 @@ import {
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { Badge } from "@/entrypoints/popup/ui/badge";
 import { cn } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";
 import { openAddRuleOptionDialogKey } from "./components/AddRuleOptionDialog/open";
 import EmojiPicker from "./components/EmojiPicker.vue";
+import ProfileBadges from "./components/ProfileBadges.vue";
 import { useHeaderShortcuts } from "./useHeaderShortcuts";
 
 const { class: className } = defineProps<{
@@ -38,11 +37,11 @@ const { class: className } = defineProps<{
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
-const ruleActionTypeMap = useRuleActionType();
 
 const isCompact = useCompactScreen();
 const addRuleOptionDialogBus = useEventBus(openAddRuleOptionDialogKey);
 const profileSearchOpen = ref(false);
+const profileActionsRef = useTemplateRef("profileActionsRef");
 
 const profileNameEditing = ref(false);
 const profileNameInput = ref<string>("");
@@ -54,8 +53,6 @@ function handleEditProfileName() {
 }
 
 const settingsStore = useSettingsStore();
-
-const actionTypeBadge = computed(() => ruleActionTypeMap[profilesStore.selectedProfile.ruleActionType]);
 
 const defaultTab = computed(() => {
   return match(profilesStore.selectedProfile.ruleActionType)
@@ -155,50 +152,12 @@ const undoAndRedoButtonGroup = [
           <i class="i-lucide-check-check size-4" />
         </Button>
       </div>
-      <div v-if="!profileNameEditing" class="flex flex-wrap gap-2">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Badge variant="secondary">
-                <i class="i-lucide-layers-2" />
-                <span
-                  class="
-                    hidden
-                    md:inline
-                  "
-                >{{ t("profile.header.priorityLabel") }}</span>
-                <span
-                  class="
-                    max-w-4 truncate
-                    md:max-w-none
-                  "
-                >{{ profilesStore.selectedProfile.priority ?? 1 }}</span>
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" class="md:hidden">
-              {{ t("profile.header.priorityValue", { priority: profilesStore.selectedProfile.priority ?? 1 }) }}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Badge>
-                <i :class="actionTypeBadge.icon" />
-                <span
-                  class="
-                    hidden
-                    md:inline
-                  "
-                >{{ actionTypeBadge.label }}</span>
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" class="md:hidden">
-              {{ t("profile.header.ruleActionType", { type: actionTypeBadge.label }) }}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      <ProfileBadges
+        v-if="!profileNameEditing"
+        :profile="profilesStore.selectedProfile"
+        @open-change-rule-action-type="profileActionsRef?.openChangeRuleActionType()"
+        @open-priority="profileActionsRef?.openPriority()"
+      />
     </div>
     <div class="flex items-center justify-between gap-1 p-1">
       <Button
@@ -248,6 +207,7 @@ const undoAndRedoButtonGroup = [
       </template>
 
       <IconsGroupWithMore
+        ref="profileActionsRef"
         :profile="profilesStore.selectedProfile"
         :toggle-shortcut-keys="toggleProfileShortcutKeys"
       >

@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="tsx" generic="T extends string | number">
 import { useWindowSize } from "@vueuse/core";
 import {
   ComboboxInput,
@@ -22,31 +22,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "#/ui/popover";
+import { Skeleton } from "#/ui/skeleton";
+import OptionIcon from "./OptionIcon.vue";
 import SelectableTag from "./SelectableTag.vue";
 
-interface Option {
+interface Option<T> {
   label: string;
-  value: string;
+  value: T;
+  tagLabel?: string;
+  icon?: string;
+  fallbackIcon?: string;
+  tooltip?: string;
+  tooltipClass?: string;
   disabled?: boolean;
 }
 
-interface MultiSelectProps {
-  defaultOptions?: Option[];
+interface MultiSelectProps<T> {
+  defaultOptions?: readonly Option<T>[];
   /** manually controlled options */
-  options: Option[];
+  options: readonly Option<T>[];
   placeholder?: string;
   hideClearAllButton?: boolean;
+  loading?: boolean;
 }
 
 const query = defineModel<string>("query", {
   default: "",
 });
 
-const modelValue = defineModel<string[]>("modelValue", {
+const modelValue = defineModel<T[]>("modelValue", {
   default: () => [],
 });
 
-const props = defineProps<MultiSelectProps>();
+const props = defineProps<MultiSelectProps<T>>();
 
 const { t } = useI18n();
 
@@ -57,7 +65,7 @@ const maxVisibleTags = computed(() => Math.max(1, Math.floor((width.value - 100)
 
 const filteredOptions = computed(() =>
   props.options.filter(option =>
-    contains(option.value, query.value),
+    contains(String(option.value), query.value) || contains(option.label, query.value),
   ),
 );
 
@@ -67,7 +75,11 @@ const selectedItems = computed(() =>
     const option = props.options.find(opt => opt.value === value);
     return {
       value,
-      label: option?.label || value,
+      label: option?.tagLabel || option?.label || String(value),
+      icon: option?.icon,
+      fallbackIcon: option?.fallbackIcon,
+      tooltip: option?.tooltip,
+      tooltipClass: option?.tooltipClass,
     };
   }),
 );
@@ -100,13 +112,13 @@ function removeTag(index: number) {
   modelValue.value = modelValue.value.filter((_, i) => i !== index);
 }
 
-function addOption(option: Option) {
+function addOption(option: Option<T>) {
   if (!modelValue.value.includes(option.value)) {
     modelValue.value = [...modelValue.value, option.value];
   }
 }
 
-function removeTagByValue(value: string) {
+function removeTagByValue(value: T) {
   modelValue.value = modelValue.value.filter(v => v !== value);
 }
 </script>
@@ -118,6 +130,7 @@ function removeTagByValue(value: string) {
     open-on-focus
     multiple
     class="flex flex-1"
+    :disabled="loading"
   >
     <ComboboxAnchor class="flex-1">
       <TagsInputRoot
@@ -132,13 +145,23 @@ function removeTagByValue(value: string) {
           has-disabled:opacity-50
           has-aria-invalid:border-destructive
           has-aria-invalid:ring-destructive/20
+          dark:bg-input/30
           dark:has-aria-invalid:ring-destructive/40
         "
         :class="{
           'pe-9': !hideClearAllButton,
         }"
       >
-        <div class="flex min-w-0 items-center gap-1">
+        <Skeleton
+          v-if="loading"
+          role="status"
+          class="absolute inset-1 rounded-sm bg-background!"
+          :aria-label="t('common.loading')"
+        />
+        <div
+          class="flex min-w-0 items-center gap-1"
+          :class="{ invisible: loading }"
+        >
           <SelectableTag
             v-for="(item, index) in visibleItems.visible"
             :key="item.value"
@@ -162,7 +185,7 @@ function removeTagByValue(value: string) {
                     v-for="item in visibleItems.hidden"
                     :key="item.value"
                     :item
-                    variant="compact"
+                    class="max-w-64"
                     @remove="removeTagByValue"
                   />
                 </div>
@@ -185,7 +208,7 @@ function removeTagByValue(value: string) {
           </ComboboxInput>
         </div>
         <button
-          v-if="!hideClearAllButton && modelValue.length"
+          v-if="!loading && !hideClearAllButton && modelValue.length"
           type="button"
           class="
             absolute inset-e-0 top-0 flex size-9 items-center justify-center
@@ -224,7 +247,13 @@ function removeTagByValue(value: string) {
           }"
           @click="() => addOption(option)"
         >
-          {{ option.label }}
+          <OptionIcon
+            v-if="option.icon || option.fallbackIcon"
+            :icon="option.icon"
+            :fallback-icon="option.fallbackIcon"
+            class="size-4"
+          />
+          <span class="truncate">{{ option.label }}</span>
 
           <ComboboxItemIndicator v-if="modelValue.includes(option.value)">
             <i class="ml-auto i-lucide-check size-4" />

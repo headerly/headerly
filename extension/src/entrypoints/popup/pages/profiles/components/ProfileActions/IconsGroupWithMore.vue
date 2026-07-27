@@ -57,6 +57,11 @@ const changeTypeDialogRef = useTemplateRef("changeTypeDialogRef");
 async function handleChangeType() {
   await handleProfileRuleActionTypeChanged(profile.value);
 }
+
+defineExpose({
+  openChangeRuleActionType: () => changeTypeDialogRef.value?.open(),
+  openPriority: () => priorityDialogRef.value?.open(),
+});
 </script>
 
 <template>

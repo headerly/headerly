@@ -107,7 +107,6 @@ describe("profile ID round trips", () => {
 describe("edge cases", () => {
   it("should handle profile with empty arrays", () => {
     const emptyProfile: Profile = {
-      ruleScope: "dynamic",
       ruleActionType: "modifyHeaders",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Empty Profile",
@@ -134,7 +133,6 @@ describe("edge cases", () => {
 
   it("should handle profile with minimal data", () => {
     const minimalProfile: Profile = {
-      ruleScope: "dynamic",
       ruleActionType: "modifyHeaders",
       id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Minimal Profile",

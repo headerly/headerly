@@ -121,6 +121,11 @@ const requestMethodsFilterSchema = groupItemSchema.extend({
   value: z.array(requestMethodSchema),
 });
 
+const tabIdsFilterSchema = groupItemSchema.extend({
+  value: z.array(z.int().nonnegative()),
+});
+export type TabIdsFilterItem = z.infer<typeof tabIdsFilterSchema>;
+
 const domainTypeFilterSchema = z.object({
   enabled: z.boolean(),
   value: domainTypeValueSchema,
@@ -159,13 +164,12 @@ const filterSchema = z.object({
   excludedResourceTypes: z.array(resourceTypesFilterSchema).optional(),
   requestMethods: z.array(requestMethodsFilterSchema).optional(),
   excludedRequestMethods: z.array(requestMethodsFilterSchema).optional(),
+  tabIds: z.array(tabIdsFilterSchema).optional(),
+  excludedTabIds: z.array(tabIdsFilterSchema).optional(),
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });
 export type Filter = z.infer<typeof filterSchema>;
-
-const ruleTypeSchema = z.enum(["dynamic", "session"]);
-export type RuleType = z.infer<typeof ruleTypeSchema>;
 
 const profileSchema = z.object({
   id: uuidSchemaWithDefault,
@@ -174,9 +178,8 @@ const profileSchema = z.object({
   emoji: z.string(),
   groupId: z.uuid().optional(),
   comments: z.string().optional(),
-  ruleScope: ruleTypeSchema,
   ruleActionType: ruleActionTypeSchema,
-  priority: z.number().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
+  priority: z.int().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
@@ -227,7 +230,7 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedResourceTypes: z.array(resourceTypesFilterWithoutIdSchema).optional(),
   requestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
   excludedRequestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
-});
+}).omit({ tabIds: true, excludedTabIds: true });
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({
   requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
