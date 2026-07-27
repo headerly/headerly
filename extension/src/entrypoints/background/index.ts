@@ -27,7 +27,8 @@ export default defineBackground({
             const powerOn = await powerOnItem.getValue();
             await powerOnItem.setValue(!powerOn);
           });
-        });
+        })
+        .exhaustive();
     });
     // `storage.watch` must be registered synchronously at the top level of the service worker;
     // asynchronous registration will cause the service worker to lose events while in an inactive state.
