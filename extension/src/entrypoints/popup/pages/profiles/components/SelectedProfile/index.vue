@@ -3,6 +3,7 @@ import type { HTMLAttributes } from "vue";
 
 import { match } from "ts-pattern";
 import { computed } from "vue";
+import { hasImplicitAction } from "#/pages/profiles/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { getObjectKeysWithTypeAssert } from "@/lib/object";
@@ -56,19 +57,22 @@ const hasAnyNonEmptyFilters = computed(() => {
 });
 
 const empty = computed(() => {
-  const noActions = (profilesStore.selectedProfile.requestHeaderModGroups ?? []).every(
+  const profile = profilesStore.selectedProfile;
+  const noActions = (profile.requestHeaderModGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && (profilesStore.selectedProfile.responseHeaderModGroups ?? []).every(
+  && (profile.responseHeaderModGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && (profilesStore.selectedProfile.syncCookieGroups ?? []).every(
+  && (profile.syncCookieGroups ?? []).every(
     group => group.items.length === 0,
   )
-  && (profilesStore.selectedProfile.redirectUrlGroup ?? []).length === 0;
+  && (profile.redirectUrlGroup ?? []).length === 0;
 
-  const noFilters = Object.keys(profilesStore.selectedProfile.filters).length === 0;
-  return noActions && noFilters;
+  const noFilters = Object.keys(profile.filters).length === 0;
+  return noActions
+    && noFilters
+    && !hasImplicitAction(profile.ruleActionType);
 });
 
 const settingsStore = useSettingsStore();
@@ -137,7 +141,7 @@ const versionBadgeCornerClassNames = [
         </svg>
       </div>
 
-      <div v-auto-animate class="relative z-10 w-full px-2 pb-2">
+      <div v-auto-animate class="relative z-10 w-full p-2">
         <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />
         <RedirectUrlGroup
           v-if="profilesStore.selectedProfile.redirectUrlGroup"

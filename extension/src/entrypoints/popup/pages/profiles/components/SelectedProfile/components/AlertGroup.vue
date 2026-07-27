@@ -3,6 +3,7 @@ import { useEventBus } from "@vueuse/core";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { hasImplicitAction } from "#/pages/profiles/utils";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import {
   Alert,
@@ -10,16 +11,21 @@ import {
   AlertTitle,
 } from "#/ui/alert";
 import { Button } from "#/ui/button";
-
 import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
+
+import { cn } from "@/lib/utils";
 import { openAddRuleOptionDialogKey } from "../../Header/components/AddRuleOptionDialog/open";
 
-const { empty, hasAnyFilters } = defineProps<{
+const { empty, hasAnyFilters, class: className } = defineProps<{
+  class?: string;
   empty: boolean;
   hasAnyFilters: boolean;
 }>();
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
+const showImplicitActionInfo = computed(() =>
+  hasImplicitAction(profilesStore.selectedProfile.ruleActionType),
+);
 
 function ignoreWarning() {
   profilesStore.selectedProfile.filters.urlFilter = [
@@ -36,50 +42,58 @@ const bus = useEventBus(openAddRuleOptionDialogKey);
 </script>
 
 <template>
-  <Alert
-    v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
-    variant="destructive"
-  >
-    <i class="i-lucide-bug size-6" />
-    <AlertTitle>
-      {{ t("profile.alert.registrationErrorTitle") }}
-    </AlertTitle>
-    <AlertDescription>
-      <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
-      <ButtonGroup>
-        <Button
-          size="sm"
-          variant="secondary"
-          as="a"
-          target="_blank"
-          href="https://github.com/headerly/headerly/issues"
-        >
-          <i class="i-lucide-github size-4" />
-          {{ t("common.reportIssue") }}
-        </Button>
-      </ButtonGroup>
-    </AlertDescription>
-  </Alert>
-  <Alert
-    v-if="showGlobalRuleWarning"
-    variant="warning"
-    class="mt-2"
-  >
-    <i class="i-lucide-triangle-alert size-6" />
-    <AlertTitle>{{ t("profile.alert.globalRuleTitle") }}</AlertTitle>
-    <AlertDescription>
-      <p>{{ t("profile.alert.globalRuleDescription") }}</p>
-      <ButtonGroup>
-        <Button size="sm" variant="secondary" @click="ignoreWarning">
-          <i class="i-lucide-ban size-4" />
-          {{ t("profile.alert.ignoreWarning") }}
-        </Button>
-        <ButtonGroupSeparator />
-        <Button size="sm" variant="secondary" @click="bus.emit({ target: 'conditions' })">
-          <i class="i-lucide-plus size-4" />
-          {{ t("common.addCondition") }}
-        </Button>
-      </ButtonGroup>
-    </AlertDescription>
-  </Alert>
+  <div v-auto-animate :class="cn('flex flex-col gap-2', className)">
+    <Alert v-if="showImplicitActionInfo">
+      <i class="i-lucide-info size-6" />
+      <AlertTitle>{{ t("profile.alert.implicitActionTitle") }}</AlertTitle>
+      <AlertDescription>
+        <p>{{ t("profile.alert.implicitActionDescription") }}</p>
+      </AlertDescription>
+    </Alert>
+    <Alert
+      v-if="profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id]"
+      variant="destructive"
+    >
+      <i class="i-lucide-bug size-6" />
+      <AlertTitle>
+        {{ t("profile.alert.registrationErrorTitle") }}
+      </AlertTitle>
+      <AlertDescription>
+        <p>{{ profilesStore.profileId2ErrorMessageRecord[profilesStore.selectedProfile.id] }}</p>
+        <ButtonGroup>
+          <Button
+            size="sm"
+            variant="secondary"
+            as="a"
+            target="_blank"
+            href="https://github.com/headerly/headerly/issues"
+          >
+            <i class="i-lucide-github size-4" />
+            {{ t("common.reportIssue") }}
+          </Button>
+        </ButtonGroup>
+      </AlertDescription>
+    </Alert>
+    <Alert
+      v-if="showGlobalRuleWarning"
+      variant="warning"
+    >
+      <i class="i-lucide-triangle-alert size-6" />
+      <AlertTitle>{{ t("profile.alert.globalRuleTitle") }}</AlertTitle>
+      <AlertDescription>
+        <p>{{ t("profile.alert.globalRuleDescription") }}</p>
+        <ButtonGroup>
+          <Button size="sm" variant="secondary" @click="ignoreWarning">
+            <i class="i-lucide-ban size-4" />
+            {{ t("profile.alert.ignoreWarning") }}
+          </Button>
+          <ButtonGroupSeparator />
+          <Button size="sm" variant="secondary" @click="bus.emit({ target: 'conditions' })">
+            <i class="i-lucide-plus size-4" />
+            {{ t("common.addCondition") }}
+          </Button>
+        </ButtonGroup>
+      </AlertDescription>
+    </Alert>
+  </div>
 </template>
