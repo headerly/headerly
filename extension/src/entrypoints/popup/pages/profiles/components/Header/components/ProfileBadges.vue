@@ -71,7 +71,7 @@ const ruleActionTypeMap = useRuleActionType();
             type="button"
             class="
               cursor-pointer
-              hover:bg-secondary/90
+              hover:bg-primary/90
             "
             :aria-label="t('profile.header.ruleActionType', {
               type: ruleActionTypeMap[profile.ruleActionType].label,
