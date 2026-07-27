@@ -17,10 +17,14 @@ const { item: profileId2RelatedRuleIdRecordItem } = useProfileId2RelatedRuleIdRe
  * and per-rule registration is what lets us associate an error message with the
  * specific profile/rule that caused it.
  */
-export async function updateRules(changes: ProfileChanges) {
+export async function updateRules({
+  created = [],
+  modified = [],
+  deleted = [],
+}: Partial<ProfileChanges>) {
   const [deleteResults, updateResults] = await Promise.all([
-    deleteRules({ deleted: changes.deleted }),
-    upsertRules({ created: changes.created, modified: changes.modified }),
+    deleteRules({ deleted }),
+    upsertRules({ created, modified }),
   ]);
 
   const profileId2ErrorRecord: Record<string, string> = {};
