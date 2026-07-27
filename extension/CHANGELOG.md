@@ -6,7 +6,7 @@
 ### Features
 
 * clarify allow, allowAllRequests, block, and upgradeScheme profiles ([ba5c454](https://github.com/headerly/headerly/commit/ba5c454d4a01dacb7efedf13137cfe49aa07ec90))
-* **DNR:** support tab IDs and excluded tab IDs conditions [#63](https://github.com/headerly/headerly/issues/63) ([#69](https://github.com/headerly/headerly/issues/69)) ([4785d78](https://github.com/headerly/headerly/commit/4785d787601b284231ce5c56fdb8b40a6cc32222))
+* **DNR:** support tab IDs and excluded tab IDs conditions ([#69](https://github.com/headerly/headerly/issues/69)) ([4785d78](https://github.com/headerly/headerly/commit/4785d787601b284231ce5c56fdb8b40a6cc32222))
 
 ## [1.16.2](https://github.com/headerly/headerly/compare/v1.16.1...v1.16.2) (2026-07-25)
 
