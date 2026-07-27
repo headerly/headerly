@@ -1,4 +1,5 @@
 import type { AddRuleOptionDialogTab } from "./shared";
+import type { TabIdsFilterGroup } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
@@ -6,6 +7,10 @@ import { getCurrentTabHost, getCurrentTabHostname, getCurrentTabId } from "@/lib
 import { getDefaultFilterValueByHost } from "@/lib/filter";
 import { withDisabledState } from "./shared";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
+
+function createTabIdsFilterGroup(value: number[]): TabIdsFilterGroup {
+  return { type: "radio", items: [{ id: uuidv7(), enabled: true, value }] };
+}
 
 export function useCreateConditionTab(): AddRuleOptionDialogTab {
   const { t } = useI18n();
@@ -15,7 +20,6 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
     getUrlFilterDisabledState,
     withConditionAlreadyAddedDisabledState,
   } = useConditionDisabledStates();
-
   return {
     label: t("addRuleOptionDialog.tabs.conditions"),
     value: "conditions",
@@ -48,11 +52,9 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         isRecommended: true,
         action: async () => {
           const currentTabId = await getCurrentTabId();
-          profilesStore.selectedProfile.filters.tabIds = [{
-            id: uuidv7(),
-            enabled: true,
-            value: currentTabId === undefined ? [] : [currentTabId],
-          }];
+          profilesStore.selectedProfile.filters.tabIds = createTabIdsFilterGroup(
+            currentTabId === undefined ? [] : [currentTabId],
+          );
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.tabIds,
@@ -203,13 +205,14 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.requestMethods.title"),
         description: t("addRuleOptionDialog.items.requestMethods.description"),
         action: () => {
-          profilesStore.selectedProfile.filters.requestMethods = [
-            {
+          profilesStore.selectedProfile.filters.requestMethods = {
+            type: "radio",
+            items: [{
               id: uuidv7(),
               enabled: true,
               value: ["get"],
-            },
-          ];
+            }],
+          };
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.requestMethods,
@@ -219,13 +222,14 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.excludedRequestMethods.title"),
         description: t("addRuleOptionDialog.items.excludedRequestMethods.description"),
         action: () => {
-          profilesStore.selectedProfile.filters.excludedRequestMethods = [
-            {
+          profilesStore.selectedProfile.filters.excludedRequestMethods = {
+            type: "radio",
+            items: [{
               id: uuidv7(),
               enabled: true,
               value: [],
-            },
-          ];
+            }],
+          };
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedRequestMethods,
@@ -235,13 +239,14 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.resourceTypes.title"),
         description: t("addRuleOptionDialog.items.resourceTypes.description"),
         action: () => {
-          profilesStore.selectedProfile.filters.resourceTypes = [
-            {
+          profilesStore.selectedProfile.filters.resourceTypes = {
+            type: "radio",
+            items: [{
               id: uuidv7(),
               enabled: true,
               value: ["main_frame"],
-            },
-          ];
+            }],
+          };
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.resourceTypes,
@@ -251,13 +256,14 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         title: t("addRuleOptionDialog.items.excludedResourceTypes.title"),
         description: t("addRuleOptionDialog.items.excludedResourceTypes.description"),
         action: () => {
-          profilesStore.selectedProfile.filters.excludedResourceTypes = [
-            {
+          profilesStore.selectedProfile.filters.excludedResourceTypes = {
+            type: "radio",
+            items: [{
               id: uuidv7(),
               enabled: true,
               value: [],
-            },
-          ];
+            }],
+          };
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedResourceTypes,
@@ -268,11 +274,9 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
         description: t("addRuleOptionDialog.items.excludedTabIds.description"),
         action: async () => {
           const currentTabId = await getCurrentTabId();
-          profilesStore.selectedProfile.filters.excludedTabIds = [{
-            id: uuidv7(),
-            enabled: true,
-            value: currentTabId === undefined ? [] : [currentTabId],
-          }];
+          profilesStore.selectedProfile.filters.excludedTabIds = createTabIdsFilterGroup(
+            currentTabId === undefined ? [] : [currentTabId],
+          );
         },
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedTabIds,

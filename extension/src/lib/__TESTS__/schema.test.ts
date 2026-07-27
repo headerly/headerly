@@ -61,10 +61,10 @@ describe("stripProfileIds", () => {
     expect(result.filters.excludedRequestDomains?.items[0]).not.toHaveProperty("id");
     expect(result.filters.topDomains?.items[0]).not.toHaveProperty("id");
     expect(result.filters.excludedTopDomains?.items[0]).not.toHaveProperty("id");
-    expect(result.filters.resourceTypes?.[0]).not.toHaveProperty("id");
-    expect(result.filters.excludedResourceTypes?.[0]).not.toHaveProperty("id");
-    expect(result.filters.requestMethods?.[0]).not.toHaveProperty("id");
-    expect(result.filters.excludedRequestMethods?.[0]).not.toHaveProperty("id");
+    expect(result.filters.resourceTypes?.items[0]).not.toHaveProperty("id");
+    expect(result.filters.excludedResourceTypes?.items[0]).not.toHaveProperty("id");
+    expect(result.filters.requestMethods?.items[0]).not.toHaveProperty("id");
+    expect(result.filters.excludedRequestMethods?.items[0]).not.toHaveProperty("id");
     expect(result.filters.domainType).toBeDefined();
     expect(result.filters.isUrlFilterCaseSensitive).toBeDefined();
   });
@@ -89,10 +89,10 @@ describe("stripProfileIds", () => {
     expect(result.filters.excludedRequestDomains!.items[0]!.value).toBe("malicious.com");
     expect(result.filters.topDomains!.items[0]!.value).toBe("app.example.com");
     expect(result.filters.excludedTopDomains!.items[0]!.value).toBe("embed.example.com");
-    expect(result.filters.resourceTypes![0]!.value).toEqual(["script", "stylesheet"]);
-    expect(result.filters.excludedResourceTypes![0]!.value).toEqual(["image", "font"]);
-    expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
-    expect(result.filters.excludedRequestMethods![0]!.value).toEqual(["delete", "patch"]);
+    expect(result.filters.resourceTypes!.items[0]!.value).toEqual(["script", "stylesheet"]);
+    expect(result.filters.excludedResourceTypes!.items[0]!.value).toEqual(["image", "font"]);
+    expect(result.filters.requestMethods!.items[0]!.value).toEqual(["get", "post"]);
+    expect(result.filters.excludedRequestMethods!.items[0]!.value).toEqual(["delete", "patch"]);
     expect(result.filters.domainType!.value).toBe("firstParty");
     expect(result.filters.isUrlFilterCaseSensitive!.value).toBe(true);
   });
@@ -133,6 +133,35 @@ describe("profile import/export", () => {
     expect(profileExchangeZodSchema.safeParse(exported).success).toBe(true);
     expect(profileExchangeZodSchema.safeParse(exported.profiles).success).toBe(false);
   });
+
+  it("should migrate version 1 array filters to radio groups", () => {
+    const profile = stripProfileIds(mockProfile);
+    const legacyExchange = {
+      version: 1,
+      profiles: [{
+        ...profile,
+        filters: {
+          ...profile.filters,
+          resourceTypes: profile.filters.resourceTypes!.items,
+          excludedResourceTypes: profile.filters.excludedResourceTypes!.items,
+          requestMethods: profile.filters.requestMethods!.items,
+          excludedRequestMethods: profile.filters.excludedRequestMethods!.items,
+        },
+      }],
+    };
+
+    const result = profileExchangeZodSchema.parse(legacyExchange);
+
+    expect(result.version).toBe(PROFILE_IMPORT_SCHEMA_VERSION);
+    expect(result.profiles[0]!.filters.resourceTypes).toEqual({
+      type: "radio",
+      items: legacyExchange.profiles[0]!.filters.resourceTypes,
+    });
+    expect(result.profiles[0]!.filters.requestMethods).toEqual({
+      type: "radio",
+      items: legacyExchange.profiles[0]!.filters.requestMethods,
+    });
+  });
 });
 
 describe("addProfileIds", () => {
@@ -168,17 +197,17 @@ describe("addProfileIds", () => {
     expect(result.filters.excludedRequestDomains!.items[0]).toHaveProperty("id");
     expect(result.filters.topDomains!.items[0]).toHaveProperty("id");
     expect(result.filters.excludedTopDomains!.items[0]).toHaveProperty("id");
-    expect(result.filters.resourceTypes![0]).toHaveProperty("id");
-    expect(result.filters.excludedResourceTypes![0]).toHaveProperty("id");
-    expect(result.filters.requestMethods![0]).toHaveProperty("id");
-    expect(result.filters.excludedRequestMethods![0]).toHaveProperty("id");
+    expect(result.filters.resourceTypes!.items[0]).toHaveProperty("id");
+    expect(result.filters.excludedResourceTypes!.items[0]).toHaveProperty("id");
+    expect(result.filters.requestMethods!.items[0]).toHaveProperty("id");
+    expect(result.filters.excludedRequestMethods!.items[0]).toHaveProperty("id");
     expect(result.requestHeaderModGroups![0]!.id).toMatch(uuidRegex);
     expect(result.requestHeaderModGroups![0]!.items[0]!.id).toMatch(uuidRegex);
     expect(result.filters.urlFilter![0]!.id).toMatch(uuidRegex);
     expect(result.filters.regexFilter![0]!.id).toMatch(uuidRegex);
     expect(result.filters.initiatorDomains!.items[0]!.id).toMatch(uuidRegex);
-    expect(result.filters.resourceTypes![0]!.id).toMatch(uuidRegex);
-    expect(result.filters.requestMethods![0]!.id).toMatch(uuidRegex);
+    expect(result.filters.resourceTypes!.items[0]!.id).toMatch(uuidRegex);
+    expect(result.filters.requestMethods!.items[0]!.id).toMatch(uuidRegex);
     expect(result.redirectUrlGroup![0]!.id).toMatch(uuidRegex);
   });
 

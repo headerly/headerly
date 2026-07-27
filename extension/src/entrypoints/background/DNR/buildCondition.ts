@@ -18,7 +18,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
     match(key)
       .with("resourceTypes", "excludedResourceTypes", (k) => {
-        const enabledItems = profile.filters[k]
+        const enabledItems = profile.filters[k]?.items
           ?.filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
@@ -26,7 +26,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         }
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
-        const enabledItems = profile.filters[k]
+        const enabledItems = profile.filters[k]?.items
           ?.filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
@@ -34,7 +34,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         }
       })
       .with("tabIds", "excludedTabIds", (k) => {
-        const enabledTabIds = profile.filters[k]
+        const enabledTabIds = profile.filters[k]?.items
           ?.filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledTabIds && enabledTabIds.length > 0) {

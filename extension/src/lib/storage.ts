@@ -111,6 +111,37 @@ const defaultProfileManager = createDefaultProfileManager();
 
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
+const LEGACY_ARRAY_FILTER_KEYS = [
+  "resourceTypes",
+  "excludedResourceTypes",
+  "requestMethods",
+  "excludedRequestMethods",
+  "tabIds",
+  "excludedTabIds",
+] as const;
+
+function migrateArrayFiltersToGroups(oldValue: ProfileManager) {
+  return {
+    ...oldValue,
+    profiles: oldValue.profiles.map((profile) => {
+      const filters = { ...profile.filters } as Record<string, unknown>;
+      for (const key of LEGACY_ARRAY_FILTER_KEYS) {
+        const filter = filters[key];
+        if (Array.isArray(filter)) {
+          filters[key] = {
+            type: "radio",
+            items: filter,
+          };
+        }
+      }
+      return {
+        ...profile,
+        filters,
+      };
+    }),
+  } as ProfileManager;
+}
+
 export interface RuleRegistration {
   ruleId: number;
   ruleScope: RuleScope;
@@ -135,8 +166,9 @@ export function useProfileManagerStorage(options?: UseStorageInstanceOptions<Pro
           }),
         };
       },
+      4: migrateArrayFiltersToGroups,
     },
-    version: 3,
+    version: 4,
     ...options,
   });
 }

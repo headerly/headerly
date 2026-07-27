@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends ConditionType">
-import type { GroupItem } from "@/lib/schema";
+import type { GroupItem, RequestMethodsFilterGroup, ResourceTypesFilterGroup } from "@/lib/schema";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
@@ -28,13 +28,25 @@ type FilterItemType<K extends T>
     : K extends "requestMethods" | "excludedRequestMethods" ? RequestMethodItem
       : never;
 
-const list = defineModel<FilterItemType<T>[]>({
+type FilterGroupType<K extends T>
+  = K extends "resourceTypes" | "excludedResourceTypes" ? ResourceTypesFilterGroup
+    : K extends "requestMethods" | "excludedRequestMethods" ? RequestMethodsFilterGroup
+      : never;
+
+const filterGroup = defineModel<FilterGroupType<T>>({
   required: true,
 });
 
 const { type } = defineProps<{
   type: T;
 }>();
+
+const list = computed<FilterItemType<T>[]>({
+  get: () => filterGroup.value.items as FilterItemType<T>[],
+  set: (value) => {
+    (filterGroup.value as unknown as { items: FilterItemType<T>[] }).items = value;
+  },
+});
 
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
@@ -108,7 +120,7 @@ function newField() {
     value: [],
   } as unknown as FilterItemType<T>;
 
-  addItemToGroup(list.value, newItem, "radio");
+  addItemToGroup(list.value, newItem, filterGroup.value.type);
 }
 </script>
 
@@ -121,12 +133,13 @@ type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes
     :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, type)"
     v-model:list="list"
     :name
-    type="radio"
+    :type="filterGroup.type"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>
       <GroupActions
         v-model:list="list"
+        v-model:type="filterGroup.type"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
