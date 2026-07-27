@@ -325,6 +325,8 @@
     "alert": {
       "globalRuleDescription": "添加一个条件以避免问题。",
       "globalRuleTitle": "此配置会影响所有请求，可能导致网站异常。",
+      "implicitActionDescription": "即使未添加其他操作配置，它也可能已经生效。",
+      "implicitActionTitle": "此配置已添加操作。",
       "ignoreWarning": "忽略警告",
       "registrationErrorTitle": "此配置注册规则时发生错误。"
     },

@@ -325,6 +325,8 @@
     "alert": {
       "globalRuleDescription": "Add a condition to avoid issues.",
       "globalRuleTitle": "This profile affects every request and might break sites.",
+      "implicitActionDescription": "It may already be active even without additional action settings.",
+      "implicitActionTitle": "This profile already has an action.",
       "ignoreWarning": "Ignore warning",
       "registrationErrorTitle": "This profile caused an error when registering rules."
     },
