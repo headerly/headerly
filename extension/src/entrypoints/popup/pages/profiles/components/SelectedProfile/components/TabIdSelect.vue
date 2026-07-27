@@ -19,7 +19,6 @@ const tabs = ref<Browser.tabs.Tab[]>([]);
 const tabsLoaded = ref(false);
 const currentTabIsControllable = ref(false);
 const currentTabGroupId = ref<number>();
-let lastTabsQueryAt = 0;
 
 const options = computed<Option<number>[]>(() => {
   const openTabsById = new Map(
@@ -59,12 +58,7 @@ function getTabTitle(tab: Browser.tabs.Tab) {
     || t("condition.tabIds.untitledTab");
 }
 
-async function refreshTabs(force = false) {
-  const now = Date.now();
-  if (!force && now - lastTabsQueryAt < 1000) {
-    return;
-  }
-  lastTabsQueryAt = now;
+async function refreshTabs() {
   try {
     const [queriedTabs, currentTab] = await Promise.all([
       browser.tabs.query({}),
@@ -84,7 +78,7 @@ function replaceWithTabs(selectedTabs: Browser.tabs.Tab[]) {
   model.value = [...new Set(
     selectedTabs.filter(isControllableTab).map(tab => tab.id),
   )];
-  refreshTabs(true);
+  refreshTabs();
 }
 
 async function useCurrentWindow() {
@@ -115,13 +109,12 @@ async function useCurrentTab() {
   replaceWithTabs(currentTab ? [currentTab] : []);
 }
 
-onMounted(() => refreshTabs(true));
+onMounted(() => refreshTabs());
 </script>
 
 <template>
   <div
     class="flex min-w-0 flex-1 items-center gap-1"
-    @pointerenter="refreshTabs()"
   >
     <MultiSelect
       v-model="model"
