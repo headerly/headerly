@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="tsx" generic="T extends string | number">
 import { useWindowSize } from "@vueuse/core";
 import {
   ComboboxInput,
@@ -26,9 +26,9 @@ import { Skeleton } from "#/ui/skeleton";
 import OptionIcon from "./OptionIcon.vue";
 import SelectableTag from "./SelectableTag.vue";
 
-interface Option {
+interface Option<T> {
   label: string;
-  value: string;
+  value: T;
   tagLabel?: string;
   icon?: string;
   fallbackIcon?: string;
@@ -37,10 +37,10 @@ interface Option {
   disabled?: boolean;
 }
 
-interface MultiSelectProps {
-  defaultOptions?: readonly Option[];
+interface MultiSelectProps<T> {
+  defaultOptions?: readonly Option<T>[];
   /** manually controlled options */
-  options: readonly Option[];
+  options: readonly Option<T>[];
   placeholder?: string;
   hideClearAllButton?: boolean;
   loading?: boolean;
@@ -50,15 +50,11 @@ const query = defineModel<string>("query", {
   default: "",
 });
 
-const modelValue = defineModel<string[]>("modelValue", {
+const modelValue = defineModel<T[]>("modelValue", {
   default: () => [],
 });
 
-const props = defineProps<MultiSelectProps>();
-
-const emit = defineEmits<{
-  optionHover: [value: string];
-}>();
+const props = defineProps<MultiSelectProps<T>>();
 
 const { t } = useI18n();
 
@@ -69,7 +65,7 @@ const maxVisibleTags = computed(() => Math.max(1, Math.floor((width.value - 100)
 
 const filteredOptions = computed(() =>
   props.options.filter(option =>
-    contains(option.value, query.value) || contains(option.label, query.value),
+    contains(String(option.value), query.value) || contains(option.label, query.value),
   ),
 );
 
@@ -79,7 +75,7 @@ const selectedItems = computed(() =>
     const option = props.options.find(opt => opt.value === value);
     return {
       value,
-      label: option?.tagLabel || option?.label || value,
+      label: option?.tagLabel || option?.label || String(value),
       icon: option?.icon,
       fallbackIcon: option?.fallbackIcon,
       tooltip: option?.tooltip,
@@ -116,13 +112,13 @@ function removeTag(index: number) {
   modelValue.value = modelValue.value.filter((_, i) => i !== index);
 }
 
-function addOption(option: Option) {
+function addOption(option: Option<T>) {
   if (!modelValue.value.includes(option.value)) {
     modelValue.value = [...modelValue.value, option.value];
   }
 }
 
-function removeTagByValue(value: string) {
+function removeTagByValue(value: T) {
   modelValue.value = modelValue.value.filter(v => v !== value);
 }
 </script>
@@ -172,7 +168,6 @@ function removeTagByValue(value: string) {
             :item
             :index
             variant="default"
-            @hover="emit('optionHover', item.value)"
             @remove-by-index="removeTag"
           />
 
@@ -191,7 +186,6 @@ function removeTagByValue(value: string) {
                     :key="item.value"
                     :item
                     class="max-w-64"
-                    @hover="emit('optionHover', item.value)"
                     @remove="removeTagByValue"
                   />
                 </div>
@@ -252,7 +246,6 @@ function removeTagByValue(value: string) {
             'bg-accent/50': modelValue.includes(option.value),
           }"
           @click="() => addOption(option)"
-          @pointerenter="emit('optionHover', option.value)"
         >
           <OptionIcon
             v-if="option.icon || option.fallbackIcon"

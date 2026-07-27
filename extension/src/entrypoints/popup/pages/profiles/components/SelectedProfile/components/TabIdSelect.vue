@@ -21,25 +21,16 @@ const currentTabIsControllable = ref(false);
 const currentTabGroupId = ref<number>();
 let lastTabsQueryAt = 0;
 
-const selectedValues = computed({
-  get: () => model.value.map(String),
-  set: (values: string[]) => {
-    model.value = values
-      .map(Number)
-      .filter(Number.isSafeInteger);
-  },
-});
-
-const options = computed<Option[]>(() => {
+const options = computed<Option<number>[]>(() => {
   const openTabsById = new Map(
     tabs.value.flatMap(tab => tab.id === undefined ? [] : [[tab.id, tab] as const]),
   );
-  const result: Option[] = tabs.value.flatMap((tab) => {
+  const result: Option<number>[] = tabs.value.flatMap((tab) => {
     if (tab.id === undefined) {
       return [];
     }
     return [{
-      value: String(tab.id),
+      value: tab.id,
       label: getTabTitle(tab),
       tagLabel: getTabTitle(tab),
       icon: tab.favIconUrl,
@@ -52,7 +43,7 @@ const options = computed<Option[]>(() => {
   for (const tabId of model.value) {
     if (!openTabsById.has(tabId)) {
       result.push({
-        value: String(tabId),
+        value: tabId,
         label: t("condition.tabIds.unavailableTab"),
         fallbackIcon: "i-lucide-panels-top-left",
         tooltip: t("condition.tabIds.unavailableTab"),
@@ -86,30 +77,6 @@ async function refreshTabs(force = false) {
     currentTabGroupId.value = currentTab?.groupId;
   } finally {
     tabsLoaded.value = true;
-  }
-}
-
-async function refreshTab(value: string) {
-  const tabId = Number(value);
-  if (!Number.isSafeInteger(tabId)) {
-    return;
-  }
-  try {
-    const tab = await browser.tabs.get(tabId);
-    const index = tabs.value.findIndex(item => item.id === tabId);
-    if (!isControllableTab(tab)) {
-      if (index !== -1) {
-        tabs.value.splice(index, 1);
-      }
-      return;
-    }
-    if (index === -1) {
-      tabs.value.push(tab);
-    } else {
-      tabs.value[index] = tab;
-    }
-  } catch {
-    tabs.value = tabs.value.filter(tab => tab.id !== tabId);
   }
 }
 
@@ -158,12 +125,11 @@ onMounted(() => refreshTabs(true));
     @pointerenter="refreshTabs()"
   >
     <MultiSelect
-      v-model="selectedValues"
+      v-model="model"
       class="min-w-0 flex-1"
       :loading="!tabsLoaded"
       :options
       :placeholder="t('condition.tabIds.selectPlaceholder')"
-      @option-hover="refreshTab"
     />
     <DropdownMenu>
       <DropdownMenuTrigger as-child>

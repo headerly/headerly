@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number">
 import type { HTMLAttributes } from "vue";
 import {
   TagsInputItem,
@@ -14,30 +14,29 @@ import {
 import { cn } from "@/lib/utils";
 import OptionIcon from "./OptionIcon.vue";
 
-interface TagItem {
+interface TagItem<T> {
   label: string;
-  value: string;
+  value: T;
   icon?: string;
   fallbackIcon?: string;
   tooltip?: string;
   tooltipClass?: string;
 }
 
-interface SelectableTagProps {
-  item: TagItem;
+interface SelectableTagProps<T> {
+  item: TagItem<T>;
   index?: number;
   variant?: "default" | "more";
   class?: HTMLAttributes["class"];
 }
 
-const props = withDefaults(defineProps<SelectableTagProps>(), {
+const props = withDefaults(defineProps<SelectableTagProps<T>>(), {
   variant: "default",
 });
 
 const emit = defineEmits<{
-  remove: [value: string];
+  remove: [value: T];
   removeByIndex: [index: number];
-  hover: [value: string];
 }>();
 
 function handleRemove() {
@@ -64,7 +63,6 @@ function handleRemove() {
             disabled:opacity-50
             data-fixed:pe-2
           `, props.class)"
-          @pointerenter="emit('hover', item.value)"
         >
           <OptionIcon
             v-if="item.icon || item.fallbackIcon"
