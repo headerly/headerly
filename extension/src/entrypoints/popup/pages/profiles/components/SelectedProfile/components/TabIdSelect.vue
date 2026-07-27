@@ -91,17 +91,16 @@ async function useCurrentWindow() {
   replaceWithTabs(await browser.tabs.query({ currentWindow: true }));
 }
 
+const NO_GROUP_ID = -1;
 async function useCurrentGroup() {
   const currentTab = await getCurrentTab();
   if (!currentTab) {
-    replaceWithTabs([]);
     return;
   }
 
   // Ungrouped tabs all share groupId -1. Treat the active ungrouped tab as its
   // own selection instead of unexpectedly selecting every ungrouped tab.
-  if (currentTab.groupId === undefined || currentTab.groupId === -1) {
-    replaceWithTabs([currentTab]);
+  if (currentTab.groupId === undefined || currentTab.groupId === NO_GROUP_ID) {
     return;
   }
 
@@ -147,7 +146,7 @@ onMounted(() => refreshTabs(true));
           {{ t("condition.tabIds.useCurrentTab") }}
         </DropdownMenuItem>
         <DropdownMenuItem
-          :disabled="currentTabGroupId === undefined || currentTabGroupId === -1"
+          :disabled="currentTabGroupId === undefined || currentTabGroupId === NO_GROUP_ID"
           @click="useCurrentGroup"
         >
           {{ t("condition.tabIds.useCurrentGroup") }}
