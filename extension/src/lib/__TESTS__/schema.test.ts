@@ -133,35 +133,6 @@ describe("profile import/export", () => {
     expect(profileExchangeZodSchema.safeParse(exported).success).toBe(true);
     expect(profileExchangeZodSchema.safeParse(exported.profiles).success).toBe(false);
   });
-
-  it("should migrate version 1 array filters to radio groups", () => {
-    const profile = stripProfileIds(mockProfile);
-    const legacyExchange = {
-      version: 1,
-      profiles: [{
-        ...profile,
-        filters: {
-          ...profile.filters,
-          resourceTypes: profile.filters.resourceTypes!.items,
-          excludedResourceTypes: profile.filters.excludedResourceTypes!.items,
-          requestMethods: profile.filters.requestMethods!.items,
-          excludedRequestMethods: profile.filters.excludedRequestMethods!.items,
-        },
-      }],
-    };
-
-    const result = profileExchangeZodSchema.parse(legacyExchange);
-
-    expect(result.version).toBe(PROFILE_IMPORT_SCHEMA_VERSION);
-    expect(result.profiles[0]!.filters.resourceTypes).toEqual({
-      type: "radio",
-      items: legacyExchange.profiles[0]!.filters.resourceTypes,
-    });
-    expect(result.profiles[0]!.filters.requestMethods).toEqual({
-      type: "radio",
-      items: legacyExchange.profiles[0]!.filters.requestMethods,
-    });
-  });
 });
 
 describe("addProfileIds", () => {

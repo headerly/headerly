@@ -1,7 +1,6 @@
 import { uuidv7 } from "uuidv7";
 import { z } from "zod";
 import { PROFILE_IMPORT_SCHEMA_VERSION } from "./const";
-import { migrateLegacyProfileExchange } from "./profileExchangeMigration";
 
 const uuidSchemaWithDefault = z.uuid().default(() => uuidv7());
 const groupItemSchema = z.object({
@@ -261,18 +260,13 @@ export type ProfileWithoutIds = z.infer<typeof profileWithoutIdsZodSchema>;
 
 const profilesWithoutIdsArrayZodSchema = z.array(profileWithoutIdsZodSchema).min(1);
 
-const currentProfileExchangeZodSchema = z.object({
+export const profileExchangeZodSchema = z.object({
   version: z.literal(PROFILE_IMPORT_SCHEMA_VERSION),
   profiles: profilesWithoutIdsArrayZodSchema,
 });
-
-export const profileExchangeZodSchema = z.preprocess(
-  migrateLegacyProfileExchange,
-  currentProfileExchangeZodSchema,
-);
 export type ProfileExchange = z.infer<typeof profileExchangeZodSchema>;
 
-export const profileExchangeJsonSchema = z.toJSONSchema(currentProfileExchangeZodSchema);
+export const profileExchangeJsonSchema = z.toJSONSchema(profileExchangeZodSchema);
 
 /**
  * Strip all id fields from profile
