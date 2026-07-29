@@ -28,7 +28,7 @@ const forwardedProps = useForwardProps(delegatedProps);
         focus-visible:ring-ring/50
         disabled:cursor-not-allowed! disabled:opacity-50
         aria-invalid:border-destructive aria-invalid:ring-destructive/20
-        data-placeholder:text-muted-foreground
+        data-placeholder:text-muted-foreground data-placeholder:italic
         data-[size=default]:h-9
         data-[size=sm]:h-8
         *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex

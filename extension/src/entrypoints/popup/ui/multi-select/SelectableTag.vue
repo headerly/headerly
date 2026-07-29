@@ -55,9 +55,9 @@ function handleRemove() {
         <TagsInputItem
           :value="item.label"
           :class="cn(`
-            relative inline-flex h-7 max-w-26 shrink-0 cursor-default
-            items-center gap-1 rounded-md bg-secondary ps-2 pe-7 pl-2 text-xs
-            font-medium text-secondary-foreground transition-all
+            relative inline-flex h-7 max-w-30 shrink-0 cursor-default
+            items-center gap-1 rounded-md bg-secondary ps-2 pe-7 pl-2 text-sm
+            text-secondary-foreground transition-all
             hover:bg-secondary/66
             disabled:pointer-events-none disabled:cursor-not-allowed
             disabled:opacity-50
@@ -98,7 +98,7 @@ function handleRemove() {
     :value="item.label"
     class="
       relative inline-flex h-7 shrink-0 cursor-pointer items-center rounded-md
-      bg-muted px-2 text-xs font-medium text-muted-foreground transition-all
+      bg-muted px-2 text-sm text-muted-foreground transition-all
       hover:bg-muted/80
     "
   >

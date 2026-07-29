@@ -187,7 +187,7 @@ const replacePanelActions = computed(() => [
         main-field="true"
         class="
           h-full min-w-0 flex-1 px-2 text-sm outline-none
-          placeholder:text-muted-foreground
+          placeholder:text-muted-foreground placeholder:italic
         "
         :placeholder="t('jsonEditor.search.findPlaceholder')"
         @keydown.enter="handleSearchSubmit"
@@ -258,7 +258,7 @@ const replacePanelActions = computed(() => [
           v-model="replaceText"
           class="
             h-full min-w-0 flex-1 px-2 text-sm outline-none
-            placeholder:text-muted-foreground
+            placeholder:text-muted-foreground placeholder:italic
           "
           :placeholder="t('jsonEditor.search.replacePlaceholder')"
           @keydown.enter="handleReplaceSubmit"

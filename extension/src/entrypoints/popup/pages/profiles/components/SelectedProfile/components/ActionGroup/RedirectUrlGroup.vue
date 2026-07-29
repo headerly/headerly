@@ -62,10 +62,6 @@ function deleteGroup() {
             v-model.trim.lazy="list[index]!.value"
             type="url"
             placeholder="https://example.com/"
-            class="
-              text-base
-              placeholder:italic
-            "
           />
         </div>
         <div class="flex items-center gap-0.5">

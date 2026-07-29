@@ -121,7 +121,7 @@ function getOperationLabel(operation: HeaderModOperation) {
       <div
         class="
           grid flex-1 flex-col gap-1
-          sm:grid-cols-2 sm:grid-rows-1
+          sm:grid-cols-2 sm:grid-rows-1 sm:gap-0
         "
       >
         <Combobox
@@ -133,10 +133,8 @@ function getOperationLabel(operation: HeaderModOperation) {
             <ComboboxInput
               v-model="field.name"
               :placeholder="t('common.name')"
-              class="
-                w-full text-base
-                placeholder:italic
-              "
+              class="w-full"
+              :class="field.operation !== 'remove' && 'sm:rounded-r-none'"
               @change="commitHeaderName"
             />
           </ComboboxAnchor>
@@ -159,10 +157,7 @@ function getOperationLabel(operation: HeaderModOperation) {
             v-model.trim.lazy="field.value"
             type="text"
             :placeholder="t('common.value')"
-            class="
-              text-base
-              placeholder:italic
-            "
+            class="sm:rounded-l-none"
           />
         </div>
       </div>

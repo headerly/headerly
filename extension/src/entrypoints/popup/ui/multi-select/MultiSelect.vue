@@ -197,8 +197,8 @@ function removeTagByValue(value: T) {
             <TagsInputInput
               :placeholder="modelValue.length > 0 ? '' : props.placeholder || t('common.selectOptions')"
               class="
-                min-w-30 flex-1 bg-transparent px-2 py-1 outline-hidden
-                placeholder:text-muted-foreground/70
+                min-w-30 flex-1 bg-transparent px-2 py-1 text-sm outline-hidden
+                placeholder:text-muted-foreground placeholder:italic
                 disabled:cursor-not-allowed
               "
               :class="{

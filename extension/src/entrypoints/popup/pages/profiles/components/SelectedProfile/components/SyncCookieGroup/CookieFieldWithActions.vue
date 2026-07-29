@@ -146,16 +146,13 @@ const missedCookieOptionKey = computed(() => {
       <div
         class="
           grid flex-1 grid-rows-2 gap-1
-          sm:grid-cols-2 sm:grid-rows-1
+          sm:grid-cols-2 sm:grid-rows-1 sm:gap-0
         "
       >
         <Input
           :model-value="field.domain"
           :placeholder="t('common.domain')"
-          class="
-            text-base
-            placeholder:italic
-          "
+          class="sm:rounded-r-none"
           @change="handleDomainChange"
         />
         <div class="relative">
@@ -166,7 +163,10 @@ const missedCookieOptionKey = computed(() => {
           >
             <SelectTrigger
               :class="cn(
-                'w-full min-w-0 px-3 text-base',
+                `
+                  w-full min-w-0 px-3
+                  sm:rounded-l-none
+                `,
                 isSelectedCookieMissing && 'border-warning text-warning',
               )"
             >
@@ -177,7 +177,10 @@ const missedCookieOptionKey = computed(() => {
               <SelectValue
                 v-else
                 :placeholder="disabled ? t('common.notAvailable') : t('syncCookie.pickCookie')"
-                class="block! flex-1 truncate text-left"
+                :class="cn(
+                  'block! flex-1 truncate text-left',
+                  !field.name && 'italic',
+                )"
               />
             </SelectTrigger>
             <SelectContent>
@@ -255,7 +258,7 @@ const missedCookieOptionKey = computed(() => {
 
       <Textarea
         v-model="field.value"
-        class="min-h-24 w-full text-base wrap-anywhere select-all"
+        class="min-h-24 w-full wrap-anywhere select-all"
         :placeholder="t('common.comments')"
         disabled
       />

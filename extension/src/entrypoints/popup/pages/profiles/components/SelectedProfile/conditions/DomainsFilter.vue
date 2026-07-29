@@ -154,10 +154,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
           :model-value="domainsFilter.items[index]!.value"
           :model-modifiers="{ lazy: true }"
           placeholder="example.com"
-          class="
-            w-full text-base
-            placeholder:italic
-          "
+          class="w-full"
           @update:model-value="(value) => {
             domainsFilter.items[index]!.value = getDomainFromUserInput(value);
           }"

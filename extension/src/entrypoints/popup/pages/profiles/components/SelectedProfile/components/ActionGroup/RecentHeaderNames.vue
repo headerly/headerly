@@ -17,16 +17,24 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const displayedNames = ref([...props.names]);
+const suppressTagAnimations = ref(false);
 
 watch(
   () => props.names,
-  (names) => {
+  (names, previousNames) => {
+    suppressTagAnimations.value = (names.length === 0) !== (previousNames.length === 0);
+
     // Keep the final item mounted while the whole alert exits so the item and
     // alert exit animations do not run at the same time.
     if (names.length > 0)
       displayedNames.value = [...names];
   },
 );
+
+function handleContainerAnimationComplete() {
+  if (props.names.length > 0)
+    suppressTagAnimations.value = false;
+}
 </script>
 
 <template>
@@ -35,10 +43,14 @@ watch(
       v-if="names.length > 0"
       key="recent-header-names"
       class="w-full overflow-hidden"
-      :initial="{ height: 0, opacity: 0, y: -4 }"
-      :animate="{ height: 'auto', opacity: 1, y: 0 }"
-      :exit="{ height: 0, opacity: 0, y: -4 }"
-      :transition="{ duration: 0.2, ease: 'easeOut' }"
+      :initial="{ height: 0, opacity: 0 }"
+      :animate="{ height: 'auto', opacity: 1 }"
+      :exit="{ height: 0, opacity: 0 }"
+      :transition="{
+        height: { duration: 0.16, ease: 'easeOut' },
+        opacity: { duration: 0.12, ease: 'easeOut' },
+      }"
+      @animation-complete="handleContainerAnimationComplete"
     >
       <div
         :class="cn(`flex items-center border-none`, props.class)"
@@ -46,23 +58,22 @@ watch(
         <div class="flex items-center gap-1">
           <span class="sr-only">{{ t("headerMod.recent.title") }}</span>
           <div class="flex flex-wrap gap-1">
-            <AnimatePresence :initial="false" mode="popLayout">
+            <AnimatePresence :initial="false">
               <motion.div
                 v-for="name in displayedNames"
                 :key="name"
-                layout="position"
                 class="
                   group/recent relative max-w-30 shrink-0
                   xl:max-w-40
                 "
-                :initial="{ opacity: 0, scale: 0.96, x: -2 }"
+                :initial="suppressTagAnimations
+                  ? false
+                  : { opacity: 0, scale: 0.96, x: -2 }"
                 :animate="{ opacity: 1, scale: 1, x: 0 }"
                 :exit="{ opacity: 0, scale: 0.96, x: -4 }"
-                :transition="{
-                  duration: 0.16,
-                  ease: 'easeOut',
-                  layout: { duration: 0.18, ease: 'easeOut' },
-                }"
+                :transition="suppressTagAnimations
+                  ? { duration: 0 }
+                  : { duration: 0.16, ease: 'easeOut' }"
               >
                 <Button
                   type="button"

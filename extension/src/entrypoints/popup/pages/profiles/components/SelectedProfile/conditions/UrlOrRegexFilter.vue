@@ -154,10 +154,6 @@ function getCurrentTabHost() {
         <Input
           v-model.trim.lazy="list[index]!.value"
           :placeholder="field[filterType].placeholder"
-          class="
-            text-base
-            placeholder:italic
-          "
         />
         <div class="flex gap-0.5">
           <TooltipProvider>

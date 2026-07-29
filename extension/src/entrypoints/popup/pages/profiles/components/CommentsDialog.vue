@@ -50,7 +50,7 @@ defineExpose({
         <Textarea
           id="comments"
           v-model="commentsInput"
-          class="min-h-32 text-base"
+          class="min-h-32"
           :placeholder="t('commentsDialog.placeholder')"
           autofocus
         />
