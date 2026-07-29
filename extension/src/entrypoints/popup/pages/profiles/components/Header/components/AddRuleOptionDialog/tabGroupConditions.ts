@@ -1,26 +1,13 @@
-import type { TabGroupBinding, TabGroupsFilterGroup } from "@/lib/schema";
+import type { TabGroupsFilterGroup } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { getCurrentTab } from "@/lib/currentTab";
+import { getCurrentTabGroupBinding } from "@/lib/currentTab";
 import { ensureTabGroupsPermission } from "@/lib/permissions";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
 
-function createTabGroupsFilterGroup(value: TabGroupBinding[]): TabGroupsFilterGroup {
+function createTabGroupsFilterGroup(value: TabGroupsFilterGroup["items"][number]["value"]): TabGroupsFilterGroup {
   return { type: "radio", items: [{ id: uuidv7(), enabled: true, value }] };
-}
-
-async function getCurrentTabGroupBinding(): Promise<TabGroupBinding[]> {
-  const currentTab = await getCurrentTab();
-  if (!currentTab || currentTab.groupId === undefined || currentTab.groupId === browser.tabGroups.TAB_GROUP_ID_NONE) {
-    return [];
-  }
-
-  const tabs = await browser.tabs.query({ groupId: currentTab.groupId });
-  return [{
-    groupId: currentTab.groupId,
-    tabIds: tabs.flatMap(tab => tab.id === undefined ? [] : [tab.id]),
-  }];
 }
 
 export function useCreateTabGroupConditions() {
@@ -41,8 +28,9 @@ export function useCreateTabGroupConditions() {
       ...(isExcluded ? {} : { isRecommended: true }),
       action: async () => {
         if (await ensureTabGroupsPermission()) {
+          const currentTabGroupBinding = await getCurrentTabGroupBinding();
           profilesStore.selectedProfile.filters[filterType] = createTabGroupsFilterGroup(
-            await getCurrentTabGroupBinding(),
+            currentTabGroupBinding ? [currentTabGroupBinding] : [],
           );
         }
       },

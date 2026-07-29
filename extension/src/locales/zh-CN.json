@@ -246,6 +246,7 @@
       "useCurrentWindow": "使用当前窗口"
     },
     "tabGroups": {
+      "addCurrentTabGroup": "添加当前标签组",
       "description": "规则仅匹配来自所选标签组内标签页的请求，并会在当前浏览器会话中同步组内标签页。",
       "unnamedGroupLabel": "\"{tabTitle}\" | \"{tabTitle} 和其他 {remainingCount} 个标签页\" | \"{tabTitle} 和其他 {remainingCount} 个标签页\"",
       "selectPlaceholder": "选择标签组...",

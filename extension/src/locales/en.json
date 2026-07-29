@@ -246,6 +246,7 @@
       "useCurrentWindow": "Use current window"
     },
     "tabGroups": {
+      "addCurrentTabGroup": "Add the current tab group",
       "description": "The rule only matches requests originating from tabs in a selected tab group. Group membership is kept in sync for the current browser session.",
       "unnamedGroupLabel": "\"{tabTitle}\" | \"{tabTitle} and {remainingCount} other tab\" | \"{tabTitle} and {remainingCount} other tabs\"",
       "selectPlaceholder": "Select tab groups...",

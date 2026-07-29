@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import type { TabGroupsFilterGroup, TabGroupsFilterItem } from "@/lib/schema";
+import type { TabGroupBinding, TabGroupsFilterGroup, TabGroupsFilterItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { Button } from "#/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { getCurrentTabGroupBinding } from "@/lib/currentTab";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 import TabGroupSelect from "../components/TabGroupSelect.vue";
@@ -36,17 +43,46 @@ function deleteGroup() {
   delete profilesStore.selectedProfile.filters[filterType];
 }
 
-function createTabGroupsFilterItem() {
+const currentTabGroupBinding = ref<TabGroupBinding>();
+
+async function refreshCurrentTabGroupBinding() {
+  currentTabGroupBinding.value = await getCurrentTabGroupBinding();
+  return currentTabGroupBinding.value;
+}
+
+function createTabGroupsFilterItem(value: TabGroupBinding[] = []) {
   return {
     id: uuidv7(),
     enabled: true,
-    value: [],
+    value,
   } satisfies TabGroupsFilterItem;
 }
 
-function newField() {
-  addItemToGroup(filterGroup.value.items, createTabGroupsFilterItem(), filterGroup.value.type);
+async function newField() {
+  const binding = await refreshCurrentTabGroupBinding();
+  addItemToGroup(
+    filterGroup.value.items,
+    createTabGroupsFilterItem(binding ? [binding] : []),
+    filterGroup.value.type,
+  );
 }
+
+async function addCurrentTabGroup(index: number) {
+  const binding = await refreshCurrentTabGroupBinding();
+  const item = filterGroup.value.items[index];
+  if (!binding || !item) {
+    return;
+  }
+
+  const existingIndex = item.value.findIndex(value => value.groupId === binding.groupId);
+  if (existingIndex === -1) {
+    item.value.push(binding);
+  } else {
+    item.value.splice(existingIndex, 1, binding);
+  }
+}
+
+onMounted(refreshCurrentTabGroupBinding);
 </script>
 
 <template>
@@ -73,6 +109,23 @@ function newField() {
           v-model="filterGroup.items[index].value"
         />
         <div class="flex gap-0.5">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button
+                  size="icon-xs"
+                  variant="secondary"
+                  :disabled="!currentTabGroupBinding"
+                  @click="addCurrentTabGroup(index)"
+                >
+                  <i class="i-lucide-at-sign size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                {{ t("condition.tabGroups.addCurrentTabGroup") }}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <Button
             size="icon-xs"
             variant="secondary"

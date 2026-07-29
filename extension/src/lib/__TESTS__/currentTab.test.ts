@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getCurrentTabId, isControllableTab } from "../currentTab";
+import { getCurrentTabGroupBinding, getCurrentTabId, isControllableTab } from "../currentTab";
 
 function createTab(id: number | undefined, url: string | undefined) {
   return { id, url } as Browser.tabs.Tab;
@@ -47,5 +47,36 @@ describe("getCurrentTabId", () => {
     ]);
 
     await expect(getCurrentTabId()).resolves.toBeUndefined();
+  });
+});
+
+describe("getCurrentTabGroupBinding", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("returns the current group and all of its tab IDs", async () => {
+    let queryCount = 0;
+    vi.spyOn(browser.tabs, "query").mockImplementation(async () => {
+      queryCount++;
+      return queryCount === 1
+        ? [{ id: 42, groupId: 7 } as Browser.tabs.Tab]
+        : [
+            { id: 41, groupId: 7 } as Browser.tabs.Tab,
+            { id: 42, groupId: 7 } as Browser.tabs.Tab,
+          ];
+    });
+
+    await expect(getCurrentTabGroupBinding()).resolves.toEqual({
+      groupId: 7,
+      tabIds: [41, 42],
+    });
+  });
+
+  it("returns undefined when the current tab is not grouped", async () => {
+    vi.spyOn(browser.tabs, "query").mockImplementation(async () => [{
+      id: 42,
+      groupId: -1,
+    } as Browser.tabs.Tab]);
+
+    await expect(getCurrentTabGroupBinding()).resolves.toBeUndefined();
   });
 });
