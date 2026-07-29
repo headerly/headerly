@@ -19,7 +19,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
     match(key)
       .with("resourceTypes", "excludedResourceTypes", (k) => {
         const enabledItems = profile.filters[k]?.items
-          ?.filter(item => item.enabled)
+          .filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
           condition[k] = uniq(enabledItems);
@@ -27,7 +27,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
         const enabledItems = profile.filters[k]?.items
-          ?.filter(item => item.enabled)
+          .filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledItems && enabledItems.length > 0) {
           condition[k] = uniq(enabledItems);
@@ -35,7 +35,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
       })
       .with("tabIds", "excludedTabIds", (k) => {
         const enabledTabIds = profile.filters[k]?.items
-          ?.filter(item => item.enabled)
+          .filter(item => item.enabled)
           .flatMap(item => item.value);
         if (enabledTabIds && enabledTabIds.length > 0) {
           condition[k] = uniq(enabledTabIds);
