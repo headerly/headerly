@@ -5,6 +5,7 @@ import { useStorage } from "@vueuse/core";
 import { match } from "ts-pattern";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import InfoTooltip from "#/components/InfoTooltip.vue";
 import { useRuleActionType } from "#/composables/useRuleActionType";
 import Badge from "#/ui/badge/Badge.vue";
@@ -21,6 +22,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
+import { Kbd, KbdGroup } from "#/ui/kbd";
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
 import {
@@ -29,6 +31,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/ui/tooltip";
+import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { cn } from "@/lib/utils";
@@ -41,6 +44,7 @@ const { class: className } = defineProps<{
 const profilesStore = useProfilesStore();
 const settingsStore = useSettingsStore();
 const { t } = useI18n();
+const router = useRouter();
 const ruleActionTypeMap = useRuleActionType();
 
 const defaultRuleActionType = useStorage<RuleActionType>("default-rule-action-type", "modifyHeaders");
@@ -50,6 +54,30 @@ function openInFullscreen() {
 }
 
 const menuOpen = ref(false);
+
+function quickCreateProfile() {
+  void profilesStore.addProfile(defaultRuleActionType.value);
+  menuOpen.value = false;
+}
+
+function openSettings() {
+  void router.push("/settings");
+  menuOpen.value = false;
+}
+
+const quickCreateShortcutKeys = useTinykeys(window, "$mod+n", (event) => {
+  event.preventDefault();
+  if (!event.repeat) {
+    quickCreateProfile();
+  }
+});
+
+const settingsShortcutKeys = useTinykeys(window, "$mod+,", (event) => {
+  event.preventDefault();
+  if (!event.repeat) {
+    openSettings();
+  }
+});
 
 const ruleActionTypes = [
   "modifyHeaders",
@@ -100,11 +128,18 @@ function getRuleActionTypeDescription(type: RuleActionType) {
       </DropdownMenuTrigger>
       <DropdownMenuContent class="min-w-40" align="end" :collision-padding="8">
         <DropdownMenuGroup>
-          <DropdownMenuItem class="justify-between gap-1" @click="profilesStore.addProfile(defaultRuleActionType)">
-            {{ t("profile.sidebar.quickCreate") }}
-            <InfoTooltip
-              :description="t('profile.sidebar.quickCreateDescription')"
-            />
+          <DropdownMenuItem class="justify-between gap-2" @click="quickCreateProfile">
+            <span>{{ t("profile.sidebar.quickCreate") }}</span>
+            <div class="ml-auto flex items-center gap-2">
+              <InfoTooltip
+                :description="t('profile.sidebar.quickCreateDescription')"
+              />
+              <KbdGroup>
+                <Kbd v-for="key in quickCreateShortcutKeys" :key>
+                  {{ key }}
+                </Kbd>
+              </KbdGroup>
+            </div>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
@@ -163,10 +198,13 @@ function getRuleActionTypeDescription(type: RuleActionType) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem as-child>
-            <RouterLink to="/settings">
-              {{ t("common.settings") }}
-            </RouterLink>
+          <DropdownMenuItem class="gap-2" @click="openSettings">
+            <span>{{ t("common.settings") }}</span>
+            <KbdGroup class="ml-auto">
+              <Kbd v-for="key in settingsShortcutKeys" :key>
+                {{ key }}
+              </Kbd>
+            </KbdGroup>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
