@@ -110,7 +110,7 @@ useSortableAndAutoAnimate({
                   <Badge
                     v-if="item.requiresAdditionalPermission"
                     class="gap-1"
-                    variant="warning"
+                    variant="secondary"
                   >
                     <i class="i-lucide-shield-alert size-3" />
                     {{ t("common.additionalPermission") }}
