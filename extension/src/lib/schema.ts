@@ -192,7 +192,7 @@ const profileSchema = z.object({
   groupId: z.uuid().optional(),
   comments: z.string().optional(),
   ruleActionType: ruleActionTypeSchema,
-  priority: z.int().nonnegative().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
+  priority: z.int().min(1).optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
