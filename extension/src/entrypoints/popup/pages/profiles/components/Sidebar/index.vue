@@ -215,7 +215,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
         settingsStore.powerOn || `opacity-60`,
       )"
     >
-      <ProfileSwitcher />
+      <ProfileSwitcher :default-rule-action-type />
     </div>
 
     <div

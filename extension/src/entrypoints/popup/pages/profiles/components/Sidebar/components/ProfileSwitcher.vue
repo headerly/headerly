@@ -1,12 +1,21 @@
 <script setup lang="tsx">
-import type { Profile, ProfileGroup } from "@/lib/schema";
+import type { Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, useTemplateRef, watch } from "vue";
+import {
+  PROFILE_GROUP_OPEN_STATES_STORAGE_KEY,
+  useLocalStorageOpenStateRecord,
+} from "@/composables/useLocalStorageOpenState";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import ProfileGroupBlock from "./ProfileGroupBlock.vue";
+import { findProfileIdAfterGroupCollapse } from "./profileGroupSelection";
 import ProfileListItem from "./ProfileListItem.vue";
+
+const { defaultRuleActionType } = defineProps<{
+  defaultRuleActionType: RuleActionType;
+}>();
 
 interface ProfileBlock {
   id: string;
@@ -24,6 +33,7 @@ interface GroupBlock {
 type ProfileSidebarBlock = ProfileBlock | GroupBlock;
 
 const profilesStore = useProfilesStore();
+const profileGroupOpenStates = useLocalStorageOpenStateRecord(PROFILE_GROUP_OPEN_STATES_STORAGE_KEY);
 
 const {
   setRef,
@@ -178,6 +188,38 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
   });
   reorderProfilesByIds(flattenProfileIds(blocks));
 }
+
+async function handleGroupCollapsed(groupId: string) {
+  const selectionBlocks = sidebarBlocks.value.map(block => block.type === "group"
+    ? {
+        type: block.type,
+        groupId: block.group.id,
+        profileIds: block.profiles.map(profile => profile.id),
+      }
+    : {
+        type: block.type,
+        profileId: block.profile.id,
+      });
+  const openGroupIds = new Set(
+    profilesStore.profileGroups
+      .filter(group => profileGroupOpenStates.value[group.id] ?? true)
+      .map(group => group.id),
+  );
+  const nextSelectedProfileId = findProfileIdAfterGroupCollapse(selectionBlocks, groupId, openGroupIds);
+  if (!nextSelectedProfileId) {
+    await profilesStore.addProfile(defaultRuleActionType);
+    return;
+  }
+
+  const selectedProfile = profilesStore.manager.profiles.find(
+    profile => profile.id === profilesStore.manager.selectedProfileId,
+  );
+  if (selectedProfile?.groupId !== groupId) {
+    return;
+  }
+
+  profilesStore.manager.selectedProfileId = nextSelectedProfileId;
+}
 </script>
 
 <template>
@@ -199,6 +241,7 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
         )"
         :group="block.group"
         :profiles="block.profiles"
+        @collapsed="handleGroupCollapsed(block.group.id)"
         @set-ref="setRef"
         @sort-profiles="handleGroupProfilesSort(block.group.id, $event)"
       />

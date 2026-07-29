@@ -16,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  (e: "collapsed"): void;
   (e: "sortProfiles", event: { newIndex: number; oldIndex: number }): void;
   (e: "setRef", el: HTMLDivElement | null, profileId: string): void;
 }>();
@@ -35,6 +36,13 @@ useSortableAndAutoAnimate({
 
 function openContextMenu() {
   contextMenu.value?.open();
+}
+
+function toggleOpen() {
+  open.value = !open.value;
+  if (!open.value) {
+    emit("collapsed");
+  }
 }
 
 defineExpose({ openContextMenu });
@@ -57,7 +65,7 @@ defineExpose({ openContextMenu });
         :group
         :open
         :profiles
-        @toggle-open="open = !open"
+        @toggle-open="toggleOpen"
       />
       <AnimatePresence :initial="false">
         <motion.div

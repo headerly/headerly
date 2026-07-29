@@ -14,6 +14,10 @@ function getOpenStateRecord(storageKey: string) {
   return openStateRecords.getOrInsertComputed(storageKey, () => useLocalStorage<OpenStateRecord>(storageKey, {}));
 }
 
+export function useLocalStorageOpenStateRecord(storageKey: string) {
+  return getOpenStateRecord(storageKey);
+}
+
 export function useLocalStorageOpenState(
   uuid: string,
   storageKey: string,
