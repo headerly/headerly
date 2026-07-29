@@ -107,6 +107,14 @@ useSortableAndAutoAnimate({
                     <i class="i-lucide-star size-3" />
                     {{ t("common.recommended") }}
                   </Badge>
+                  <Badge
+                    v-if="item.requiresAdditionalPermission"
+                    class="gap-1"
+                    variant="warning"
+                  >
+                    <i class="i-lucide-shield-alert size-3" />
+                    {{ t("common.additionalPermission") }}
+                  </Badge>
                 </div>
                 <div class="text-left text-xs text-muted-foreground">
                   {{ item.description }}

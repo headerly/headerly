@@ -109,6 +109,7 @@
     "title": "编辑备注"
   },
   "common": {
+    "additionalPermission": "需要额外权限",
     "addCondition": "添加条件",
     "auto": "自动",
     "backToProfiles": "返回配置",

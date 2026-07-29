@@ -35,6 +35,10 @@ export const badgeVariants = cva(
            dark:focus-visible:ring-destructive/40
            [a&]:hover:bg-destructive/90
          `,
+        warning: `
+          border-transparent bg-warning text-black
+          [a&]:hover:bg-warning/90
+        `,
         outline:
           `
             text-foreground

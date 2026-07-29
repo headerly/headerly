@@ -95,6 +95,7 @@ export function useCreateActionTab(): AddRuleOptionDialogTab {
         key: "cookie-sync-request-header",
         title: t("addRuleOptionDialog.items.cookieSyncRequestHeader.title"),
         description: t("addRuleOptionDialog.items.cookieSyncRequestHeader.description"),
+        requiresAdditionalPermission: true,
         action: async () => {
           if (await ensureCookiesPermission()) {
             addSyncCookieGroup();

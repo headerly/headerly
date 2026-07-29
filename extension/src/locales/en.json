@@ -109,6 +109,7 @@
     "title": "Edit Comments"
   },
   "common": {
+    "additionalPermission": "Additional permission",
     "addCondition": "Add a condition",
     "auto": "Auto",
     "backToProfiles": "Back to profiles",

@@ -25,7 +25,7 @@ export function useCreateTabGroupConditions() {
       description: isExcluded
         ? t("addRuleOptionDialog.items.excludedTabGroups.description")
         : t("addRuleOptionDialog.items.tabGroups.description"),
-      ...(isExcluded ? {} : { isRecommended: true }),
+      requiresAdditionalPermission: true,
       action: async () => {
         if (await ensureTabGroupsPermission()) {
           const currentTabGroupBinding = await getCurrentTabGroupBinding();
