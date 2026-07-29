@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.18.0](https://github.com/headerly/headerly/compare/v1.17.0...v1.18.0) (2026-07-29)
+
+
+### Features
+
+* add checkbox mode to request method, resource type, and tab ID conditions ([#71](https://github.com/headerly/headerly/issues/71)) ([57097cf](https://github.com/headerly/headerly/commit/57097cf8cd41b0dfcf1898c024b971cedc43829d))
+
+
+### Bug Fixes
+
+* select a visible profile when collapsing groups ([3a5d68d](https://github.com/headerly/headerly/commit/3a5d68dcaab00f4d3ab239500d7206df388353e2))
+
 ## [1.17.0](https://github.com/headerly/headerly/compare/v1.16.2...v1.17.0) (2026-07-27)
 
 
