@@ -37,7 +37,7 @@ interface FilterOption<V extends FilterValue> {
   label: string;
 }
 
-const resourceTypeOptions: readonly FilterOption<ResourceTypeValue>[] = [
+const resourceTypeOptions = [
   { value: "csp_report", label: t("condition.resourceType.cspReport") },
   { value: "font", label: t("condition.resourceType.font") },
   { value: "image", label: t("condition.resourceType.image") },
@@ -53,9 +53,9 @@ const resourceTypeOptions: readonly FilterOption<ResourceTypeValue>[] = [
   { value: "websocket", label: t("condition.resourceType.websocket") },
   { value: "webtransport", label: t("condition.resourceType.webtransport") },
   { value: "xmlhttprequest", label: t("condition.resourceType.xmlhttprequest") },
-];
+] as const satisfies readonly FilterOption<ResourceTypeValue>[];
 
-const requestMethodsOptions: readonly FilterOption<RequestMethodValue>[] = [
+const requestMethodsOptions = [
   { value: "connect", label: "CONNECT" },
   { value: "delete", label: "DELETE" },
   { value: "get", label: "GET" },
@@ -65,7 +65,7 @@ const requestMethodsOptions: readonly FilterOption<RequestMethodValue>[] = [
   { value: "patch", label: "PATCH" },
   { value: "post", label: "POST" },
   { value: "put", label: "PUT" },
-];
+] as const satisfies readonly FilterOption<RequestMethodValue>[];
 
 const optionsMap: {
   [K in ConditionType]: readonly FilterOption<FilterValueMap[K]>[];
@@ -79,12 +79,12 @@ const optionsMap: {
 const options = computed(() => optionsMap[type]);
 
 const name = computed(() => {
-  const nameMap: Record<ConditionType, string> = {
+  const nameMap = {
     resourceTypes: t("condition.resourceTypes.title"),
     excludedResourceTypes: t("condition.excludedResourceTypes.title"),
     requestMethods: t("condition.requestMethods.title"),
     excludedRequestMethods: t("condition.excludedRequestMethods.title"),
-  };
+  } as const satisfies Record<ConditionType, string>;
 
   return nameMap[type];
 });
