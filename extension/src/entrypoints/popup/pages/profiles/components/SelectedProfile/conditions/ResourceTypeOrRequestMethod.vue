@@ -1,6 +1,5 @@
 <script setup lang="ts" generic="T extends ConditionType">
-import type { GroupItem } from "@/lib/schema";
-import { match } from "ts-pattern";
+import type { GroupItem, GroupType } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,22 +12,16 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 
-// Define specific item types
-type ResourceTypeItem = GroupItem & {
-  value: `${Browser.declarativeNetRequest.ResourceType}`[];
+type FilterItem<V extends FilterValue> = GroupItem & {
+  value: V[];
 };
 
-type RequestMethodItem = GroupItem & {
-  value: `${Browser.declarativeNetRequest.RequestMethod}`[];
-};
+interface FilterGroup<V extends FilterValue> {
+  type: GroupType;
+  items: FilterItem<V>[];
+}
 
-// Use conditional types to get the correct item type
-type FilterItemType<K extends T>
-  = K extends "resourceTypes" | "excludedResourceTypes" ? ResourceTypeItem
-    : K extends "requestMethods" | "excludedRequestMethods" ? RequestMethodItem
-      : never;
-
-const list = defineModel<FilterItemType<T>[]>({
+const filterGroup = defineModel<FilterGroup<FilterValueMap[T]>>({
   required: true,
 });
 
@@ -39,8 +32,8 @@ const { type } = defineProps<{
 const profilesStore = useProfilesStore();
 const { t } = useI18n();
 
-interface ResourceTypeOption {
-  value: `${Browser.declarativeNetRequest.ResourceType}`;
+interface FilterOption<V extends FilterValue> {
+  value: V;
   label: string;
 }
 
@@ -60,12 +53,7 @@ const resourceTypeOptions = [
   { value: "websocket", label: t("condition.resourceType.websocket") },
   { value: "webtransport", label: t("condition.resourceType.webtransport") },
   { value: "xmlhttprequest", label: t("condition.resourceType.xmlhttprequest") },
-] as const satisfies ResourceTypeOption[];
-
-interface RequestMethodOption {
-  value: `${Browser.declarativeNetRequest.RequestMethod}`;
-  label: string;
-}
+] as const satisfies readonly FilterOption<ResourceTypeValue>[];
 
 const requestMethodsOptions = [
   { value: "connect", label: "CONNECT" },
@@ -77,9 +65,11 @@ const requestMethodsOptions = [
   { value: "patch", label: "PATCH" },
   { value: "post", label: "POST" },
   { value: "put", label: "PUT" },
-] as const satisfies RequestMethodOption[];
+] as const satisfies readonly FilterOption<RequestMethodValue>[];
 
-const optionsMap = {
+const optionsMap: {
+  [K in ConditionType]: readonly FilterOption<FilterValueMap[K]>[];
+} = {
   resourceTypes: resourceTypeOptions,
   requestMethods: requestMethodsOptions,
   excludedResourceTypes: resourceTypeOptions,
@@ -88,45 +78,58 @@ const optionsMap = {
 
 const options = computed(() => optionsMap[type]);
 
-const name = computed(() =>
-  match(type as ConditionType)
-    .with("resourceTypes", () => t("condition.resourceTypes.title"))
-    .with("excludedResourceTypes", () => t("condition.excludedResourceTypes.title"))
-    .with("requestMethods", () => t("condition.requestMethods.title"))
-    .with("excludedRequestMethods", () => t("condition.excludedRequestMethods.title"))
-    .exhaustive(),
-);
+const name = computed(() => {
+  const nameMap = {
+    resourceTypes: t("condition.resourceTypes.title"),
+    excludedResourceTypes: t("condition.excludedResourceTypes.title"),
+    requestMethods: t("condition.requestMethods.title"),
+    excludedRequestMethods: t("condition.excludedRequestMethods.title"),
+  } as const satisfies Record<ConditionType, string>;
+
+  return nameMap[type];
+});
 
 function deleteGroup() {
   delete profilesStore.selectedProfile.filters[type];
 }
 
 function newField() {
-  const newItem = {
+  const newItem: FilterItem<FilterValueMap[T]> = {
     id: uuidv7(),
     enabled: true,
     value: [],
-  } as unknown as FilterItemType<T>;
+  };
 
-  addItemToGroup(list.value, newItem, "radio");
+  addItemToGroup(filterGroup.value.items, newItem, filterGroup.value.type);
 }
 </script>
 
 <script lang="ts">
 type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes" | "excludedRequestMethods";
+type ResourceTypeValue = `${Browser.declarativeNetRequest.ResourceType}`;
+type RequestMethodValue = `${Browser.declarativeNetRequest.RequestMethod}`;
+type FilterValue = ResourceTypeValue | RequestMethodValue;
+
+interface FilterValueMap {
+  resourceTypes: ResourceTypeValue;
+  excludedResourceTypes: ResourceTypeValue;
+  requestMethods: RequestMethodValue;
+  excludedRequestMethods: RequestMethodValue;
+}
 </script>
 
 <template>
   <Group
     :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, type)"
-    v-model:list="list"
+    v-model:list="filterGroup.items"
     :name
-    type="radio"
+    :type="filterGroup.type"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>
       <GroupActions
-        v-model:list="list"
+        v-model:list="filterGroup.items"
+        v-model:type="filterGroup.type"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
@@ -139,8 +142,8 @@ type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes
         "
       >
         <MultiSelect
-          v-if="list[index]"
-          v-model="list[index].value"
+          v-if="filterGroup.items[index]"
+          v-model="filterGroup.items[index].value"
           class="
             w-full
             sm:w-auto
@@ -153,15 +156,15 @@ type ConditionType = "resourceTypes" | "requestMethods" | "excludedResourceTypes
             variant="secondary"
             size="icon-xs"
             @click="() => {
-              list.splice(index, 1);
+              filterGroup.items.splice(index, 1);
             }"
           >
             <span class="sr-only">{{ t("common.deleteHeaderMod") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown
-            v-model:list="list"
-            v-model:field="list[index]!"
+            v-model:list="filterGroup.items"
+            v-model:field="filterGroup.items[index]!"
             :index
           />
         </div>

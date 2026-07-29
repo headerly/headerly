@@ -53,7 +53,7 @@ function removeClosedTabIds(
 
   for (const profile of nextManager.profiles) {
     for (const key of TAB_ID_FILTER_KEYS) {
-      for (const item of profile.filters[key] ?? []) {
+      for (const item of profile.filters[key]?.items ?? []) {
         const nextValue = item.value.filter(tabId => !removedTabIds.has(tabId));
         if (nextValue.length !== item.value.length) {
           item.value = nextValue;

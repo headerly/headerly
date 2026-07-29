@@ -20,6 +20,13 @@ export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;
 const groupTypeSchema = z.enum(["radio", "checkbox"]);
 export type GroupType = z.infer<typeof groupTypeSchema>;
 
+function createFilterGroupSchema<T extends z.ZodType>(itemSchema: T) {
+  return z.object({
+    type: groupTypeSchema,
+    items: z.array(itemSchema),
+  });
+}
+
 export const profileGroupSchema = z.object({
   id: uuidSchemaWithDefault,
   name: z.string(),
@@ -107,24 +114,30 @@ export type HeaderModGroup = z.infer<typeof headerModGroupSchema>;
 const urlOrRegexFilterSchema = groupItemWithValueSchema;
 export type UrlOrRegexFilterItem = z.infer<typeof urlOrRegexFilterSchema>;
 
-const domainsFilterSchema = z.object({
-  type: groupTypeSchema,
-  items: z.array(groupItemWithValueSchema),
-});
+const domainsFilterSchema = createFilterGroupSchema(groupItemWithValueSchema);
 export type DomainsFilter = z.infer<typeof domainsFilterSchema>;
 
 const resourceTypesFilterSchema = groupItemSchema.extend({
   value: z.array(resourceTypeSchema),
 });
 
+const resourceTypesFilterGroupSchema = createFilterGroupSchema(resourceTypesFilterSchema);
+export type ResourceTypesFilterGroup = z.infer<typeof resourceTypesFilterGroupSchema>;
+
 const requestMethodsFilterSchema = groupItemSchema.extend({
   value: z.array(requestMethodSchema),
 });
+
+const requestMethodsFilterGroupSchema = createFilterGroupSchema(requestMethodsFilterSchema);
+export type RequestMethodsFilterGroup = z.infer<typeof requestMethodsFilterGroupSchema>;
 
 const tabIdsFilterSchema = groupItemSchema.extend({
   value: z.array(z.int().nonnegative()),
 });
 export type TabIdsFilterItem = z.infer<typeof tabIdsFilterSchema>;
+
+const tabIdsFilterGroupSchema = createFilterGroupSchema(tabIdsFilterSchema);
+export type TabIdsFilterGroup = z.infer<typeof tabIdsFilterGroupSchema>;
 
 const domainTypeFilterSchema = z.object({
   enabled: z.boolean(),
@@ -160,12 +173,12 @@ const filterSchema = z.object({
   excludedRequestDomains: domainsFilterSchema.optional(),
   topDomains: domainsFilterSchema.optional(),
   excludedTopDomains: domainsFilterSchema.optional(),
-  resourceTypes: z.array(resourceTypesFilterSchema).optional(),
-  excludedResourceTypes: z.array(resourceTypesFilterSchema).optional(),
-  requestMethods: z.array(requestMethodsFilterSchema).optional(),
-  excludedRequestMethods: z.array(requestMethodsFilterSchema).optional(),
-  tabIds: z.array(tabIdsFilterSchema).optional(),
-  excludedTabIds: z.array(tabIdsFilterSchema).optional(),
+  resourceTypes: resourceTypesFilterGroupSchema.optional(),
+  excludedResourceTypes: resourceTypesFilterGroupSchema.optional(),
+  requestMethods: requestMethodsFilterGroupSchema.optional(),
+  excludedRequestMethods: requestMethodsFilterGroupSchema.optional(),
+  tabIds: tabIdsFilterGroupSchema.optional(),
+  excludedTabIds: tabIdsFilterGroupSchema.optional(),
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });
@@ -179,7 +192,7 @@ const profileSchema = z.object({
   groupId: z.uuid().optional(),
   comments: z.string().optional(),
   ruleActionType: ruleActionTypeSchema,
-  priority: z.int().optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
+  priority: z.int().min(1).optional().meta({ description: "Range: 1 to 2^31 - 1, default: 1" }),
   requestHeaderModGroups: z.array(headerModGroupSchema).optional(),
   responseHeaderModGroups: z.array(headerModGroupSchema).optional(),
   syncCookieGroups: z.array(syncCookieGroupSchema).optional(),
@@ -217,6 +230,9 @@ const domainsFilterWithoutIdSchema = domainsFilterSchema.extend({
 const resourceTypesFilterWithoutIdSchema = resourceTypesFilterSchema.omit({ id: true });
 const requestMethodsFilterWithoutIdSchema = requestMethodsFilterSchema.omit({ id: true });
 
+const resourceTypesFilterGroupWithoutIdSchema = createFilterGroupSchema(resourceTypesFilterWithoutIdSchema);
+const requestMethodsFilterGroupWithoutIdSchema = createFilterGroupSchema(requestMethodsFilterWithoutIdSchema);
+
 const filterWithoutIdSchema = filterSchema.extend({
   urlFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
   regexFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
@@ -226,10 +242,10 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedRequestDomains: domainsFilterWithoutIdSchema.optional(),
   topDomains: domainsFilterWithoutIdSchema.optional(),
   excludedTopDomains: domainsFilterWithoutIdSchema.optional(),
-  resourceTypes: z.array(resourceTypesFilterWithoutIdSchema).optional(),
-  excludedResourceTypes: z.array(resourceTypesFilterWithoutIdSchema).optional(),
-  requestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
-  excludedRequestMethods: z.array(requestMethodsFilterWithoutIdSchema).optional(),
+  resourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
+  excludedResourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
+  requestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
+  excludedRequestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
 }).omit({ tabIds: true, excludedTabIds: true });
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({

@@ -7,6 +7,7 @@ import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
+import { profileManagerMigrations } from "./migrations";
 import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
@@ -118,25 +119,8 @@ export interface RuleRegistration {
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
   return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
-    migrations: {
-      2: (oldValue: ProfileManager) => {
-        return {
-          ...oldValue,
-          profileGroups: [],
-        };
-      },
-      3: (oldValue: ProfileManager) => {
-        return {
-          ...oldValue,
-          profiles: oldValue.profiles.map((profile) => {
-            const migratedProfile = { ...profile } as typeof profile & { ruleScope?: unknown };
-            delete migratedProfile.ruleScope;
-            return migratedProfile;
-          }),
-        };
-      },
-    },
-    version: 3,
+    migrations: profileManagerMigrations,
+    version: 4,
     ...options,
   });
 }

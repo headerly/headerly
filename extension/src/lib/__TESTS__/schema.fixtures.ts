@@ -156,54 +156,60 @@ export const mockProfile: Profile = {
         },
       ],
     },
-    resourceTypes: [
-      {
+    resourceTypes: {
+      type: "checkbox",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440014",
         enabled: true,
         comments: "Resource types filter",
         value: ["script", "stylesheet"],
-      },
-    ],
-    excludedResourceTypes: [
-      {
+      }],
+    },
+    excludedResourceTypes: {
+      type: "radio",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440015",
         enabled: true,
         comments: "Excluded resource types",
         value: ["image", "font"],
-      },
-    ],
-    requestMethods: [
-      {
+      }],
+    },
+    requestMethods: {
+      type: "checkbox",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440016",
         enabled: true,
         comments: "Request methods filter",
         value: ["get", "post"],
-      },
-    ],
-    excludedRequestMethods: [
-      {
+      }],
+    },
+    excludedRequestMethods: {
+      type: "radio",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440017",
         enabled: true,
         comments: "Excluded request methods",
         value: ["delete", "patch"],
-      },
-    ],
-    tabIds: [
-      {
+      }],
+    },
+    tabIds: {
+      type: "checkbox",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440026",
         enabled: true,
         comments: "Tabs",
         value: [42, 43],
-      },
-    ],
-    excludedTabIds: [
-      {
+      }],
+    },
+    excludedTabIds: {
+      type: "radio",
+      items: [{
         id: "550e8400-e29b-41d4-a716-446655440027",
         enabled: true,
         comments: "Excluded tabs",
         value: [44],
-      },
-    ],
+      }],
+    },
     domainType: {
       enabled: true,
       value: "firstParty",

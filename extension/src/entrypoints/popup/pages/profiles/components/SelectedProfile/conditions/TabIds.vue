@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TabIdsFilterItem } from "@/lib/schema";
+import type { TabIdsFilterGroup, TabIdsFilterItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,7 +13,7 @@ import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
 import TabIdSelect from "../components/TabIdSelect.vue";
 
-const list = defineModel<TabIdsFilterItem[]>({ required: true });
+const filterGroup = defineModel<TabIdsFilterGroup>({ required: true });
 
 const { filterType } = defineProps<{
   filterType: "tabIds" | "excludedTabIds";
@@ -47,21 +47,22 @@ async function createTabIdsFilterItem() {
 }
 
 async function newField() {
-  addItemToGroup(list.value, await createTabIdsFilterItem(), "radio");
+  addItemToGroup(filterGroup.value.items, await createTabIdsFilterItem(), filterGroup.value.type);
 }
 </script>
 
 <template>
   <Group
     :id="getProfileFilterGroupOpenStateId(profilesStore.selectedProfile.id, filterType)"
-    v-model:list="list"
+    v-model:list="filterGroup.items"
     :name="field[filterType].title"
-    type="radio"
+    :type="filterGroup.type"
     @delete-empty-group="deleteGroup"
   >
     <template #group-actions>
       <GroupActions
-        v-model:list="list"
+        v-model:list="filterGroup.items"
+        v-model:type="filterGroup.type"
         :description="field[filterType].description"
         @delete-group="deleteGroup"
         @new-field="newField"
@@ -70,21 +71,21 @@ async function newField() {
     <template #item="{ index }">
       <div class="flex min-w-0 flex-1 items-center gap-1">
         <TabIdSelect
-          v-if="list[index]"
-          v-model="list[index].value"
+          v-if="filterGroup.items[index]"
+          v-model="filterGroup.items[index].value"
         />
         <div class="flex gap-0.5">
           <Button
             size="icon-xs"
             variant="secondary"
-            @click="list.splice(index, 1)"
+            @click="filterGroup.items.splice(index, 1)"
           >
             <span class="sr-only">{{ t("common.deleteCondition") }}</span>
             <i class="i-lucide-x size-4" />
           </Button>
           <ActionsDropdown
-            v-model:list="list"
-            v-model:field="list[index]!"
+            v-model:list="filterGroup.items"
+            v-model:field="filterGroup.items[index]!"
             :index
           />
         </div>

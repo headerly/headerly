@@ -13,7 +13,7 @@ export function deriveRuleScope(condition: Browser.declarativeNetRequest.RuleCon
 
 export function hasTemporaryTabBinding(profile: Pick<Profile, "filters">) {
   return [profile.filters.tabIds, profile.filters.excludedTabIds]
-    .some(items => items?.some(item => item.enabled && item.value.length > 0));
+    .some(group => group?.items.some(item => item.enabled && item.value.length > 0));
 }
 
 type ProfileActionData = Pick<

@@ -38,7 +38,8 @@ export async function getCurrentTabHostname() {
 }
 
 export async function getCurrentTabId() {
-  return (await getCurrentTab())?.id;
+  const currentTab = await getCurrentTab();
+  return currentTab && isControllableTab(currentTab) ? currentTab.id : undefined;
 }
 
 export async function getCurrentTabHost() {

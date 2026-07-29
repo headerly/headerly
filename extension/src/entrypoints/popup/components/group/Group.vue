@@ -120,19 +120,16 @@ useSortableAndAutoAnimate({
       <template #main>
         <CollapsibleContent class="overflow-visible">
           <slot name="items-before" />
-          <component
-            :is="type === 'radio' ? RadioGroup : 'div'"
-            v-bind="type === 'radio'
-              ? {
-                'as': 'div',
-                'modelValue': list.find(item => item.enabled)?.id,
-                'onUpdate:modelValue': (val: string) => {
-                  list.forEach(item => {
-                    item.enabled = item.id === val;
-                  });
-                },
+          <RadioGroup
+            as="div"
+            :model-value="type === 'radio' ? list.find(item => item.enabled)?.id : undefined"
+            @update:model-value="(val) => {
+              if (type === 'radio') {
+                list.forEach(item => {
+                  item.enabled = item.id === val;
+                });
               }
-              : {}"
+            }"
           >
             <div
               ref="listContainer"
@@ -160,7 +157,7 @@ useSortableAndAutoAnimate({
                 </SortableItem>
               </div>
             </div>
-          </component>
+          </RadioGroup>
         </CollapsibleContent>
       </template>
     </Fieldset>

@@ -16,14 +16,16 @@ describe("filters field comprehensive tests", () => {
     expect(result.filters.excludedRequestDomains?.items).toHaveLength(1);
     expect(result.filters.topDomains?.items).toHaveLength(1);
     expect(result.filters.excludedTopDomains?.items).toHaveLength(1);
-    expect(result.filters.resourceTypes).toHaveLength(1);
-    expect(result.filters.excludedResourceTypes).toHaveLength(1);
-    expect(result.filters.requestMethods).toHaveLength(1);
-    expect(result.filters.excludedRequestMethods).toHaveLength(1);
-    expect(result.filters.resourceTypes![0]!.value).toEqual(["script", "stylesheet"]);
-    expect(result.filters.requestMethods![0]!.value).toEqual(["get", "post"]);
+    expect(result.filters.resourceTypes?.items).toHaveLength(1);
+    expect(result.filters.excludedResourceTypes?.items).toHaveLength(1);
+    expect(result.filters.requestMethods?.items).toHaveLength(1);
+    expect(result.filters.excludedRequestMethods?.items).toHaveLength(1);
+    expect(result.filters.resourceTypes!.items[0]!.value).toEqual(["script", "stylesheet"]);
+    expect(result.filters.requestMethods!.items[0]!.value).toEqual(["get", "post"]);
     expect(result.filters.initiatorDomains!.type).toBe("checkbox");
     expect(result.filters.excludedInitiatorDomains!.type).toBe("radio");
+    expect(result.filters.resourceTypes!.type).toBe("checkbox");
+    expect(result.filters.excludedResourceTypes!.type).toBe("radio");
   });
 
   it("should preserve filter field data through round trip", () => {
@@ -37,16 +39,16 @@ describe("filters field comprehensive tests", () => {
     expect(restored.filters.excludedRequestDomains!.items[0]!.value).toBe(mockProfile.filters.excludedRequestDomains!.items[0]!.value);
     expect(restored.filters.topDomains!.items[0]!.value).toBe(mockProfile.filters.topDomains!.items[0]!.value);
     expect(restored.filters.excludedTopDomains!.items[0]!.value).toBe(mockProfile.filters.excludedTopDomains!.items[0]!.value);
-    expect(restored.filters.resourceTypes![0]!.value).toEqual(mockProfile.filters.resourceTypes![0]!.value);
-    expect(restored.filters.excludedResourceTypes![0]!.value).toEqual(mockProfile.filters.excludedResourceTypes![0]!.value);
-    expect(restored.filters.requestMethods![0]!.value).toEqual(mockProfile.filters.requestMethods![0]!.value);
-    expect(restored.filters.excludedRequestMethods![0]!.value).toEqual(mockProfile.filters.excludedRequestMethods![0]!.value);
+    expect(restored.filters.resourceTypes!.items[0]!.value).toEqual(mockProfile.filters.resourceTypes!.items[0]!.value);
+    expect(restored.filters.excludedResourceTypes!.items[0]!.value).toEqual(mockProfile.filters.excludedResourceTypes!.items[0]!.value);
+    expect(restored.filters.requestMethods!.items[0]!.value).toEqual(mockProfile.filters.requestMethods!.items[0]!.value);
+    expect(restored.filters.excludedRequestMethods!.items[0]!.value).toEqual(mockProfile.filters.excludedRequestMethods!.items[0]!.value);
     expect(restored.filters.domainType!.value).toBe(mockProfile.filters.domainType!.value);
     expect(restored.filters.isUrlFilterCaseSensitive!.value).toBe(mockProfile.filters.isUrlFilterCaseSensitive!.value);
     expect(restored.filters.urlFilter![0]!.id).not.toBe(mockProfile.filters.urlFilter![0]!.id);
     expect(restored.filters.regexFilter![0]!.id).not.toBe(mockProfile.filters.regexFilter![0]!.id);
     expect(restored.filters.initiatorDomains!.items[0]!.id).not.toBe(mockProfile.filters.initiatorDomains!.items[0]!.id);
-    expect(restored.filters.resourceTypes![0]!.id).not.toBe(mockProfile.filters.resourceTypes![0]!.id);
+    expect(restored.filters.resourceTypes!.items[0]!.id).not.toBe(mockProfile.filters.resourceTypes!.items[0]!.id);
   });
 
   it("should handle empty filter arrays correctly", () => {
@@ -55,10 +57,10 @@ describe("filters field comprehensive tests", () => {
       filters: {
         urlFilter: [],
         regexFilter: [],
-        resourceTypes: [],
-        excludedResourceTypes: [],
-        requestMethods: [],
-        excludedRequestMethods: [],
+        resourceTypes: { type: "checkbox", items: [] },
+        excludedResourceTypes: { type: "checkbox", items: [] },
+        requestMethods: { type: "checkbox", items: [] },
+        excludedRequestMethods: { type: "checkbox", items: [] },
       },
     };
 
@@ -69,8 +71,8 @@ describe("filters field comprehensive tests", () => {
     expect(restored.filters.urlFilter).toEqual([]);
     expect(stripped.filters.regexFilter).toEqual([]);
     expect(restored.filters.regexFilter).toEqual([]);
-    expect(stripped.filters.resourceTypes).toEqual([]);
-    expect(restored.filters.resourceTypes).toEqual([]);
+    expect(stripped.filters.resourceTypes).toEqual({ type: "checkbox", items: [] });
+    expect(restored.filters.resourceTypes).toEqual({ type: "checkbox", items: [] });
   });
 });
 

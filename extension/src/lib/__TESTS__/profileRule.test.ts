@@ -19,11 +19,14 @@ describe("hasTemporaryTabBinding", () => {
   it("detects enabled non-empty tab filters", () => {
     expect(hasTemporaryTabBinding({
       filters: {
-        tabIds: [{
-          id: "550e8400-e29b-41d4-a716-446655440000",
-          enabled: true,
-          value: [42],
-        }],
+        tabIds: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            enabled: true,
+            value: [42],
+          }],
+        },
       },
     })).toBe(true);
   });
@@ -31,16 +34,22 @@ describe("hasTemporaryTabBinding", () => {
   it("ignores disabled and empty tab filters", () => {
     expect(hasTemporaryTabBinding({
       filters: {
-        excludedTabIds: [{
-          id: "550e8400-e29b-41d4-a716-446655440000",
-          enabled: false,
-          value: [42],
-        }],
-        tabIds: [{
-          id: "550e8400-e29b-41d4-a716-446655440001",
-          enabled: true,
-          value: [],
-        }],
+        excludedTabIds: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440000",
+            enabled: false,
+            value: [42],
+          }],
+        },
+        tabIds: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440001",
+            enabled: true,
+            value: [],
+          }],
+        },
       },
     })).toBe(false);
   });
