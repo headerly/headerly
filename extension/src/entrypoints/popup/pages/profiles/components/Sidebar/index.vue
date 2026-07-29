@@ -65,7 +65,7 @@ function openSettings() {
   menuOpen.value = false;
 }
 
-const quickCreateShortcutKeys = useTinykeys(window, "$mod+n", (event) => {
+const quickCreateShortcutKeys = useTinykeys(window, "$mod+N", (event) => {
   event.preventDefault();
   if (!event.repeat) {
     quickCreateProfile();

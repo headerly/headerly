@@ -1,7 +1,7 @@
 import type { KeybindingHandler } from "tinykeys";
 import { parseKeybinding, tinykeys } from "tinykeys";
 import { match } from "ts-pattern";
-import { onUnmounted } from "vue";
+import { onScopeDispose } from "vue";
 
 export function useTinykeys(
   target: Window | HTMLElement,
@@ -9,7 +9,7 @@ export function useTinykeys(
   handler: KeybindingHandler,
 ) {
   const stop = tinykeys(target, { [keybinding]: handler });
-  onUnmounted(stop);
+  onScopeDispose(stop);
 
   const keys = parseKeybinding(keybinding).flatMap(([requiredModifiers, optionalModifiers, key]) => {
     if (key instanceof RegExp) {
