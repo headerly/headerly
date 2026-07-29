@@ -53,4 +53,19 @@ describe("hasTemporaryTabBinding", () => {
       },
     })).toBe(false);
   });
+
+  it("detects tab group snapshots with live tabs", () => {
+    expect(hasTemporaryTabBinding({
+      filters: {
+        tabGroups: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440002",
+            enabled: true,
+            value: [{ groupId: 7, tabIds: [42, 43] }],
+          }],
+        },
+      },
+    })).toBe(true);
+  });
 });

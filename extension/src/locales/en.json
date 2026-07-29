@@ -41,6 +41,10 @@
         "description": "The rule will not match requests from the selected tabs. Tab bindings become invalid after the browser restarts.",
         "title": "Excluded Tabs"
       },
+      "excludedTabGroups": {
+        "description": "The rule will not match requests from tabs in the selected tab groups. Requires access to tab groups.",
+        "title": "Excluded Tab Groups"
+      },
       "initiatorDomains": {
         "description": "The rule will only match network requests originating from the list of initiator domains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Initiator Domains"
@@ -80,6 +84,10 @@
       "tabIds": {
         "description": "The rule will only match requests from the selected tabs. Tab bindings become invalid after the browser restarts.",
         "title": "Tabs"
+      },
+      "tabGroups": {
+        "description": "The rule will only match requests from tabs in the selected tab groups. Requires access to tab groups.",
+        "title": "Tab Groups"
       },
       "urlFilter": {
         "description": "The rule will only match network requests whose URL contains any of the specified substrings. If the list is omitted, the rule is applied to requests with all URLs. An empty list is not allowed. Only one of urlFilter or regexFilter can be specified.",
@@ -192,6 +200,10 @@
       "description": "The rule will not match requests originating from any selected tab.",
       "title": "Excluded Tabs"
     },
+    "excludedTabGroups": {
+      "description": "The rule will not match requests originating from tabs in any selected tab group.",
+      "title": "Excluded Tab Groups"
+    },
     "regexFilter": {
       "description": "Regular expression to match against the network request url.",
       "syntaxPrefix": "This follows the",
@@ -232,6 +244,13 @@
       "useCurrentGroup": "Use current group",
       "useCurrentTab": "Use current tab",
       "useCurrentWindow": "Use current window"
+    },
+    "tabGroups": {
+      "description": "The rule only matches requests originating from tabs in a selected tab group. Group membership is kept in sync for the current browser session.",
+      "unnamedGroupLabel": "\"{tabTitle}\" | \"{tabTitle} and {remainingCount} other tab\" | \"{tabTitle} and {remainingCount} other tabs\"",
+      "selectPlaceholder": "Select tab groups...",
+      "title": "Tab Groups",
+      "unavailableGroup": "Tab group is unavailable"
     },
     "urlFilter": {
       "anchor": " - Anchor: marks start or end of the URL.",

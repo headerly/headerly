@@ -11,6 +11,7 @@ import { unregisterAllRules } from "./DNR/unregisterAllRules";
 import { onMessage } from "./message";
 import { hasRegisterableAction, hasTemporaryTabBinding } from "./profileRule";
 import { setupSyncCookies } from "./syncCookies";
+import { setupTabGroupSync } from "./tabGroupSync";
 import { setupTabIdCleanup } from "./tabIdCleanup";
 
 export default defineBackground({
@@ -55,6 +56,7 @@ export default defineBackground({
     });
     setupSyncCookies({ profileManagerMutex, profileManagerItem });
     setupTabIdCleanup({ profileManagerMutex, profileManagerItem });
+    setupTabGroupSync({ profileManagerMutex, profileManagerItem });
 
     // Clean up orphaned DNR rules whenever the worker starts, then update the badge.
     reconcileRulesAndUpdateBadge();

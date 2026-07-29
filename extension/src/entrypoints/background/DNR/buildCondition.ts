@@ -15,6 +15,12 @@ const allowAllRequestsResourceTypes = [
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
 
+  function appendTabIds(key: "tabIds" | "excludedTabIds", tabIds: number[] | undefined) {
+    if (tabIds && tabIds.length > 0) {
+      condition[key] = uniq([...(condition[key] ?? []), ...tabIds]);
+    }
+  }
+
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
     match(key)
       .with("resourceTypes", "excludedResourceTypes", (k) => {
@@ -37,9 +43,14 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         const enabledTabIds = profile.filters[k]?.items
           .filter(item => item.enabled)
           .flatMap(item => item.value);
-        if (enabledTabIds && enabledTabIds.length > 0) {
-          condition[k] = uniq(enabledTabIds);
-        }
+        appendTabIds(k, enabledTabIds);
+      })
+      .with("tabGroups", "excludedTabGroups", (k) => {
+        const enabledTabIds = profile.filters[k]?.items
+          .filter(item => item.enabled)
+          .flatMap(item => item.value)
+          .flatMap(binding => binding.tabIds);
+        appendTabIds(k === "tabGroups" ? "tabIds" : "excludedTabIds", enabledTabIds);
       })
       .with("urlFilter", "regexFilter", (k) => {
         // A DNR rule cannot have both urlFilter and regexFilter.

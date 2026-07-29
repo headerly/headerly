@@ -5,6 +5,7 @@ import DomainsFilter from "../conditions/DomainsFilter.vue";
 import DomainType from "../conditions/DomainType.vue";
 import IsUrlFilterCaseSensitive from "../conditions/IsUrlFilterCaseSensitive.vue";
 import ResourceTypeOrRequestMethod from "../conditions/ResourceTypeOrRequestMethod.vue";
+import TabGroups from "../conditions/TabGroups.vue";
 import TabIds from "../conditions/TabIds.vue";
 import UrlOrRegexFilter from "../conditions/UrlOrRegexFilter.vue";
 
@@ -91,5 +92,15 @@ const filters = computed(() => profilesStore.selectedProfile.filters);
     v-if="filters.excludedTabIds"
     v-model="filters.excludedTabIds"
     filter-type="excludedTabIds"
+  />
+  <TabGroups
+    v-if="filters.tabGroups"
+    v-model="filters.tabGroups"
+    filter-type="tabGroups"
+  />
+  <TabGroups
+    v-if="filters.excludedTabGroups"
+    v-model="filters.excludedTabGroups"
+    filter-type="excludedTabGroups"
   />
 </template>

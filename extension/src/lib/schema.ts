@@ -139,6 +139,12 @@ export type TabIdsFilterItem = z.infer<typeof tabIdsFilterSchema>;
 const tabIdsFilterGroupSchema = createFilterGroupSchema(tabIdsFilterSchema);
 export type TabIdsFilterGroup = z.infer<typeof tabIdsFilterGroupSchema>;
 
+const tabGroupBindingSchema = z.object({ groupId: z.int().nonnegative(), tabIds: z.array(z.int().nonnegative()) });
+export type TabGroupBinding = z.infer<typeof tabGroupBindingSchema>;
+const tabGroupsFilterSchema = groupItemSchema.extend({ value: z.array(tabGroupBindingSchema) });
+export type TabGroupsFilterItem = z.infer<typeof tabGroupsFilterSchema>;
+const tabGroupsFilterGroupSchema = createFilterGroupSchema(tabGroupsFilterSchema);
+export type TabGroupsFilterGroup = z.infer<typeof tabGroupsFilterGroupSchema>;
 const domainTypeFilterSchema = z.object({
   enabled: z.boolean(),
   value: domainTypeValueSchema,
@@ -179,6 +185,8 @@ const filterSchema = z.object({
   excludedRequestMethods: requestMethodsFilterGroupSchema.optional(),
   tabIds: tabIdsFilterGroupSchema.optional(),
   excludedTabIds: tabIdsFilterGroupSchema.optional(),
+  tabGroups: tabGroupsFilterGroupSchema.optional(),
+  excludedTabGroups: tabGroupsFilterGroupSchema.optional(),
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });
@@ -246,7 +254,7 @@ const filterWithoutIdSchema = filterSchema.extend({
   excludedResourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
   requestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
   excludedRequestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
-}).omit({ tabIds: true, excludedTabIds: true });
+}).omit({ tabIds: true, excludedTabIds: true, tabGroups: true, excludedTabGroups: true });
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({
   requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),

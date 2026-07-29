@@ -45,6 +45,25 @@ describe("buildCondition", () => {
           type: "checkbox",
           items: [createFilterItem(10, [44])],
         },
+        tabGroups: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440011",
+            enabled: true,
+            value: [
+              { groupId: 7, tabIds: [43, 45] },
+              { groupId: 8, tabIds: [46] },
+            ],
+          }],
+        },
+        excludedTabGroups: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440012",
+            enabled: true,
+            value: [{ groupId: 9, tabIds: [44, 47] }],
+          }],
+        },
       },
     });
 
@@ -54,7 +73,7 @@ describe("buildCondition", () => {
     expect(condition.excludedResourceTypes).toEqual(["font"]);
     expect(condition.requestMethods).toEqual(["get", "post"]);
     expect(condition.excludedRequestMethods).toEqual(["delete"]);
-    expect(condition.tabIds).toEqual([42, 43]);
-    expect(condition.excludedTabIds).toEqual([44]);
+    expect(condition.tabIds).toEqual([42, 43, 45, 46]);
+    expect(condition.excludedTabIds).toEqual([44, 47]);
   });
 });
