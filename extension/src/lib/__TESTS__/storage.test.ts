@@ -40,6 +40,7 @@ describe("profile manager storage migrations", () => {
         filters: {
           resourceTypes,
           tabIds,
+          excludedTabIds: [],
         },
       }],
       selectedProfileId: profile.id,
@@ -55,6 +56,10 @@ describe("profile manager storage migrations", () => {
     expect(manager.profiles[0]!.filters.tabIds).toEqual({
       type: "radio",
       items: tabIds,
+    });
+    expect(manager.profiles[0]!.filters.excludedTabIds).toEqual({
+      type: "radio",
+      items: [],
     });
   });
 });

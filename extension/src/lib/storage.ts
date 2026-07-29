@@ -7,6 +7,7 @@ import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
+import { profileManagerMigrations } from "./migrations";
 import { createProfile } from "./profileFactory";
 
 interface UseExtensionStorageOptions<T> {
@@ -111,37 +112,6 @@ const defaultProfileManager = createDefaultProfileManager();
 
 type UseStorageInstanceOptions<T> = Pick<UseExtensionStorageOptions<T>, "onReady">;
 
-const LEGACY_ARRAY_FILTER_KEYS = [
-  "resourceTypes",
-  "excludedResourceTypes",
-  "requestMethods",
-  "excludedRequestMethods",
-  "tabIds",
-  "excludedTabIds",
-] as const;
-
-function migrateArrayFiltersToGroups(oldValue: ProfileManager) {
-  return {
-    ...oldValue,
-    profiles: oldValue.profiles.map((profile) => {
-      const filters = { ...profile.filters } as Record<string, unknown>;
-      for (const key of LEGACY_ARRAY_FILTER_KEYS) {
-        const filter = filters[key];
-        if (Array.isArray(filter)) {
-          filters[key] = {
-            type: "radio",
-            items: filter,
-          };
-        }
-      }
-      return {
-        ...profile,
-        filters,
-      };
-    }),
-  } as ProfileManager;
-}
-
 export interface RuleRegistration {
   ruleId: number;
   ruleScope: RuleScope;
@@ -149,25 +119,7 @@ export interface RuleRegistration {
 
 export function useProfileManagerStorage(options?: UseStorageInstanceOptions<ProfileManager>) {
   return useExtensionStorageWrapper<ProfileManager>("local:profileManager", defaultProfileManager, {
-    migrations: {
-      2: (oldValue: ProfileManager) => {
-        return {
-          ...oldValue,
-          profileGroups: [],
-        };
-      },
-      3: (oldValue: ProfileManager) => {
-        return {
-          ...oldValue,
-          profiles: oldValue.profiles.map((profile) => {
-            const migratedProfile = { ...profile } as typeof profile & { ruleScope?: unknown };
-            delete migratedProfile.ruleScope;
-            return migratedProfile;
-          }),
-        };
-      },
-      4: migrateArrayFiltersToGroups,
-    },
+    migrations: profileManagerMigrations,
     version: 4,
     ...options,
   });
