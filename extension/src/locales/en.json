@@ -10,7 +10,7 @@
     },
     "items": {
       "cookieSyncRequestHeader": {
-        "description": "Sync cookies for a specific website to the request header. New permissions need to be granted.",
+        "description": "Sync cookies for a specific website to the request header.",
         "title": "Cookie Sync to Request Header"
       },
       "domainType": {

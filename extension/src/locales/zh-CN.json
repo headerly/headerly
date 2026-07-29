@@ -10,7 +10,7 @@
     },
     "items": {
       "cookieSyncRequestHeader": {
-        "description": "将指定网站的 Cookie 同步到请求头。需要授予新的权限。",
+        "description": "将指定网站的 Cookie 同步到请求头。",
         "title": "同步 Cookie 到请求头"
       },
       "domainType": {
