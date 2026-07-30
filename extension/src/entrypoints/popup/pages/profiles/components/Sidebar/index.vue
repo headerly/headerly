@@ -130,14 +130,9 @@ function getRuleActionTypeDescription(type: RuleActionType) {
         <DropdownMenuGroup>
           <DropdownMenuItem class="justify-between gap-2" @click="quickCreateProfile">
             <span>{{ t("profile.sidebar.quickCreate") }}</span>
-            <div class="ml-auto flex items-center gap-2">
-              <InfoTooltip
-                :description="t('profile.sidebar.quickCreateDescription')"
-              />
-              <DropdownMenuShortcut class="ml-0">
-                {{ quickCreateShortcutKeys.join("+") }}
-              </DropdownMenuShortcut>
-            </div>
+            <DropdownMenuShortcut>
+              {{ quickCreateShortcutKeys.join("+") }}
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
