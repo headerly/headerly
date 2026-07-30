@@ -17,12 +17,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/ui/dropdown-menu";
-import { Kbd, KbdGroup } from "#/ui/kbd";
 import { Label } from "#/ui/label";
 import { Switch } from "#/ui/switch";
 import {
@@ -134,11 +134,9 @@ function getRuleActionTypeDescription(type: RuleActionType) {
               <InfoTooltip
                 :description="t('profile.sidebar.quickCreateDescription')"
               />
-              <KbdGroup>
-                <Kbd v-for="key in quickCreateShortcutKeys" :key>
-                  {{ key }}
-                </Kbd>
-              </KbdGroup>
+              <DropdownMenuShortcut class="ml-0">
+                {{ quickCreateShortcutKeys.join("+") }}
+              </DropdownMenuShortcut>
             </div>
           </DropdownMenuItem>
           <DropdownMenuSub>
@@ -200,11 +198,9 @@ function getRuleActionTypeDescription(type: RuleActionType) {
         <DropdownMenuGroup>
           <DropdownMenuItem class="gap-2" @click="openSettings">
             <span>{{ t("common.settings") }}</span>
-            <KbdGroup class="ml-auto">
-              <Kbd v-for="key in settingsShortcutKeys" :key>
-                {{ key }}
-              </Kbd>
-            </KbdGroup>
+            <DropdownMenuShortcut>
+              {{ settingsShortcutKeys.join("+") }}
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>

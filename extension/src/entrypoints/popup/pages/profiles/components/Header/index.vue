@@ -8,6 +8,7 @@ import { Button } from "#/ui/button";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuShortcut,
 } from "#/ui/dropdown-menu";
 import {
   Input,
@@ -227,19 +228,15 @@ const undoAndRedoButtonGroup = [
               @click="btn.onClick"
             >
               <span>{{ btn.label }}</span>
-              <KbdGroup class="z-50 ml-auto">
-                <Kbd v-for="key in btn.shortcutKeys" :key>
-                  {{ key }}
-                </Kbd>
-              </KbdGroup>
+              <DropdownMenuShortcut>
+                {{ btn.shortcutKeys.join("+") }}
+              </DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem @click="addRuleOptionDialogBus.emit({ target: 'actions' })">
               <span>{{ t("profile.header.addActionOrCondition") }}</span>
-              <KbdGroup class="z-50 ml-auto">
-                <Kbd v-for="key in addRuleOptionShortcutKeys" :key>
-                  {{ key }}
-                </Kbd>
-              </KbdGroup>
+              <DropdownMenuShortcut>
+                {{ addRuleOptionShortcutKeys.join("+") }}
+              </DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </template>
