@@ -35,6 +35,8 @@ export function setupTabGroupSync(options: {
   browser.permissions.onAdded.addListener(({ permissions }) => {
     if (permissions?.includes("tabGroups")) {
       browser.tabGroups.onRemoved.addListener(onTabGroupRemoved);
+      shouldRefreshAllBindings = true;
+      scheduleSync();
     }
   });
 
