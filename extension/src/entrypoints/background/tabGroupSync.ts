@@ -22,6 +22,7 @@ export function setupTabGroupSync(options: {
   const pendingRemovedGroupIds = new Set<number>();
   const pendingRemovedTabIds = new Set<number>();
   let shouldRefreshAllBindings = true;
+  let shouldClearAllBindings = false;
   let syncTimer: ReturnType<typeof setTimeout> | undefined;
 
   browser.tabs.onRemoved.addListener((tabId) => {
@@ -40,6 +41,10 @@ export function setupTabGroupSync(options: {
       scheduleSync();
     }
   });
+  browser.runtime.onStartup.addListener(() => {
+    shouldClearAllBindings = true;
+    scheduleSync();
+  });
   browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
     if (changeInfo.groupId !== undefined) {
       shouldRefreshAllBindings = true;
@@ -53,9 +58,9 @@ export function setupTabGroupSync(options: {
     }
   });
 
-  // Running this once also covers browser startup, extension updates, and any
-  // later service-worker restart.
-  flushPendingChanges();
+  // Delay the initial refresh so onStartup can invalidate bindings from a
+  // previous browser session before their session-only group IDs are queried.
+  scheduleSync();
 
   function scheduleSync() {
     if (syncTimer !== undefined) {
@@ -72,9 +77,11 @@ export function setupTabGroupSync(options: {
     const removedGroupIds = new Set(pendingRemovedGroupIds);
     const removedTabIds = new Set(pendingRemovedTabIds);
     const refreshAllBindings = shouldRefreshAllBindings;
+    const clearAllBindings = shouldClearAllBindings;
     pendingRemovedGroupIds.clear();
     pendingRemovedTabIds.clear();
     shouldRefreshAllBindings = false;
+    shouldClearAllBindings = false;
 
     return profileManagerMutex.runExclusive(async () => {
       const manager = await profileManagerItem.getValue();
@@ -84,7 +91,9 @@ export function setupTabGroupSync(options: {
         nextManager = removeTabGroupBindings(nextManager, removedGroupIds, removedTabIds);
       }
 
-      if (refreshAllBindings) {
+      if (clearAllBindings) {
+        nextManager = clearTabGroupBindings(nextManager);
+      } else if (refreshAllBindings) {
         const refreshedTabIdsByGroupId = await querySelectedTabGroups(nextManager);
         nextManager = refreshTabGroupBindings(nextManager, refreshedTabIdsByGroupId);
       }
@@ -145,6 +154,10 @@ function updateTabGroupBindings(
   }
 
   return changed ? nextManager : manager;
+}
+
+export function clearTabGroupBindings(manager: ProfileManager) {
+  return updateTabGroupBindings(manager, () => undefined);
 }
 
 export function removeTabGroupBindings(

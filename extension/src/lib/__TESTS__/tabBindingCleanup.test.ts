@@ -1,7 +1,7 @@
 import type { Profile } from "../schema";
 import type { ProfileManager } from "../types";
 import { describe, expect, it } from "vitest";
-import { refreshTabGroupBindings } from "@/entrypoints/background/tabGroupSync";
+import { clearTabGroupBindings, refreshTabGroupBindings } from "@/entrypoints/background/tabGroupSync";
 import { removeClosedTabIds } from "@/entrypoints/background/tabIdCleanup";
 import { createProfile } from "../profileFactory";
 
@@ -69,6 +69,26 @@ describe("temporary tab binding cleanup", () => {
     }));
 
     const nextManager = refreshTabGroupBindings(manager, new Map([[7, []]]));
+
+    expect(nextManager.profiles[0]?.enabled).toBe(false);
+    expect(nextManager.profiles[0]?.filters.tabGroups?.items[0]?.value).toEqual([]);
+  });
+
+  it("clears session-only tab group bindings for a new browser session", () => {
+    const manager = createManager(createProfile({
+      filters: {
+        tabGroups: {
+          type: "checkbox",
+          items: [{
+            id: "550e8400-e29b-41d4-a716-446655440003",
+            enabled: true,
+            value: [{ groupId: 7, tabIds: [42, 43] }],
+          }],
+        },
+      },
+    }));
+
+    const nextManager = clearTabGroupBindings(manager);
 
     expect(nextManager.profiles[0]?.enabled).toBe(false);
     expect(nextManager.profiles[0]?.filters.tabGroups?.items[0]?.value).toEqual([]);
