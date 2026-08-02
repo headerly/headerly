@@ -4,6 +4,7 @@ import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
 import { isEqual } from "es-toolkit";
 import { TAB_GROUP_ID_NONE } from "@/lib/const";
+import { hasEmptyTemporaryTabFilter } from "./profileRule";
 
 const TAB_GROUP_SYNC_DELAY_MS = 500;
 const TAB_GROUP_FILTER_KEYS = ["tabGroups", "excludedTabGroups"] as const;
@@ -39,7 +40,6 @@ export function setupTabGroupSync(options: {
       scheduleSync();
     }
   });
-
   browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
     if (changeInfo.groupId !== undefined) {
       shouldRefreshAllBindings = true;
@@ -125,6 +125,7 @@ function updateTabGroupBindings(
   const nextManager = structuredClone(manager);
   let changed = false;
   for (const profile of nextManager.profiles) {
+    let profileChanged = false;
     for (const key of TAB_GROUP_FILTER_KEYS) {
       for (const item of profile.filters[key]?.items ?? []) {
         const nextValue = item.value.flatMap((binding) => {
@@ -134,8 +135,12 @@ function updateTabGroupBindings(
         if (!isEqual(nextValue, item.value)) {
           item.value = nextValue;
           changed = true;
+          profileChanged = true;
         }
       }
+    }
+    if (profileChanged && profile.enabled && hasEmptyTemporaryTabFilter(profile)) {
+      profile.enabled = false;
     }
   }
 

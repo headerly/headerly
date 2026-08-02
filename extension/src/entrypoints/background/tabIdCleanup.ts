@@ -1,6 +1,7 @@
 import type { Mutex } from "async-mutex";
 import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
+import { hasEmptyTemporaryTabFilter } from "./profileRule";
 
 const TAB_ID_CLEANUP_DELAY_MS = 500;
 const TAB_ID_FILTER_KEYS = ["tabIds", "excludedTabIds"] as const;
@@ -40,7 +41,7 @@ export function setupTabIdCleanup(options: {
   }
 }
 
-function removeClosedTabIds(
+export function removeClosedTabIds(
   manager: ProfileManager,
   removedTabIds: ReadonlySet<number>,
 ) {
@@ -52,14 +53,19 @@ function removeClosedTabIds(
   let changed = false;
 
   for (const profile of nextManager.profiles) {
+    let profileChanged = false;
     for (const key of TAB_ID_FILTER_KEYS) {
       for (const item of profile.filters[key]?.items ?? []) {
         const nextValue = item.value.filter(tabId => !removedTabIds.has(tabId));
         if (nextValue.length !== item.value.length) {
           item.value = nextValue;
           changed = true;
+          profileChanged = true;
         }
       }
+    }
+    if (profileChanged && profile.enabled && hasEmptyTemporaryTabFilter(profile)) {
+      profile.enabled = false;
     }
   }
 
