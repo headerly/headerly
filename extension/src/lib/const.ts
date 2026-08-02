@@ -11,3 +11,5 @@ export const PROFILE_GROUP_COLOR_PRESETS = [
   "#78d9ec",
   "#fcad70",
 ] as const;
+
+export const TAB_GROUP_ID_NONE = -1;

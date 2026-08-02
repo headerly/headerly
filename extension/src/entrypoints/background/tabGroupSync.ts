@@ -2,8 +2,9 @@ import type { Mutex } from "async-mutex";
 import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
 import { isEqual } from "es-toolkit";
+import { TAB_GROUP_ID_NONE } from "@/lib/const";
 
-const TAB_GROUP_SYNC_DELAY_MS = 200;
+const TAB_GROUP_SYNC_DELAY_MS = 500;
 const TAB_GROUP_FILTER_KEYS = ["tabGroups", "excludedTabGroups"] as const;
 
 interface TabGroupBindingChanges {
@@ -31,10 +32,17 @@ export function setupTabGroupSync(options: {
     pendingRemovedTabIds.add(tabId);
     scheduleSync();
   });
-  browser.tabGroups.onRemoved.addListener((group) => {
+  function onTabGroupRemoved(group: Browser.tabGroups.TabGroup) {
     pendingRemovedGroupIds.add(group.id);
     scheduleSync();
+  }
+  browser.tabGroups?.onRemoved.addListener(onTabGroupRemoved);
+  browser.permissions.onAdded.addListener(({ permissions }) => {
+    if (permissions?.includes("tabGroups")) {
+      browser.tabGroups.onRemoved.addListener(onTabGroupRemoved);
+    }
   });
+
   browser.tabs.onUpdated.addListener((_tabId, changeInfo) => {
     if (changeInfo.groupId !== undefined) {
       shouldRefreshAllBindings = true;
@@ -42,7 +50,7 @@ export function setupTabGroupSync(options: {
     }
   });
   browser.tabs.onCreated.addListener((tab) => {
-    if (tab.groupId !== undefined && tab.groupId !== browser.tabGroups.TAB_GROUP_ID_NONE) {
+    if (tab.groupId !== undefined && tab.groupId !== TAB_GROUP_ID_NONE) {
       shouldRefreshAllBindings = true;
       scheduleSync();
     }

@@ -1,7 +1,7 @@
 import type { TabGroupBinding } from "./schema";
+import { TAB_GROUP_ID_NONE } from "./const";
 
 const CONTROLLABLE_TAB_PROTOCOLS = ["http:", "https:"];
-const NO_GROUP_ID = -1;
 
 export function isControllableTab(
   tab: Browser.tabs.Tab,
@@ -47,7 +47,7 @@ export async function getCurrentTabId() {
 
 export async function getCurrentTabGroupBinding(): Promise<TabGroupBinding | undefined> {
   const currentTab = await getCurrentTab();
-  if (!currentTab || currentTab.groupId === undefined || currentTab.groupId === NO_GROUP_ID) {
+  if (!currentTab || currentTab.groupId === undefined || currentTab.groupId === TAB_GROUP_ID_NONE) {
     return undefined;
   }
 

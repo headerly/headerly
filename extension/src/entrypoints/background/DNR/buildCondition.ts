@@ -1,6 +1,6 @@
 import type { ProfileCoreData } from "../diffProfiles";
 import type { ResourceType } from "@/lib/schema";
-import { uniq } from "es-toolkit";
+import { union, uniq } from "es-toolkit";
 import { match } from "ts-pattern";
 
 interface BuildConditionOptions {
@@ -17,7 +17,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
 
   function appendTabIds(key: "tabIds" | "excludedTabIds", tabIds: number[] | undefined) {
     if (tabIds && tabIds.length > 0) {
-      condition[key] = uniq([...(condition[key] ?? []), ...tabIds]);
+      condition[key] = union(condition[key] ?? [], tabIds);
     }
   }
 
