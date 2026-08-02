@@ -47,7 +47,7 @@ export async function getCurrentTabId() {
 
 export async function getCurrentTabGroupBinding(): Promise<TabGroupBinding | undefined> {
   const currentTab = await getCurrentTab();
-  if (!currentTab || currentTab.groupId === undefined || currentTab.groupId === TAB_GROUP_ID_NONE) {
+  if (!currentTab || currentTab.groupId === TAB_GROUP_ID_NONE) {
     return undefined;
   }
 

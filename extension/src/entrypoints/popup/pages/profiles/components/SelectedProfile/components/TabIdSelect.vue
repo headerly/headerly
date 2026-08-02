@@ -94,7 +94,7 @@ async function useCurrentGroup() {
 
   // Ungrouped tabs all share groupId -1. Treat the active ungrouped tab as its
   // own selection instead of unexpectedly selecting every ungrouped tab.
-  if (currentTab.groupId === undefined || currentTab.groupId === NO_GROUP_ID) {
+  if (currentTab.groupId === NO_GROUP_ID) {
     return;
   }
 
@@ -139,7 +139,7 @@ onMounted(() => refreshTabs());
           {{ t("condition.tabIds.useCurrentTab") }}
         </DropdownMenuItem>
         <DropdownMenuItem
-          :disabled="currentTabGroupId === undefined || currentTabGroupId === NO_GROUP_ID"
+          :disabled="currentTabGroupId === NO_GROUP_ID"
           @click="useCurrentGroup"
         >
           {{ t("condition.tabIds.useCurrentGroup") }}

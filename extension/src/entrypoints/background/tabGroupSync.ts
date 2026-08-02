@@ -50,7 +50,7 @@ export function setupTabGroupSync(options: {
     }
   });
   browser.tabs.onCreated.addListener((tab) => {
-    if (tab.groupId !== undefined && tab.groupId !== TAB_GROUP_ID_NONE) {
+    if (tab.groupId !== TAB_GROUP_ID_NONE) {
       shouldRefreshAllBindings = true;
       scheduleSync();
     }

@@ -26,9 +26,9 @@ const colorIconClasses = {
 
 const tabsByGroupId = computed(() => Map.groupBy(
   tabs.value
-    .filter(tab => tab.id !== undefined && tab.groupId !== undefined)
+    .filter(tab => tab.id !== undefined)
     .sort((a, b) => a.index - b.index),
-  tab => tab.groupId!,
+  tab => tab.groupId,
 ));
 
 const selectedGroupIds = computed({
