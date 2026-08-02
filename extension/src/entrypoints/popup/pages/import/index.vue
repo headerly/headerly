@@ -7,7 +7,7 @@ import JsonEditor from "#/components/JsonEditor/index.vue";
 import { Button } from "#/ui/button";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { ensureCookiesPermission } from "@/lib/permissions";
+import { ensureBrowserPermission } from "@/lib/permissions";
 import { decodeProfileSharePayload } from "@/lib/profileShare";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,7 @@ async function confirmImport() {
 
     const { profiles } = result.data;
     const hasSyncCookieGroups = profiles.some(profile => Boolean(profile.syncCookieGroups?.length));
-    if (hasSyncCookieGroups && !await ensureCookiesPermission()) {
+    if (hasSyncCookieGroups && !await ensureBrowserPermission("cookies")) {
       toast.error(t("import.toast.cookiesPermissionRequired"));
       return;
     }

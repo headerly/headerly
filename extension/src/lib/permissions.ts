@@ -1,17 +1,8 @@
-export async function ensureCookiesPermission() {
-  const hasCookiesPermission = await browser.permissions.contains({ permissions: ["cookies"] });
-  if (hasCookiesPermission) {
+export async function ensureBrowserPermission(permission: Browser.runtime.ManifestOptionalPermission): Promise<boolean> {
+  const hasPermission = await browser.permissions.contains({ permissions: [permission] });
+  if (hasPermission) {
     return true;
   }
 
-  return await browser.permissions.request({ permissions: ["cookies"] });
-}
-
-export async function ensureTabGroupsPermission() {
-  const hasTabGroupsPermission = await browser.permissions.contains({ permissions: ["tabGroups"] });
-  if (hasTabGroupsPermission) {
-    return true;
-  }
-
-  return await browser.permissions.request({ permissions: ["tabGroups"] });
+  return await browser.permissions.request({ permissions: [permission] });
 }

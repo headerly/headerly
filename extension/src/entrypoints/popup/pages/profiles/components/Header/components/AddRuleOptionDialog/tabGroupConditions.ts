@@ -3,7 +3,7 @@ import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabGroupBinding } from "@/lib/currentTab";
-import { ensureTabGroupsPermission } from "@/lib/permissions";
+import { ensureBrowserPermission } from "@/lib/permissions";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
 
 function createTabGroupsFilterGroup(value: TabGroupsFilterGroup["items"][number]["value"]): TabGroupsFilterGroup {
@@ -27,7 +27,7 @@ export function useCreateTabGroupConditions() {
         : t("addRuleOptionDialog.items.tabGroups.description"),
       requiresAdditionalPermission: true,
       action: async () => {
-        if (await ensureTabGroupsPermission()) {
+        if (await ensureBrowserPermission("tabGroups")) {
           const currentTabGroupBinding = await getCurrentTabGroupBinding();
           profilesStore.selectedProfile.filters[filterType] = createTabGroupsFilterGroup(
             currentTabGroupBinding ? [currentTabGroupBinding] : [],
