@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const props = withDefaults(defineProps<{
   defaultValue?: string;
   modelValue?: string;
-  modelModifiers?: { lazy?: boolean; trim?: boolean };
+  modelModifiers?: { trim?: boolean };
   class?: HTMLAttributes["class"];
 }>(), {
   modelModifiers: () => ({}),
@@ -58,7 +58,6 @@ defineExpose({
       `,
       props.class,
     )"
-    @input="!modelModifiers.lazy && emitUpdate($event)"
-    @change="modelModifiers.lazy && emitUpdate($event)"
+    @input="emitUpdate($event)"
   >
 </template>

@@ -48,28 +48,15 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-let selectingAutocompleteOption: boolean = false;
-
 function normalizeAndCommitHeaderName(name: string) {
   field.value.name = name.trim().toLocaleLowerCase();
   if (field.value.name)
     emit("nameCommitted", field.value.name);
 }
 
-function commitHeaderName() {
-  if (!selectingAutocompleteOption)
-    normalizeAndCommitHeaderName(field.value.name);
-}
-
-function startSelectingAutocompleteOption() {
-  selectingAutocompleteOption = true;
-}
-
 function selectAutocompleteOption(value: unknown) {
   if (typeof value === "string")
     normalizeAndCommitHeaderName(value);
-
-  selectingAutocompleteOption = false;
 }
 
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
@@ -135,7 +122,6 @@ function getOperationLabel(operation: HeaderModOperation) {
               :placeholder="t('common.name')"
               class="w-full"
               :class="field.operation !== 'remove' && 'sm:rounded-r-none'"
-              @change="commitHeaderName"
             />
           </ComboboxAnchor>
 
@@ -145,7 +131,6 @@ function getOperationLabel(operation: HeaderModOperation) {
                 v-for="option in autocompleteList"
                 :key="option"
                 :value="option"
-                @pointerdown="startSelectingAutocompleteOption"
               >
                 {{ option }}
               </ComboboxItem>
@@ -154,7 +139,7 @@ function getOperationLabel(operation: HeaderModOperation) {
         </Combobox>
         <div v-if="field.operation !== 'remove'" class="flex-1">
           <Input
-            v-model.trim.lazy="field.value"
+            v-model.trim="field.value"
             type="text"
             :placeholder="t('common.value')"
             class="sm:rounded-l-none"

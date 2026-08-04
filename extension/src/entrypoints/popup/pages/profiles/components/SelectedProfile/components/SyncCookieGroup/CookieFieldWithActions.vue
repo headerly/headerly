@@ -93,8 +93,8 @@ const cookieOptions = computed(() => {
   return sortBy(options, ["label", "domain", "path"]);
 });
 
-function handleDomainChange(e: Event) {
-  const userInput = (e.target as HTMLInputElement).value.trim();
+function updateDomain(value: string) {
+  const userInput = value.trim();
   try {
     const url = new URL(userInput);
     field.value.domain = url.hostname;
@@ -153,7 +153,7 @@ const missedCookieOptionKey = computed(() => {
           :model-value="field.domain"
           :placeholder="t('common.domain')"
           class="sm:rounded-r-none"
-          @change="handleDomainChange"
+          @update:model-value="updateDomain"
         />
         <div class="relative">
           <Select

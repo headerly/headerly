@@ -152,7 +152,6 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
       >
         <Input
           :model-value="domainsFilter.items[index]!.value"
-          :model-modifiers="{ lazy: true }"
           placeholder="example.com"
           class="w-full"
           @update:model-value="(value) => {
