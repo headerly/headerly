@@ -1,9 +1,9 @@
-<script setup lang="ts">
-import type { ComboboxRootEmits, ComboboxRootProps } from "reka-ui";
+<script setup lang="ts" generic="T extends AcceptableValue">
+import type { AcceptableValue, ComboboxRootEmits, ComboboxRootProps } from "reka-ui";
 import { ComboboxRoot, useForwardPropsEmits } from "reka-ui";
 
-const props = defineProps<ComboboxRootProps>();
-const emits = defineEmits<ComboboxRootEmits>();
+const props = defineProps<ComboboxRootProps<T>>();
+const emits = defineEmits<ComboboxRootEmits<T>>();
 
 const forwarded = useForwardPropsEmits(props, emits);
 </script>

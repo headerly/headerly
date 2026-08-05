@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { AcceptableValue } from "reka-ui";
 import type { HeaderMod } from "@/lib/schema";
 
 import type { ActionType, HeaderModOperation } from "@/lib/types";
@@ -55,9 +54,8 @@ function normalizeAndCommitHeaderName(name: string) {
     emit("nameCommitted", field.value.name);
 }
 
-function selectAutocompleteOption(value: AcceptableValue) {
-  if (typeof value === "string")
-    normalizeAndCommitHeaderName(value);
+function selectAutocompleteOption(value: string) {
+  normalizeAndCommitHeaderName(value);
 }
 
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
