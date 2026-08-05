@@ -156,7 +156,7 @@ function updateTabGroupBindings(
   return changed ? nextManager : manager;
 }
 
-export function clearTabGroupBindings(manager: ProfileManager) {
+function clearTabGroupBindings(manager: ProfileManager) {
   return updateTabGroupBindings(manager, () => undefined);
 }
 
@@ -177,7 +177,7 @@ export function removeTabGroupBindings(
   });
 }
 
-export function refreshTabGroupBindings(
+function refreshTabGroupBindings(
   manager: ProfileManager,
   refreshedTabIdsByGroupId: ReadonlyMap<number, readonly number[]>,
 ) {

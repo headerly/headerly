@@ -41,7 +41,7 @@ export function setupTabIdCleanup(options: {
   }
 }
 
-export function removeClosedTabIds(
+function removeClosedTabIds(
   manager: ProfileManager,
   removedTabIds: ReadonlySet<number>,
 ) {
