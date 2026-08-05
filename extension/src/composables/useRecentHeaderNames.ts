@@ -14,11 +14,12 @@ export function addNameToRecentHeaderNames(recentHeaderNames: string[], name: st
   if (!normalizedName)
     return recentHeaderNames;
 
+  if (recentHeaderNames.some(recentName => recentName.toLocaleLowerCase() === normalizedName))
+    return recentHeaderNames;
+
   return [
     normalizedName,
-    ...recentHeaderNames.filter(
-      recentName => recentName.toLocaleLowerCase() !== normalizedName,
-    ),
+    ...recentHeaderNames,
   ].slice(0, RECENT_HEADER_NAMES_LIMIT);
 }
 
