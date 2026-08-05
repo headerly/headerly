@@ -146,13 +146,12 @@ const missedCookieOptionKey = computed(() => {
       <div
         class="
           grid flex-1 grid-rows-2 gap-1
-          sm:grid-cols-2 sm:grid-rows-1 sm:gap-0
+          sm:grid-cols-2 sm:grid-rows-1
         "
       >
         <Input
           :model-value="field.domain"
           :placeholder="t('common.domain')"
-          class="sm:rounded-r-none"
           @update:model-value="updateDomain"
         />
         <div class="relative">
@@ -163,10 +162,7 @@ const missedCookieOptionKey = computed(() => {
           >
             <SelectTrigger
               :class="cn(
-                `
-                  w-full min-w-0 px-3
-                  sm:rounded-l-none
-                `,
+                'w-full min-w-0 px-3',
                 isSelectedCookieMissing && 'border-warning text-warning',
               )"
             >
