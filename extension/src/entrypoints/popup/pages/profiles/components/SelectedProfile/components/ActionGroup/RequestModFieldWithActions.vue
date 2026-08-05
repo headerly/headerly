@@ -2,6 +2,7 @@
 import type { HeaderMod } from "@/lib/schema";
 
 import type { ActionType, HeaderModOperation } from "@/lib/types";
+import { useDebounceFn } from "@vueuse/core";
 import { match } from "ts-pattern";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -48,14 +49,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const emitRecentHeaderName = useDebounceFn((name: string) => {
+  emit("nameCommitted", name);
+}, 200);
+
 function normalizeAndCommitHeaderName(name: string) {
   field.value.name = name.trim().toLocaleLowerCase();
   if (field.value.name)
-    emit("nameCommitted", field.value.name);
-}
-
-function selectAutocompleteOption(value: string) {
-  normalizeAndCommitHeaderName(value);
+    emitRecentHeaderName(field.value.name);
 }
 
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
@@ -113,7 +114,7 @@ function getOperationLabel(operation: HeaderModOperation) {
         <Combobox
           :model-value="field.name"
           :class="cn('flex-1', field.operation === 'remove' && `col-span-2`)"
-          @update:model-value="selectAutocompleteOption"
+          @update:model-value="normalizeAndCommitHeaderName"
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
