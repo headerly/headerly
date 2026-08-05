@@ -34,25 +34,23 @@ const { t } = useI18n();
       <div
         :class="cn(`flex min-h-6 items-center border-none`, props.class)"
       >
-        <div class="flex items-center gap-1">
+        <div class="flex w-full items-center gap-1">
           <span class="sr-only">{{ t("headerMod.recent.title") }}</span>
-          <div v-auto-animate class="flex flex-wrap gap-1">
-            <div
+          <div v-auto-animate class="w-full gap-1 space-x-1">
+            <span
               v-for="name in names"
               :key="name"
-              class="
-                group/recent relative max-w-30 shrink-0
-                xl:max-w-40
-              "
+              class="group/recent relative shrink-0"
             >
               <Button
                 type="button"
                 size="sm"
                 variant="secondary"
                 class="
-                  h-6 w-full justify-start rounded-full py-0 pr-6 pl-3.5 text-sm
-                  font-normal text-muted-foreground shadow-none
+                  h-6 max-w-30 justify-start rounded-full py-0 pr-6 pl-3.5
+                  text-sm font-normal text-muted-foreground shadow-none
                   hover:text-foreground
+                  xl:max-w-40
                 "
                 :aria-label="t('headerMod.recent.add', { name })"
                 @click="emit('add', name)"
@@ -75,7 +73,7 @@ const { t } = useI18n();
                 <i class="i-lucide-x size-3" />
                 <span class="sr-only">{{ t('headerMod.recent.remove', { name }) }}</span>
               </Button>
-            </div>
+            </span>
           </div>
         </div>
       </div>
