@@ -59,7 +59,7 @@ function deleteGroup() {
       >
         <div class="flex w-full flex-1">
           <Input
-            v-model.trim.lazy="list[index]!.value"
+            v-model.trim="list[index]!.value"
             type="url"
             placeholder="https://example.com/"
           />

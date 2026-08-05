@@ -152,7 +152,7 @@ function getCurrentTabHost() {
         "
       >
         <Input
-          v-model.trim.lazy="list[index]!.value"
+          v-model.trim="list[index]!.value"
           :placeholder="field[filterType].placeholder"
         />
         <div class="flex gap-0.5">

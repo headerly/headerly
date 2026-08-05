@@ -2,7 +2,7 @@ import type { Ref } from "vue";
 import type { ActionType } from "@/lib/types";
 import { useLocalStorage } from "@vueuse/core";
 
-const RECENT_HEADER_NAMES_LIMIT = 4;
+const RECENT_HEADER_NAMES_LIMIT = 3;
 const RECENT_HEADER_NAMES_STORAGE_KEYS = {
   request: "recent-request-header-names",
   response: "recent-response-header-names",
@@ -14,11 +14,12 @@ export function addNameToRecentHeaderNames(recentHeaderNames: string[], name: st
   if (!normalizedName)
     return recentHeaderNames;
 
+  if (recentHeaderNames.some(recentName => recentName.toLocaleLowerCase() === normalizedName))
+    return recentHeaderNames;
+
   return [
     normalizedName,
-    ...recentHeaderNames.filter(
-      recentName => recentName.toLocaleLowerCase() !== normalizedName,
-    ),
+    ...recentHeaderNames,
   ].slice(0, RECENT_HEADER_NAMES_LIMIT);
 }
 
