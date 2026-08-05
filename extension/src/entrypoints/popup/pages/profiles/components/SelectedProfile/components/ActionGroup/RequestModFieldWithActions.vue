@@ -59,6 +59,10 @@ function normalizeAndCommitHeaderName(name: string) {
     emitRecentHeaderName(field.value.name);
 }
 
+function handleHeaderNameInput(event: Event) {
+  normalizeAndCommitHeaderName((event.target as HTMLInputElement).value);
+}
+
 function getAutocompleteList(actionType: ActionType, operation: HeaderModOperation) {
   if (actionType === "response") {
     return AUTOCOMPLETE_RESPONSE_FIELDS;
@@ -114,7 +118,6 @@ function getOperationLabel(operation: HeaderModOperation) {
         <Combobox
           :model-value="field.name"
           :class="cn('flex-1', field.operation === 'remove' && `col-span-2`)"
-          @update:model-value="normalizeAndCommitHeaderName"
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
@@ -122,7 +125,7 @@ function getOperationLabel(operation: HeaderModOperation) {
               :placeholder="t('common.name')"
               class="w-full"
               :class="field.operation !== 'remove' && 'sm:rounded-r-none'"
-              @update:model-value="normalizeAndCommitHeaderName"
+              @input="handleHeaderNameInput"
             />
           </ComboboxAnchor>
 
@@ -132,6 +135,7 @@ function getOperationLabel(operation: HeaderModOperation) {
                 v-for="option in autocompleteList"
                 :key="option"
                 :value="option"
+                @select="normalizeAndCommitHeaderName(option)"
               >
                 {{ option }}
               </ComboboxItem>
