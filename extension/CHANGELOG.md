@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.19.0](https://github.com/headerly/headerly/compare/v1.18.0...v1.19.0) (2026-08-05)
+
+
+### Features
+
+* **profiles:** add keyboard shortcuts for Quick Create and Settings ([#74](https://github.com/headerly/headerly/issues/74)) ([20e106f](https://github.com/headerly/headerly/commit/20e106f1bbc9ec660f731f6b5b37cf7b8e3f2b55))
+* **profiles:** add tab group conditions ([#73](https://github.com/headerly/headerly/issues/73)) ([439c560](https://github.com/headerly/headerly/commit/439c560594a9eab027d3497e49ea28fd52155913))
+
+
+### Bug Fixes
+
+* save user input when closing popup with Esc or clicking outside ([#76](https://github.com/headerly/headerly/issues/76)) ([107ebfc](https://github.com/headerly/headerly/commit/107ebfcc83971380aefe3cc54021f87541c608fb))
+
 ## [1.18.0](https://github.com/headerly/headerly/compare/v1.17.0...v1.18.0) (2026-07-29)
 
 
