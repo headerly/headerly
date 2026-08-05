@@ -51,7 +51,7 @@ const { t } = useI18n();
 
 const emitRecentHeaderName = useDebounceFn((name: string) => {
   emit("nameCommitted", name);
-}, 200);
+}, 500);
 
 function normalizeAndCommitHeaderName(name: string) {
   field.value.name = name.trim().toLocaleLowerCase();
