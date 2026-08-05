@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/headerly/headerly/compare/v1.19.0...v1.20.0) (2026-08-05)
+
+
+### Features
+
+* try replace codemirror to monaco ([460a8ef](https://github.com/headerly/headerly/commit/460a8ef51e1105a240b19e2a12cec1d2c0dc6cbc))
+
 ## [1.19.0](https://github.com/headerly/headerly/compare/v1.18.0...v1.19.0) (2026-08-05)
 
 
