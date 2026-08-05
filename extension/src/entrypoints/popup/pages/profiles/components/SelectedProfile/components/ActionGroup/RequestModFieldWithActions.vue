@@ -119,10 +119,11 @@ function getOperationLabel(operation: HeaderModOperation) {
         >
           <ComboboxAnchor class="w-full">
             <ComboboxInput
-              v-model="field.name"
+              :model-value="field.name"
               :placeholder="t('common.name')"
               class="w-full"
               :class="field.operation !== 'remove' && 'sm:rounded-r-none'"
+              @update:model-value="normalizeAndCommitHeaderName"
             />
           </ComboboxAnchor>
 
