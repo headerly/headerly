@@ -210,6 +210,24 @@ export const mockProfile: Profile = {
         value: [44],
       }],
     },
+    tabGroups: {
+      type: "checkbox",
+      items: [{
+        id: "550e8400-e29b-41d4-a716-446655440028",
+        enabled: true,
+        comments: "Tab groups",
+        value: [{ groupId: 7, tabIds: [45, 46] }],
+      }],
+    },
+    excludedTabGroups: {
+      type: "radio",
+      items: [{
+        id: "550e8400-e29b-41d4-a716-446655440029",
+        enabled: true,
+        comments: "Excluded tab groups",
+        value: [{ groupId: 8, tabIds: [47] }],
+      }],
+    },
     domainType: {
       enabled: true,
       value: "firstParty",

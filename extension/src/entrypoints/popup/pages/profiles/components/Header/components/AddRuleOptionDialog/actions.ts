@@ -5,7 +5,7 @@ import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { findHeaderModGroups } from "#/pages/profiles/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { ensureCookiesPermission } from "@/lib/permissions";
+import { ensureBrowserPermission } from "@/lib/permissions";
 import { createHeaderMod, createRedirectUrl, createSyncCookie } from "@/lib/profileFactory";
 import { getEnabledState, withDisabledState } from "./shared";
 
@@ -95,8 +95,9 @@ export function useCreateActionTab(): AddRuleOptionDialogTab {
         key: "cookie-sync-request-header",
         title: t("addRuleOptionDialog.items.cookieSyncRequestHeader.title"),
         description: t("addRuleOptionDialog.items.cookieSyncRequestHeader.description"),
+        requiresAdditionalPermission: true,
         action: async () => {
-          if (await ensureCookiesPermission()) {
+          if (await ensureBrowserPermission("cookies")) {
             addSyncCookieGroup();
           }
         },

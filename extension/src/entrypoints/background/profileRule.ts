@@ -12,8 +12,29 @@ export function deriveRuleScope(condition: Browser.declarativeNetRequest.RuleCon
 }
 
 export function hasTemporaryTabBinding(profile: Pick<Profile, "filters">) {
-  return [profile.filters.tabIds, profile.filters.excludedTabIds]
+  const hasTabIds = [profile.filters.tabIds, profile.filters.excludedTabIds]
     .some(group => group?.items.some(item => item.enabled && item.value.length > 0));
+  const hasTabGroups = [profile.filters.tabGroups, profile.filters.excludedTabGroups]
+    .some(group => group?.items.some(item =>
+      item.enabled && item.value.some(binding => binding.tabIds.length > 0),
+    ));
+  return hasTabIds || hasTabGroups;
+}
+
+/** Detects enabled temporary-tab filters that no longer match any live tab. */
+export function hasEmptyTemporaryTabFilter(profile: Pick<Profile, "filters">) {
+  const hasEmptyTabIds = [profile.filters.tabIds, profile.filters.excludedTabIds]
+    .some((group) => {
+      const enabledItems = group?.items.filter(item => item.enabled) ?? [];
+      return enabledItems.length > 0 && enabledItems.every(item => item.value.length === 0);
+    });
+  const hasEmptyTabGroups = [profile.filters.tabGroups, profile.filters.excludedTabGroups]
+    .some((group) => {
+      const enabledItems = group?.items.filter(item => item.enabled) ?? [];
+      return enabledItems.length > 0
+        && enabledItems.every(item => item.value.every(binding => binding.tabIds.length === 0));
+    });
+  return hasEmptyTabIds || hasEmptyTabGroups;
 }
 
 type ProfileActionData = Pick<

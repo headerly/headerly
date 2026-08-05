@@ -1,6 +1,6 @@
 import type { ProfileCoreData } from "../diffProfiles";
 import type { ResourceType } from "@/lib/schema";
-import { uniq } from "es-toolkit";
+import { union, uniq } from "es-toolkit";
 import { match } from "ts-pattern";
 
 interface BuildConditionOptions {
@@ -14,6 +14,12 @@ const allowAllRequestsResourceTypes = [
 
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
+
+  function appendTabIds(key: "tabIds" | "excludedTabIds", tabIds: number[] | undefined) {
+    if (tabIds && tabIds.length > 0) {
+      condition[key] = union(condition[key] ?? [], tabIds);
+    }
+  }
 
   (Object.keys(profile.filters) as (keyof typeof profile.filters)[]).forEach((key) => {
     match(key)
@@ -37,9 +43,14 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         const enabledTabIds = profile.filters[k]?.items
           .filter(item => item.enabled)
           .flatMap(item => item.value);
-        if (enabledTabIds && enabledTabIds.length > 0) {
-          condition[k] = uniq(enabledTabIds);
-        }
+        appendTabIds(k, enabledTabIds);
+      })
+      .with("tabGroups", "excludedTabGroups", (k) => {
+        const enabledTabIds = profile.filters[k]?.items
+          .filter(item => item.enabled)
+          .flatMap(item => item.value)
+          .flatMap(binding => binding.tabIds);
+        appendTabIds(k === "tabGroups" ? "tabIds" : "excludedTabIds", enabledTabIds);
       })
       .with("urlFilter", "regexFilter", (k) => {
         // A DNR rule cannot have both urlFilter and regexFilter.

@@ -6,6 +6,7 @@ export interface AddRuleOptionDialogItem {
   disabled?: boolean;
   disabledTooltip?: string;
   isRecommended?: boolean;
+  requiresAdditionalPermission?: boolean;
 }
 
 export type AddRuleOptionDialogTabValue = "actions" | "conditions";

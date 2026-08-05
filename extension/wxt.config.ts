@@ -28,6 +28,7 @@ export default defineConfig({
     ],
     optional_permissions: [
       "cookies",
+      "tabGroups",
     ],
     minimum_chrome_version: "145",
   },

@@ -10,7 +10,7 @@
     },
     "items": {
       "cookieSyncRequestHeader": {
-        "description": "将指定网站的 Cookie 同步到请求头。需要授予新的权限。",
+        "description": "将指定网站的 Cookie 同步到请求头。",
         "title": "同步 Cookie 到请求头"
       },
       "domainType": {
@@ -40,6 +40,10 @@
       "excludedTabIds": {
         "description": "规则不会匹配来自所选标签页的请求。标签页绑定在浏览器重启后失效。",
         "title": "排除标签页"
+      },
+      "excludedTabGroups": {
+        "description": "规则不会匹配来自所选标签组内标签页的请求。需要授予标签组访问权限。",
+        "title": "排除标签组"
       },
       "initiatorDomains": {
         "description": "规则仅匹配来自 initiator domains 列表中域名的网络请求。省略列表时，规则应用于来自所有域名的请求。不允许空列表。",
@@ -81,6 +85,10 @@
         "description": "规则仅匹配来自所选标签页的请求。标签页绑定在浏览器重启后失效。",
         "title": "标签页"
       },
+      "tabGroups": {
+        "description": "规则仅匹配来自所选标签组内标签页的请求。需要授予标签组访问权限。",
+        "title": "标签组"
+      },
       "urlFilter": {
         "description": "规则仅匹配 URL 包含任一指定子串的网络请求。省略列表时，规则应用于所有 URL 的请求。不允许空列表。urlFilter 和 regexFilter 只能指定其中一个。",
         "title": "URL 过滤器"
@@ -101,6 +109,7 @@
     "title": "编辑备注"
   },
   "common": {
+    "additionalPermission": "需要额外权限",
     "addCondition": "添加条件",
     "auto": "自动",
     "backToProfiles": "返回配置",
@@ -192,6 +201,10 @@
       "description": "规则不会匹配来自任一所选标签页的请求。",
       "title": "排除标签页"
     },
+    "excludedTabGroups": {
+      "description": "规则不会匹配来自任一所选标签组内标签页的请求。",
+      "title": "排除标签组"
+    },
     "regexFilter": {
       "description": "用于匹配网络请求 URL 的正则表达式。",
       "syntaxPrefix": "它遵循",
@@ -232,6 +245,14 @@
       "useCurrentGroup": "使用当前分组",
       "useCurrentTab": "使用当前标签页",
       "useCurrentWindow": "使用当前窗口"
+    },
+    "tabGroups": {
+      "addCurrentTabGroup": "添加当前标签组",
+      "description": "规则仅匹配来自所选标签组内标签页的请求，并会在当前浏览器会话中同步组内标签页。",
+      "unnamedGroupLabel": "\"{tabTitle}\" | \"{tabTitle} 和其他 {remainingCount} 个标签页\" | \"{tabTitle} 和其他 {remainingCount} 个标签页\"",
+      "selectPlaceholder": "选择标签组...",
+      "title": "标签组",
+      "unavailableGroup": "标签组不可用"
     },
     "urlFilter": {
       "anchor": " - 锚点：匹配 URL 开头或结尾。",

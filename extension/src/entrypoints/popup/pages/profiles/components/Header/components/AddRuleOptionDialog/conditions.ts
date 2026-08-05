@@ -6,20 +6,18 @@ import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabHost, getCurrentTabHostname, getCurrentTabId } from "@/lib/currentTab";
 import { getDefaultFilterValueByHost } from "@/lib/filter";
 import { withDisabledState } from "./shared";
+import { useCreateTabGroupConditions } from "./tabGroupConditions";
 import { useConditionDisabledStates } from "./useConditionDisabledStates";
 
 function createTabIdsFilterGroup(value: number[]): TabIdsFilterGroup {
   return { type: "radio", items: [{ id: uuidv7(), enabled: true, value }] };
 }
-
 export function useCreateConditionTab(): AddRuleOptionDialogTab {
   const { t } = useI18n();
   const profilesStore = useProfilesStore();
-  const {
-    getRegexFilterDisabledState,
-    getUrlFilterDisabledState,
-    withConditionAlreadyAddedDisabledState,
-  } = useConditionDisabledStates();
+  const { getRegexFilterDisabledState, getUrlFilterDisabledState, withConditionAlreadyAddedDisabledState }
+    = useConditionDisabledStates();
+  const { excludedTabGroupsCondition, tabGroupsCondition } = useCreateTabGroupConditions();
   return {
     label: t("addRuleOptionDialog.tabs.conditions"),
     value: "conditions",
@@ -59,6 +57,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
       }, () => Boolean(
         profilesStore.selectedProfile.filters.tabIds,
       )),
+      tabGroupsCondition,
       withDisabledState({
         key: "url-filter",
         title: t("addRuleOptionDialog.items.urlFilter.title"),
@@ -281,6 +280,7 @@ export function useCreateConditionTab(): AddRuleOptionDialogTab {
       }, () => Boolean(
         profilesStore.selectedProfile.filters.excludedTabIds,
       )),
+      excludedTabGroupsCondition,
       withConditionAlreadyAddedDisabledState({
         key: "url-regex-filter-case-sensitive",
         title: t("addRuleOptionDialog.items.urlRegexFilterCaseSensitive.title"),
