@@ -55,6 +55,16 @@ export default defineConfig({
     },
   },
   vite: () => <WxtViteConfig>({
+    optimizeDeps: {
+      // modern-monaco resolves its editor workers with import.meta.url. Serving
+      // its modules directly keeps those URLs local and prevents stale optimized
+      // dependency URLs after the worker graph changes during development.
+      exclude: [
+        "modern-monaco",
+        "modern-monaco/editor-core",
+        "modern-monaco/lsp/json/setup",
+      ],
+    },
     plugins: [
       vueDevtools({
         appendTo: "src/entrypoints/popup/main.ts",
