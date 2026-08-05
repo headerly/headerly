@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { AutoAnimationPlugin } from "@formkit/auto-animate";
+import autoAnimate from "@formkit/auto-animate";
 import { AnimatePresence, motion } from "motion-v";
+import { onBeforeUnmount, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "#/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +18,41 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const tagAnimation: AutoAnimationPlugin = (element, action, newCoordinates, oldCoordinates) => {
+  const timing = { duration: 160, easing: "ease-out" };
+
+  if (action === "add") {
+    return new KeyframeEffect(element, [
+      { opacity: 0, transform: "translateX(-4px) scale(0.98)" },
+      { opacity: 1, transform: "translateX(0) scale(1)" },
+    ], timing);
+  }
+
+  if (action === "remove") {
+    return new KeyframeEffect(element, [
+      { opacity: 1, transform: "scale(1)" },
+      { opacity: 0, transform: "scale(0.98)" },
+    ], timing);
+  }
+
+  const previous = oldCoordinates!;
+  const current = newCoordinates!;
+  return new KeyframeEffect(element, [
+    { transform: `translate(${previous.left - current.left}px, ${previous.top - current.top}px)` },
+    { transform: "translate(0, 0)" },
+  ], timing);
+};
+
+const tagsContainer = useTemplateRef<HTMLDivElement>("tagsContainer");
+let tagsAnimationController: ReturnType<typeof autoAnimate> | undefined;
+
+watch(tagsContainer, (element) => {
+  tagsAnimationController?.destroy?.();
+  tagsAnimationController = element ? autoAnimate(element, tagAnimation) : undefined;
+}, { flush: "post" });
+
+onBeforeUnmount(() => tagsAnimationController?.destroy?.());
 </script>
 
 <template>
@@ -36,7 +74,7 @@ const { t } = useI18n();
       >
         <div class="flex items-center gap-1">
           <span class="sr-only">{{ t("headerMod.recent.title") }}</span>
-          <div v-auto-animate class="flex flex-wrap gap-1">
+          <div ref="tagsContainer" class="flex flex-wrap gap-1">
             <div
               v-for="name in names"
               :key="name"
