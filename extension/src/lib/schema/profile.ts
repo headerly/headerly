@@ -10,7 +10,7 @@ import {
   syncCookieSchema,
   uuidSchemaWithDefault,
 } from "./base";
-import { filterSchema, filterWithoutIdSchema } from "./fitlers";
+import { filterSchema, filterWithoutIdSchema } from "./filters";
 
 export const profileSchema = z.object({
   id: uuidSchemaWithDefault,

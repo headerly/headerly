@@ -22,7 +22,7 @@ import type {
   tabIdsFilterGroupSchema,
   tabIdsFilterSchema,
   urlOrRegexFilterSchema,
-} from "./fitlers";
+} from "./filters";
 import type { profileExchangeZodSchema, profileSchema, profileWithoutIdsZodSchema } from "./profile";
 
 export type GroupItem = z.infer<typeof groupItemSchema>;
