@@ -4,7 +4,14 @@ export default defineConfig({
   cleanUrls: true,
   title: "Headerly",
   description: "Configure browser network rules with reusable profiles.",
+  head: [
+    ["link", { rel: "icon", href: "/favicon.ico" }],
+  ],
   themeConfig: {
+    editLink: {
+      pattern: "https://github.com/headerly/headerly/edit/main/docs/:path",
+      text: "Edit this page on GitHub",
+    },
     nav: [
       { text: "Guide", link: "/start/overview" },
       { text: "Reference", link: "/reference/profiles" },
