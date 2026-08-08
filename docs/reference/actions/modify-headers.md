@@ -38,7 +38,7 @@ Chrome only permits `append` for these request headers, using the exact lowercas
 
 `accept`, `accept-encoding`, `accept-language`, `access-control-request-headers`, `cache-control`, `connection`, `content-language`, `cookie`, `forwarded`, `if-match`, `if-none-match`, `keep-alive`, `range`, `te`, `trailer`, `transfer-encoding`, `upgrade`, `user-agent`, `via`, `want-digest`, `x-forwarded-for`.
 
-This allowlist is browser-defined and case-sensitive. Response-header append is not limited by this request-header list.
+This allowlist is browser-defined and case-sensitive. See Chromium's [`kDNRRequestHeaderAppendAllowList`](https://chromium.googlesource.com/chromium/src/+/HEAD/extensions/browser/api/declarative_net_request/constants.h#314) for the current list and the delimiter used by each header. Response-header append is not limited by this request-header list.
 
 ## Conflicts
 
