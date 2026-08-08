@@ -1,4 +1,5 @@
 import { defineConfig } from "vitepress";
+import extensionPackage from "../../extension/package.json" with { type: "json" };
 
 export default defineConfig({
   cleanUrls: true,
@@ -16,6 +17,19 @@ export default defineConfig({
       { text: "Guide", link: "/start/overview" },
       { text: "Reference", link: "/reference/profiles" },
       { text: "Troubleshooting", link: "/troubleshooting/rule-not-applied" },
+      {
+        text: `v${extensionPackage.version}`,
+        items: [
+          {
+            text: "Changelog",
+            link: "https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md",
+          },
+          {
+            text: "Contributing",
+            link: "https://github.com/headerly/headerly/blob/main/.github/CONTRIBUTING.md",
+          },
+        ],
+      },
     ],
     sidebar: [
       {
