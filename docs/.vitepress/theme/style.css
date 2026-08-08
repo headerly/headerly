@@ -137,3 +137,19 @@
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
 
+/**
+ * Component: Image zoom
+ * -------------------------------------------------------------------------- */
+
+.medium-zoom-overlay {
+  z-index: 100;
+  background-color: var(--vp-c-bg) !important;
+}
+
+.medium-zoom-image--opened {
+  z-index: 101;
+}
+
+.medium-zoom--opened .medium-zoom-overlay {
+  opacity: 0.9 !important;
+}
