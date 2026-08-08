@@ -25,6 +25,12 @@ At most one profile in a radio group can be enabled. Enabling a profile disables
 
 Changing a member profile's enabled state separately clears the remembered state.
 
+## Sidebar context menus
+
+Right-click a profile emoji in the Sidebar to open its context menu. From there, you can pause or resume the profile, duplicate it, change its group membership, edit comments or priority, change its action type, export it, or delete or reset it.
+
+Right-click a profile group header to open the group context menu. From there, you can edit the group's name and color, switch between radio and checkbox mode, create a profile in the group, pause or resume remembered profiles, remove all profiles from the group, or delete the group.
+
 ## Storage and export
 
 Groups and memberships are local organizational data. They do not affect DNR rule contents and are not included in profile exports. Removing the final member causes an empty group to be cleaned up.
