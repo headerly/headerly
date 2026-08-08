@@ -45,6 +45,7 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 .rolldown
 dist
+.temp/
 
 CLAUDE.md
 .codex
