@@ -16,12 +16,12 @@ In this tutorial, we will add a request header to requests sent to the current w
 4. In **Modify request header**, enter:
 
    - Name: `X-Headerly-Demo`
-   - Operation: `set`
    - Value: `enabled`
+   - Operation: `Set` by default.
 
 5. Keep the profile enabled.
 
-Headerly registers the profile automatically. The active-rule badge should include this profile.
+Headerly registers the profile automatically. The active-rule popup badge should change to `1`.
 
 ## Check the result
 

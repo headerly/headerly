@@ -10,7 +10,7 @@
 Internal IDs, profile-group membership, tab IDs, and tab-group conditions are removed from exported profiles.
 
 ::: danger Review secrets
-Header values, comments, redirect URLs, and synchronized cookie values can contain private information. Exported profiles are not automatically redacted.
+Synchronized Cookie values are cleared automatically. Header values, comments, and redirect URLs are not redacted and can still contain private information.
 :::
 
 ## Import profiles

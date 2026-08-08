@@ -31,6 +31,4 @@ Object.fromEntries(response.headers.entries());
 
 Replace `/api/endpoint` with a URL matched by the profile, then inspect the returned object for the modified header.
 
-Cross-origin response headers can be hidden by CORS, and Fetch never exposes headers such as `Set-Cookie`. Use a same-origin request and a readable test header when possible.
-
 See [Modify headers reference](/reference/actions/modify-headers) for operation and priority behavior.

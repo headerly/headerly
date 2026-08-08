@@ -16,4 +16,6 @@ Treat synchronized values as secrets. A profile's target conditions, not the ori
 
 ## Export and sharing
 
-Exports contain user-configured values. Share links compress and encode the export but do not encrypt it. Review headers, comments, URLs, and cookie values before exporting or sharing a profile.
+Headerly clears synchronized Cookie values before generating exported JSON, downloaded profiles, or share links. It retains the Cookie identity so an imported profile can synchronize against the receiving user's local Cookie.
+
+Other user-configured values remain in exports. Share links compress and encode the export but do not encrypt it. Review headers, comments, and URLs before exporting or sharing a profile.

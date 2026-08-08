@@ -42,7 +42,9 @@ Headerly exchanges profiles as versioned JSON.
 
 ## Export transformations
 
-Headerly removes all internal IDs, profile-group membership, `tabIds`, `excludedTabIds`, `tabGroups`, and `excludedTabGroups`. Other values, including comments, header values, redirect URLs, and synchronized cookie values, remain present.
+Headerly removes all internal IDs, profile-group membership, `tabIds`, `excludedTabIds`, `tabGroups`, and `excludedTabGroups`. It also replaces every synchronized Cookie Value with an empty string while retaining Domain, Path, and Name so the imported profile can synchronize against the receiving user's local Cookie.
+
+Other values, including comments, ordinary header values, and redirect URLs, remain present.
 
 ## Import behavior
 

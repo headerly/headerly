@@ -8,4 +8,4 @@ If the Import page does not open:
 2. Open the complete share link in the same browser profile.
 3. Confirm that no characters were removed from the URL.
 
-Shared payloads are compressed and encoded, not encrypted. Review imported profiles before enabling them, especially header and synchronized-cookie values.
+Shared payloads are compressed and encoded, not encrypted. Synchronized Cookie values are cleared before sharing, but ordinary header values and other profile data remain. Review imported profiles and their target conditions before enabling them.
