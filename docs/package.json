@@ -10,6 +10,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "medium-zoom": "catalog:",
     "vitepress": "catalog:",
     "vue": "catalog:"
   },
