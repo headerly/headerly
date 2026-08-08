@@ -4,19 +4,11 @@
 
 Headerly declares Chrome 145 as its minimum Chrome version. This is required for DNR top-level-domain conditions. Compatible Chromium-based browsers must implement the same APIs used by a configured profile.
 
-## Rule scopes and quotas
+## Tab and tab-group selections
 
-Headerly uses dynamic rules for persistent profiles and session rules for profiles bound to Tab IDs or Tab Groups.
+Selections saved under **Tab IDs** and **Tab groups** are cleared when the browser restarts. Chrome only guarantees [tab IDs](https://developer.chrome.com/docs/extensions/reference/api/tabs#property-Tab-id) and [tab-group IDs](https://developer.chrome.com/docs/extensions/reference/api/tabGroups#property-TabGroup-id) within the current browser session. This is a browser limitation, not a Headerly limitation.
 
-Chrome documents these relevant limits:
-
-- up to 5,000 session rules;
-- at least 5,000 unsafe dynamic rules;
-- up to 30,000 safe dynamic rules in supported Chrome versions;
-- up to 1,000 regular-expression rules per ruleset type;
-- less than 2 KB of compiled memory for each regular expression.
-
-`block`, `allow`, `allowAllRequests`, and `upgradeScheme` are safe actions. `redirect` and `modifyHeaders` count against the unsafe dynamic-rule limit.
+Headerly automatically pauses any profile that had an active tab or tab-group condition before the restart. This prevents the profile from unexpectedly applying to more tabs after its saved selection is cleared.
 
 ## Network-stack boundaries
 

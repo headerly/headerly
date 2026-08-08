@@ -15,4 +15,4 @@ When no Resource Types or Excluded Resource Types condition is configured and He
 
 Once a frame matches, an Allow All Requests rule can suppress lower-priority Headerly actions for requests in that frame. Use a narrow URL or domain condition and an intentional priority.
 
-The action has no additional fields and is classified as a safe DNR action.
+The action has no additional fields.

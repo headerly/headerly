@@ -13,7 +13,7 @@ Check the profile from top to bottom.
 4. Check every enabled condition. Different condition types must all match.
 5. For URL matching, test the complete request URL rather than the page URL.
 6. Check the request's Resource Type and Request Method in Developer Tools.
-7. For Tab or Tab Group conditions, confirm that the tab is still bound and the profile has not been disabled after the binding became empty.
+7. For Tab or Tab Group conditions, select the tab or group again and resume the profile if the selected tab or group was closed or the browser restarted.
 8. Check the profile for a registration error.
 9. Check whether a higher-priority Allow or Allow All Requests profile suppresses the action.
 10. Pause other network-modifying extensions and retry.

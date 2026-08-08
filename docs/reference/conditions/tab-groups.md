@@ -1,6 +1,6 @@
 # Tab groups
 
-Tab-group conditions bind a profile to the current tabs in selected Chrome tab groups.
+Tab-group conditions are a synchronized form of [Tab ID conditions](/reference/conditions/tab-ids). Instead of selecting individual tabs, select a Chrome tab group. Headerly applies the profile to the tabs currently in that group and keeps the effective tab selection synchronized with the browser group.
 
 ## `tabGroups`
 
@@ -10,16 +10,20 @@ The rule includes tabs in the selected groups.
 
 The rule excludes tabs in the selected groups.
 
-Headerly stores each selected group ID with a snapshot of its Tab IDs, then translates the snapshot into DNR `tabIds` or `excludedTabIds`. It refreshes bindings when tabs are created, closed, or moved between groups.
+When tabs are added to, removed from, or moved between selected groups, Headerly automatically updates which tabs the profile applies to.
 
 ## Lifetime
 
-Chrome group IDs are unique only within a browser session. Headerly clears old bindings at browser startup. If a group is removed or every bound tab disappears, the empty temporary condition disables an enabled profile.
+Removing a selected group removes it from the condition. If no selected tabs remain, Headerly disables the profile.
 
-Tab-group profiles use session-scoped DNR rules and tab-group conditions are omitted from exports.
+::: warning Browser restart clears selections
+Selections saved under **Tab IDs** and **Tab groups** are cleared when the browser restarts. Chrome only guarantees these IDs within the current browser session, so this is a browser limitation, not a Headerly limitation.
+
+Headerly automatically pauses any profile that had an active tab or tab-group condition before the restart. This prevents the profile from unexpectedly applying to more tabs after its saved selection is cleared.
+:::
 
 ## Permission
 
-Selecting a group requires the optional `tabGroups` permission. Headerly uses `chrome.tabGroups` for group metadata and lifecycle events, and `chrome.tabs.query()` to find group members.
+Selecting a group requires the optional `tabGroups` permission.
 
 See the [Chrome Tab Groups API](https://developer.chrome.com/docs/extensions/reference/api/tabGroups).

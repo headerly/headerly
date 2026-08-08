@@ -35,7 +35,7 @@ export default defineConfig({
           { text: "Synchronize cookies", link: "/guides/sync-cookies" },
           { text: "Redirect requests", link: "/guides/redirect-requests" },
           { text: "Block or allow requests", link: "/guides/block-or-allow-requests" },
-          { text: "Scope rules to tabs", link: "/guides/scope-rules-to-tabs" },
+          { text: "Apply profiles to tabs", link: "/guides/apply-profile-to-tabs" },
           { text: "Import, export, and share", link: "/guides/import-export-share" },
         ],
       },
@@ -96,7 +96,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: "Declarative Net Request", link: "/explanation/declarative-net-request" },
-          { text: "Matching and rule scope", link: "/explanation/matching-and-rule-scope" },
+          { text: "How conditions combine", link: "/explanation/how-conditions-combine" },
           { text: "Priority and conflicts", link: "/explanation/priority-and-conflicts" },
           { text: "Privacy model", link: "/explanation/privacy-model" },
         ],

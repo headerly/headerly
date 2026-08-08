@@ -10,8 +10,14 @@ The rule matches only requests associated with the selected tabs.
 
 The rule excludes requests associated with the selected tabs.
 
-Headerly uses non-negative Chrome Tab IDs. Closed tabs are removed from stored bindings. If every enabled item in a temporary tab condition becomes empty, Headerly disables the profile.
+## Lifetime
 
-Rules containing either field are registered as session rules. Chrome clears session rules when the browser shuts down, and Headerly does not include Tab ID conditions in exported profiles.
+Closing a selected tab removes it from the condition. If no selected tabs remain, Headerly disables the profile.
+
+::: warning Browser restart clears selections
+Selections saved under **Tab IDs** and **Tab groups** are cleared when the browser restarts. Chrome only guarantees these IDs within the current browser session, so this is a browser limitation, not a Headerly limitation.
+
+Headerly automatically pauses any profile that had an active tab or tab-group condition before the restart. This prevents the profile from unexpectedly applying to more tabs after its saved selection is cleared.
+:::
 
 Use [Tab groups](/reference/conditions/tab-groups) when membership should follow a browser tab group.

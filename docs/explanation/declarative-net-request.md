@@ -10,7 +10,7 @@ Chrome evaluates those rules inside the browser network stack. This design lets 
 
 1. Headerly stores the profile locally.
 2. Enabled, registerable profiles are converted into DNR actions and conditions.
-3. Headerly adds or updates dynamic or session rules.
+3. Headerly registers or updates the corresponding browser rules.
 4. Registration IDs and errors are stored for the popup.
 5. The toolbar badge reflects active registered rules.
 
