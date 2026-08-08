@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabHostname } from "@/lib/currentTab";
 import { createHeaderMod, createRedirectUrl } from "@/lib/profileFactory";
-import { addProfileIds, stripProfileIds } from "@/lib/schema";
+import { addProfileIds, ALLOW_ALL_REQUESTS_RESOURCE_TYPES, stripProfileIds } from "@/lib/schema";
 
 export type ActionKey
   = | "toggle"
@@ -119,6 +119,15 @@ export async function handleProfileRuleActionTypeChanged(profile: Profile) {
       }
     })
     .exhaustive();
+
+  if (profile.ruleActionType === "allowAllRequests") {
+    for (const filterType of ["resourceTypes", "excludedResourceTypes"] as const) {
+      const filterGroup = profile.filters[filterType];
+      filterGroup?.items.forEach((item) => {
+        item.value = item.value.filter(resourceType => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(resourceType));
+      });
+    }
+  }
 
   if (Object.keys(profile.filters).length > 0) {
     return;

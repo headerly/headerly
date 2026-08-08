@@ -1,16 +1,11 @@
 import type { ProfileCoreData } from "../diffProfiles";
-import type { ResourceType } from "@/lib/schema";
 import { union, uniq } from "es-toolkit";
 import { match } from "ts-pattern";
+import { ALLOW_ALL_REQUESTS_RESOURCE_TYPES } from "@/lib/schema";
 
 interface BuildConditionOptions {
   nativeResourceTypeBehavior: boolean;
 }
-
-const allowAllRequestsResourceTypes = [
-  "main_frame",
-  "sub_frame",
-] as const satisfies ResourceType[];
 
 export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
@@ -27,8 +22,11 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         const enabledItems = profile.filters[k]?.items
           .filter(item => item.enabled)
           .flatMap(item => item.value);
-        if (enabledItems && enabledItems.length > 0) {
-          condition[k] = uniq(enabledItems);
+        const resourceTypes = profile.ruleActionType === "allowAllRequests"
+          ? enabledItems?.filter(value => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(value))
+          : enabledItems;
+        if (resourceTypes && resourceTypes.length > 0) {
+          condition[k] = uniq(resourceTypes);
         }
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
@@ -106,7 +104,7 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
     // DNR restricts allowAllRequests rules to main_frame/sub_frame resource types.
     // Using all resource types with allowAllRequests causes rule registration to fail.
     condition.resourceTypes = match(profile.ruleActionType)
-      .with("allowAllRequests", () => allowAllRequestsResourceTypes)
+      .with("allowAllRequests", () => ALLOW_ALL_REQUESTS_RESOURCE_TYPES)
       .otherwise(() => resourceTypes);
   }
 

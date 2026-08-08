@@ -76,4 +76,25 @@ describe("buildCondition", () => {
     expect(condition.tabIds).toEqual([42, 43, 45, 46]);
     expect(condition.excludedTabIds).toEqual([44, 47]);
   });
+
+  it("restricts allowAllRequests resource type conditions to frames", () => {
+    const profile = createProfile({
+      ruleActionType: "allowAllRequests",
+      filters: {
+        resourceTypes: {
+          type: "checkbox",
+          items: [createFilterItem(1, ["main_frame", "script", "sub_frame"])],
+        },
+        excludedResourceTypes: {
+          type: "checkbox",
+          items: [createFilterItem(2, ["image", "sub_frame"])],
+        },
+      },
+    });
+
+    const condition = buildCondition(profile, { nativeResourceTypeBehavior: false });
+
+    expect(condition.resourceTypes).toEqual(["main_frame", "sub_frame"]);
+    expect(condition.excludedResourceTypes).toEqual(["sub_frame"]);
+  });
 });
