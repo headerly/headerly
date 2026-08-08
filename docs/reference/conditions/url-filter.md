@@ -7,8 +7,8 @@
 | Token | Meaning |
 | --- | --- |
 | `*` | Any number of characters |
-| `|` | Start or end of the URL when placed at the corresponding edge |
-| `||` | Start of a domain or subdomain when placed first |
+| `\|` | Start or end of the URL when placed at the corresponding edge |
+| `\|\|` | Start of a domain or subdomain when placed first |
 | `^` | A separator character or the end of the URL |
 
 Examples:
