@@ -4,6 +4,3 @@ compatibility_date = "2026-07-05"
 
 [vars]
 NODE_VERSION = "24.15.0"
-
-[assets]
-directory = "./.vitepress/dist"
