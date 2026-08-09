@@ -51,6 +51,11 @@ export const RESOURCE_TYPES = [
 ] as const satisfies `${Browser.declarativeNetRequest.ResourceType}`[];
 export const resourceTypeSchema = z.enum(RESOURCE_TYPES);
 
+export const ALLOW_ALL_REQUESTS_RESOURCE_TYPES = [
+  "main_frame",
+  "sub_frame",
+] as const satisfies (typeof RESOURCE_TYPES)[number][];
+
 export const REQUEST_METHODS = [
   "connect",
   "delete",

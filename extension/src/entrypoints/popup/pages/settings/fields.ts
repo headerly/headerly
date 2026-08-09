@@ -84,18 +84,5 @@ export function useCreateSettings() {
         },
       ],
     },
-    {
-      fieldsetTitle: t("settings.groups.declarativeNetRequest"),
-      anchor: "declarativeNetRequest",
-      anchorIcon: "i-lucide-code-xml",
-      fields: [
-        {
-          type: "checkbox",
-          label: t("settings.fields.nativeResourceTypeBehavior"),
-          key: "nativeResourceTypeBehavior",
-          description: t("settings.descriptions.nativeResourceTypeBehavior"),
-        },
-      ],
-    },
   ] satisfies SettingGroup[]);
 }

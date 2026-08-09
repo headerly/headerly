@@ -11,6 +11,7 @@ import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
+import { ALLOW_ALL_REQUESTS_RESOURCE_TYPES } from "@/lib/schema";
 
 type FilterItem<V extends FilterValue> = GroupItem & {
   value: V[];
@@ -76,7 +77,17 @@ const optionsMap: {
   excludedRequestMethods: requestMethodsOptions,
 };
 
-const options = computed(() => optionsMap[type]);
+const options = computed(() => {
+  const conditionOptions = optionsMap[type];
+  if (
+    profilesStore.selectedProfile.ruleActionType !== "allowAllRequests"
+    || (type !== "resourceTypes" && type !== "excludedResourceTypes")
+  ) {
+    return conditionOptions;
+  }
+
+  return conditionOptions.filter(option => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(option.value));
+});
 
 const name = computed(() => {
   const nameMap = {

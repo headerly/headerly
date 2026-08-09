@@ -67,7 +67,7 @@ describe("buildCondition", () => {
       },
     });
 
-    const condition = buildCondition(profile, { nativeResourceTypeBehavior: false });
+    const condition = buildCondition(profile);
 
     expect(condition.resourceTypes).toEqual(["script", "stylesheet"]);
     expect(condition.excludedResourceTypes).toEqual(["font"]);

@@ -150,10 +150,6 @@ export function usePowerOnStorage() {
   return useExtensionStorageWrapper<boolean>("local:powerOn", true);
 }
 
-export function useNativeResourceTypeBehaviorStorage() {
-  return useExtensionStorageWrapper<boolean>("local:nativeResourceTypeBehavior", false);
-}
-
 export function useLanguageStorage() {
   const browserLanguage = browser.i18n.getUILanguage().replace("_", "-");
   const initialLanguage = SUPPORT_LOCALES.includes(browserLanguage) ? browserLanguage as SupportLocale : "en";

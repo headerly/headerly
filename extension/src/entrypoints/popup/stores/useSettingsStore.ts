@@ -4,7 +4,6 @@ import { computed } from "vue";
 import {
   useHideRecentlyAddedStorage,
   useLanguageStorage,
-  useNativeResourceTypeBehaviorStorage,
   usePowerOnStorage,
   useShowCommentsInlineStorage,
 } from "@/lib/storage";
@@ -15,7 +14,6 @@ export const useSettingsStore = defineStore("settings", () => {
   });
   const storageConfigs = {
     powerOn: usePowerOnStorage(),
-    nativeResourceTypeBehavior: useNativeResourceTypeBehaviorStorage(),
     language: useLanguageStorage(),
     showCommentsInline: useShowCommentsInlineStorage(),
     hideRecentlyAdded: useHideRecentlyAddedStorage(),
