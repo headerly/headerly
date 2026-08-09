@@ -3,7 +3,7 @@ import type { RuleScope } from "../profileRule";
 import type { RuleRegistration } from "@/lib/storage";
 import { isEqual } from "es-toolkit";
 import { match } from "ts-pattern";
-import { useNativeResourceTypeBehaviorStorage, useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
+import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "@/lib/storage";
 import { deriveRuleScope, RULE_SCOPES } from "../profileRule";
 import { buildAction } from "./buildAction";
 import { buildCondition } from "./buildCondition";
@@ -99,12 +99,10 @@ async function deleteRules(changes: Pick<ProfileChanges, "deleted">) {
 async function upsertRules(changes: Pick<ProfileChanges, "created" | "modified">) {
   const results: RuleUpdateResult[] = [];
   const profilesToRegister = [...changes.created, ...changes.modified];
-  const { item: nativeResourceTypeBehaviorItem } = useNativeResourceTypeBehaviorStorage();
-  const nativeResourceTypeBehavior = await nativeResourceTypeBehaviorItem.getValue();
   const registrationRecord = await profileId2RelatedRuleIdRecordItem.getValue();
 
   for (const profile of profilesToRegister) {
-    const condition = buildCondition(profile, { nativeResourceTypeBehavior });
+    const condition = buildCondition(profile);
     const ruleScope = deriveRuleScope(condition);
     // Treat creation as an upsert too. A full re-registration and a queued
     // profile-created event can otherwise register the same profile twice.

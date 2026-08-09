@@ -1,13 +1,8 @@
 import type { ProfileCoreData } from "../diffProfiles";
 import { union, uniq } from "es-toolkit";
 import { match } from "ts-pattern";
-import { ALLOW_ALL_REQUESTS_RESOURCE_TYPES } from "@/lib/schema";
 
-interface BuildConditionOptions {
-  nativeResourceTypeBehavior: boolean;
-}
-
-export function buildCondition(profile: ProfileCoreData, options: BuildConditionOptions) {
+export function buildCondition(profile: ProfileCoreData) {
   const condition: Browser.declarativeNetRequest.RuleCondition = {};
 
   function appendTabIds(key: "tabIds" | "excludedTabIds", tabIds: number[] | undefined) {
@@ -22,11 +17,8 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
         const enabledItems = profile.filters[k]?.items
           .filter(item => item.enabled)
           .flatMap(item => item.value);
-        const resourceTypes = profile.ruleActionType === "allowAllRequests"
-          ? enabledItems?.filter(value => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(value))
-          : enabledItems;
-        if (resourceTypes && resourceTypes.length > 0) {
-          condition[k] = uniq(resourceTypes);
+        if (enabledItems && enabledItems.length > 0) {
+          condition[k] = uniq(enabledItems);
         }
       })
       .with("requestMethods", "excludedRequestMethods", (k) => {
@@ -97,15 +89,11 @@ export function buildCondition(profile: ProfileCoreData, options: BuildCondition
   const hasResourceTypes = condition.resourceTypes !== undefined;
   const hasExcludedResourceTypes = condition.excludedResourceTypes !== undefined;
 
-  if (!hasResourceTypes && !hasExcludedResourceTypes && !options.nativeResourceTypeBehavior) {
+  if (!hasResourceTypes && !hasExcludedResourceTypes && profile.ruleActionType !== "allowAllRequests") {
     // If no resource types are specified, match all types.
     // Setting resource types to "undefined" is too limiting; setting it to "all" can improve extension usability.
     const resourceTypes = Object.values(browser.declarativeNetRequest.ResourceType);
-    // DNR restricts allowAllRequests rules to main_frame/sub_frame resource types.
-    // Using all resource types with allowAllRequests causes rule registration to fail.
-    condition.resourceTypes = match(profile.ruleActionType)
-      .with("allowAllRequests", () => ALLOW_ALL_REQUESTS_RESOURCE_TYPES)
-      .otherwise(() => resourceTypes);
+    condition.resourceTypes = resourceTypes;
   }
 
   // Always exclude the extension itself from its own rules to prevent lockout.
