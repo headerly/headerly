@@ -96,16 +96,6 @@ export default defineConfig({
         ],
       },
       {
-        text: "Other reference",
-        collapsed: true,
-        items: [
-          { text: "Import and export format", link: "/reference/import-export-format" },
-          { text: "Settings", link: "/reference/settings" },
-          { text: "Permissions", link: "/reference/permissions" },
-          { text: "Compatibility and limits", link: "/reference/compatibility-and-limits" },
-        ],
-      },
-      {
         text: "How it works",
         collapsed: true,
         items: [

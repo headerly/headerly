@@ -1,6 +1,6 @@
 # Tab groups
 
-Tab-group conditions are a synchronized form of [Tab ID conditions](/reference/conditions/tab-ids). Instead of selecting individual tabs, select a Chrome tab group. Headerly applies the profile to the tabs currently in that group and keeps the effective tab selection synchronized with the browser group.
+Tab-group conditions are a synchronized form of [Tab ID conditions](/reference/conditions/tabs). Instead of selecting individual tabs, select a Chrome tab group. Headerly applies the profile to the tabs currently in that group and keeps the effective tab selection synchronized with the browser group.
 
 ## `tabGroups`
 

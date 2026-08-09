@@ -25,4 +25,4 @@ Selections saved under **Tab IDs** and **Tab groups** are cleared when the brows
 Headerly automatically pauses any profile that had an active tab or tab-group condition before the restart. This prevents the profile from unexpectedly applying to more tabs after its saved selection is cleared. Select the tabs or groups again before resuming the profile.
 :::
 
-See [Tab IDs](/reference/conditions/tab-ids) and [Tab groups](/reference/conditions/tab-groups).
+See [Tab IDs](/reference/conditions/tabs) and [Tab groups](/reference/conditions/tab-groups).

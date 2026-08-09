@@ -51,7 +51,7 @@ After import, Headerly uses that identity to read the matching Cookie from the c
 
 ## Permission
 
-This feature requires the optional `cookies` permission and host access for the cookie's domain. See [Permissions](/reference/permissions).
+This feature requires the optional `cookies` permission and host access for the cookie's domain. See [Permissions](/start/installation#permissions).
 
 ## Limitations
 

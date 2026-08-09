@@ -21,5 +21,3 @@ Synchronized Cookie values are cleared automatically. Header values, comments, a
 4. Confirm the import.
 
 Imported profiles receive new internal IDs and do not overwrite profiles with similar names. Imports containing synchronized cookies can request the optional Cookies permission.
-
-See [Import and export format](/reference/import-export-format) for the versioned schema.
