@@ -1,4 +1,5 @@
 export {
+  ALLOW_ALL_REQUESTS_RESOURCE_TYPES,
   DOMAIN_TYPES,
   profileGroupSchema,
   REQUEST_METHODS,
