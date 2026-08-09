@@ -45,7 +45,7 @@ function deleteGroup() {
     <template #group-actions>
       <GroupActions
         v-model:list="list"
-        :description="t('redirectUrl.description')"
+        documentation-link="https://headerly.dev/reference/actions/redirect"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />

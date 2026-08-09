@@ -153,35 +153,22 @@
   },
   "condition": {
     "domains": {
-      "asciiOnly": "The entries must consist of only ascii characters.",
       "excludedInitiatorDomains": {
-        "description": "The rule will not match network requests originating from the list of excludedInitiatorDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over initiatorDomains.",
         "title": "Excluded Initiator Domains Filter"
       },
       "excludedRequestDomains": {
-        "description": "The rule will not match network requests when the domains matches one from the list of excludedRequestDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over requestDomains.",
         "title": "Excluded Request Domains Filter"
       },
       "excludedTopDomains": {
-        "description": "The rule will not match network requests when the associated top-level frame's domain matches one from the list of excludedTopDomains. If the list is empty or omitted, no domains are excluded. This takes precedence over topDomains.",
         "title": "Excluded Top Domains Filter"
       },
       "initiatorDomains": {
-        "description": "The rule will only match network requests originating from the list of initiatorDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Initiator Domains Filter"
       },
-      "matchesInitiator": "This matches against the request initiator and not the request url.",
-      "punycode": "Use punycode encoding for internationalized domains.",
       "requestDomains": {
-        "description": "The rule will only match network requests when the domain matches one from the list of requestDomains. If the list is omitted, the rule is applied to requests from all domains. An empty list is not allowed.",
         "title": "Request Domains Filter"
       },
-      "serviceWorkerFallback": "For requests without an associated top-level frame, the request initiator's domain is used instead.",
-      "subdomainsAllowed": "Sub-domains like \"a.example.com\" are also allowed.",
-      "subdomainsExcluded": "Sub-domains of the listed domains are also excluded.",
-      "subdomainsMatched": "Sub-domains of the listed domains are also matched.",
       "topDomains": {
-        "description": "The rule will only match network requests when the associated top-level frame's domain matches one from the list of topDomains. If the list is omitted, the rule is applied to requests associated with all top-level frame domains. An empty list is not allowed.",
         "title": "Top Domains Filter"
       },
       "useCurrentTabDomain": "Use the domain of the current tab"
@@ -198,17 +185,12 @@
       "title": "Excluded Resource Types"
     },
     "excludedTabIds": {
-      "description": "The rule will not match requests originating from any selected tab.",
       "title": "Excluded Tabs"
     },
     "excludedTabGroups": {
-      "description": "The rule will not match requests originating from tabs in any selected tab group.",
       "title": "Excluded Tab Groups"
     },
     "regexFilter": {
-      "description": "Regular expression to match against the network request url.",
-      "syntaxPrefix": "This follows the",
-      "syntaxSuffix": "syntax.",
       "title": "Regex Filter"
     },
     "requestMethods": {
@@ -236,7 +218,6 @@
     },
     "selectPlaceholder": "Select {name}...",
     "tabIds": {
-      "description": "The rule only matches requests originating from a selected tab. Selected tabs become invalid after the browser restarts.",
       "quickSelect": "Quickly replace selected tabs",
       "selectPlaceholder": "Select tabs...",
       "title": "Tabs",
@@ -248,23 +229,14 @@
     },
     "tabGroups": {
       "addCurrentTabGroup": "Add the current tab group",
-      "description": "The rule only matches requests originating from tabs in a selected tab group. Group membership is kept in sync for the current browser session.",
       "unnamedGroupLabel": "\"{tabTitle}\" | \"{tabTitle} and {remainingCount} other tab\" | \"{tabTitle} and {remainingCount} other tabs\"",
       "selectPlaceholder": "Select tab groups...",
       "title": "Tab Groups",
       "unavailableGroup": "Tab group is unavailable"
     },
     "urlFilter": {
-      "anchor": " - Anchor: marks start or end of the URL.",
-      "domainAnchor": " - Domain anchor: matches start of a (sub)domain.",
-      "format": "Format: (optional anchor) + pattern + (optional anchor)",
-      "omitted": "Omitted = all URLs match. Empty string not allowed.",
-      "onlyOne": "Note: Only one of urlFilter or regexFilter can be used.",
-      "separator": "{separator} - Separator: matches anything except letters, digits, {chars}, or end of URL.",
-      "syntaxLink": "URL pattern syntax",
       "title": "URL Filter",
-      "useCurrentTabRootUrl": "Use the root URL of the current tab",
-      "wildcard": " - Wildcard: matches any characters."
+      "useCurrentTabRootUrl": "Use the root URL of the current tab"
     },
     "urlFilterCaseSensitive": {
       "title": "Url Filter Case Sensitive"
@@ -431,7 +403,6 @@
   },
   "redirectUrl": {
     "delete": "Delete this redirect URL",
-    "description": "The redirect URL. Redirects to JavaScript URLs are not allowed.",
     "title": "Redirect URL",
     "useCurrentTabUrl": "Use the URL of the current tab"
   },
@@ -439,14 +410,6 @@
     "allow": "Allow",
     "allowAllRequests": "Allow all requests",
     "block": "Block",
-    "description": {
-      "allow": "Allow the network request. The request won't be intercepted if there is an allow rule which matches it",
-      "allowAllRequests": "Allow all requests within a frame hierarchy, including the frame request itself",
-      "block": "Block the network request",
-      "modifyHeaders": "Modify request/response headers from the network request",
-      "redirect": "Redirect the network request",
-      "upgradeScheme": "Upgrade the network request URL's scheme to HTTPS if the request is HTTP or FTP"
-    },
     "modifyHeaders": "Modify headers",
     "redirect": "Redirect",
     "upgradeScheme": "Upgrade scheme"

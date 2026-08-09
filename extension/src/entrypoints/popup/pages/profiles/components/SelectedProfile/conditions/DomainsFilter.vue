@@ -29,63 +29,30 @@ const { filterType } = defineProps<{
 
 const { t } = useI18n();
 
-function createDomainDescription(
-  description: string,
-  options: {
-    afterSubdomains?: string[];
-    afterCommon?: string[];
-  } = {},
-) {
-  return (
-    <>
-      <p>
-        {description}
-      </p>
-      <ul>
-        <li>{t("condition.domains.subdomainsAllowed")}</li>
-        {options.afterSubdomains?.map(item => <li>{item}</li>)}
-        <li>{t("condition.domains.asciiOnly")}</li>
-        <li>{t("condition.domains.punycode")}</li>
-        {options.afterCommon?.map(item => <li>{item}</li>)}
-      </ul>
-    </>
-  );
-}
-
 const field = computed(() => ({
   requestDomains: {
     title: t("condition.domains.requestDomains.title"),
-    description: createDomainDescription(t("condition.domains.requestDomains.description")),
+    documentationLink: "https://headerly.dev/reference/conditions/request-domains",
   },
   excludedRequestDomains: {
     title: t("condition.domains.excludedRequestDomains.title"),
-    description: createDomainDescription(t("condition.domains.excludedRequestDomains.description")),
+    documentationLink: "https://headerly.dev/reference/conditions/request-domains",
   },
   initiatorDomains: {
     title: t("condition.domains.initiatorDomains.title"),
-    description: createDomainDescription(t("condition.domains.initiatorDomains.description"), {
-      afterCommon: [t("condition.domains.matchesInitiator")],
-    }),
+    documentationLink: "https://headerly.dev/reference/conditions/initiator-domains",
   },
   excludedInitiatorDomains: {
     title: t("condition.domains.excludedInitiatorDomains.title"),
-    description: createDomainDescription(t("condition.domains.excludedInitiatorDomains.description"), {
-      afterCommon: [t("condition.domains.matchesInitiator")],
-    }),
+    documentationLink: "https://headerly.dev/reference/conditions/initiator-domains",
   },
   topDomains: {
     title: t("condition.domains.topDomains.title"),
-    description: createDomainDescription(t("condition.domains.topDomains.description"), {
-      afterSubdomains: [t("condition.domains.subdomainsMatched")],
-      afterCommon: [t("condition.domains.serviceWorkerFallback")],
-    }),
+    documentationLink: "https://headerly.dev/reference/conditions/top-level-domains",
   },
   excludedTopDomains: {
     title: t("condition.domains.excludedTopDomains.title"),
-    description: createDomainDescription(t("condition.domains.excludedTopDomains.description"), {
-      afterSubdomains: [t("condition.domains.subdomainsExcluded")],
-      afterCommon: [t("condition.domains.serviceWorkerFallback")],
-    }),
+    documentationLink: "https://headerly.dev/reference/conditions/top-level-domains",
   },
 }));
 
@@ -138,7 +105,7 @@ const { currentUrl, canUseCurrentUrl } = useCurrentTabUrl();
       <GroupActions
         v-model:list="domainsFilter.items"
         v-model:type="domainsFilter.type"
-        :description="field[filterType].description"
+        :documentation-link="field[filterType].documentationLink"
         @delete-group="deleteGroup"
         @new-field="newField"
       />

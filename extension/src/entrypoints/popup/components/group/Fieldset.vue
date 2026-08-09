@@ -1,7 +1,19 @@
 <script setup lang="ts">
-const { name } = defineProps<{
+import { useI18n } from "vue-i18n";
+import { Button } from "#/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/ui/tooltip";
+
+const { documentationLink, name } = defineProps<{
+  documentationLink?: string;
   name: string;
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -21,6 +33,25 @@ const { name } = defineProps<{
       <slot name="name-before" />
       <span data-testid="fieldset-name">{{ name }}</span>
       <div class="flex flex-1 items-center gap-1">
+        <TooltipProvider v-if="documentationLink">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Button as-child size="icon-xs" variant="secondary">
+                <a
+                  :href="documentationLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="t('group.actions.openDocumentation')"
+                >
+                  <i class="i-lucide-book-open size-4" />
+                </a>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {{ t("group.actions.openDocumentation") }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <slot name="group-actions">
           <span class="h-0 flex-1 border-t" />
         </slot>

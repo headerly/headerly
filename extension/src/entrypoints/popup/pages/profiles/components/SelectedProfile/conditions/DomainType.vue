@@ -24,6 +24,7 @@ const { t } = useI18n();
 <template>
   <Fieldset
     :name="t('condition.domainType.title')"
+    documentation-link="https://headerly.dev/reference/conditions/domain-type"
   >
     <template #main>
       <RadioGroup v-model="model.value" class="flex items-center gap-4">

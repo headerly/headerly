@@ -31,11 +31,11 @@ const { t } = useI18n();
 const field = computed(() => ({
   tabGroups: {
     title: t("condition.tabGroups.title"),
-    description: t("condition.tabGroups.description"),
+    documentationLink: "https://headerly.dev/reference/conditions/tab-groups",
   },
   excludedTabGroups: {
     title: t("condition.excludedTabGroups.title"),
-    description: t("condition.excludedTabGroups.description"),
+    documentationLink: "https://headerly.dev/reference/conditions/tab-groups",
   },
 }));
 
@@ -97,7 +97,7 @@ onMounted(refreshCurrentTabGroupBinding);
       <GroupActions
         v-model:list="filterGroup.items"
         v-model:type="filterGroup.type"
-        :description="field[filterType].description"
+        :documentation-link="field[filterType].documentationLink"
         @delete-group="deleteGroup"
         @new-field="newField"
       />

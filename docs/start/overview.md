@@ -13,6 +13,7 @@ Headerly uses Chrome's Declarative Net Request API. The browser evaluates and ap
 ## Common uses
 
 - Add an authorization or feature-flag header during development.
+- Select an existing browser cookie and append it to matching requests.
 - Change response headers while testing CORS or iframe behavior.
 - Redirect an API or asset to another environment.
 - Block an unwanted request while debugging a page.

@@ -6,7 +6,6 @@ import { match } from "ts-pattern";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import InfoTooltip from "#/components/InfoTooltip.vue";
 import { useRuleActionType } from "#/composables/useRuleActionType";
 import Badge from "#/ui/badge/Badge.vue";
 
@@ -88,14 +87,14 @@ const ruleActionTypes = [
   "redirect",
 ] as const satisfies RuleActionType[];
 
-function getRuleActionTypeDescription(type: RuleActionType) {
+function getRuleActionTypeDocumentationLink(type: RuleActionType) {
   return match(type)
-    .with("modifyHeaders", () => t("ruleAction.description.modifyHeaders"))
-    .with("block", () => t("ruleAction.description.block"))
-    .with("allow", () => t("ruleAction.description.allow"))
-    .with("upgradeScheme", () => t("ruleAction.description.upgradeScheme"))
-    .with("allowAllRequests", () => t("ruleAction.description.allowAllRequests"))
-    .with("redirect", () => t("ruleAction.description.redirect"))
+    .with("modifyHeaders", () => "https://headerly.dev/reference/actions/modify-headers")
+    .with("block", () => "https://headerly.dev/reference/actions/block")
+    .with("allow", () => "https://headerly.dev/reference/actions/allow")
+    .with("upgradeScheme", () => "https://headerly.dev/reference/actions/upgrade-scheme")
+    .with("allowAllRequests", () => "https://headerly.dev/reference/actions/allow-all-requests")
+    .with("redirect", () => "https://headerly.dev/reference/actions/redirect")
     .exhaustive();
 }
 </script>
@@ -152,9 +151,20 @@ function getRuleActionTypeDescription(type: RuleActionType) {
                   }"
                 >
                   {{ ruleActionTypeMap[type].label }}
-                  <InfoTooltip
-                    :description="getRuleActionTypeDescription(type)"
-                  />
+                  <a
+                    :href="getRuleActionTypeDocumentationLink(type)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    :aria-label="t('group.actions.openDocumentation')"
+                    class="
+                      flex items-center justify-center rounded-sm
+                      text-muted-foreground transition
+                      hover:text-foreground
+                    "
+                    @click.stop
+                  >
+                    <i class="i-lucide-circle-question-mark size-4" />
+                  </a>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem v-if="type !== defaultRuleActionType" @click="defaultRuleActionType = type">
@@ -203,7 +213,7 @@ function getRuleActionTypeDescription(type: RuleActionType) {
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuItem as-child>
-                <a href="https://headerly.dev/guide/getting-started" target="_blank">
+                <a href="https://headerly.dev/start/overview" target="_blank">
                   <i class="i-lucide-book-open size-4 shrink-0" />
                   {{ t("profile.sidebar.documentation") }}
                 </a>

@@ -25,11 +25,11 @@ const { t } = useI18n();
 const field = computed(() => ({
   tabIds: {
     title: t("condition.tabIds.title"),
-    description: t("condition.tabIds.description"),
+    documentationLink: "https://headerly.dev/reference/conditions/tabs",
   },
   excludedTabIds: {
     title: t("condition.excludedTabIds.title"),
-    description: t("condition.excludedTabIds.description"),
+    documentationLink: "https://headerly.dev/reference/conditions/tabs",
   },
 }));
 
@@ -63,7 +63,7 @@ async function newField() {
       <GroupActions
         v-model:list="filterGroup.items"
         v-model:type="filterGroup.type"
-        :description="field[filterType].description"
+        :documentation-link="field[filterType].documentationLink"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
