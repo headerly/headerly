@@ -2,6 +2,11 @@
 
 Headerly share links are handled by the browser extension.
 
+Install Headerly if it is not already available in this browser:
+
+- [Download for Chrome](https://chromewebstore.google.com/detail/headerly/lmlapacaojgifapgjkbdkmaclkgcbhng)
+- [Download for Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/headerly/dhkjobinnldebfgpondcjlefklcapnha)
+
 If the Import page does not open:
 
 1. Install and enable Headerly.
