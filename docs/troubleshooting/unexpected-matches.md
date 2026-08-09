@@ -18,7 +18,9 @@ Choose the perspective that represents the intended restriction.
 
 ## No Resource Type is configured
 
-By default, Headerly explicitly matches all resource types. Add Resource Types to narrow the rule, or enable native DNR resource-type behavior in Settings if that is the desired default.
+Except for `allowAllRequests`, Headerly explicitly matches all resource types by default. Add a Resource Types or Excluded Resource Types condition and select one or more values to narrow the rule. Headerly does not provide a setting for Chrome's native resource-type default.
+
+`allowAllRequests` does not receive an automatic resource-type list. See [Resource types](/reference/conditions/resource-types) for its restrictions.
 
 ## A global profile is enabled
 

@@ -9,7 +9,7 @@ Chrome requires `allowAllRequests` rules to use only:
 - `main_frame`
 - `sub_frame`
 
-When no Resource Types or Excluded Resource Types condition is configured and Headerly's native-resource behavior is disabled, Headerly automatically supplies both values.
+Headerly does not add resource types automatically for this action. If you add a Resource Types or Excluded Resource Types condition, select only these values.
 
 ## Priority
 
