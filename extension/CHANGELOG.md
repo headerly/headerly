@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.20.0](https://github.com/headerly/headerly/compare/v1.19.0...v1.20.0) (2026-08-09)
+
+
+### Features
+
+* **docs:** completely expand the technical documentation ([#79](https://github.com/headerly/headerly/issues/79)) ([3001f28](https://github.com/headerly/headerly/commit/3001f28361377470bcb551ace83f178b11842619))
+
+
+### Bug Fixes
+
+* restrict allowAllRequests resource types and remove native DNR setting ([#80](https://github.com/headerly/headerly/issues/80)) ([d9be141](https://github.com/headerly/headerly/commit/d9be141ecf577a0fcf8d1fefa86431af965073a6))
+
 ## [1.19.0](https://github.com/headerly/headerly/compare/v1.18.0...v1.19.0) (2026-08-05)
 
 
