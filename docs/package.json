@@ -6,7 +6,7 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "deploy": "vitepress build && wrangler pages deploy",
-    "preview": "vitepress build && wrangler preview",
+    "preview": "vitepress preview",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
