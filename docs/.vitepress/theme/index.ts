@@ -5,6 +5,9 @@ import { useRoute } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 // https://vitepress.dev/guide/custom-theme
 import { defineComponent, h, nextTick, onMounted, onUnmounted, watch } from "vue";
+import "@fontsource-variable/inter/wght-italic.css";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/roboto-mono";
 import "./style.css";
 
 const Layout = defineComponent({
