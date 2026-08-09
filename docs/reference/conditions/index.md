@@ -13,7 +13,7 @@ Conditions select the network requests to which a profile applies. Different con
 | [Domain type](/reference/conditions/domain-type) | `domainType` |
 | [Resource types](/reference/conditions/resource-types) | `resourceTypes`, `excludedResourceTypes` |
 | [Request methods](/reference/conditions/request-methods) | `requestMethods`, `excludedRequestMethods` |
-| [Tab IDs](/reference/conditions/tab-ids) | `tabIds`, `excludedTabIds` |
+| [Tabs](/reference/conditions/tabs) | `tabIds`, `excludedTabIds` |
 | [Tab groups](/reference/conditions/tab-groups) | `tabGroups`, `excludedTabGroups` |
 
 Disabled or empty items do not contribute to a generated rule. If no conditions remain, the profile is global. Headerly always excludes its own extension ID from initiator-domain matching to avoid applying rules to itself.

@@ -91,7 +91,7 @@ export default defineConfig({
           { text: "Domain type", link: "/reference/conditions/domain-type" },
           { text: "Resource types", link: "/reference/conditions/resource-types" },
           { text: "Request methods", link: "/reference/conditions/request-methods" },
-          { text: "Tab IDs", link: "/reference/conditions/tab-ids" },
+          { text: "Tabs", link: "/reference/conditions/tabs" },
           { text: "Tab groups", link: "/reference/conditions/tab-groups" },
         ],
       },
