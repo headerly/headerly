@@ -19,4 +19,17 @@ Within Headerly, equal-priority actions are ordered by Chrome as follows:
 
 Matching header modifications are processed separately, from higher to lower priority, after allow rules are considered. See [Priority and conflicts](/explanation/priority-and-conflicts).
 
-Set an explicit priority when profiles overlap or modify the same header. A narrow exception commonly uses a higher priority than a broad default profile.
+## Override a header for a nested path
+
+To set a header to `a` for resources under `/path/a/`, but set the same header to `b` under `/path/a/b/`, create two overlapping Modify Headers profiles:
+
+| Profile | Header operation | URL Filter | Priority |
+| --- | --- | --- | --- |
+| `/path/a/` | Set `X-Example-Header` to `a` | `*/path/a/*` | `1` |
+| `/path/a/b/` | Set `X-Example-Header` to `b` | `*/path/a/b/*` | `2` |
+
+A request under `/path/a/file.js` matches only the first profile and receives `X-Example-Header: a`. A request under `/path/a/b/file.js` matches both profiles. Headerly applies the higher-priority `set` operation first, setting `X-Example-Header: b`; the lower-priority `set` operation cannot overwrite it, so the final value is `b`.
+
+The same pattern works with Regex Filter conditions. Headerly does not provide excluded URL Filter or excluded Regex Filter conditions, so overlapping profiles with different priorities are currently the only way to override a broad URL-pattern header value for a narrower URL pattern.
+
+Set an explicit priority when profiles overlap or modify the same header.
