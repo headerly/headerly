@@ -66,6 +66,7 @@ function deleteGroup() {
       <GroupActions
         v-model:list="group.items"
         v-model:type="group.type"
+        documentation-link="https://headerly.dev/reference/actions/modify-headers"
         @delete-group="deleteGroup"
         @new-field="addNewField"
       />

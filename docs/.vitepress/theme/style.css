@@ -44,6 +44,9 @@
  * -------------------------------------------------------------------------- */
 
 :root {
+  --vp-font-family-base: "Inter Variable", sans-serif;
+  --vp-font-family-mono: "Roboto Mono Variable", monospace;
+
   --vp-c-default-1: var(--vp-c-gray-1);
   --vp-c-default-2: var(--vp-c-gray-2);
   --vp-c-default-3: var(--vp-c-gray-3);
@@ -137,3 +140,19 @@
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
 
+/**
+ * Component: Image zoom
+ * -------------------------------------------------------------------------- */
+
+.medium-zoom-overlay {
+  z-index: 100;
+  background-color: var(--vp-c-bg) !important;
+}
+
+.medium-zoom-image--opened {
+  z-index: 101;
+}
+
+.medium-zoom--opened .medium-zoom-overlay {
+  opacity: 0.9 !important;
+}

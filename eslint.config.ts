@@ -9,6 +9,7 @@ export default antfu(
       semi: true,
     },
     // Automatic detection does not work in a monorepo and must be enabled manually.
+    markdown: true,
     vue: true,
   },
   ...vueI18n.configs.recommended,
@@ -74,7 +75,7 @@ export default antfu(
       },
     },
     rules: {
-      ...tailwind.configs.recommended!.rules,
+      ...tailwind.configs.recommended.rules,
       "better-tailwindcss/no-unknown-classes": [
         "error",
         {
@@ -93,6 +94,6 @@ export default antfu(
     },
   },
   {
-    ignores: ["**/*.{css,md}"],
+    ignores: ["**/*.css"],
   },
 );

@@ -100,6 +100,12 @@ const name = computed(() => {
   return nameMap[type];
 });
 
+const documentationLink = computed(() => {
+  return type === "requestMethods" || type === "excludedRequestMethods"
+    ? "https://headerly.dev/reference/conditions/request-methods"
+    : "https://headerly.dev/reference/conditions/resource-types";
+});
+
 function deleteGroup() {
   delete profilesStore.selectedProfile.filters[type];
 }
@@ -141,6 +147,7 @@ interface FilterValueMap {
       <GroupActions
         v-model:list="filterGroup.items"
         v-model:type="filterGroup.type"
+        :documentation-link
         @delete-group="deleteGroup"
         @new-field="newField"
       />

@@ -32,6 +32,7 @@ const radioValue = computed({
 <template>
   <Fieldset
     :name="t('condition.urlFilterCaseSensitive.title')"
+    documentation-link="https://headerly.dev/reference/conditions/url-case-sensitivity"
   >
     <template #main>
       <RadioGroup v-model="radioValue" class="flex items-center gap-4">

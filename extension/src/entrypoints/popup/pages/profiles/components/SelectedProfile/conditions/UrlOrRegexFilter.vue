@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import type { UrlOrRegexFilterItem } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
-import { computed, h, resolveComponent } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
@@ -29,79 +29,17 @@ const { filterType } = defineProps<{
 }>();
 
 const { t } = useI18n();
-const I18nT = resolveComponent("i18n-t");
-
-const urlFilterTokens = {
-  wildcard: "*",
-  anchor: "|",
-  domainAnchor: "||",
-  separator: "^",
-  separatorExcludedChars: "_ - . %",
-  regexEngine: "RE2",
-} as const;
 
 const field = computed(() => ({
   urlFilter: {
     title: t("condition.urlFilter.title"),
     placeholder: "||example.com/*",
-    description: (
-      <>
-        <p>
-          <a
-            href="https://developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#url_filter_syntax"
-            target="_blank"
-          >
-            {t("condition.urlFilter.syntaxLink")}
-          </a>
-        </p>
-        <ul>
-          <li>
-            <code>{urlFilterTokens.wildcard}</code>
-            {t("condition.urlFilter.wildcard")}
-          </li>
-          <li>
-            <code>{urlFilterTokens.anchor}</code>
-            {t("condition.urlFilter.anchor")}
-          </li>
-          <li>
-            <code>{urlFilterTokens.domainAnchor}</code>
-            {t("condition.urlFilter.domainAnchor")}
-          </li>
-          <li>
-            {h(I18nT, {
-              keypath: "condition.urlFilter.separator",
-              tag: "span",
-            }, {
-              chars: () => <code>{urlFilterTokens.separatorExcludedChars}</code>,
-              separator: () => <code>{urlFilterTokens.separator}</code>,
-            })}
-          </li>
-        </ul>
-        <p>
-          {t("condition.urlFilter.format")}
-        </p>
-        <p>{t("condition.urlFilter.omitted")}</p>
-        <p>{t("condition.urlFilter.onlyOne")}</p>
-      </>
-    ),
+    documentationLink: "https://headerly.dev/reference/conditions/url-filter",
   },
   regexFilter: {
     title: t("condition.regexFilter.title"),
     placeholder: String.raw`^https?:\/\/example\.com\/.*`,
-    description: (
-      <>
-        <p>
-          {t("condition.regexFilter.description")}
-        </p>
-        <p>
-          {t("condition.regexFilter.syntaxPrefix")}
-          {" "}
-          <a href="https://github.com/google/re2/wiki/syntax" target="_blank">{urlFilterTokens.regexEngine}</a>
-          {" "}
-          {t("condition.regexFilter.syntaxSuffix")}
-        </p>
-      </>
-    ),
+    documentationLink: "https://headerly.dev/reference/conditions/regex-filter",
   },
 } as const));
 
@@ -139,7 +77,7 @@ function getCurrentTabHost() {
     <template #group-actions>
       <GroupActions
         v-model:list="list"
-        :description="field[filterType].description"
+        :documentation-link="field[filterType].documentationLink"
         @delete-group="deleteGroup"
         @new-field="newField"
       />
