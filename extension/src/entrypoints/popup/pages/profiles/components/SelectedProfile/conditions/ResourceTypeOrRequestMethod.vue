@@ -86,7 +86,7 @@ const options = computed(() => {
     return conditionOptions;
   }
 
-  return conditionOptions.filter(option => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(option.value as ResourceTypeValue));
+  return conditionOptions.filter(option => ALLOW_ALL_REQUESTS_RESOURCE_TYPES.includes(option.value));
 });
 
 const name = computed(() => {
