@@ -1,10 +1,17 @@
 import { defineConfig } from "vitepress";
+import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
 
 export default defineConfig({
   cleanUrls: true,
   title: "Headerly",
   description: "Configure browser network rules with reusable profiles.",
+  sitemap: {
+    hostname: "https://headerly.dev",
+  },
+  vite: {
+    plugins: [llmstxt()],
+  },
   head: [
     ["link", { rel: "icon", href: "/favicon.ico" }],
   ],

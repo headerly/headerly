@@ -74,6 +74,7 @@ catalog:
   vite: ^8.2.0
   vite-plugin-vue-devtools: ^8.2.1
   vitepress: 2.0.0-alpha.19
+  vitepress-plugin-llms: ^1.13.4
   vitest: ^4.1.10
   vitest-browser-vue: ^2.1.0
   vue: 3.6.0-beta.17

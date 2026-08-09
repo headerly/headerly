@@ -17,6 +17,7 @@
   "devDependencies": {
     "oxc-minify": "catalog:",
     "vite": "catalog:",
+    "vitepress-plugin-llms": "catalog:",
     "wrangler": "catalog:"
   }
 }
