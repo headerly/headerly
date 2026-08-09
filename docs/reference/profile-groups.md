@@ -33,4 +33,8 @@ Right-click a profile group header to open the group context menu. From there, y
 
 ## Storage and export
 
-Groups and memberships are local organizational data. They do not affect DNR rule contents and are not included in profile exports. Removing the final member causes an empty group to be cleaned up.
+Groups and memberships are stored locally as organizational data. They do not affect DNR rule contents. Removing the final member causes an empty group to be cleaned up.
+
+::: warning Export support is not yet implemented
+Profile group definitions and profile-to-group memberships are not currently included in profile exports. Support for exporting and restoring this data remains to be implemented.
+:::
