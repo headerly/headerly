@@ -4,10 +4,10 @@ Conditions select the network requests to which a profile applies. Different con
 
 | Condition | Field |
 | --- | --- |
+| [Request domains](/reference/conditions/request-domains) | `requestDomains`, `excludedRequestDomains` |
 | [URL filter](/reference/conditions/url-filter) | `urlFilter` |
 | [Regular expression filter](/reference/conditions/regex-filter) | `regexFilter` |
 | [URL case sensitivity](/reference/conditions/url-case-sensitivity) | `isUrlFilterCaseSensitive` |
-| [Request domains](/reference/conditions/request-domains) | `requestDomains`, `excludedRequestDomains` |
 | [Initiator domains](/reference/conditions/initiator-domains) | `initiatorDomains`, `excludedInitiatorDomains` |
 | [Top-level domains](/reference/conditions/top-level-domains) | `topDomains`, `excludedTopDomains` |
 | [Domain type](/reference/conditions/domain-type) | `domainType` |

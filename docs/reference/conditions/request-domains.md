@@ -2,6 +2,10 @@
 
 Request-domain conditions compare against the domain of the requested URL.
 
+::: tip Start here
+Request domains are usually the condition that best matches the intended scope. Prefer them when matching the destination website; they are simpler than URL and regular-expression filters, support multiple enabled values, and match subdomains automatically.
+:::
+
 ## `requestDomains`
 
 The rule matches only requests whose destination domain is in the enabled list.

@@ -82,10 +82,10 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: "Condition overview", link: "/reference/conditions/" },
+          { text: "Request domains", link: "/reference/conditions/request-domains" },
           { text: "URL filter", link: "/reference/conditions/url-filter" },
           { text: "Regular expression filter", link: "/reference/conditions/regex-filter" },
           { text: "URL case sensitivity", link: "/reference/conditions/url-case-sensitivity" },
-          { text: "Request domains", link: "/reference/conditions/request-domains" },
           { text: "Initiator domains", link: "/reference/conditions/initiator-domains" },
           { text: "Top-level domains", link: "/reference/conditions/top-level-domains" },
           { text: "Domain type", link: "/reference/conditions/domain-type" },
