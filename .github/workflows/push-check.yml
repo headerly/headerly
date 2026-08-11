@@ -31,3 +31,9 @@ jobs:
 
       - name: Unit Tests
         run: pnpm run test
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter=extension exec playwright install --with-deps chromium
+
+      - name: Guide E2E Tests
+        run: pnpm run test:e2e

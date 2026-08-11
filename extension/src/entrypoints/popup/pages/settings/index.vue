@@ -105,6 +105,7 @@ const settings = useCreateSettings();
         <template #main>
           <div class="flex gap-2">
             <Button
+              data-testid="reinitialize-all-rules"
               variant="secondary"
               class="flex items-center"
               @click="async () => {
