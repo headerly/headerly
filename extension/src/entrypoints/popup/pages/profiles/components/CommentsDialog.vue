@@ -50,6 +50,7 @@ defineExpose({
         <Textarea
           id="comments"
           v-model="commentsInput"
+          data-testid="profile-comments-input"
           class="min-h-32"
           :placeholder="t('commentsDialog.placeholder')"
           autofocus
@@ -61,7 +62,7 @@ defineExpose({
             {{ t("common.cancel") }}
           </Button>
         </DialogClose>
-        <Button @click="handleSave">
+        <Button data-testid="profile-comments-save" @click="handleSave">
           {{ t("common.save") }}
         </Button>
       </DialogFooter>

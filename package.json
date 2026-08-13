@@ -19,6 +19,7 @@
     "docs:preview": "pnpm --filter=docs run preview",
     "zip": "pnpm --filter=extension run zip",
     "test": "pnpm --recursive --sequential run test",
+    "test:e2e": "pnpm --filter=extension run test:e2e",
     "lint": "eslint . --max-warnings 0 --cache",
     "lint:fix": "eslint . --fix --max-warnings 0 --cache",
     "typecheck": "pnpm --recursive --sequential run typecheck"

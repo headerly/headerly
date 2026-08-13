@@ -81,6 +81,7 @@ useSortableAndAutoAnimate({
       <template #name-before>
         <Label v-if="type">
           <Checkbox
+            :data-testid="`group-toggle-${id}`"
             :model-value="checkedState"
             @update:model-value="(val) => {
               const isChecked = val === true;
@@ -142,12 +143,14 @@ useSortableAndAutoAnimate({
                 <SortableItem>
                   <Checkbox
                     v-if="type === 'checkbox'"
+                    :data-testid="`group-item-${item.id}`"
                     :model-value="item.enabled"
                     class="mr-1"
                     @update:model-value="(val) => item.enabled = val === true"
                   />
                   <RadioGroupItem
                     v-else
+                    :data-testid="`group-item-${item.id}`"
                     :value="item.id"
                     class="mr-1"
                   />

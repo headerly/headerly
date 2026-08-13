@@ -77,12 +77,12 @@ defineExpose({
       </DialogHeader>
       <div class="flex items-center space-x-2 py-4">
         <Select v-model="typeInput">
-          <SelectTrigger class="w-full">
+          <SelectTrigger data-testid="profile-action-type-select" class="w-full">
             <SelectValue :placeholder="t('profile.changeType.placeholder')" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem v-for="option in options" :key="option.value" :value="option.value">
+              <SelectItem v-for="option in options" :key="option.value" :data-testid="`profile-action-type-${option.value}`" :value="option.value">
                 {{ option.label }}
               </SelectItem>
             </SelectGroup>
@@ -95,7 +95,7 @@ defineExpose({
             {{ t("common.cancel") }}
           </Button>
         </DialogClose>
-        <Button @click="handleConfirm">
+        <Button data-testid="profile-action-type-confirm" @click="handleConfirm">
           {{ t("common.confirm") }}
         </Button>
       </DialogFooter>

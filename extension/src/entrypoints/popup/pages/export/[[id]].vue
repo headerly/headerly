@@ -142,6 +142,7 @@ async function handleDownloadJson() {
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button
+              data-testid="export-menu-trigger"
               size="sm"
               :disabled="!validJsonSchema"
             >
@@ -151,15 +152,15 @@ async function handleDownloadJson() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" :collision-padding="8" class="z-500">
-            <DropdownMenuItem @click="handleCopyShareLink">
+            <DropdownMenuItem data-testid="export-copy-link" @click="handleCopyShareLink">
               <i class="i-lucide-link" />
               {{ t("share.copyLink") }}
             </DropdownMenuItem>
-            <DropdownMenuItem @click="handleCopyJson">
+            <DropdownMenuItem data-testid="export-copy-json" @click="handleCopyJson">
               <i class="i-lucide-copy" />
               {{ t("share.copyToClipboard") }}
             </DropdownMenuItem>
-            <DropdownMenuItem @click="handleDownloadJson">
+            <DropdownMenuItem data-testid="export-download-json" @click="handleDownloadJson">
               <i class="i-lucide-hard-drive-download" />
               {{ t("share.saveAsFile") }}
             </DropdownMenuItem>
