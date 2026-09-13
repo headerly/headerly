@@ -8,7 +8,7 @@ const features = [
   { number: "03", title: "Only where you need it.", description: "Target URLs, regex, domains, request methods, and resource types. Get specific with individual tabs and tab groups.", icon: "i-lucide-crosshair", href: "/reference/conditions/", detail: "PRECISE REQUEST MATCHING" },
   { number: "04", title: "Switch contexts. Keep your setup.", description: "Organize rules into reusable profiles. Switch environments with radio groups, combine profiles with checkbox groups, and pause or resume them together.", icon: "i-lucide-panels-top-left", href: "/reference/profile-groups", detail: "PROFILES + GROUPS" },
   { number: "05", title: "Let your session keep up.", description: "Append a selected browser cookie to matching requests and keep its value in sync as it changes. Cookie access is enabled only when you grant permission.", icon: "i-lucide-refresh-cw", href: "/guides/sync-cookies", detail: "COOKIE SYNCHRONIZATION" },
-  { number: "06", title: "Keep it. Share it. Reuse it.", description: "Back up profiles as JSON or pass a setup along with a share link. Synchronized cookie values are cleared from exports and shared profiles.", icon: "i-lucide-arrow-up-right", href: "/guides/import-export-share", detail: "IMPORT / EXPORT / SHARE" },
+  { number: "06", title: "Keep it. Share it. Reuse it.", description: "Back up profiles as JSON or pass a setup along with a share link. Synchronized cookie values are cleared from exports and shared profiles.", icon: "i-lucide-message-square-share", href: "/guides/import-export-share", detail: "IMPORT / EXPORT / SHARE" },
 ];
 </script>
 

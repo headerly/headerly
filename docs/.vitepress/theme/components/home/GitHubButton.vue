@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { ShimmerButton } from "@headerly/ui/components/shimmer-button";
+import { Button } from "@headerly/ui/components/button";
 </script>
 
 <template>
-  <ShimmerButton
-    is="a"
+  <Button
+    as="a"
+    variant="secondary"
     href="https://github.com/headerly/headerly"
     target="_blank"
     rel="noopener noreferrer"
-    class="h-12 px-5 text-sm font-medium no-underline"
+    class="h-12 rounded-xl px-5 text-sm font-medium no-underline"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,5 +22,5 @@ import { ShimmerButton } from "@headerly/ui/components/shimmer-button";
     </svg>
     View on GitHub
     <i class="i-lucide-arrow-up-right size-4" aria-hidden="true" />
-  </ShimmerButton>
+  </Button>
 </template>

@@ -28,14 +28,14 @@ function toggleTheme() {
   >
     <i
       class="
-        i-lucide-moon size-5
-        dark:hidden
+        i-lucide-moon hidden size-5
+        dark:block
       " aria-hidden="true"
     />
     <i
       class="
-        i-lucide-sun hidden size-5
-        dark:block
+        i-lucide-sun block size-5
+        dark:hidden
       " aria-hidden="true"
     />
   </button>
