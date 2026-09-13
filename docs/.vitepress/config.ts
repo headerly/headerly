@@ -56,7 +56,14 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/headerly/headerly" },
     ],
-    search: { provider: "local" },
+    search: {
+      provider: "algolia",
+      options: {
+        appId: "F0WZOSC455",
+        apiKey: "438803226f2de94f9cf4763aaaf6e193",
+        indexName: "headerly docs",
+      },
+    },
     outline: { level: [2, 3] },
   },
 });
