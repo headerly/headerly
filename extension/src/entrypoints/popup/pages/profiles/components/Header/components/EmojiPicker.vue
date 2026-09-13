@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { useVirtualizer } from "@tanstack/vue-virtual";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "#/ui/popover";
+} from "@headerly/ui/components/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useVirtualizer } from "@tanstack/vue-virtual";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { useEmojisWithCategory } from "@/entrypoints/popup/constants/emoji";
-import { cn } from "@/lib/utils";
 
 const selectedEmoji = defineModel<string>({ required: true });
 const parentRef = useTemplateRef("parentRef");

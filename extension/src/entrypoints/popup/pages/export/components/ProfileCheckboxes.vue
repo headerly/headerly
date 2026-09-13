@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import ProfileOption from "#/components/ProfileOption.vue";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
+import { Button } from "@headerly/ui/components/button";
+import { Checkbox } from "@headerly/ui/components/checkbox";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import ProfileOption from "#/components/ProfileOption.vue";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 
 const model = defineModel<Profile[]>({

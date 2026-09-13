@@ -1,18 +1,18 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem } from "@/lib/schema";
-import { uuidv7 } from "uuidv7";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
-import { useSettingsStore } from "#/stores/useSettingsStore";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
+} from "@headerly/ui/components/dropdown-menu";
+import { uuidv7 } from "uuidv7";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
+import { useSettingsStore } from "#/stores/useSettingsStore";
 import FieldCommentsButton from "./FieldCommentsButton.vue";
 
 const list = defineModel<T[]>("list", {

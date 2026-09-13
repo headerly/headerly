@@ -5,8 +5,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
 
 const { description, class: className } = defineProps<{
   description: string;

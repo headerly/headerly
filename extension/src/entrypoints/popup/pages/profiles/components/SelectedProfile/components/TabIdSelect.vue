@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { Option } from "#/ui/multi-select";
-import { computed, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import type { Option } from "@headerly/ui/components/multi-select";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
-import { MultiSelect } from "#/ui/multi-select";
+} from "@headerly/ui/components/dropdown-menu";
+import { MultiSelect } from "@headerly/ui/components/multi-select";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { getCurrentTab, isControllableTab } from "@/lib/currentTab";
 
 const model = defineModel<number[]>({ required: true });

@@ -70,6 +70,7 @@ export default antfu(
     },
     settings: {
       "better-tailwindcss": {
+        detectComponentClasses: true,
         cwd: "./extension",
         entryPoint: "./src/entrypoints/popup/index.css",
       },
@@ -85,6 +86,27 @@ export default antfu(
           ],
         },
       ],
+    },
+  },
+  {
+    files: ["docs/**/*.{ts,vue}"],
+    settings: {
+      "better-tailwindcss": {
+        detectComponentClasses: true,
+        cwd: "./docs",
+        entryPoint: "./.vitepress/theme/style.css",
+      },
+    },
+    rules: {
+      "@intlify/vue-i18n/no-raw-text": "off",
+      "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["vp-raw", "no-zoom", "i-lucide-*"] }],
+    },
+  },
+  {
+    files: ["packages/ui/src/components/border-beam/BorderBeam.vue", "packages/ui/src/components/rainbow-button/RainbowButton.vue"],
+    rules: {
+      // These animation classes use Vue-scoped CSS with reactive custom properties.
+      "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^border-beam$", "^rainbow-button$"] }],
     },
   },
   {

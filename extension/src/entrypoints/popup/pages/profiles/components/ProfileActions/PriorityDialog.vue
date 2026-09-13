@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -10,14 +8,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "#/ui/dialog";
+} from "@headerly/ui/components/dialog";
 import {
   NumberField,
   NumberFieldContent,
   NumberFieldDecrement,
   NumberFieldIncrement,
   NumberFieldInput,
-} from "#/ui/number-field";
+} from "@headerly/ui/components/number-field";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const priority = defineModel<number>({
   default: 1,

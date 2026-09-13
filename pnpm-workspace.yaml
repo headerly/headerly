@@ -23,6 +23,7 @@ catalog:
   "@commitlint/types": ^21.2.0
   "@egoist/tailwindcss-icons": ^1.9.2
   "@fontsource-variable/inter": ^5.3.0
+  "@fontsource-variable/outfit": ^5.3.0
   "@fontsource-variable/roboto-mono": ^5.3.0
   "@formkit/auto-animate": ^0.10.0
   "@iconify-json/lucide": ^1.2.121

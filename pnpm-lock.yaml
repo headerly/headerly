@@ -33,6 +33,9 @@ catalogs:
     '@fontsource-variable/inter':
       specifier: ^5.3.0
       version: 5.3.0
+    '@fontsource-variable/outfit':
+      specifier: ^5.3.0
+      version: 5.3.0
     '@fontsource-variable/roboto-mono':
       specifier: ^5.3.0
       version: 5.3.0
@@ -272,9 +275,15 @@ importers:
       '@fontsource-variable/inter':
         specifier: 'catalog:'
         version: 5.3.0
+      '@fontsource-variable/outfit':
+        specifier: 'catalog:'
+        version: 5.3.0
       '@fontsource-variable/roboto-mono':
         specifier: 'catalog:'
         version: 5.3.0
+      '@headerly/ui':
+        specifier: workspace:*
+        version: link:../packages/ui
       medium-zoom:
         specifier: 'catalog:'
         version: 1.1.0
@@ -285,6 +294,9 @@ importers:
         specifier: 'catalog:'
         version: 3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)
     devDependencies:
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.3.3(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
       oxc-minify:
         specifier: 'catalog:'
         version: 0.143.0
@@ -321,6 +333,9 @@ importers:
       '@formkit/auto-animate':
         specifier: 'catalog:'
         version: 0.10.0
+      '@headerly/ui':
+        specifier: workspace:*
+        version: link:../packages/ui
       '@replit/codemirror-indentation-markers':
         specifier: 'catalog:'
         version: 6.5.3(@codemirror/language@6.12.4)(@codemirror/state@6.7.1)(@codemirror/view@6.43.8)
@@ -345,9 +360,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       codemirror:
         specifier: 'catalog:'
         version: 6.0.2
@@ -372,9 +384,6 @@ importers:
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.7
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.6.0
       tinykeys:
         specifier: 'catalog:'
         version: 4.0.0
@@ -409,18 +418,9 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@egoist/tailwindcss-icons':
-        specifier: 'catalog:'
-        version: 1.9.2(tailwindcss@4.2.2)
       '@fontsource-variable/inter':
         specifier: 'catalog:'
         version: 5.3.0
-      '@iconify-json/lucide':
-        specifier: 'catalog:'
-        version: 1.2.121
-      '@tailwindcss/typography':
-        specifier: 'catalog:'
-        version: 0.5.20(tailwindcss@4.2.2)
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.3(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
@@ -454,9 +454,6 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.2.2
-      tw-animate-css:
-        specifier: 'catalog:'
-        version: 1.4.0
       unplugin-turbo-console:
         specifier: 'catalog:'
         version: 2.3.3(esbuild@0.28.1)(rolldown@1.2.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2))
@@ -472,6 +469,46 @@ importers:
       wxt:
         specifier: 'catalog:'
         version: 0.21.3(esbuild@0.28.1)(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))(oxc-parser@0.129.0)(rolldown@1.2.3)(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
+
+  packages/ui:
+    dependencies:
+      '@egoist/tailwindcss-icons':
+        specifier: 'catalog:'
+        version: 1.9.2(tailwindcss@4.2.2)
+      '@iconify-json/lucide':
+        specifier: 'catalog:'
+        version: 1.2.121
+      '@tailwindcss/typography':
+        specifier: 'catalog:'
+        version: 0.5.20(tailwindcss@4.2.2)
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 14.4.0(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2))
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      motion-v:
+        specifier: 'catalog:'
+        version: 2.3.0(@vueuse/core@14.4.0(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)))(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2))
+      reka-ui:
+        specifier: 'catalog:'
+        version: 2.10.1(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2))
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.6.0
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.2.2
+      tw-animate-css:
+        specifier: 'catalog:'
+        version: 1.4.0
+    devDependencies:
+      vue:
+        specifier: 'catalog:'
+        version: 3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)
 
 packages:
 
@@ -1180,6 +1217,9 @@ packages:
 
   '@fontsource-variable/inter@5.3.0':
     resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
+
+  '@fontsource-variable/outfit@5.3.0':
+    resolution: {integrity: sha512-fPb5XnYK0k7SbR++HEmm4+ZqDszmLKQ+sPRUr8oQ/KNC0vy6r6hazJFe8iYozv4cqlHbvJ/JECkJWrfDodUMVQ==}
 
   '@fontsource-variable/roboto-mono@5.3.0':
     resolution: {integrity: sha512-h5r+KY/6qy8JEOj33JgcrFO81YAnvrc1EAwMpl/EPJLb2OIvOy0/jmB5M7qs7x/uXk5JUP5Ux4LrkeOK7faHkQ==}
@@ -6337,6 +6377,8 @@ snapshots:
       - vue
 
   '@fontsource-variable/inter@5.3.0': {}
+
+  '@fontsource-variable/outfit@5.3.0': {}
 
   '@fontsource-variable/roboto-mono@5.3.0': {}
 

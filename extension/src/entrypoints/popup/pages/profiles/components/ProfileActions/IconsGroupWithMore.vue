@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import type { ActionKey } from "./actions";
 import type { Profile } from "@/lib/schema";
-import { useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
-import { Kbd, KbdGroup } from "#/ui/kbd";
+} from "@headerly/ui/components/dropdown-menu";
+import { Kbd, KbdGroup } from "@headerly/ui/components/kbd";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { useCompactScreen } from "@/composables/useCompactScreen";
-import { cn } from "@/lib/utils";
 import {
   handleProfileRuleActionTypeChanged,
   profileActionIdGroups,

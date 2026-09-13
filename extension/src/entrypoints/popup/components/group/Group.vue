@@ -1,14 +1,14 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { GroupItem, GroupType } from "@/lib/schema";
+import { Button } from "@headerly/ui/components/button";
+import { Checkbox } from "@headerly/ui/components/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@headerly/ui/components/collapsible";
+import { Label } from "@headerly/ui/components/label";
+import { RadioGroup, RadioGroupItem } from "@headerly/ui/components/radio-group";
 import { head } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { computed, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/ui/collapsible";
-import { Label } from "#/ui/label";
-import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
 import {
   GROUP_OPEN_STATES_STORAGE_KEY,
   useLocalStorageOpenState,

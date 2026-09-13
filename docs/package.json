@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "catalog:",
+    "@fontsource-variable/outfit": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
+    "@headerly/ui": "workspace:*",
     "medium-zoom": "catalog:",
     "vitepress": "catalog:",
     "vue": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
     "oxc-minify": "catalog:",
     "vite": "catalog:",
     "vitepress-plugin-llms": "catalog:",

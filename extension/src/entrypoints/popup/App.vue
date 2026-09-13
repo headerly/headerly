@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { cn } from "@headerly/ui/lib/utils";
 import { onMounted, ref, watch } from "vue";
 import { Toaster } from "vue-sonner";
 import {
@@ -8,7 +9,6 @@ import {
 } from "@/composables/useLocalStorageOpenState";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getGroupOpenStateIds } from "@/lib/openState";
-import { cn } from "@/lib/utils";
 import { useSettingsStore } from "./stores/useSettingsStore";
 import "vue-sonner/style.css";
 

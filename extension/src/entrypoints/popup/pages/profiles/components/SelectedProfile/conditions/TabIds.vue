@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { TabIdsFilterGroup, TabIdsFilterItem } from "@/lib/schema";
+import { Button } from "@headerly/ui/components/button";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import { Button } from "#/ui/button";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabId } from "@/lib/currentTab";
 import { addItemToGroup } from "@/lib/group";

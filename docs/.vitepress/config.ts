@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
@@ -10,10 +12,20 @@ export default defineConfig({
     hostname: "https://headerly.dev",
   },
   vite: {
-    plugins: [llmstxt()],
+    resolve: {
+      alias: [
+        {
+          // Replace the switch in desktop, overflow and mobile navigation together.
+          find: /^.*\/VPSwitchAppearance\.vue$/,
+          replacement: fileURLToPath(new URL("./theme/components/ThemeToggle.vue", import.meta.url)),
+        },
+      ],
+    },
+    plugins: [llmstxt(), tailwindcss()],
+    ssr: { noExternal: ["@headerly/ui"] },
   },
   head: [
-    ["link", { rel: "icon", href: "/favicon.ico" }],
+    ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
   ],
   themeConfig: {
     editLink: {
@@ -43,6 +55,7 @@ export default defineConfig({
         text: "Start",
         items: [
           { text: "Overview", link: "/start/overview" },
+          { text: "Compare tools", link: "/explanation/compare-tools" },
           { text: "Install Headerly", link: "/start/installation" },
           { text: "Create your first profile", link: "/start/first-profile" },
         ],

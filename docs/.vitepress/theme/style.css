@@ -1,148 +1,112 @@
-/**
- * Customize default theme styling by overriding CSS variables:
- * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
- */
+/* Utilities must take precedence over VitePress's unlayered element styles. */
+@import "@headerly/ui/styles/tailwind.css" important;
 
-/**
- * Colors
- *
- * Each colors have exact same color scale system with 3 levels of solid
- * colors with different brightness, and 1 soft color.
- *
- * - `XXX-1`: The most solid color used mainly for colored text. It must
- *   satisfy the contrast ratio against when used on top of `XXX-soft`.
- *
- * - `XXX-2`: The color used mainly for hover state of the button.
- *
- * - `XXX-3`: The color for solid background, such as bg color of the button.
- *   It must satisfy the contrast ratio with pure white (#ffffff) text on
- *   top of it.
- *
- * - `XXX-soft`: The color used for subtle background such as custom container
- *   or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
- *   on top of it.
- *
- *   The soft color must be semi transparent alpha channel. This is crucial
- *   because it allows adding multiple "soft" colors on top of each other
- *   to create a accent, such as when having inline code block inside
- *   custom containers.
- *
- * - `default`: The color used purely for subtle indication without any
- *   special meanings attached to it such as bg color for menu hover state.
- *
- * - `brand`: Used for primary brand colors, such as link text, button with
- *   brand theme, etc.
- *
- * - `tip`: Used to indicate useful information. The default theme uses the
- *   brand color for this by default.
- *
- * - `warning`: Used to indicate warning to the users. Used in custom
- *   container, badges, etc.
- *
- * - `danger`: Used to show error, or dangerous message to the users. Used
- *   in custom container, badges, etc.
- * -------------------------------------------------------------------------- */
+@import "./home.css" layer(components);
 
-:root {
-  --vp-font-family-base: "Inter Variable", sans-serif;
-  --vp-font-family-mono: "Roboto Mono Variable", monospace;
+@source "../../**/*.{md,vue,ts}";
 
-  --vp-c-default-1: var(--vp-c-gray-1);
-  --vp-c-default-2: var(--vp-c-gray-2);
-  --vp-c-default-3: var(--vp-c-gray-3);
-  --vp-c-default-soft: var(--vp-c-gray-soft);
+/* VitePress is an adapter for the shared theme, not a separate palette.
+   Explicitly include .dark so VitePress's dark defaults cannot override it. */
+:root,
+.dark {
+  --vp-font-family-base: var(--font-sans);
+  --vp-font-family-mono: var(--font-mono);
 
-  --vp-c-brand-1: var(--vp-c-indigo-1);
-  --vp-c-brand-2: var(--vp-c-indigo-2);
-  --vp-c-brand-3: var(--vp-c-indigo-3);
-  --vp-c-brand-soft: var(--vp-c-indigo-soft);
+  --vp-c-neutral: var(--foreground);
+  --vp-c-neutral-inverse: var(--background);
+  --vp-c-bg: var(--background);
+  --vp-c-bg-alt: var(--muted);
+  --vp-c-bg-elv: var(--popover);
+  --vp-c-bg-soft: var(--card);
+  --vp-c-border: var(--border);
+  --vp-c-divider: var(--border);
+  --vp-c-gutter: var(--border);
+  --vp-c-text-1: var(--foreground);
+  --vp-c-text-2: var(--muted-foreground);
+  --vp-c-text-3: var(--muted-foreground);
 
-  --vp-c-tip-1: var(--vp-c-brand-1);
-  --vp-c-tip-2: var(--vp-c-brand-2);
-  --vp-c-tip-3: var(--vp-c-brand-3);
-  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  --vp-c-default-1: var(--accent);
+  --vp-c-default-2: var(--secondary);
+  --vp-c-default-3: var(--muted);
+  --vp-c-default-soft: color-mix(in oklch, var(--muted-foreground) 12%, transparent);
 
-  --vp-c-warning-1: var(--vp-c-yellow-1);
-  --vp-c-warning-2: var(--vp-c-yellow-2);
-  --vp-c-warning-3: var(--vp-c-yellow-3);
-  --vp-c-warning-soft: var(--vp-c-yellow-soft);
+  --vp-c-brand-1: var(--brand);
+  --vp-c-brand-2: color-mix(in oklch, var(--brand) 85%, var(--foreground));
+  --vp-c-brand-3: var(--brand);
+  --vp-c-brand-soft: color-mix(in oklch, var(--brand) 14%, transparent);
+  --vp-c-sponsor: var(--brand);
+  --vp-c-tip-1: var(--color-success);
+  --vp-c-tip-2: var(--color-success);
+  --vp-c-tip-3: var(--color-success);
+  --vp-c-tip-soft: color-mix(in oklch, var(--color-success) 14%, transparent);
+  --vp-c-note-1: var(--color-info);
+  --vp-c-note-2: var(--color-info);
+  --vp-c-note-3: var(--color-info);
+  --vp-c-note-soft: color-mix(in oklch, var(--color-info) 14%, transparent);
+  --vp-c-success-1: var(--color-success);
+  --vp-c-success-2: var(--color-success);
+  --vp-c-success-3: var(--color-success);
+  --vp-c-success-soft: color-mix(in oklch, var(--color-success) 14%, transparent);
+  --vp-c-important-1: var(--brand);
+  --vp-c-important-2: var(--brand);
+  --vp-c-important-3: var(--brand);
+  --vp-c-important-soft: color-mix(in oklch, var(--brand) 14%, transparent);
+  --vp-c-warning-1: var(--color-warning);
+  --vp-c-warning-2: var(--color-warning);
+  --vp-c-warning-3: var(--color-warning);
+  --vp-c-warning-soft: color-mix(in oklch, var(--color-warning) 14%, transparent);
+  --vp-c-danger-1: var(--destructive);
+  --vp-c-danger-2: var(--destructive);
+  --vp-c-danger-3: var(--destructive);
+  --vp-c-danger-soft: color-mix(in oklch, var(--destructive) 14%, transparent);
+  --vp-c-caution-1: var(--destructive);
+  --vp-c-caution-2: var(--destructive);
+  --vp-c-caution-3: var(--destructive);
+  --vp-c-caution-soft: color-mix(in oklch, var(--destructive) 14%, transparent);
 
-  --vp-c-danger-1: var(--vp-c-red-1);
-  --vp-c-danger-2: var(--vp-c-red-2);
-  --vp-c-danger-3: var(--vp-c-red-3);
-  --vp-c-danger-soft: var(--vp-c-red-soft);
-}
-
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
-
-:root {
+  /* Primary and secondary actions match the shared Button variants. */
   --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--vp-c-white);
-  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-text: var(--primary-foreground);
+  --vp-button-brand-bg: var(--primary);
   --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--vp-c-white);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-hover-text: var(--primary-foreground);
+  --vp-button-brand-hover-bg: color-mix(in oklch, var(--primary) 90%, transparent);
   --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--vp-c-white);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
-}
+  --vp-button-brand-active-text: var(--primary-foreground);
+  --vp-button-brand-active-bg: color-mix(in oklch, var(--primary) 80%, transparent);
+  --vp-button-alt-text: var(--secondary-foreground);
+  --vp-button-alt-bg: var(--secondary);
+  --vp-button-alt-hover-text: var(--accent-foreground);
+  --vp-button-alt-hover-bg: var(--accent);
+  --vp-button-alt-active-text: var(--accent-foreground);
+  --vp-button-alt-active-bg: var(--accent);
 
-/**
- * Component: Home
- * -------------------------------------------------------------------------- */
+  --vp-sidebar-bg-color: var(--sidebar);
+  --vp-input-border-color: var(--input);
+  --vp-input-bg-color: var(--background);
+  --vp-input-switch-bg-color: var(--muted);
+  --vp-code-color: var(--foreground);
+  --vp-code-bg: var(--muted);
+  --vp-code-block-bg: var(--muted);
+  --vp-custom-block-info-bg: var(--vp-c-note-soft);
+  --vp-custom-block-info-code-bg: var(--vp-c-note-soft);
+  --vp-custom-block-note-bg: var(--vp-c-note-soft);
+  --vp-custom-block-note-code-bg: var(--vp-c-note-soft);
 
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(
-    120deg,
-    #bd34fe 30%,
-    #41d1ff
-  );
+  --vp-local-search-bg: var(--popover);
+  --vp-local-search-result-bg: var(--popover);
+  --vp-local-search-result-selected-bg: var(--accent);
+  --vp-local-search-result-selected-border: var(--ring);
+  --vp-local-search-highlight-bg: var(--primary);
+  --vp-local-search-highlight-text: var(--primary-foreground);
 
-  --vp-home-hero-image-background-image: linear-gradient(
-    -45deg,
-    #bd34fe 50%,
-    #47caff 50%
+  --vp-home-hero-name-color: var(--brand);
+  --vp-home-hero-name-background: none;
+  --vp-home-hero-image-background-image: radial-gradient(
+    var(--vp-c-brand-soft), transparent 70%
   );
   --vp-home-hero-image-filter: blur(44px);
 }
-
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: blur(56px);
-  }
-}
-
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: blur(68px);
-  }
-}
-
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: transparent;
-  --vp-custom-block-tip-text: var(--vp-c-text-1);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
-  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
-}
-
-/**
- * Component: Algolia
- * -------------------------------------------------------------------------- */
-
-.DocSearch {
-  --docsearch-primary-color: var(--vp-c-brand-1) !important;
-}
-
-/**
- * Component: Image zoom
- * -------------------------------------------------------------------------- */
 
 .medium-zoom-overlay {
   z-index: 100;
@@ -155,4 +119,12 @@
 
 .medium-zoom--opened .medium-zoom-overlay {
   opacity: 0.9 !important;
+}
+
+/* The navigation wordmark has its own typeface; article typography stays shared. */
+.VPNavBarTitle .title {
+  font-family: var(--font-brand);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
 }

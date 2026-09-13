@@ -6,6 +6,7 @@ import { search, searchKeymap } from "@codemirror/search";
 import { Prec } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, keymap } from "@codemirror/view";
+import { cn } from "@headerly/ui/lib/utils";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import { useDark } from "@vueuse/core";
 import { jsonSchema } from "codemirror-json-schema";
@@ -13,7 +14,6 @@ import { computed, createApp, h } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { i18n } from "#/i18n";
 import { profileExchangeJsonSchema } from "@/lib/schema";
-import { cn } from "@/lib/utils";
 import JsonSearchPanel from "./JsonSearchPanel.vue";
 
 const model = defineModel<string>({ required: true });

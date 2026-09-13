@@ -11,17 +11,17 @@ import {
   setSearchQuery,
 } from "@codemirror/search";
 import { runScopeHandlers } from "@codemirror/view";
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
-import { Toggle } from "#/ui/toggle";
+import { Button } from "@headerly/ui/components/button";
+import { Toggle } from "@headerly/ui/components/toggle";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 type SearchCommand = (view: EditorView) => boolean;
 
