@@ -1,3 +1,8 @@
+---
+order: 30
+sidebarTitle: "Synchronize cookies"
+---
+
 # Synchronize a cookie into requests
 
 Use cookie synchronization when a request header must follow the current value of a browser cookie. Cookie sync is a convenience wrapper around a **Modify request header** action using the `append` operation: Headerly supplies the current local cookie value instead of requiring a fixed header value.

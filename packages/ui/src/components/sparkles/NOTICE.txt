@@ -1,0 +1,4 @@
+Adapted from Inspira UI: https://inspira-ui.com/r/sparkles.json
+See packages/ui/INSPIRA-LICENSE.
+Adaptations: shared theme colors, CSS-pixel canvas sizing, bounded particle density,
+time-based animation, viewport and document visibility pausing, reduced-motion support.

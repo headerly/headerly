@@ -1,0 +1,3 @@
+Adapted from Inspira UI: https://inspira-ui.com/r/rainbow-button.json
+Shared cn utility and reduced-motion support adapted for Headerly.
+See packages/ui/INSPIRA-LICENSE.

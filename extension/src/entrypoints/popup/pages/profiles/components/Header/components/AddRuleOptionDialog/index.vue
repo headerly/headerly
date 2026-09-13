@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import type { AddRuleOptionDialogTabValue } from "./shared";
-import { useEventBus } from "@vueuse/core";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "#/ui/dialog";
-import { Kbd, KbdGroup } from "#/ui/kbd";
+} from "@headerly/ui/components/dialog";
+import { Kbd, KbdGroup } from "@headerly/ui/components/kbd";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "#/ui/tabs";
+} from "@headerly/ui/components/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { useEventBus } from "@vueuse/core";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { openAddRuleOptionDialogKey } from "./open";
 import TabList from "./TabList.vue";
 import { useCreateTabs } from "./tabs";

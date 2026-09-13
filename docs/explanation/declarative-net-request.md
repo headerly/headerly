@@ -1,3 +1,8 @@
+---
+order: 10
+sidebarTitle: "Declarative Net Request"
+---
+
 # How Headerly uses Declarative Net Request
 
 Headerly does not proxy network traffic. It translates each enabled profile into a declarative rule and asks Chrome to register that rule.

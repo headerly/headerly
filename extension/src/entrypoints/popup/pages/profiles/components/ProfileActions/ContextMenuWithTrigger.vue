@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { computed, useTemplateRef } from "vue";
-import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuTrigger,
-} from "#/ui/context-menu";
+} from "@headerly/ui/components/context-menu";
+import { computed, useTemplateRef } from "vue";
+import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import {
   handleProfileRuleActionTypeChanged,

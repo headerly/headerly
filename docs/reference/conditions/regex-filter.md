@@ -1,3 +1,7 @@
+---
+order: 40
+---
+
 # Regular expression filter
 
 `regexFilter` matches the complete network-request URL with Chrome's RE2 regular-expression engine.

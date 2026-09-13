@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { Button } from "@headerly/ui/components/button";
+import { cn } from "@headerly/ui/lib/utils";
 import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
-import { cn } from "@/lib/utils";
 
 const props = defineProps<{
   names: string[];

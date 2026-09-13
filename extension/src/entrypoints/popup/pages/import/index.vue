@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { Button } from "@headerly/ui/components/button";
+import { cn } from "@headerly/ui/lib/utils";
 import { ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import JsonEditor from "#/components/JsonEditor/index.vue";
-import { Button } from "#/ui/button";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { ensureBrowserPermission } from "@/lib/permissions";
 import { decodeProfileSharePayload } from "@/lib/profileShare";
 import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
-import { cn } from "@/lib/utils";
 
 const profilesStore = useProfilesStore();
 const route = useRoute();

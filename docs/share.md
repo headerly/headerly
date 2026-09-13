@@ -1,11 +1,14 @@
+<script setup>
+import DownloadButtons from "./.vitepress/theme/components/DownloadButtons.vue";
+</script>
+
 # Open shared profiles
 
 Headerly share links are handled by the browser extension.
 
 Install Headerly if it is not already available in this browser:
 
-- [Download for Chrome](https://chromewebstore.google.com/detail/headerly/lmlapacaojgifapgjkbdkmaclkgcbhng)
-- [Download for Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/headerly/dhkjobinnldebfgpondcjlefklcapnha)
+<DownloadButtons />
 
 If the Import page does not open:
 

@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
-import { toast } from "vue-sonner";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
+} from "@headerly/ui/components/dropdown-menu";
+import { cn } from "@headerly/ui/lib/utils";
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { toast } from "vue-sonner";
 import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { encodeProfileSharePayload } from "@/lib/profileShare";
 import { createProfileExchange } from "@/lib/schema";
-import { cn } from "@/lib/utils";
 import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
 
 const profilesStore = useProfilesStore();

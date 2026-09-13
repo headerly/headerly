@@ -1,15 +1,15 @@
 <script setup lang="tsx">
 import type { Profile } from "@/lib/schema";
-import { computed } from "vue";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { computed } from "vue";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 
 const { profile, class: className } = defineProps<{
   profile: Profile;

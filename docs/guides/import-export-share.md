@@ -1,3 +1,8 @@
+---
+order: 70
+sidebarTitle: "Import, export, and share"
+---
+
 # Import, export, and share profiles
 
 ## Export profiles

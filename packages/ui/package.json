@@ -1,0 +1,33 @@
+{
+  "name": "@headerly/ui",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./components/*": "./src/components/*/index.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./styles/*": "./src/styles/*",
+    "./components/*.vue": "./src/components/*.vue"
+  },
+  "scripts": {
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "dependencies": {
+    "@egoist/tailwindcss-icons": "catalog:",
+    "@iconify-json/lucide": "catalog:",
+    "@tailwindcss/typography": "catalog:",
+    "@vueuse/core": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "motion-v": "catalog:",
+    "reka-ui": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "vue": "catalog:"
+  }
+}

@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { toast } from "vue-sonner";
-import { sendMessage } from "##/background/message";
-import Fieldset from "#/components/group/Fieldset.vue";
-import InfoTooltip from "#/components/InfoTooltip.vue";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Label } from "#/ui/label";
-
+import { Button } from "@headerly/ui/components/button";
+import { Checkbox } from "@headerly/ui/components/checkbox";
+import { Label } from "@headerly/ui/components/label";
 import {
   Select,
   SelectContent,
@@ -15,7 +9,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "#/ui/select";
+} from "@headerly/ui/components/select";
+import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
+import { sendMessage } from "##/background/message";
+import Fieldset from "#/components/group/Fieldset.vue";
+
+import InfoTooltip from "#/components/InfoTooltip.vue";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";

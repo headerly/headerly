@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { cn } from "@headerly/ui/lib/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { cn } from "@/lib/utils";
 import Header from "./components/Header/index.vue";
 import SelectedProfile from "./components/SelectedProfile";
 import Sidebar from "./components/Sidebar";

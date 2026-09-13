@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -10,9 +8,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "#/ui/dialog";
-import { Label } from "#/ui/label";
-import { Textarea } from "#/ui/textarea";
+} from "@headerly/ui/components/dialog";
+import { Label } from "@headerly/ui/components/label";
+import { Textarea } from "@headerly/ui/components/textarea";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const comments = defineModel<string>();
 

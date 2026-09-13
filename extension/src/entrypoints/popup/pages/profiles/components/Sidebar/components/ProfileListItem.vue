@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { match } from "ts-pattern";
-import { computed } from "vue";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { match } from "ts-pattern";
+import { computed } from "vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { cn } from "@/lib/utils";
 import ContextMenuWithTrigger from "../../ProfileActions/ContextMenuWithTrigger.vue";
 
 const props = withDefaults(defineProps<{

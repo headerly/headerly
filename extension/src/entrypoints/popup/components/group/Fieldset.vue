@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { useI18n } from "vue-i18n";
 
 const { documentationLink, name } = defineProps<{
   documentationLink?: string;

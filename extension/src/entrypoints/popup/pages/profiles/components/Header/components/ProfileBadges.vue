@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Profile } from "@/lib/schema";
-import { useI18n } from "vue-i18n";
-import { useRuleActionType } from "#/composables/useRuleActionType";
+import { Badge } from "@headerly/ui/components/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
-import { Badge } from "@/entrypoints/popup/ui/badge";
+} from "@headerly/ui/components/tooltip";
+import { useI18n } from "vue-i18n";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 
 const { profile } = defineProps<{
   profile: Profile;

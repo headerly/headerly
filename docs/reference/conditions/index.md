@@ -1,3 +1,8 @@
+---
+order: 10
+sidebarTitle: "Condition overview"
+---
+
 # Conditions
 
 Conditions select the network requests to which a profile applies. Different condition types are combined with logical AND. Multiple enabled values within a condition usually broaden that condition; excluded variants remove matches.

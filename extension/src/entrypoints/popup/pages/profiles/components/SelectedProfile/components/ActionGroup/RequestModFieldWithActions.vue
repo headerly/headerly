@@ -2,12 +2,7 @@
 import type { HeaderMod } from "@/lib/schema";
 
 import type { ActionType, HeaderModOperation } from "@/lib/types";
-import { useDebounceFn } from "@vueuse/core";
-import { match } from "ts-pattern";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Combobox,
   ComboboxAnchor,
@@ -15,20 +10,25 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxViewport,
-} from "#/ui/combobox";
-import { Input } from "#/ui/input";
+} from "@headerly/ui/components/combobox";
+import { Input } from "@headerly/ui/components/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useDebounceFn } from "@vueuse/core";
+import { match } from "ts-pattern";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import {
   AUTOCOMPLETE_APPEND_REQUEST_FIELDS,
   AUTOCOMPLETE_RESPONSE_FIELDS,
   AUTOCOMPLETE_SET_AND_REMOVE_REQUEST_FIELDS,
 } from "@/entrypoints/popup/constants/header";
-import { cn } from "@/lib/utils";
 
 const list = defineModel<HeaderMod[]>("list", {
   required: true,

@@ -1,15 +1,8 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import type { RuleActionType } from "@/lib/schema";
-import { useStorage } from "@vueuse/core";
-import { match } from "ts-pattern";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useRuleActionType } from "#/composables/useRuleActionType";
-import Badge from "#/ui/badge/Badge.vue";
-
-import { Button } from "#/ui/button";
+import Badge from "@headerly/ui/components/badge/Badge.vue";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,19 +14,26 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "#/ui/dropdown-menu";
-import { Label } from "#/ui/label";
-import { Switch } from "#/ui/switch";
+} from "@headerly/ui/components/dropdown-menu";
+import { Label } from "@headerly/ui/components/label";
+import { Switch } from "@headerly/ui/components/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+
+import { useStorage } from "@vueuse/core";
+import { match } from "ts-pattern";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 import { useTinykeys } from "@/composables/useTinykeys";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn } from "@/lib/utils";
 import ProfileSwitcher from "./components/ProfileSwitcher.vue";
 
 const { class: className } = defineProps<{

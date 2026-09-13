@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Option } from "#/ui/multi-select";
+import type { Option } from "@headerly/ui/components/multi-select";
 import type { TabGroupBinding } from "@/lib/schema";
+import { MultiSelect } from "@headerly/ui/components/multi-select";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { MultiSelect } from "#/ui/multi-select";
 
 const model = defineModel<TabGroupBinding[]>({ required: true });
 

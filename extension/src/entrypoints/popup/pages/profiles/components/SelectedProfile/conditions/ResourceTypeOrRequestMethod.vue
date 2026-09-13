@@ -1,13 +1,13 @@
 <script setup lang="ts" generic="T extends ConditionType">
 import type { GroupItem, GroupType } from "@/lib/schema";
+import Button from "@headerly/ui/components/button/Button.vue";
+import MultiSelect from "@headerly/ui/components/multi-select/MultiSelect.vue";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import Button from "#/ui/button/Button.vue";
-import MultiSelect from "#/ui/multi-select/MultiSelect.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";

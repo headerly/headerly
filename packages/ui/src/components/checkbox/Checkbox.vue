@@ -1,0 +1,70 @@
+<script setup lang="ts">
+import type { CheckboxRootEmits, CheckboxRootProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
+import { cn } from "@headerly/ui/lib/utils";
+import { reactiveOmit } from "@vueuse/core";
+import { AnimatePresence, motion } from "motion-v";
+import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from "reka-ui";
+
+const props = defineProps<CheckboxRootProps & { class?: HTMLAttributes["class"] }>();
+const emits = defineEmits<CheckboxRootEmits>();
+
+const delegatedProps = reactiveOmit(props, "class");
+
+const forwarded = useForwardPropsEmits(delegatedProps, emits);
+</script>
+
+<template>
+  <CheckboxRoot
+    v-slot="slotProps"
+    data-slot="checkbox"
+    v-bind="forwarded"
+    :class="
+      cn(`
+        peer size-4.5 shrink-0 rounded-[3px] border-2 border-muted-foreground/70
+        bg-transparent text-background
+        transition-[background-color,border-color,box-shadow] outline-none
+        focus-visible:border-ring focus-visible:ring-[3px]
+        focus-visible:ring-ring/50
+        disabled:cursor-not-allowed disabled:opacity-50
+        aria-invalid:border-destructive aria-invalid:ring-destructive/20
+        data-[state=checked]:border-foreground
+        data-[state=checked]:bg-foreground
+        data-[state=indeterminate]:border-foreground
+        data-[state=indeterminate]:bg-foreground
+        dark:aria-invalid:ring-destructive/40
+      `,
+         props.class)"
+  >
+    <CheckboxIndicator
+      force-mount
+      data-slot="checkbox-indicator"
+      class="grid place-content-center text-current"
+    >
+      <AnimatePresence :initial="false">
+        <motion.span
+          v-if="slotProps.modelValue === true || slotProps.modelValue === 'indeterminate'"
+          key="indicator"
+          class="grid place-content-center"
+          :initial="{ scale: 0, opacity: 0 }"
+          :animate="{ scale: 1, opacity: 1 }"
+          :exit="{ scale: 0, opacity: 0 }"
+          :transition="{ duration: 0.15 }"
+        >
+          <slot v-bind="slotProps">
+            <i
+              v-if="slotProps.modelValue === true" class="
+                i-lucide-check size-4 stroke-3
+              "
+            />
+            <i
+              v-else-if="slotProps.modelValue === 'indeterminate'" class="
+                i-lucide-minus size-4 stroke-3
+              "
+            />
+          </slot>
+        </motion.span>
+      </AnimatePresence>
+    </CheckboxIndicator>
+  </CheckboxRoot>
+</template>

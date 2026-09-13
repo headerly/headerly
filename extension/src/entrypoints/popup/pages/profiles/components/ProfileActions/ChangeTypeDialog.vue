@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { RuleActionType } from "@/lib/schema";
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRuleActionType } from "#/composables/useRuleActionType";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -12,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "#/ui/dialog";
+} from "@headerly/ui/components/dialog";
 import {
   Select,
   SelectContent,
@@ -20,7 +17,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "#/ui/select";
+} from "@headerly/ui/components/select";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRuleActionType } from "#/composables/useRuleActionType";
 
 const ruleActionType = defineModel<RuleActionType>("ruleActionType", {
   required: true,
