@@ -24,7 +24,7 @@ import FeatureGrid from "./FeatureGrid.vue";
           Make the web<br>work <em>your way.</em>
         </BlurReveal>
         <BlurReveal as="p" :delay="0.1">
-          Change a header. Redirect a request. Switch environments.<br
+          Change a HTTP request/response header. Redirect a request. Switch environments.<br
             class="desktop-break"
           > A little more control, right where you browse.
         </BlurReveal>
