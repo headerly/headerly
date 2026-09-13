@@ -1,3 +1,8 @@
+---
+order: 10
+sidebarTitle: "Overview"
+---
+
 # Headerly overview
 
 Headerly is a browser extension for creating reusable network rules. A rule can modify request or response headers, redirect or block a request, allow traffic, or upgrade an insecure URL scheme.

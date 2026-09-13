@@ -1,3 +1,8 @@
+---
+order: 10
+sidebarTitle: "Action overview"
+---
+
 # Actions
 
 An action defines what Chrome does when every enabled condition in a profile matches.

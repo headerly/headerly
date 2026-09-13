@@ -1,3 +1,7 @@
+---
+order: 90
+---
+
 # Resource types
 
 Resource-type conditions select requests by their browser resource category.

@@ -4,6 +4,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
+import { generateDocsSidebar } from "./sidebar.ts";
 
 export default defineConfig({
   cleanUrls: true,
@@ -51,90 +52,7 @@ export default defineConfig({
         ],
       },
     ],
-    sidebar: [
-      {
-        text: "Start",
-        items: [
-          { text: "Overview", link: "/start/overview" },
-          { text: "Install Headerly", link: "/start/installation" },
-          { text: "Create your first profile", link: "/start/first-profile" },
-        ],
-      },
-      {
-        text: "Guides",
-        collapsed: false,
-        items: [
-          { text: "Modify request headers", link: "/guides/modify-request-headers" },
-          { text: "Modify response headers", link: "/guides/modify-response-headers" },
-          { text: "Synchronize cookies", link: "/guides/sync-cookies" },
-          { text: "Redirect requests", link: "/guides/redirect-requests" },
-          { text: "Block or allow requests", link: "/guides/block-or-allow-requests" },
-          { text: "Apply profiles to tabs", link: "/guides/apply-profile-to-tabs" },
-          { text: "Import, export, and share", link: "/guides/import-export-share" },
-        ],
-      },
-      {
-        text: "Core reference",
-        collapsed: false,
-        items: [
-          { text: "Profiles", link: "/reference/profiles" },
-          { text: "Profile groups", link: "/reference/profile-groups" },
-          { text: "Priorities", link: "/reference/priorities" },
-          { text: "Radio and checkbox groups", link: "/reference/group-modes" },
-        ],
-      },
-      {
-        text: "Actions",
-        collapsed: false,
-        items: [
-          { text: "Action overview", link: "/reference/actions/" },
-          { text: "Modify headers", link: "/reference/actions/modify-headers" },
-          { text: "Synchronize cookies", link: "/reference/actions/sync-cookies" },
-          { text: "Redirect", link: "/reference/actions/redirect" },
-          { text: "Block", link: "/reference/actions/block" },
-          { text: "Allow", link: "/reference/actions/allow" },
-          { text: "Upgrade scheme", link: "/reference/actions/upgrade-scheme" },
-          { text: "Allow all requests", link: "/reference/actions/allow-all-requests" },
-        ],
-      },
-      {
-        text: "Conditions",
-        collapsed: false,
-        items: [
-          { text: "Condition overview", link: "/reference/conditions/" },
-          { text: "Request domains", link: "/reference/conditions/request-domains" },
-          { text: "URL filter", link: "/reference/conditions/url-filter" },
-          { text: "Regular expression filter", link: "/reference/conditions/regex-filter" },
-          { text: "URL case sensitivity", link: "/reference/conditions/url-case-sensitivity" },
-          { text: "Initiator domains", link: "/reference/conditions/initiator-domains" },
-          { text: "Top-level domains", link: "/reference/conditions/top-level-domains" },
-          { text: "Domain type", link: "/reference/conditions/domain-type" },
-          { text: "Resource types", link: "/reference/conditions/resource-types" },
-          { text: "Request methods", link: "/reference/conditions/request-methods" },
-          { text: "Tabs", link: "/reference/conditions/tabs" },
-          { text: "Tab groups", link: "/reference/conditions/tab-groups" },
-        ],
-      },
-      {
-        text: "How it works",
-        collapsed: true,
-        items: [
-          { text: "Declarative Net Request", link: "/explanation/declarative-net-request" },
-          { text: "How conditions combine", link: "/explanation/how-conditions-combine" },
-          { text: "Priority and conflicts", link: "/explanation/priority-and-conflicts" },
-          { text: "Privacy model", link: "/explanation/privacy-model" },
-        ],
-      },
-      {
-        text: "Troubleshooting",
-        collapsed: false,
-        items: [
-          { text: "Rule not applied", link: "/troubleshooting/rule-not-applied" },
-          { text: "Unexpected matches", link: "/troubleshooting/unexpected-matches" },
-          { text: "Registration errors", link: "/troubleshooting/registration-errors" },
-        ],
-      },
-    ],
+    sidebar: generateDocsSidebar(),
     socialLinks: [
       { icon: "github", link: "https://github.com/headerly/headerly" },
     ],

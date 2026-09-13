@@ -1,3 +1,8 @@
+---
+order: 110
+sidebarTitle: "Tabs"
+---
+
 # Tab IDs
 
 Tab ID conditions bind a profile to browser tabs.

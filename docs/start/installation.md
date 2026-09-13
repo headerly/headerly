@@ -1,3 +1,7 @@
+---
+order: 20
+---
+
 # Install Headerly
 
 Install Headerly from one of the supported extension stores:

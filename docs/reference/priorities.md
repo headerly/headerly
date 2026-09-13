@@ -1,3 +1,7 @@
+---
+order: 30
+---
+
 # Priorities
 
 Priority is a positive integer used by Chrome to resolve matching DNR rules.

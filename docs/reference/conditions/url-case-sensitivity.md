@@ -1,3 +1,7 @@
+---
+order: 50
+---
+
 # URL case sensitivity
 
 `isUrlFilterCaseSensitive` controls case sensitivity for whichever URL matcher is active: `urlFilter` or `regexFilter`.

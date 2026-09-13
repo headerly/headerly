@@ -1,3 +1,7 @@
+---
+order: 30
+---
+
 # Synchronize cookies
 
 Cookie synchronization is a Headerly action component available to `modifyHeaders` profiles. It reads a selected browser cookie and appends `name=value` to the outgoing `Cookie` header.

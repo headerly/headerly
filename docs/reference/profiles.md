@@ -1,3 +1,7 @@
+---
+order: 10
+---
+
 # Profiles
 
 A profile is Headerly's top-level rule definition. An enabled, valid profile maps to one Chrome DNR rule.

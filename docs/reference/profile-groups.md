@@ -1,3 +1,7 @@
+---
+order: 20
+---
+
 # Profile groups
 
 Profile groups organize top-level profiles and optionally coordinate which profiles are enabled.

@@ -24,6 +24,7 @@
     "vite": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",
     "vitepress-plugin-llms": "catalog:",
+    "vitepress-sidebar": "catalog:",
     "wrangler": "catalog:"
   }
 }

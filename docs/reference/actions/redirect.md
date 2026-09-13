@@ -1,3 +1,7 @@
+---
+order: 40
+---
+
 # Redirect
 
 `redirect` sends a matching request to one fixed destination URL.
