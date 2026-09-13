@@ -6,6 +6,7 @@
     "module": "preserve",
     "moduleResolution": "bundler",
     "types": ["vite/client"],
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
