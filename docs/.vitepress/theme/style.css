@@ -1,8 +1,6 @@
 /* Utilities must take precedence over VitePress's unlayered element styles. */
 @import "@headerly/ui/styles/tailwind.css" important;
 
-@import "./home.css" layer(components);
-
 @source "../../**/*.{md,vue,ts}";
 
 @layer utilities {
@@ -112,7 +110,6 @@
   --vp-home-hero-image-background-image: radial-gradient(
     var(--vp-c-brand-soft), transparent 70%
   );
-  --vp-home-hero-image-filter: blur(44px);
 }
 
 .medium-zoom-overlay {
