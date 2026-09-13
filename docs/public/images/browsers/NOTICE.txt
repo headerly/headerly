@@ -1,3 +1,0 @@
-Chrome and Microsoft Edge logos from https://github.com/alrra/browser-logos
-All logos and trademarks are the property of their respective owners.
-Used here to identify links to the corresponding extension stores.
