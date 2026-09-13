@@ -15,24 +15,51 @@ const features = [
 <template>
   <BentoGrid
     class="
-      home-feature-grid max-w-none gap-x-16 gap-y-0
+      mt-12 max-w-none gap-x-16 gap-y-0
+      max-sm:mt-9
       md:auto-rows-auto md:grid-cols-2
     "
   >
     <BlurReveal
       v-for="(feature, index) in features"
       :key="feature.number" as="a" :delay="(index % 2) * 0.08" :href="feature.href" class="
-        home-feature
+        group flex flex-col border-t border-border pt-7 pb-8
+        max-sm:py-6
       "
     >
-      <div class="feature-index">
-        <span>{{ feature.number }}</span><i :class="feature.icon" aria-hidden="true" />
+      <div class="mb-6 flex items-center justify-between">
+        <span
+          class="font-mono text-xs/normal text-muted-foreground"
+        >{{ feature.number }}</span><i
+          class="size-6 text-brand" :class="feature.icon" aria-hidden="true"
+        />
       </div>
-      <h3>{{ feature.title }}</h3>
-      <p>{{ feature.description }}</p>
-      <div class="feature-footnote">
+      <h3
+        class="
+          text-2xl/snug font-medium tracking-tight
+          group-hover:text-brand
+        "
+      >
+        {{ feature.title }}
+      </h3>
+      <p
+        class="mt-3 mb-6 max-w-md text-sm/relaxed text-muted-foreground"
+      >
+        {{ feature.description }}
+      </p>
+      <div
+        class="
+          mt-auto flex items-center justify-between gap-4 font-mono
+          text-xs/normal tracking-wider text-muted-foreground
+        "
+      >
         <span>{{ feature.detail }}</span><i
-          class="i-lucide-arrow-up-right" aria-hidden="true"
+          class="
+            i-lucide-arrow-up-right size-4.5 text-foreground
+            transition-transform duration-200
+            group-hover:translate-x-1 group-hover:-translate-y-1
+            motion-reduce:transition-none
+          " aria-hidden="true"
         />
       </div>
     </BlurReveal>

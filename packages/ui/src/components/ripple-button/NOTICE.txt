@@ -1,0 +1,3 @@
+Adapted from Inspira UI: https://inspira-ui.com/r/ripple-button.json
+Shared cn utility, link support, reduced-motion support, and Web Animations API cleanup adapted for Headerly.
+See packages/ui/INSPIRA-LICENSE.
