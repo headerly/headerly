@@ -6,6 +6,7 @@ import DefaultTheme from "vitepress/theme";
 // https://vitepress.dev/guide/custom-theme
 import { defineAsyncComponent, defineComponent, h, nextTick, onMounted, onUnmounted, watch } from "vue";
 import HeaderLogo from "./components/HeaderLogo.vue";
+import VersionMenu from "./components/VersionMenu.vue";
 import "@fontsource-variable/inter/wght-italic.css";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/roboto-mono";
@@ -50,4 +51,7 @@ const Layout = defineComponent({
 export default {
   extends: DefaultTheme,
   Layout,
+  enhanceApp({ app }) {
+    app.component("VersionMenu", VersionMenu);
+  },
 } satisfies Theme;

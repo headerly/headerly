@@ -8,7 +8,7 @@ import { generateDocsSidebar } from "./sidebar.ts";
 
 export default defineConfig({
   cleanUrls: true,
-  title: "Headerly",
+  title: "headerly",
   description: "Configure browser network rules with reusable profiles.",
   sitemap: {
     hostname: "https://headerly.dev",
@@ -39,17 +39,20 @@ export default defineConfig({
       { text: "Reference", link: "/reference/profiles" },
       { text: "Troubleshooting", link: "/troubleshooting/rule-not-applied" },
       {
-        text: `v${extensionPackage.version}`,
-        items: [
-          {
-            text: "Changelog",
-            link: "https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md",
-          },
-          {
-            text: "Contributing",
-            link: "https://github.com/headerly/headerly/blob/main/.github/CONTRIBUTING.md",
-          },
-        ],
+        component: "VersionMenu",
+        props: {
+          version: extensionPackage.version,
+          items: [
+            {
+              text: "Changelog",
+              link: "https://github.com/headerly/headerly/blob/main/extension/CHANGELOG.md",
+            },
+            {
+              text: "Contributing",
+              link: "https://github.com/headerly/headerly/blob/main/.github/CONTRIBUTING.md",
+            },
+          ],
+        },
       },
     ],
     sidebar: generateDocsSidebar(),
