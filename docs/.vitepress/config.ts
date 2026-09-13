@@ -4,7 +4,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
-import { generateDocsSidebar } from "./sidebar.ts";
+import { generateDocsSidebar } from "./sidebar";
 
 export default defineConfig({
   cleanUrls: true,
