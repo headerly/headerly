@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
+import vueDevTools from "vite-plugin-vue-devtools";
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
@@ -21,7 +22,7 @@ export default defineConfig({
         },
       ],
     },
-    plugins: [llmstxt(), tailwindcss()],
+    plugins: [llmstxt(), tailwindcss(), vueDevTools()],
     ssr: { noExternal: ["@headerly/ui"] },
   },
   head: [
@@ -55,7 +56,6 @@ export default defineConfig({
         text: "Start",
         items: [
           { text: "Overview", link: "/start/overview" },
-          { text: "Compare tools", link: "/explanation/compare-tools" },
           { text: "Install Headerly", link: "/start/installation" },
           { text: "Create your first profile", link: "/start/first-profile" },
         ],

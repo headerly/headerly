@@ -303,6 +303,9 @@ importers:
       vite:
         specifier: ^8.2.0
         version: 8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0)
+      vite-plugin-vue-devtools:
+        specifier: 'catalog:'
+        version: 8.2.1(supports-color@10.2.2)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))(vue@3.6.0-beta.17(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2))
       vitepress-plugin-llms:
         specifier: 'catalog:'
         version: 1.13.4(supports-color@10.2.2)

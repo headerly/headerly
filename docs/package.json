@@ -22,6 +22,7 @@
     "@tailwindcss/vite": "catalog:",
     "oxc-minify": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-vue-devtools": "catalog:",
     "vitepress-plugin-llms": "catalog:",
     "wrangler": "catalog:"
   }

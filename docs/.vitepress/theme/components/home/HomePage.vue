@@ -3,18 +3,12 @@ import { BlurReveal } from "@headerly/ui/components/blur-reveal";
 import { ScrewText } from "@headerly/ui/components/screw-text";
 import { Sparkles } from "@headerly/ui/components/sparkles";
 import DownloadButtons from "../DownloadButtons.vue";
-import ComparisonTable from "./ComparisonTable.vue";
 import FeatureGrid from "./FeatureGrid.vue";
 </script>
 
 <template>
   <div class="headerly-home vp-raw">
     <section aria-labelledby="hero-title">
-      <div class="hero-edition">
-        <span>HEADERLY / BROWSER TOOLKIT</span><a href="https://github.com/headerly/headerly" target="_blank" rel="noopener noreferrer">FREE & OPEN SOURCE <i
-          class="i-lucide-arrow-up-right" aria-hidden="true"
-        /></a>
-      </div>
       <div class="hero-main">
         <div class="hero-sparkles" aria-hidden="true">
           <Sparkles particle-color="var(--brand)" :particle-density="120" :min-size="0.7" :max-size="1.8" :speed="0.5" />
@@ -88,24 +82,6 @@ import FeatureGrid from "./FeatureGrid.vue";
       </div>
     </section>
 
-    <BlurReveal as="section" class="home-comparison" aria-labelledby="comparison-title">
-      <div>
-        <p class="home-label">
-          03 — FIND YOUR FIT
-        </p>
-        <h2 id="comparison-title">
-          The right tool<br>for your kind of work.
-        </h2>
-      </div>
-      <div class="comparison-details">
-        <p>Change a header right in the popup. Keep reusable rules close at hand. See how Headerly’s focused workflow compares with a full debugging toolkit.</p>
-        <a href="/explanation/compare-tools" class="home-text-link">
-          Compare the tools <i class="i-lucide-arrow-up-right" aria-hidden="true" />
-        </a>
-      </div>
-      <ComparisonTable />
-    </BlurReveal>
-
     <section class="home-start" aria-labelledby="start-title">
       <div>
         <p
@@ -121,7 +97,7 @@ import FeatureGrid from "./FeatureGrid.vue";
     <footer class="home-footer">
       <a href="/" class="home-wordmark"><img
         src="/images/headerly.svg" alt="" width="24" height="24" class="no-zoom"
-      >Headerly</a><p>A small tool for a more personal web.</p><nav aria-label="Footer">
+      >Headerly</a><p>© 2026-present Headerly. All rights reserved.</p><nav aria-label="Footer">
         <a href="/start/overview">Docs</a><a href="https://github.com/headerly/headerly" target="_blank" rel="noopener noreferrer">Source <i
           class="i-lucide-arrow-up-right" aria-hidden="true"
         /></a>

@@ -5,6 +5,13 @@
 
 @source "../../**/*.{md,vue,ts}";
 
+@layer utilities {
+  /* Preserve the icon's clipping width against Tailwind's container utility. */
+  .VPNavBarHamburger .container {
+    width: 16px !important;
+  }
+}
+
 /* VitePress is an adapter for the shared theme, not a separate palette.
    Explicitly include .dark so VitePress's dark defaults cannot override it. */
 :root,

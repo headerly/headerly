@@ -4,7 +4,7 @@
     viewBox="16 16 98 98"
     width="24"
     height="24"
-    fill="currentColor"
+    fill="var(--brand)"
     aria-hidden="true"
     class="mr-2 shrink-0"
   >
