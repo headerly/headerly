@@ -1,3 +1,7 @@
+---
+order: 40
+---
+
 # Privacy model
 
 Headerly relies on declarative browser rules. The browser applies matching actions internally; Headerly does not proxy traffic or read request and response bodies.

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import CommentsDialog from "#/pages/profiles/components/CommentsDialog.vue";
 
 const comments = defineModel<string>();
 

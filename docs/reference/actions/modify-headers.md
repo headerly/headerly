@@ -1,3 +1,7 @@
+---
+order: 20
+---
+
 # Modify headers
 
 `modifyHeaders` changes request headers before they are sent or response headers after they are received.

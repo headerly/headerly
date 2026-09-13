@@ -1,15 +1,15 @@
 <script setup lang="ts" generic="T extends GroupItem">
 import type { VNode } from "vue";
 import type { GroupItem, GroupType } from "@/lib/schema";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useI18n } from "vue-i18n";
 
 const list = defineModel<T[]>("list", {
   required: true,

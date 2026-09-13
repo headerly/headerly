@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { TabGroupBinding, TabGroupsFilterGroup, TabGroupsFilterItem } from "@/lib/schema";
+import { Button } from "@headerly/ui/components/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@headerly/ui/components/tooltip";
 import { uuidv7 } from "uuidv7";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
-import { Button } from "#/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabGroupBinding } from "@/lib/currentTab";
 import { addItemToGroup } from "@/lib/group";

@@ -1,0 +1,6 @@
+Blur Reveal is adapted from Inspira UI (MIT).
+https://inspira-ui.com/docs/en/components/text-animations/blur-reveal
+https://inspira-ui.com/r/blur-reveal.json
+
+Adapted to use semantic elements and native Web Animations, preserve SSR content,
+reveal once on viewport entry, and respect reduced-motion preferences.

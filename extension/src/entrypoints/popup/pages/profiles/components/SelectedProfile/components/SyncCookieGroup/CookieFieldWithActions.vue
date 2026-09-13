@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import type { MaybeRefOrGetter } from "vue";
 import type { SyncCookie } from "@/lib/schema";
-import { useQuery } from "@tanstack/vue-query";
-import { pick, sortBy } from "es-toolkit";
-import { computed, ref, toValue } from "vue";
-import { useI18n } from "vue-i18n";
-import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
-import { Alert, AlertDescription } from "#/ui/alert";
-import { Button } from "#/ui/button";
+import { Alert, AlertDescription } from "@headerly/ui/components/alert";
+import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "#/ui/dialog";
-import { Input } from "#/ui/input";
+} from "@headerly/ui/components/dialog";
+import { Input } from "@headerly/ui/components/input";
 import {
   Select,
   SelectContent,
@@ -23,9 +18,14 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "#/ui/select";
-import { Textarea } from "#/ui/textarea";
-import { cn } from "@/lib/utils";
+} from "@headerly/ui/components/select";
+import { Textarea } from "@headerly/ui/components/textarea";
+import { cn } from "@headerly/ui/lib/utils";
+import { useQuery } from "@tanstack/vue-query";
+import { pick, sortBy } from "es-toolkit";
+import { computed, ref, toValue } from "vue";
+import { useI18n } from "vue-i18n";
+import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 
 const list = defineModel<SyncCookie[]>("list", {
   required: true,

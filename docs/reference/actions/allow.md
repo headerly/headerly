@@ -1,3 +1,7 @@
+---
+order: 60
+---
+
 # Allow
 
 `allow` exempts an individual matching request from lower-priority Headerly rules.

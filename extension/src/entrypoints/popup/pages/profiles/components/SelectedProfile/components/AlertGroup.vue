@@ -1,19 +1,19 @@
 <script setup lang="ts">
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@headerly/ui/components/alert";
+import { Button } from "@headerly/ui/components/button";
+import { ButtonGroup, ButtonGroupSeparator } from "@headerly/ui/components/button-group";
+import { cn } from "@headerly/ui/lib/utils";
 import { useEventBus } from "@vueuse/core";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { hasImplicitAction } from "#/pages/profiles/utils";
-import { useProfilesStore } from "#/stores/useProfilesStore";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "#/ui/alert";
-import { Button } from "#/ui/button";
-import { ButtonGroup, ButtonGroupSeparator } from "#/ui/button-group";
 
-import { cn } from "@/lib/utils";
+import { useProfilesStore } from "#/stores/useProfilesStore";
 import { openAddRuleOptionDialogKey } from "../../Header/components/AddRuleOptionDialog/open";
 
 const { empty, hasAnyFilters, class: className } = defineProps<{

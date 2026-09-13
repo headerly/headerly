@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { useEventBus } from "@vueuse/core";
-import { match } from "ts-pattern";
-import { computed, ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuShortcut,
-} from "#/ui/dropdown-menu";
+} from "@headerly/ui/components/dropdown-menu";
 import {
   Input,
-} from "#/ui/input";
-import { Kbd, KbdGroup } from "#/ui/kbd";
+} from "@headerly/ui/components/input";
+import { Kbd, KbdGroup } from "@headerly/ui/components/kbd";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useEventBus } from "@vueuse/core";
+import { match } from "ts-pattern";
+import { computed, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCompactScreen } from "@/composables/useCompactScreen";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
-import { cn } from "@/lib/utils";
 import IconsGroupWithMore from "../ProfileActions/IconsGroupWithMore.vue";
 import ProfileManage from "../Sidebar/components/ProfileManage.vue";
 import AddRuleOptionDialog from "./components/AddRuleOptionDialog/index.vue";

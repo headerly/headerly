@@ -1,3 +1,7 @@
+---
+order: 30
+---
+
 # URL filter
 
 `urlFilter` matches the complete network-request URL using Chrome's compact filter syntax.

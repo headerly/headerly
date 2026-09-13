@@ -1,5 +1,13 @@
 <script setup lang="tsx">
 import type { DomainsFilter } from "@/lib/schema";
+import { Button } from "@headerly/ui/components/button";
+import { Input } from "@headerly/ui/components/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@headerly/ui/components/tooltip";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -7,14 +15,6 @@ import ActionsDropdown from "#/components/group/FieldActionsDropdown.vue";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";
 import { useCurrentTabUrl } from "#/composables/useCurrentTabUrl";
-import { Button } from "#/ui/button";
-import { Input } from "#/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "#/ui/tooltip";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";

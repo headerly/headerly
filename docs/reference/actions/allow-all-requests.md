@@ -1,3 +1,7 @@
+---
+order: 80
+---
+
 # Allow all requests
 
 `allowAllRequests` allows the matching frame request and future requests in that frame hierarchy. It is broader than [`allow`](/reference/actions/allow), which applies to one request.

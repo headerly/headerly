@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { Filter } from "@/lib/schema";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import Fieldset from "#/components/group/Fieldset.vue";
-import { Button } from "#/ui/button";
-import { Label } from "#/ui/label";
-import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
+import { Button } from "@headerly/ui/components/button";
+import { Label } from "@headerly/ui/components/label";
+import { RadioGroup, RadioGroupItem } from "@headerly/ui/components/radio-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import Fieldset from "#/components/group/Fieldset.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 
 const model = defineModel<NonNullable<Filter["isUrlFilterCaseSensitive"]>>({

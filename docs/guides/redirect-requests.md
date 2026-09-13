@@ -1,3 +1,8 @@
+---
+order: 40
+sidebarTitle: "Redirect requests"
+---
+
 # 🚧 Redirect requests
 
 ::: warning Work in progress

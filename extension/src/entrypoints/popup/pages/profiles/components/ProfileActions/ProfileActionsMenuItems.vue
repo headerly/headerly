@@ -4,8 +4,6 @@ import type {
   ProfileActionItem,
 } from "./actions";
 import type { Profile } from "@/lib/schema";
-import { computed } from "vue";
-import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
 import {
   ContextMenuGroup,
   ContextMenuItem,
@@ -13,7 +11,7 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-} from "#/ui/context-menu";
+} from "@headerly/ui/components/context-menu";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -21,7 +19,9 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from "#/ui/dropdown-menu";
+} from "@headerly/ui/components/dropdown-menu";
+import { computed } from "vue";
+import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
 
 const props = defineProps<{
   actionGroups: readonly ProfileActionGroup[];

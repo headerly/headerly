@@ -1,3 +1,8 @@
+---
+order: 60
+sidebarTitle: "Apply profiles to tabs"
+---
+
 # Apply a profile to tabs or tab groups
 
 Use tab conditions when a profile should affect selected browser tabs instead of every matching tab.

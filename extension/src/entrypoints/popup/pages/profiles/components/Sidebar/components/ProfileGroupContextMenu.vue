@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import type { Profile, ProfileGroup } from "@/lib/schema";
-import { useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import InfoTooltip from "#/components/InfoTooltip.vue";
-import { Button } from "#/ui/button";
+import { Button } from "@headerly/ui/components/button";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "#/ui/context-menu";
-import { Input } from "#/ui/input";
-import { RadioGroup, RadioGroupItem } from "#/ui/radio-group";
-import { ToggleGroup, ToggleGroupItem } from "#/ui/toggle-group";
+} from "@headerly/ui/components/context-menu";
+import { Input } from "@headerly/ui/components/input";
+import { RadioGroup, RadioGroupItem } from "@headerly/ui/components/radio-group";
+import { ToggleGroup, ToggleGroupItem } from "@headerly/ui/components/toggle-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { cn } from "@headerly/ui/lib/utils";
+import { useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import InfoTooltip from "#/components/InfoTooltip.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { PROFILE_GROUP_COLOR_PRESETS } from "@/lib/const";
-import { cn } from "@/lib/utils";
 import ProfileGroupDisplayName from "../../ProfileGroupDisplayName.vue";
 import { useProfileGroupActions } from "./useProfileGroupActions";
 

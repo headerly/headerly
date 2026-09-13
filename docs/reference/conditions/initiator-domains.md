@@ -1,3 +1,7 @@
+---
+order: 60
+---
+
 # Initiator domains
 
 Initiator-domain conditions compare against the origin that initiated a request, not the requested URL.

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { refDebounced } from "@vueuse/core";
-import Fuse from "fuse.js/basic";
-import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
-import { Checkbox } from "#/ui/checkbox";
-import { Input } from "#/ui/input";
+import { Button } from "@headerly/ui/components/button";
+import { Checkbox } from "@headerly/ui/components/checkbox";
+import { Input } from "@headerly/ui/components/input";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "#/ui/sheet";
+} from "@headerly/ui/components/sheet";
+import { refDebounced } from "@vueuse/core";
+import Fuse from "fuse.js/basic";
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import BatchProfileToolbar from "./BatchProfileToolbar.vue";
 import ProfileListItem from "./ProfileListItem.vue";

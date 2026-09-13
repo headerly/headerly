@@ -1,3 +1,7 @@
+---
+order: 30
+---
+
 # Registration errors
 
 Headerly stores DNR registration errors against the profile that produced them. The profile remains editable but does not have a working registered rule until the error is corrected.

@@ -1,3 +1,7 @@
+---
+order: 20
+---
+
 # Modify response headers
 
 Use a response-header rule to change headers after a matching response reaches the browser.

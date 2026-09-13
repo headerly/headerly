@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import { Button } from "#/ui/button";
-import { Toggle } from "#/ui/toggle";
+import { Button } from "@headerly/ui/components/button";
+import { Toggle } from "@headerly/ui/components/toggle";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { useI18n } from "vue-i18n";
 
 const batchManage = defineModel<boolean>("batchManage", {
   required: true,

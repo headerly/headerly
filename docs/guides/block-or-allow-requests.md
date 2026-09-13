@@ -1,3 +1,7 @@
+---
+order: 50
+---
+
 # Block or allow requests
 
 ## Block matching requests

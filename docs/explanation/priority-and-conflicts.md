@@ -1,3 +1,7 @@
+---
+order: 30
+---
+
 # Priority and conflicts
 
 Several profiles can match the same request. Chrome resolves them in stages, not as one flat list.

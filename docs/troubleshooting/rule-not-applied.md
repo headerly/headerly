@@ -1,3 +1,7 @@
+---
+order: 10
+---
+
 # Rule not applied
 
 Check the profile from top to bottom.

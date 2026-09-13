@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 
+import { cn } from "@headerly/ui/lib/utils";
 import { match } from "ts-pattern";
 import { computed } from "vue";
 import { hasImplicitAction } from "#/pages/profiles/utils";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 import { getObjectKeysWithTypeAssert } from "@/lib/object";
-import { cn } from "@/lib/utils";
 import RequestModFieldWithActions from "./components/ActionGroup/index.vue";
 import RedirectUrlGroup from "./components/ActionGroup/RedirectUrlGroup.vue";
 import AlertGroup from "./components/AlertGroup.vue";

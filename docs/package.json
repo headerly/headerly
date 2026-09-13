@@ -12,14 +12,18 @@
   "dependencies": {
     "@fontsource-variable/inter": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
+    "@headerly/ui": "workspace:*",
     "medium-zoom": "catalog:",
     "vitepress": "catalog:",
     "vue": "catalog:"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
     "oxc-minify": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-vue-devtools": "catalog:",
     "vitepress-plugin-llms": "catalog:",
+    "vitepress-sidebar": "catalog:",
     "wrangler": "catalog:"
   }
 }

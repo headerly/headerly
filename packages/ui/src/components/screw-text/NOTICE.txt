@@ -1,0 +1,4 @@
+Adapted from Inspira UI: https://inspira-ui.com/r/screw-text.json
+See packages/ui/INSPIRA-LICENSE.
+Adaptations: shared cn utility, keyboard focus, reduced-motion support,
+interrupted animation handling, icon slot, and stable accessible link text.

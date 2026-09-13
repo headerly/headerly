@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { AddRuleOptionDialogItem, AddRuleOptionDialogTabValue } from "./shared";
-import { useStorage } from "@vueuse/core";
-import { ref, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import Badge from "#/ui/badge/Badge.vue";
+import Badge from "@headerly/ui/components/badge/Badge.vue";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "#/ui/tooltip";
+} from "@headerly/ui/components/tooltip";
+import { useStorage } from "@vueuse/core";
+import { ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 
 const props = defineProps<{

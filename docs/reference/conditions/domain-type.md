@@ -1,3 +1,7 @@
+---
+order: 80
+---
+
 # Domain type
 
 `domainType` selects whether a request is first-party or third-party relative to the domain from which it originated.

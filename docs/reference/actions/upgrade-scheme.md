@@ -1,3 +1,7 @@
+---
+order: 70
+---
+
 # Upgrade scheme
 
 `upgradeScheme` replaces an insecure request scheme with its secure equivalent before the request is sent.

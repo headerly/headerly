@@ -1,3 +1,7 @@
+---
+order: 10
+---
+
 # Modify request headers
 
 Use a request-header rule to change headers before the browser sends a matching request.
