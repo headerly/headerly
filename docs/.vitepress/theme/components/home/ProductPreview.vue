@@ -8,12 +8,15 @@ import smallDarkScreenshot from "../../assets/popup-screenshot-small-dark.webp";
 import smallLightScreenshot from "../../assets/popup-screenshot-small-light.webp";
 
 const { isDark } = useData();
+const isMounted = ref(false);
 const isSmallScreen = ref(false);
 const screenshot = computed(() => {
+  // Match the prerendered image during hydration, then apply the client theme.
+  const useDarkScreenshot = isMounted.value && isDark.value;
   if (isSmallScreen.value) {
-    return isDark.value ? smallDarkScreenshot : smallLightScreenshot;
+    return useDarkScreenshot ? smallDarkScreenshot : smallLightScreenshot;
   }
-  return isDark.value ? largeDarkScreenshot : largeLightScreenshot;
+  return useDarkScreenshot ? largeDarkScreenshot : largeLightScreenshot;
 });
 let smallScreenQuery: MediaQueryList | undefined;
 
@@ -22,6 +25,7 @@ function updateScreenSize() {
 }
 
 onMounted(() => {
+  isMounted.value = true;
   smallScreenQuery = window.matchMedia("(max-width: 640px)");
   updateScreenSize();
   smallScreenQuery.addEventListener("change", updateScreenSize);
