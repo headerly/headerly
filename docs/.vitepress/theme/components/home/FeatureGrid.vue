@@ -36,7 +36,7 @@ const features = [
       </div>
       <h3
         class="
-          text-2xl/snug font-medium tracking-tight
+          text-2xl/snug font-medium tracking-tight transition
           group-hover:text-brand
         "
       >
