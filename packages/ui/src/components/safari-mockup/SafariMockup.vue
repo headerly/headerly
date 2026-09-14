@@ -14,21 +14,19 @@ withDefaults(defineProps<SafariMockupProps>(), {
 </script>
 
 <template>
-  <svg
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    :width
-    :height
-    :viewBox="`0 0 ${width} ${height}`"
+  <div
+    class="overflow-hidden rounded-[inherit]"
+    :style="{ maxWidth: `${width}px` }"
   >
-    <g clipPath="url(#path0)">
-      <path
-        :d="`M0 52H1202V${height - 12}C1202 ${height - 5.373} 1196.63 ${height} 1190 ${height}H12C5.37258 ${height} 0 ${height - 5.373} 0 ${height - 12}V52Z`"
-        class="
-          fill-[#E5E5E5]
-          dark:fill-[#404040]
-        "
-      />
+    <svg
+      class="block h-auto w-full"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      :width
+      :height="52"
+      :viewBox="`0 0 ${width} 52`"
+      aria-hidden="true"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -146,38 +144,18 @@ withDefaults(defineProps<SafariMockupProps>(), {
           fill="#A3A3A3"
         />
       </g>
-      <rect
-        width="1200"
-        :height="height - 53"
-        x="1"
-        y="52"
-        fill="#0e1112"
-        class="[clip-path:url(#roundedBottom)]"
-      />
-      <image
-        width="1200"
-        :height="height - 53"
-        x="1"
-        y="52"
-        preserveAspectRatio="xMidYMid meet"
-        :href="src"
-        class="[clip-path:url(#roundedBottom)]"
-      />
-    </g>
-    <defs>
-      <clipPath id="path0">
-        <rect
-          fill="white"
-          :width
-          :height
-        />
-      </clipPath>
-      <clipPath id="roundedBottom">
-        <path
-          :d="`M1 52H1201V${height - 12}C1201 ${height - 5.925} 1196.08 ${height - 1} 1190 ${height - 1}H12C5.92486 ${height - 1} 1 ${height - 5.925} 1 ${height - 12}V52Z`"
-          fill="white"
-        />
-      </clipPath>
-    </defs>
-  </svg>
+    </svg>
+    <div class="overflow-hidden rounded-b-[inherit]">
+      <slot>
+        <img
+          v-if="src"
+          :src
+          :width="width - 3"
+          :height="height - 53"
+          alt=""
+          class="block h-auto w-full"
+        >
+      </slot>
+    </div>
+  </div>
 </template>
