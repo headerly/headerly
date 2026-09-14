@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
 import { fetchEcho, group, header, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
 
@@ -43,9 +43,7 @@ describe("documented profile and rule lifecycle", { concurrent: false }, () => {
 
     const manager = await extension.manager();
     const modification = manager.profiles[0]?.requestHeaderModGroups?.[0]?.items[0];
-    if (!modification || modification.operation === "remove") {
-      throw new Error("Expected a set header modification");
-    }
+    assert(modification && modification.operation !== "remove", "Expected a set header modification");
     modification.value = "after";
     await extension.updateManager(manager);
     await expect.poll(async () => {
@@ -96,9 +94,7 @@ describe("documented profile and rule lifecycle", { concurrent: false }, () => {
 
     const manager = await extension.manager();
     const modification = manager.profiles[0]?.requestHeaderModGroups?.[0]?.items[0];
-    if (!modification || modification.operation === "remove") {
-      throw new Error("Expected an append header modification");
-    }
+    assert(modification && modification.operation !== "remove", "Expected an append header modification");
     modification.operation = "set";
     await extension.updateManager(manager);
     await expect.poll(() => extension.ruleCount()).toBe(1);

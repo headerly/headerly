@@ -1,6 +1,7 @@
 import antfu from "@antfu/eslint-config";
 import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 import tailwind from "eslint-plugin-better-tailwindcss";
+import playwright from "eslint-plugin-playwright";
 
 export default antfu(
   {
@@ -13,6 +14,29 @@ export default antfu(
     vue: true,
   },
   ...vueI18n.configs.recommended,
+  {
+    ...playwright.configs["flat/recommended"],
+    files: ["extension/e2e/**/*.ts"],
+    rules: {
+      ...playwright.configs["flat/recommended"].rules,
+      // Vitest owns parameterized tests, hooks, and assertions in this suite.
+      "playwright/no-standalone-expect": "off",
+      "playwright/no-duplicate-hooks": "off",
+      "playwright/prefer-web-first-assertions": "off",
+      "test/no-duplicate-hooks": "error",
+    },
+    settings: {
+      playwright: {
+        globalAliases: { test: ["it"] },
+      },
+    },
+  },
+  {
+    files: ["extension/e2e/**/*.e2e.test.ts"],
+    rules: {
+      "test/no-standalone-expect": "error",
+    },
+  },
   {
     settings: {
       "vue-i18n": {

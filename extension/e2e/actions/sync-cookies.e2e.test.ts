@@ -129,6 +129,7 @@ describe("documented synchronized-cookie behavior", { concurrent: false }, () =>
 
     expect(await extension.rules()).toEqual([]);
   });
+
   it("removes an expired source cookie from outgoing requests", async () => {
     const { extension, server } = state;
     const cookie = { domain: "expiration.example.test", name: "session", path: "/", value: "short-lived" };

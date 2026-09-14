@@ -155,6 +155,7 @@ describe("documented destination-domain and URL conditions", { concurrent: false
     const popup = await extension.openExtensionPage();
     expect((await fetchEcho(popup, `${server.loopbackOrigin}/echo`)).headers["x-condition"]).toBeUndefined();
   });
+
   it.each(["disabled", "empty"])("falls back to the URL filter when regex is %s", async (mode) => {
     const { extension, server } = state;
     await extension.setProfiles([markerProfile({

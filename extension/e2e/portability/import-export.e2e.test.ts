@@ -234,6 +234,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     await expect.poll(() => importPage.getByTestId("import-confirm").isDisabled()).toBe(true);
     await importPage.close();
   });
+
   it("registers imported profiles and applies them to real requests", async () => {
     const { extension, server } = state;
     await extension.setProfiles([], 0);
