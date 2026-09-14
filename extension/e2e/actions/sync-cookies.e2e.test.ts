@@ -51,8 +51,8 @@ describe("documented synchronized-cookie behavior", { concurrent: false }, () =>
     }).toEqual(["admin", "domain-cookie", ""]);
   });
 
-  it("updates duplicate identities and follows overwrite, deletion, and expiration", async () => {
-    const { extension } = state;
+  it("updates duplicate identities and follows overwrite and deletion", async () => {
+    const { extension, server } = state;
     await extension.context.addCookies([{
       domain: "changes.example.test",
       name: "session",
@@ -69,6 +69,10 @@ describe("documented synchronized-cookie behavior", { concurrent: false }, () =>
       return (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items.map(cookie => cookie.value);
     }).toEqual(["first", "first"]);
 
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toContain("session=first");
+
     await extension.context.addCookies([{
       domain: "changes.example.test",
       name: "session",
@@ -78,12 +82,15 @@ describe("documented synchronized-cookie behavior", { concurrent: false }, () =>
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items.map(cookie => cookie.value);
     }).toEqual(["second", "second"]);
+    await expect.poll(async () => (await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie)
+      .toBe("session=second; session=second");
 
     await extension.context.clearCookies({ domain: "changes.example.test", name: "session" });
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items.map(cookie => cookie.value);
     }).toEqual(["", ""]);
     await expect.poll(() => extension.ruleCount()).toBe(0);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toBeUndefined();
   });
 
   it("resynchronizes when the configured identity changes", async () => {
@@ -121,5 +128,42 @@ describe("documented synchronized-cookie behavior", { concurrent: false }, () =>
     })], 0);
 
     expect(await extension.rules()).toEqual([]);
+  });
+  it("removes an expired source cookie from outgoing requests", async () => {
+    const { extension, server } = state;
+    const cookie = { domain: "expiration.example.test", name: "session", path: "/", value: "short-lived" };
+    await extension.context.addCookies([{ ...cookie, expires: Math.floor(Date.now() / 1000) + 60 }]);
+    await extension.setProfiles([profile({ syncCookieGroups: [group([syncCookie(cookie.domain, cookie.path, cookie.name)])] })], 1);
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toContain("session=short-lived");
+    // Expire the real browser cookie without sleeping for wall-clock expiry.
+    await extension.context.addCookies([{ ...cookie, expires: Math.floor(Date.now() / 1000) - 1 }]);
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items[0]?.value).toBe("");
+    await expect.poll(async () => (await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toBeUndefined();
+    expect(await extension.ruleCount()).toBe(0);
+  });
+
+  it("synchronizes a duplicate identity added later and clears an old identity's value", async () => {
+    const { extension, server } = state;
+    const cookie = { domain: "duplicate.example.test", name: "session", path: "/", value: "existing" };
+    await extension.context.addCookies([cookie]);
+    const target = profile({ syncCookieGroups: [group([syncCookie(cookie.domain, cookie.path, cookie.name)])] });
+    await extension.setProfiles([target], 1);
+    const manager = await extension.manager();
+    manager.profiles.push(profile({ syncCookieGroups: [group([syncCookie(cookie.domain, cookie.path, cookie.name)])] }));
+    await extension.updateManager(manager);
+    await expect.poll(async () => (await extension.manager()).profiles.map(entry => entry.syncCookieGroups?.[0]?.items[0]?.value))
+      .toEqual(["existing", "existing"]);
+    await expect.poll(() => extension.ruleCount()).toBe(2);
+
+    const next = await extension.manager();
+    next.profiles[0]!.syncCookieGroups![0]!.items[0]!.path = "/missing";
+    await extension.updateManager(next);
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items[0]?.value).toBe("");
+    await expect.poll(() => extension.ruleCount()).toBe(1);
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toBe("session=existing");
   });
 });

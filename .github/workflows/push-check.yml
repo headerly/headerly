@@ -37,3 +37,12 @@ jobs:
 
       - name: Guide E2E Tests
         run: pnpm run test:e2e
+
+      - name: Upload E2E failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failure-traces
+          path: extension/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

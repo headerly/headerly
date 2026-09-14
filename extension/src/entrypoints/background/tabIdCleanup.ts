@@ -14,25 +14,32 @@ export function setupTabIdCleanup(options: {
 }) {
   const { profileManagerMutex, profileManagerItem } = options;
   const pendingRemovedTabIds = new Set<number>();
-  let shouldClearAllTabIds = false;
   let cleanupTimer: ReturnType<typeof setTimeout> | undefined;
 
   browser.tabs.onRemoved.addListener((tabId) => {
     pendingRemovedTabIds.add(tabId);
     scheduleCleanup();
   });
-  browser.runtime.onStartup.addListener(() => {
-    shouldClearAllTabIds = true;
-    scheduleCleanup();
-  });
-  browser.storage.session.get(TAB_SESSION_INITIALIZED_KEY).then(async (stored) => {
-    if (stored[TAB_SESSION_INITIALIZED_KEY] === true) {
-      return;
-    }
-    await browser.storage.session.set({ [TAB_SESSION_INITIALIZED_KEY]: true });
-    shouldClearAllTabIds = true;
-    scheduleCleanup();
-  });
+  browser.runtime.onStartup.addListener(initializeTabSession);
+  initializeTabSession();
+
+  function initializeTabSession() {
+    return profileManagerMutex.runExclusive(async () => {
+      const stored = await browser.storage.session.get(TAB_SESSION_INITIALIZED_KEY);
+      if (stored[TAB_SESSION_INITIALIZED_KEY] === true) {
+        return;
+      }
+      // Clear the previous session before accepting new bindings. Delaying this
+      // like tab-close events also clears selections created during startup.
+      const manager = await profileManagerItem.getValue();
+      const nextManager = clearTabIds(manager);
+      if (nextManager !== manager) {
+        await profileManagerItem.setValue(nextManager);
+      }
+      // A worker interrupted during cleanup must retry on its next start.
+      await browser.storage.session.set({ [TAB_SESSION_INITIALIZED_KEY]: true });
+    });
+  }
 
   function scheduleCleanup() {
     if (cleanupTimer !== undefined) {
@@ -47,15 +54,11 @@ export function setupTabIdCleanup(options: {
   function flushRemovedTabIds() {
     cleanupTimer = undefined;
     const removedTabIds = new Set(pendingRemovedTabIds);
-    const clearAllTabIds = shouldClearAllTabIds;
     pendingRemovedTabIds.clear();
-    shouldClearAllTabIds = false;
 
     profileManagerMutex.runExclusive(async () => {
       const manager = await profileManagerItem.getValue();
-      const nextManager = clearAllTabIds
-        ? clearTabIds(manager)
-        : removeClosedTabIds(manager, removedTabIds);
+      const nextManager = removeClosedTabIds(manager, removedTabIds);
       if (nextManager !== manager) {
         await profileManagerItem.setValue(nextManager);
       }

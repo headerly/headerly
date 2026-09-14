@@ -119,6 +119,12 @@ describe("documented modifyHeaders behavior", { concurrent: false }, () => {
     const { extension, server } = state;
     const page = await extension.context.newPage();
     await page.goto(`${server.loopbackOrigin}/page`);
+    await extension.context.addCookies([{
+      url: server.loopbackOrigin,
+      name: "original",
+      value: "value",
+    }]);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers.cookie).toContain("original=value");
     await extension.setProfiles([
       profile({
         priority: 3,
@@ -139,7 +145,7 @@ describe("documented modifyHeaders behavior", { concurrent: false }, () => {
     ], 2);
 
     const result = await fetchEcho(page, `${server.loopbackOrigin}/echo`, {
-      headers: { "accept-language": "base", "cookie": "original=value" },
+      headers: { "accept-language": "base" },
     });
     expect(result.headers["x-conflict"]).toBe("highest");
     expect(result.headers.cookie).toBeUndefined();

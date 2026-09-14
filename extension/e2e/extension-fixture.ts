@@ -128,7 +128,7 @@ export async function startGuideServer(): Promise<GuideServer> {
 
   await new Promise<void>((resolve, reject) => {
     server.once("error", reject);
-    server.listen(0, "0.0.0.0", resolve);
+    server.listen(0, "127.0.0.1", resolve);
   });
 
   const { port } = server.address() as AddressInfo;
@@ -179,15 +179,24 @@ export class ExtensionSession {
     this.context = await chromium.launchPersistentContext(this.userDataDir, {
       args: [
         "--headless=new",
+        "--lang=en-US",
         `--disable-extensions-except=${this.extensionPath}`,
         `--load-extension=${this.extensionPath}`,
       ],
       headless: false,
+      locale: "en-US",
       viewport: { height: 800, width: 1280 },
     });
+    this.context.setDefaultTimeout(10_000);
+    this.context.setDefaultNavigationTimeout(15_000);
+    await this.context.tracing.start({ screenshots: true, snapshots: true, sources: true });
     this.worker = this.context.serviceWorkers()[0]
       ?? await this.context.waitForEvent("serviceworker");
     this.extensionId = new URL(this.worker.url()).host;
+    await expect.poll(() => this.worker.evaluate(async () => {
+      const stored = await chrome.storage.session.get("headerlyTabSessionInitialized");
+      return stored.headerlyTabSessionInitialized;
+    })).toBe(true);
   }
 
   async restart() {
@@ -196,9 +205,12 @@ export class ExtensionSession {
   }
 
   async close() {
-    await this.context?.close();
-    if (this.userDataDir) {
-      await rm(this.userDataDir, { force: true, recursive: true });
+    try {
+      await this.context?.close();
+    } finally {
+      if (this.userDataDir) {
+        await rm(this.userDataDir, { force: true, recursive: true });
+      }
     }
   }
 
@@ -206,39 +218,6 @@ export class ExtensionSession {
     const page = await this.context.newPage();
     await page.goto(`chrome-extension://${this.extensionId}/popup.html#${route}`);
     return page;
-  }
-
-  async grantPermission(permission: "cookies" | "tabGroups") {
-    const page = await this.openExtensionPage();
-    const alreadyGranted = await page.evaluate(async (permissionName) => {
-      return await chrome.permissions.contains({ permissions: [permissionName] });
-    }, permission);
-    if (alreadyGranted) {
-      await page.close();
-      return;
-    }
-    await page.evaluate((permissionName) => {
-      const button = document.createElement("button");
-      button.id = "e2e-permission";
-      button.textContent = `Grant ${permissionName}`;
-      Object.assign(button.style, {
-        height: "40px",
-        left: "8px",
-        position: "fixed",
-        top: "8px",
-        width: "180px",
-        zIndex: "2147483647",
-      });
-      button.addEventListener("click", async () => {
-        const granted = await chrome.permissions.request({ permissions: [permissionName] });
-        document.body.dataset.permissionGranted = String(granted);
-      });
-      document.body.append(button);
-    }, permission);
-    await page.locator("#e2e-permission").click();
-    await expect.poll(() => page.locator("body").getAttribute("data-permission-granted"))
-      .toBe("true");
-    await page.close();
   }
 
   async setProfiles(
@@ -250,6 +229,8 @@ export class ExtensionSession {
       await chrome.storage.local.set({ powerOn: false });
     });
     await expect.poll(() => this.ruleCount()).toBe(0);
+    await expect.poll(() => this.registrations()).toEqual({});
+    await expect.poll(() => this.badgeText()).toBe("❚❚");
 
     const manager: ProfileManagerValue = {
       profileGroups,
@@ -258,8 +239,6 @@ export class ExtensionSession {
     };
     await this.worker.evaluate(async (nextManager) => {
       await chrome.storage.local.set({
-        profileId2ErrorMessageRecord: {},
-        profileId2RelatedRuleIdRecord: {},
         profileManager: nextManager,
         profileManager$: { v: 4 },
       });
@@ -267,6 +246,9 @@ export class ExtensionSession {
     }, manager);
 
     await expect.poll(() => this.ruleCount(), { timeout: 10_000 }).toBe(expectedRuleCount);
+    await expect.poll(async () => Object.keys(await this.registrations())).toHaveLength(expectedRuleCount);
+    // Even zero-rule setups must wait for the power-on watcher to finish.
+    await expect.poll(() => this.badgeText()).toBe(expectedRuleCount > 0 ? String(expectedRuleCount) : "");
   }
 
   async manager(): Promise<ProfileManagerValue> {
@@ -294,7 +276,7 @@ export class ExtensionSession {
       const result = await chrome.storage.local.get("profileId2ErrorMessageRecord");
       return result.profileId2ErrorMessageRecord;
     });
-    return errors as Record<string, string>;
+    return (errors ?? {}) as Record<string, string>;
   }
 
   async registrations(): Promise<Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>> {
@@ -302,7 +284,7 @@ export class ExtensionSession {
       const result = await chrome.storage.local.get("profileId2RelatedRuleIdRecord");
       return result.profileId2RelatedRuleIdRecord;
     });
-    return registrations as Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>;
+    return (registrations ?? {}) as Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>;
   }
 
   async rules(): Promise<RegisteredRule[]> {
@@ -362,6 +344,9 @@ export async function fetchEcho(page: Frame | Page, url: string, options?: {
 }) {
   return await page.evaluate(async ({ options: requestOptions, url: requestUrl }) => {
     const response = await fetch(requestUrl, { cache: "no-store", ...requestOptions });
+    if (!response.ok) {
+      throw new Error(`Echo request failed: ${response.status} ${requestUrl}`);
+    }
     return await response.json() as {
       headers: Record<string, string | undefined>;
       method: string;
@@ -378,14 +363,21 @@ export async function fetchResponseHeaders(page: Page, url: string) {
 }
 
 export async function loadInspectionScript(page: Page, url: string) {
-  await page.evaluate((scriptUrl) => {
+  return await page.evaluate(async (scriptUrl) => {
     window.e2eScriptHeader = undefined;
     const script = document.createElement("script");
     script.src = `${scriptUrl}?cache=${crypto.randomUUID()}`;
-    document.head.append(script);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load ${script.src}`));
+        document.head.append(script);
+      });
+      return window.e2eScriptHeader;
+    } finally {
+      script.remove();
+    }
   }, url);
-  await expect.poll(() => page.evaluate(() => window.e2eScriptHeader)).not.toBeUndefined();
-  return await page.evaluate(() => window.e2eScriptHeader);
 }
 
 export async function editorText(page: Page) {
@@ -395,7 +387,7 @@ export async function editorText(page: Page) {
 export async function setEditorText(page: Page, text: string) {
   const editor = page.locator(".cm-content");
   await editor.click();
-  await page.keyboard.press("Control+A");
+  await page.keyboard.press("ControlOrMeta+A");
   await page.keyboard.insertText(text);
 }
 
@@ -410,11 +402,10 @@ declare global {
       updateDynamicRules: (options: { removeRuleIds: number[] }) => Promise<void>;
       updateSessionRules: (options: { removeRuleIds: number[] }) => Promise<void>;
     };
-    permissions: {
-      contains: (permissions: { permissions: string[] }) => Promise<boolean>;
-      request: (permissions: { permissions: string[] }) => Promise<boolean>;
-    };
     storage: {
+      session: {
+        get: (key: string) => Promise<Record<string, unknown>>;
+      };
       local: {
         get: (key: string) => Promise<Record<string, unknown>>;
         set: (values: Record<string, unknown>) => Promise<void>;

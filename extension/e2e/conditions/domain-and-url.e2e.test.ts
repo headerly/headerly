@@ -21,12 +21,13 @@ describe("documented destination-domain and URL conditions", { concurrent: false
       requestDomains: group([
         item("  127.0.0.1  "),
         item("127.0.0.1"),
+        item("localhost"),
         { ...item("disabled.test"), enabled: false },
       ]),
     })], 1);
 
     const [rule] = await extension.rules();
-    expect(rule?.condition.requestDomains).toEqual(["127.0.0.1"]);
+    expect(rule?.condition.requestDomains).toEqual(["127.0.0.1", "localhost"]);
     expect(rule?.condition.excludedRequestDomains).toEqual(["localhost"]);
     expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-condition"])
       .toBe("matched");
@@ -76,6 +77,10 @@ describe("documented destination-domain and URL conditions", { concurrent: false
     const [rule] = await extension.rules();
     expect(rule?.condition.regexFilter).toContain("regex-only");
     expect(rule?.condition.urlFilter).toBeUndefined();
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/regex-only`)).headers["x-condition"]).toBe("matched");
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/url-only`)).headers["x-condition"]).toBeUndefined();
   });
 
   it("supports explicit URL case sensitivity and Chrome's default insensitive mode", async () => {
@@ -131,7 +136,7 @@ describe("documented destination-domain and URL conditions", { concurrent: false
   });
 
   it("treats empty and disabled condition items as absent and always excludes Headerly itself", async () => {
-    const { extension } = state;
+    const { extension, server } = state;
     await extension.setProfiles([markerProfile({
       requestDomains: group([
         item("   "),
@@ -144,5 +149,21 @@ describe("documented destination-domain and URL conditions", { concurrent: false
     expect(rule?.condition.requestDomains).toBeUndefined();
     expect(rule?.condition.urlFilter).toBeUndefined();
     expect(rule?.condition.excludedInitiatorDomains).toContain(extension.extensionId);
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-condition"]).toBe("matched");
+    const popup = await extension.openExtensionPage();
+    expect((await fetchEcho(popup, `${server.loopbackOrigin}/echo`)).headers["x-condition"]).toBeUndefined();
+  });
+  it.each(["disabled", "empty"])("falls back to the URL filter when regex is %s", async (mode) => {
+    const { extension, server } = state;
+    await extension.setProfiles([markerProfile({
+      regexFilter: [{ ...item(mode === "empty" ? "   " : "never-match"), enabled: mode !== "disabled" }],
+      urlFilter: [item("/path/selected")],
+    })], 1);
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/selected`)).headers["x-condition"]).toBe("matched");
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/other`)).headers["x-condition"]).toBeUndefined();
   });
 });

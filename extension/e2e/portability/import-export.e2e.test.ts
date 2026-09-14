@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import {
   editorText,
+  fetchEcho,
   group,
   header,
   item,
@@ -18,8 +19,6 @@ function portableProfile() {
     groupId: nextId(),
     filters: {
       requestDomains: group([item("example.com")]),
-      tabGroups: group([item([{ groupId: 456, tabIds: [123] }])]),
-      tabIds: group([item([123])]),
     },
     name: "Portable profile",
     requestHeaderModGroups: [group([header("authorization", "set", "Bearer preserved")])],
@@ -48,6 +47,14 @@ describe("documented import, export, download, and share behavior", { concurrent
   it("removes local IDs, group membership, and temporary tab conditions from exports", async () => {
     const { extension } = state;
     const target = portableProfile();
+    const page = await extension.context.newPage();
+    await page.goto(`${state.server.loopbackOrigin}/page?export=scope`);
+    const tabId = await extension.tabId(page);
+    const tabGroupId = await extension.worker.evaluate(async id => await chrome.tabs.group({ tabIds: [id] }), tabId);
+    target.filters.tabGroups = group([item([{ groupId: tabGroupId, tabIds: [tabId] }])]);
+    target.filters.tabIds = group([item([tabId])]);
+    target.filters.excludedTabIds = group([item([-1])]);
+    target.filters.excludedTabGroups = group([{ ...item([{ groupId: tabGroupId, tabIds: [tabId] }]), enabled: false }]);
     const groupId = target.groupId!;
     await extension.setProfiles([target], 1, [{
       color: "#8ab4f8",
@@ -64,6 +71,9 @@ describe("documented import, export, download, and share behavior", { concurrent
     expect(serialized).not.toContain("groupId");
     expect(serialized).not.toContain("tabIds");
     expect(serialized).not.toContain("tabGroups");
+    expect(serialized).not.toContain("excludedTabIds");
+    expect(serialized).not.toContain("excludedTabGroups");
+    expect((await extension.manager()).profiles[0]?.filters.tabIds?.items[0]?.value).toEqual([tabId]);
     expect(serialized).not.toContain("Local-only group");
     await exportPage.close();
   });
@@ -71,7 +81,15 @@ describe("documented import, export, download, and share behavior", { concurrent
   it("redacts cookie values but retains identity and other user-authored secrets", async () => {
     const { extension } = state;
     const target = portableProfile();
+    await extension.context.addCookies([{
+      domain: ".example.com",
+      name: "session",
+      path: "/admin",
+      value: "must-not-export",
+    }]);
     await extension.setProfiles([target], 1);
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items[0]?.value)
+      .toBe("must-not-export");
     const exportPage = await extension.openExtensionPage(`/export/${target.id}`);
     const exported = await exportedJson(exportPage);
     const serialized = JSON.stringify(exported);
@@ -82,6 +100,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     expect(serialized).toContain("session");
     expect(serialized).toContain("Bearer preserved");
     expect(serialized).toContain("comments remain visible");
+    expect((await extension.manager()).profiles[0]?.syncCookieGroups?.[0]?.items[0]?.value).toBe("must-not-export");
     await exportPage.close();
   });
 
@@ -123,6 +142,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     const downloadPromise = exportPage.waitForEvent("download");
     await exportPage.getByTestId("export-download-json").click();
     const download = await downloadPromise;
+    expect(download.suggestedFilename()).toBe("headerly-profiles.json");
     expect(JSON.parse(await readFile(await download.path(), "utf8"))).toEqual(exported);
     await exportPage.close();
   });
@@ -132,7 +152,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     const target = portableProfile();
     await extension.setProfiles([target], 1);
     const exportPage = await extension.openExtensionPage(`/export/${target.id}`);
-    await exportedJson(exportPage);
+    const exported = await exportedJson(exportPage);
     await exportPage.evaluate(() => {
       Object.defineProperty(navigator, "clipboard", {
         configurable: true,
@@ -144,7 +164,6 @@ describe("documented import, export, download, and share behavior", { concurrent
     await expect.poll(() => exportPage.evaluate(() => window.e2eClipboard))
       .toMatch(/^https:\/\/headerly\.dev\/share\?profiles=/);
     const shareLink = await exportPage.evaluate(() => window.e2eClipboard);
-    expect(shareLink).not.toContain("Bearer%20preserved");
     await exportPage.close();
 
     await extension.context.route("https://headerly.dev/share*", async route => route.fulfill({
@@ -155,7 +174,9 @@ describe("documented import, export, download, and share behavior", { concurrent
     await sharePage.goto(shareLink);
     await expect.poll(() => sharePage.url())
       .toContain(`chrome-extension://${extension.extensionId}/popup.html#/import`);
-    await expect.poll(() => editorText(sharePage)).toContain("Portable profile");
+    await expect.poll(async () => JSON.parse(await editorText(sharePage))).toEqual(exported);
+    await sharePage.getByTestId("import-confirm").click();
+    await expect.poll(async () => (await extension.manager()).profiles).toHaveLength(2);
     await sharePage.close();
   });
 
@@ -194,7 +215,7 @@ describe("documented import, export, download, and share behavior", { concurrent
       name: "headerly-profiles.json",
     });
     await expect.poll(() => editorText(importPage)).toContain("Imported from file");
-    expect(await importPage.getByTestId("import-confirm").isEnabled()).toBe(true);
+    await expect.poll(() => importPage.getByTestId("import-confirm").isEnabled()).toBe(true);
     await importPage.getByTestId("import-confirm").click();
     await expect.poll(async () => (await extension.manager()).profiles.some(entry => entry.name === "Imported from file"))
       .toBe(true);
@@ -205,13 +226,61 @@ describe("documented import, export, download, and share behavior", { concurrent
     await extension.setProfiles([], 0);
     const importPage = await extension.openExtensionPage("/import");
     await setEditorText(importPage, "not-json");
-    expect(await importPage.getByTestId("import-confirm").isDisabled()).toBe(true);
-    expect(await importPage.getByTestId("import-beautify").isDisabled()).toBe(true);
+    await expect.poll(() => importPage.getByTestId("import-confirm").isDisabled()).toBe(true);
+    await expect.poll(() => importPage.getByTestId("import-beautify").isDisabled()).toBe(true);
 
     await setEditorText(importPage, JSON.stringify({ profiles: [], version: 999 }));
-    expect(await importPage.getByTestId("import-beautify").isEnabled()).toBe(true);
-    expect(await importPage.getByTestId("import-confirm").isDisabled()).toBe(true);
+    await expect.poll(() => importPage.getByTestId("import-beautify").isEnabled()).toBe(true);
+    await expect.poll(() => importPage.getByTestId("import-confirm").isDisabled()).toBe(true);
     await importPage.close();
+  });
+  it("registers imported profiles and applies them to real requests", async () => {
+    const { extension, server } = state;
+    await extension.setProfiles([], 0);
+    const popup = await extension.openExtensionPage("/import");
+    await setEditorText(popup, JSON.stringify({
+      version: 1,
+      profiles: [{
+        name: "Imported live rule",
+        emoji: "🧪",
+        enabled: true,
+        ruleActionType: "modifyHeaders",
+        filters: { requestDomains: { type: "checkbox", items: [{ enabled: true, value: "127.0.0.1" }] } },
+        requestHeaderModGroups: [{ type: "checkbox", items: [{ enabled: true, name: "x-imported", operation: "set", value: "works" }] }],
+      }],
+    }));
+    await popup.getByTestId("import-confirm").click();
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    await expect.poll(async () => (await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-imported"]).toBe("works");
+    expect((await fetchEcho(page, `${server.localhostOrigin}/echo`)).headers["x-imported"]).toBeUndefined();
+    expect(await extension.errors()).toEqual({});
+  });
+
+  it("cancels a valid import without changing stored profiles", async () => {
+    const { extension } = state;
+    const existing = profile({ ruleActionType: "allow" });
+    await extension.setProfiles([existing], 1);
+    const before = await extension.manager();
+    const popup = await extension.openExtensionPage("/import");
+    await setEditorText(popup, JSON.stringify({ version: 1, profiles: [{ name: "Cancelled", emoji: "🧪", enabled: true, ruleActionType: "block", filters: {} }] }));
+    await expect.poll(() => popup.getByTestId("import-confirm").isEnabled()).toBe(true);
+    await popup.getByRole("button", { name: "Cancel", exact: true }).click();
+    await expect.poll(() => new URL(popup.url()).hash).toBe("#/");
+    await expect.poll(() => popup.getByTestId(`profile-${existing.id}`).isVisible()).toBe(true);
+    expect(await extension.manager()).toEqual(before);
+    expect(await extension.ruleCount()).toBe(1);
+  });
+
+  it("rejects a corrupted share payload without changing saved profiles", async () => {
+    const { extension } = state;
+    await extension.setProfiles([profile({ ruleActionType: "allow" })], 1);
+    const before = await extension.manager();
+    const popup = await extension.openExtensionPage("/import?profiles=not-a-compressed-payload");
+    await expect.poll(() => popup.getByText("Import failed: Invalid share link", { exact: true }).isVisible()).toBe(true);
+    await expect.poll(() => popup.getByTestId("import-confirm").isDisabled()).toBe(true);
+    expect(await editorText(popup)).toBe("");
+    expect(await extension.manager()).toEqual(before);
   });
 });
 

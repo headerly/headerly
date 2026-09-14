@@ -44,10 +44,13 @@ describe("documented request-context conditions", { concurrent: false }, () => {
     await page.goto(`${server.loopbackOrigin}/page`);
     await extension.setProfiles([markerProfile({
       excludedInitiatorDomains: group([item("127.0.0.1")]),
+      initiatorDomains: group([item("127.0.0.1"), item("localhost")]),
     })], 1);
 
     expect((await fetchEcho(page, `${server.localhostOrigin}/echo`)).headers["x-context"])
       .toBeUndefined();
+    await page.goto(`${server.localhostOrigin}/page`);
+    expect((await fetchEcho(page, `${server.localhostOrigin}/echo`)).headers["x-context"]).toBe("matched");
     await page.close();
   });
 
@@ -73,6 +76,7 @@ describe("documented request-context conditions", { concurrent: false }, () => {
 
     await extension.setProfiles([markerProfile({
       excludedTopDomains: group([item("127.0.0.1")]),
+      topDomains: group([item("127.0.0.1")]),
       initiatorDomains: group([item("localhost")]),
       requestDomains: group([item("127.0.0.1")]),
     })], 1);
@@ -124,7 +128,7 @@ describe("documented request-context conditions", { concurrent: false }, () => {
     await page.close();
   });
 
-  it("matches every resource type by default except for allowAllRequests", async () => {
+  it("matches navigation, script and fetch requests without an explicit resource type", async () => {
     const { extension, server } = state;
     const page = await extension.context.newPage();
     await page.goto(`${server.loopbackOrigin}/page`);
@@ -134,7 +138,9 @@ describe("documented request-context conditions", { concurrent: false }, () => {
     expect(resourceTypes).toContain("main_frame");
     expect(resourceTypes).toContain("script");
     expect(resourceTypes).toContain("xmlhttprequest");
-    expect(resourceTypes).toHaveLength(15);
+    await page.goto(`${server.loopbackOrigin}/echo`);
+    const navigationEcho = JSON.parse(await page.locator("body").textContent() ?? "");
+    expect(navigationEcho.headers["x-resource-type"]).toBe("matched");
     expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-resource-type"])
       .toBe("matched");
     expect(await loadInspectionScript(page, `${server.loopbackOrigin}/inspect-script.js`)).toBe("matched");

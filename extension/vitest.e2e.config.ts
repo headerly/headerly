@@ -6,6 +6,9 @@ export default defineConfig({
     env: {
       HEADERLY_EXTENSION_PATH: resolve(import.meta.dirname, ".output/chrome-mv3"),
     },
+    expect: {
+      poll: { interval: 50, timeout: 5000 },
+    },
     fileParallelism: false,
     hookTimeout: 45_000,
     include: ["e2e/**/*.e2e.test.ts"],

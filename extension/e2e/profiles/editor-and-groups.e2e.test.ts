@@ -64,6 +64,50 @@ describe("documented profile editor and group operations", { concurrent: false }
     await popup.close();
   });
 
+  it("undoes and redoes group deletion together with its profiles and DNR rules", async () => {
+    const { extension } = state;
+    const groupId = nextId();
+    const first = profile({ groupId, name: "Grouped", ruleActionType: "allow" });
+    const second = profile({ name: "Keep me", ruleActionType: "allow" });
+    await extension.setProfiles([first, second], 2, [{ color: "#8ab4f8", id: groupId, name: "Undo group", type: "checkbox" }]);
+    const popup = await extension.openExtensionPage();
+    await popup.getByTestId(`profile-group-${groupId}`).click({ button: "right" });
+    await popup.getByTestId(`profile-group-action-delete-${groupId}`).click();
+    await expect.poll(async () => (await extension.manager()).profiles.map(entry => entry.id)).toEqual([second.id]);
+    await expect.poll(() => extension.ruleCount()).toBe(1);
+    await popup.getByRole("button", { name: "Undo", exact: true }).click();
+    await expect.poll(async () => (await extension.manager()).profileGroups.map(entry => entry.id)).toEqual([groupId]);
+    await expect.poll(async () => (await extension.manager()).profiles.map(entry => entry.id)).toEqual([first.id, second.id]);
+    expect((await extension.manager()).profiles[0]?.groupId).toBe(groupId);
+    await expect.poll(() => extension.ruleCount()).toBe(2);
+    await popup.getByRole("button", { name: "Redo", exact: true }).click();
+    await expect.poll(async () => (await extension.manager()).profileGroups).toEqual([]);
+    await expect.poll(async () => (await extension.manager()).profiles.map(entry => entry.id)).toEqual([second.id]);
+    await expect.poll(() => extension.ruleCount()).toBe(1);
+  });
+
+  it("synchronizes edits between open popups and retains them after reopening", async () => {
+    const { extension } = state;
+    const target = profile({ name: "Before", ruleActionType: "allow" });
+    await extension.setProfiles([target], 1);
+    const first = await extension.openExtensionPage();
+    const second = await extension.openExtensionPage();
+    await first.getByTestId("profile-name").click();
+    await first.getByTestId("profile-name-input").fill("Shared edit");
+    await first.getByTestId("profile-name-save").click();
+    await expect.poll(() => second.getByTestId("profile-name").textContent()).toContain("Shared edit");
+    await second.getByTestId(`profile-${target.id}`).click({ modifiers: ["Shift"] });
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await expect.poll(() => extension.ruleCount()).toBe(0);
+    await first.close();
+    await second.close();
+    const reopened = await extension.openExtensionPage();
+    await expect.poll(() => reopened.getByTestId("profile-name").textContent()).toContain("Shared edit");
+    expect((await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await reopened.getByTestId(`profile-${target.id}`).click({ modifiers: ["Shift"] });
+    await expect.poll(() => extension.ruleCount()).toBe(1);
+  });
+
   it("resets rather than removes the only remaining profile", async () => {
     const { extension } = state;
     const target = profile({
@@ -99,7 +143,7 @@ describe("documented profile editor and group operations", { concurrent: false }
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.requestHeaderModGroups?.[0]?.items[1]?.enabled;
     }).toBe(false);
-    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-checkbox-second"])
+    await expect.poll(async () => (await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-checkbox-second"])
       .toBeUndefined();
 
     const radioFirst = header("x-radio", "set", "first");
@@ -112,7 +156,7 @@ describe("documented profile editor and group operations", { concurrent: false }
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.requestHeaderModGroups?.[0]?.items.map(entry => entry.enabled);
     }).toEqual([false, true]);
-    expect((await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-radio"])
+    await expect.poll(async () => (await fetchEcho(page, `${server.loopbackOrigin}/echo`)).headers["x-radio"])
       .toBe("second");
     await popup.close();
     await page.close();

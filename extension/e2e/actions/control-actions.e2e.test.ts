@@ -82,6 +82,50 @@ describe("documented redirect, block, allow, upgrade, and frame actions", { conc
       .toEqual([invalidType.id, missingType.id].sort());
   });
 
+  it("keeps child requests blocked when only the parent request is allowed", async () => {
+    const { extension, server } = state;
+    const frameUrl = `${server.loopbackOrigin}/allow-frame`;
+    await extension.setProfiles([
+      profile({ filters: { requestDomains: group([item("127.0.0.1")]) }, priority: 1, ruleActionType: "block" }),
+      profile({ filters: { urlFilter: [item(`|${frameUrl}|`)] }, priority: 2, ruleActionType: "allow" }),
+    ], 2);
+    const page = await extension.context.newPage();
+    const blockedChild = page.waitForEvent("requestfailed", { predicate: request => request.url().endsWith("/blocked-child.js") });
+    await page.goto(frameUrl);
+    expect((await blockedChild).failure()?.errorText).toBe("net::ERR_BLOCKED_BY_CLIENT");
+    expect(await page.evaluate(() => window.guideChildLoaded)).toBeUndefined();
+  });
+
+  it("applies allowAllRequests to a subframe but respects higher-priority child blocks", async () => {
+    const { extension, server } = state;
+    const target = profile({
+      filters: { resourceTypes: group([item(["sub_frame"])]), urlFilter: [item("/allow-frame")] },
+      priority: 2,
+      ruleActionType: "allowAllRequests",
+    });
+    const block = profile({ filters: { urlFilter: [item("/blocked-child.js")] }, priority: 1, ruleActionType: "block" });
+    await extension.setProfiles([target, block], 2);
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    const frameUrl = `${server.loopbackOrigin}/allow-frame`;
+    const navigated = page.waitForEvent("framenavigated", { predicate: frame => frame.url() === frameUrl });
+    await page.evaluate((url) => {
+      const frame = document.createElement("iframe");
+      frame.src = url;
+      document.body.append(frame);
+    }, frameUrl);
+    const frame = await navigated;
+    await expect.poll(() => frame.evaluate(() => window.guideChildLoaded)).toBe(true);
+    const manager = await extension.manager();
+    manager.profiles[1]!.priority = 3;
+    await extension.updateManager(manager);
+    await expect.poll(async () => (await extension.rules()).some(rule => rule.priority === 3)).toBe(true);
+    const blockedChild = page.waitForEvent("requestfailed", { predicate: request => request.url().endsWith("/blocked-child.js") });
+    await frame.goto(frameUrl);
+    expect((await blockedChild).failure()?.errorText).toBe("net::ERR_BLOCKED_BY_CLIENT");
+    expect(await frame.evaluate(() => window.guideChildLoaded)).toBeUndefined();
+  });
+
   it("redirects one exact complete URL to the trimmed fixed destination", async () => {
     const { extension, server } = state;
     const source = `${server.loopbackOrigin}/redirect-source`;
