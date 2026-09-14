@@ -9,7 +9,7 @@ import ProductPreview from "./ProductPreview.vue";
 </script>
 
 <template>
-  <div
+  <main
     class="
       vp-raw mx-auto max-w-7xl px-12 text-foreground
       **:focus-visible:rounded-sm **:focus-visible:outline-2
@@ -280,5 +280,5 @@ import ProductPreview from "./ProductPreview.vue";
         /></a>
       </nav>
     </footer>
-  </div>
+  </main>
 </template>

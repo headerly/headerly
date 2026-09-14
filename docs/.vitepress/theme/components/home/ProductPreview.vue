@@ -25,6 +25,7 @@ import smallLightScreenshot from "../../assets/popup-screenshot-small-light.webp
       >
         <source media="(max-width: 640px)" :srcset="smallLightScreenshot" width="1200" height="960">
         <img
+          fetchpriority="high"
           :src="largeLightScreenshot" width="1200" height="900" alt="" class="
             block h-auto w-full
           "
@@ -38,6 +39,7 @@ import smallLightScreenshot from "../../assets/popup-screenshot-small-light.webp
       >
         <source media="(max-width: 640px)" :srcset="smallDarkScreenshot" width="1200" height="960">
         <img
+          fetchpriority="high"
           :src="largeDarkScreenshot" width="1200" height="900" alt="" class="
             block h-auto w-full
           "
