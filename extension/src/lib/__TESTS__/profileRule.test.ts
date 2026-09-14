@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   deriveRuleScope,
   hasEmptyTemporaryTabFilter,
+  hasRegisterableAction,
   hasTemporaryTabBinding,
 } from "@/entrypoints/background/profileRule";
+import { mockProfile } from "./schema.fixtures";
 
 describe("deriveRuleScope", () => {
   it("uses dynamic rules when the condition has no temporary tab binding", () => {
@@ -118,5 +120,22 @@ describe("hasEmptyTemporaryTabFilter", () => {
         },
       },
     })).toBe(false);
+  });
+});
+
+describe("hasRegisterableAction", () => {
+  it("requires the complete cookie identity before registering synchronized cookies", () => {
+    const syncOnlyProfile = structuredClone(mockProfile);
+    syncOnlyProfile.requestHeaderModGroups = [];
+    syncOnlyProfile.responseHeaderModGroups = [];
+    syncOnlyProfile.syncCookieGroups![0]!.items[0]!.domain = "";
+    expect(hasRegisterableAction(syncOnlyProfile)).toBe(false);
+
+    syncOnlyProfile.syncCookieGroups![0]!.items[0]!.domain = "example.com";
+    syncOnlyProfile.syncCookieGroups![0]!.items[0]!.path = "";
+    expect(hasRegisterableAction(syncOnlyProfile)).toBe(false);
+
+    syncOnlyProfile.syncCookieGroups![0]!.items[0]!.path = "/";
+    expect(hasRegisterableAction(syncOnlyProfile)).toBe(true);
   });
 });

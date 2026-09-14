@@ -73,7 +73,7 @@ defineExpose({
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
-            <NumberFieldInput />
+            <NumberFieldInput data-testid="profile-priority-input" />
             <NumberFieldIncrement />
           </NumberFieldContent>
         </NumberField>
@@ -84,7 +84,7 @@ defineExpose({
             {{ t("common.cancel") }}
           </Button>
         </DialogClose>
-        <Button :disabled="!isValid" @click="handleSave">
+        <Button data-testid="profile-priority-save" :disabled="!isValid" @click="handleSave">
           {{ t("common.save") }}
         </Button>
       </DialogFooter>

@@ -175,7 +175,14 @@ export const useProfilesStore = defineStore("profiles", () => {
   function removeProfileFromGroup(profileId: string) {
     const profile = manager.value.profiles.find(p => p.id === profileId);
     if (profile) {
+      const previousGroupId = profile.groupId;
       delete profile.groupId;
+      if (previousGroupId && !manager.value.profiles.some(candidate => candidate.groupId === previousGroupId)) {
+        const groupIndex = profileGroups.value.findIndex(group => group.id === previousGroupId);
+        if (groupIndex !== -1) {
+          profileGroups.value.splice(groupIndex, 1);
+        }
+      }
     }
   }
 

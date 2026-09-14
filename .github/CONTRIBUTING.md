@@ -68,18 +68,14 @@ pnpm run zip
 
 ### E2E Test
 
-In order to test browser extensions, playwright needs to use the `headless=new` mode, which can cause the behavior of `playwright test` and `playwright test --ui` to be inconsistent at times, be sure to use `playwright test` to ensure that the test passes.
+The E2E suite uses Vitest to run Playwright against the production extension bundle. Chromium is launched with `headless=new`, which supports extensions in headless mode.
 
-You must run `pnpm run build` before running this command because this command is run for the build product in the production environment.
-```bash
-pnpm run test:e2e:prod
-```
-
-This command is recommended for development mode:
 ```bash
 pnpm exec playwright install chromium # Just run once
-pnpm run test:e2e:dev
+pnpm run test:e2e
 ```
+
+`test:e2e` builds the production extension before running all Guide scenarios.
 
 ### Lint
 

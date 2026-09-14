@@ -157,16 +157,18 @@ function handleFileChange(event: Event) {
           {{ t("common.cancel") }}
         </Button>
         <Button
+          data-testid="import-beautify"
           variant="secondary"
           :disabled="!validJson"
           @click="handleFormatJson"
         >
           {{ t("common.beautify") }}
         </Button>
-        <Button variant="secondary" @click="handleFileImport">
+        <Button data-testid="import-file" variant="secondary" @click="handleFileImport">
           {{ t("import.loadFromFile") }}
         </Button>
         <Button
+          data-testid="import-confirm"
           :disabled="!validJsonSchema"
           @click="confirmImport"
         >
@@ -175,6 +177,7 @@ function handleFileChange(event: Event) {
 
         <input
           ref="fileInputRef"
+          data-testid="import-file-input"
           type="file"
           accept=".json"
           class="hidden"
