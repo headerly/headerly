@@ -18,6 +18,8 @@ function createTheme(dark: boolean) {
       },
       "&.cm-focused": { outline: "none" },
       ".cm-content": { caretColor: "var(--foreground)" },
+      // Keep the indentation plugin's negative-z-index guides above the line background.
+      ".cm-indent-markers": { isolation: "isolate" },
       ".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--foreground)" },
       ".cm-gutters": {
         backgroundColor: "var(--muted)",
