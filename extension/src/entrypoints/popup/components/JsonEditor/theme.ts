@@ -26,7 +26,8 @@ function createTheme(dark: boolean) {
         color: "var(--muted-foreground)",
         borderRight: "1px solid var(--border)",
       },
-      ".cm-activeLine": { backgroundColor: "var(--muted)" },
+      // CodeMirror draws selections behind the lines, so this must stay translucent.
+      ".cm-activeLine": { backgroundColor: "color-mix(in oklch, var(--muted-foreground) 8%, transparent)" },
       ".cm-activeLineGutter": {
         backgroundColor: "var(--editor-selection)",
         color: "var(--foreground)",
