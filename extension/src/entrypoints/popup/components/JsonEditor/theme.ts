@@ -20,12 +20,15 @@ function createTheme(dark: boolean) {
       ".cm-content": { caretColor: "var(--foreground)" },
       ".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--foreground)" },
       ".cm-gutters": {
-        backgroundColor: "var(--background)",
+        backgroundColor: "var(--muted)",
         color: "var(--muted-foreground)",
         borderRight: "1px solid var(--border)",
       },
-      ".cm-activeLine, .cm-activeLineGutter": { backgroundColor: "var(--muted)" },
-      ".cm-activeLineGutter": { color: "var(--foreground)" },
+      ".cm-activeLine": { backgroundColor: "var(--muted)" },
+      ".cm-activeLineGutter": {
+        backgroundColor: "var(--editor-selection)",
+        color: "var(--foreground)",
+      },
       "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": {
         backgroundColor: "var(--editor-selection)",
       },
