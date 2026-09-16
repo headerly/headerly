@@ -1,6 +1,6 @@
 import { assert, describe, expect, it } from "vitest";
-import { fetchEcho, group, header, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, header, profile } from "../test-util";
 
 describe("documented profile and rule lifecycle", { concurrent: false }, () => {
   const state = setupExtensionSuite();

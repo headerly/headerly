@@ -1,22 +1,22 @@
 import { Buffer } from "node:buffer";
 import { readFile } from "node:fs/promises";
+import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
+import { setupExtensionSuite } from "../suite";
 import {
   editorText,
   fetchEcho,
   group,
   header,
   item,
-  nextId,
   profile,
   setEditorText,
-} from "../extension-fixture";
-import { setupExtensionSuite } from "../suite";
+} from "../test-util";
 
 function portableProfile() {
   return profile({
     comments: "comments remain visible",
-    groupId: nextId(),
+    groupId: uuidv7(),
     filters: {
       requestDomains: group([item("example.com")]),
     },
@@ -25,7 +25,7 @@ function portableProfile() {
     syncCookieGroups: [group([{
       domain: ".example.com",
       enabled: true,
-      id: nextId(),
+      id: uuidv7(),
       name: "session",
       path: "/admin",
       value: "must-not-export",

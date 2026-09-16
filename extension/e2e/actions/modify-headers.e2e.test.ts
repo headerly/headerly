@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { setupExtensionSuite } from "../suite";
 import {
   fetchEcho,
   fetchResponseHeaders,
@@ -6,8 +7,7 @@ import {
   header,
   item,
   profile,
-} from "../extension-fixture";
-import { setupExtensionSuite } from "../suite";
+} from "../test-util";
 
 describe("documented modifyHeaders behavior", { concurrent: false }, () => {
   const state = setupExtensionSuite();

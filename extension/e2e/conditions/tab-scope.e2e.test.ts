@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { fetchEcho, group, header, item, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, header, item, profile } from "../test-util";
 
 describe("documented tab and tab-group conditions", { concurrent: false }, () => {
   const state = setupExtensionSuite();

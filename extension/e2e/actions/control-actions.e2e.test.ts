@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { group, item, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { group, item, profile } from "../test-util";
 
 describe("documented redirect, block, allow, upgrade, and frame actions", { concurrent: false }, () => {
   const state = setupExtensionSuite();

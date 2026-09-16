@@ -1,6 +1,7 @@
+import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
-import { fetchEcho, group, header, item, nextId, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, header, item, profile } from "../test-util";
 
 describe("rule replacement, recovery and persistence", { concurrent: false }, () => {
   const state = setupExtensionSuite();
@@ -109,7 +110,7 @@ describe("rule replacement, recovery and persistence", { concurrent: false }, ()
     await extension.setProfiles([target, changed], 2);
     const before = (await extension.registrations())[target.id];
     const manager = await extension.manager();
-    const groupId = nextId();
+    const groupId = uuidv7();
     Object.assign(manager.profiles[0]!, { comments: "A note", emoji: "📝", groupId, name: "Renamed" });
     manager.profileGroups = [{ color: "#8ab4f8", id: groupId, name: "Metadata group", type: "checkbox" }];
     manager.selectedProfileId = changed.id;

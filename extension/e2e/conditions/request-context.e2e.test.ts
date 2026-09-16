@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { setupExtensionSuite } from "../suite";
 import {
   fetchEcho,
   group,
@@ -6,8 +7,7 @@ import {
   item,
   loadInspectionScript,
   profile,
-} from "../extension-fixture";
-import { setupExtensionSuite } from "../suite";
+} from "../test-util";
 
 function markerProfile(filters: ReturnType<typeof profile>["filters"]) {
   return profile({

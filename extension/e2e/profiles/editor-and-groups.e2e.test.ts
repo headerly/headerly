@@ -1,13 +1,14 @@
+import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
-import { fetchEcho, group, header, item, nextId, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, header, item, profile } from "../test-util";
 
 describe("documented profile editor and group operations", { concurrent: false }, () => {
   const state = setupExtensionSuite();
 
   it("renames, comments, prioritizes, changes type, duplicates, and deletes profiles", async () => {
     const { extension } = state;
-    const groupId = nextId();
+    const groupId = uuidv7();
     const target = profile({
       filters: { requestDomains: group([item("example.test")]) },
       groupId,
@@ -66,7 +67,7 @@ describe("documented profile editor and group operations", { concurrent: false }
 
   it("undoes and redoes group deletion together with its profiles and DNR rules", async () => {
     const { extension } = state;
-    const groupId = nextId();
+    const groupId = uuidv7();
     const first = profile({ groupId, name: "Grouped", ruleActionType: "allow" });
     const second = profile({ name: "Keep me", ruleActionType: "allow" });
     await extension.setProfiles([first, second], 2, [{ color: "#8ab4f8", id: groupId, name: "Undo group", type: "checkbox" }]);
@@ -164,7 +165,7 @@ describe("documented profile editor and group operations", { concurrent: false }
 
   it("pauses, remembers, resumes, and switches profile-group modes", async () => {
     const { extension } = state;
-    const groupId = nextId();
+    const groupId = uuidv7();
     const first = profile({ groupId, name: "First", ruleActionType: "allow" });
     const second = profile({ groupId, name: "Second", ruleActionType: "allow" });
     await extension.setProfiles([first, second], 2, [{
@@ -201,7 +202,7 @@ describe("documented profile editor and group operations", { concurrent: false }
 
   it("ungroups every member and cleans up the empty profile group", async () => {
     const { extension } = state;
-    const groupId = nextId();
+    const groupId = uuidv7();
     await extension.setProfiles([
       profile({ groupId, ruleActionType: "allow" }),
       profile({ groupId, ruleActionType: "allow" }),
@@ -217,7 +218,7 @@ describe("documented profile editor and group operations", { concurrent: false }
 
   it("edits group metadata, creates members, moves profiles, and deletes the group", async () => {
     const { extension } = state;
-    const groupId = nextId();
+    const groupId = uuidv7();
     const member = profile({ groupId, name: "Existing member", ruleActionType: "allow" });
     const ungrouped = profile({ name: "Move me", ruleActionType: "allow" });
     await extension.setProfiles([member, ungrouped], 2, [{

@@ -1,7 +1,9 @@
+import type { AddressInfo, Server } from "node:net";
 import { mkdir, writeFile } from "node:fs/promises";
+import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
-import { ExtensionSession, startGuideServer } from "./extension-fixture";
+import { ExtensionSession } from "./extension-fixture";
 
 export function setupExtensionSuite() {
   const state = {
@@ -38,4 +40,87 @@ export function setupExtensionSuite() {
   });
 
   return state;
+}
+
+interface GuideServer {
+  close: () => Promise<void>;
+  localhostOrigin: string;
+  loopbackOrigin: string;
+}
+
+async function startGuideServer(): Promise<GuideServer> {
+  const server = createServer((request, response) => {
+    response.setHeader("access-control-allow-origin", "*");
+    response.setHeader("access-control-expose-headers", "*");
+    response.setHeader("cache-control", "no-store");
+
+    const url = new URL(request.url ?? "/", "http://localhost");
+    if (url.pathname === "/response") {
+      response.setHeader("x-guide-response", "original");
+      response.setHeader("x-response-append", "original");
+      response.setHeader("x-remove-response", "remove-me");
+      response.end("response headers");
+      return;
+    }
+
+    if (url.pathname === "/redirect-target") {
+      response.setHeader("content-type", "text/html");
+      response.end("<h1>redirect target</h1>");
+      return;
+    }
+
+    if (url.pathname === "/allow-frame") {
+      response.setHeader("content-type", "text/html");
+      response.end("<script src=\"/blocked-child.js\"></script><h1>allowed frame</h1>");
+      return;
+    }
+
+    if (url.pathname === "/blocked-child.js") {
+      response.setHeader("content-type", "text/javascript");
+      response.end("window.guideChildLoaded = true;");
+      return;
+    }
+
+    if (url.pathname === "/inspect-script.js") {
+      response.setHeader("content-type", "text/javascript");
+      response.end(`window.e2eScriptHeader = ${JSON.stringify(request.headers["x-resource-type"] ?? null)};`);
+      return;
+    }
+
+    if (url.pathname === "/frame") {
+      response.setHeader("content-type", "text/html");
+      response.end("<h1>child frame</h1>");
+      return;
+    }
+
+    if (url.pathname === "/echo" || url.pathname.startsWith("/path/")) {
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({
+        headers: request.headers,
+        method: request.method,
+        path: url.pathname,
+      }));
+      return;
+    }
+
+    response.setHeader("content-type", "text/html");
+    response.end(`<h1>${url.pathname}</h1>`);
+  });
+
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+
+  const { port } = server.address() as AddressInfo;
+  return {
+    close: () => closeServer(server),
+    localhostOrigin: `http://localhost:${port}`,
+    loopbackOrigin: `http://127.0.0.1:${port}`,
+  };
+}
+async function closeServer(server: Server) {
+  await new Promise<void>((resolve, reject) => {
+    server.close(error => error ? reject(error) : resolve());
+  });
 }

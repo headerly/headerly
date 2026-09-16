@@ -1,9 +1,10 @@
+import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
-import { fetchEcho, group, item, nextId, profile } from "../extension-fixture";
 import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, item, profile } from "../test-util";
 
 function syncCookie(domain: string, path: string, name: string, value = "") {
-  return { domain, enabled: true, id: nextId(), name, path, value };
+  return { domain, enabled: true, id: uuidv7(), name, path, value };
 }
 
 describe("documented synchronized-cookie behavior", { concurrent: false }, () => {
