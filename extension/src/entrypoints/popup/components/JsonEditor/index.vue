@@ -4,7 +4,6 @@ import type { HTMLAttributes } from "vue";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { search, searchKeymap } from "@codemirror/search";
 import { Prec } from "@codemirror/state";
-import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, keymap } from "@codemirror/view";
 import { cn } from "@headerly/ui/lib/utils";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
@@ -15,6 +14,7 @@ import CodeMirror from "vue-codemirror6";
 import { i18n } from "#/i18n";
 import { profileExchangeJsonSchema } from "@/lib/schema";
 import JsonSearchPanel from "./JsonSearchPanel.vue";
+import { darkTheme, lightTheme } from "./theme";
 
 const model = defineModel<string>({ required: true });
 
@@ -67,9 +67,16 @@ const extensions = computed(() => {
     }),
     // @ts-expect-error https://github.com/colinhacks/zod/discussions/5936
     jsonSchema(profileExchangeJsonSchema),
-    indentationMarkers(),
-    dark.value && oneDark,
-  ].filter(Boolean);
+    indentationMarkers({
+      colors: {
+        light: "var(--border)",
+        dark: "var(--border)",
+        activeLight: "var(--ring)",
+        activeDark: "var(--ring)",
+      },
+    }),
+    dark.value ? darkTheme : lightTheme,
+  ];
 });
 </script>
 

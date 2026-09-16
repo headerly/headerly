@@ -182,15 +182,6 @@ async function handleDownloadJson() {
             search-panel-sticky-top="2.25rem"
           />
         </div>
-        <p
-          class="
-            sticky bottom-0 flex items-center gap-2 bg-background px-2 py-1
-            text-sm text-warning
-          "
-        >
-          <i class="i-lucide-alert-triangle size-4" />
-          {{ t("share.sensitiveWarning") }}
-        </p>
       </div>
     </main>
   </div>
