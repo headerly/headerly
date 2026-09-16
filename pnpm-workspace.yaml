@@ -54,7 +54,6 @@ catalog:
   es-toolkit: ^1.50.0
   eslint: ^10.8.0
   eslint-plugin-better-tailwindcss: ^4.7.0
-  eslint-plugin-playwright: ^2.11.0
   fuse.js: ^7.5.0
   lefthook: ^2.1.10
   medium-zoom: ^1.1.0

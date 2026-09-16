@@ -126,9 +126,6 @@ catalogs:
     eslint-plugin-better-tailwindcss:
       specifier: ^4.7.0
       version: 4.7.0
-    eslint-plugin-playwright:
-      specifier: ^2.11.0
-      version: 2.11.0
     fuse.js:
       specifier: ^7.5.0
       version: 7.5.0
@@ -266,9 +263,6 @@ importers:
       eslint-plugin-better-tailwindcss:
         specifier: 'catalog:'
         version: 4.7.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))(tailwindcss@4.2.2)(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)
-      eslint-plugin-playwright:
-        specifier: 'catalog:'
-        version: 2.11.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))
       lefthook:
         specifier: 'catalog:'
         version: 2.1.10
@@ -3415,12 +3409,6 @@ packages:
     engines: {node: ^20.0.0 || >=22.0.0}
     peerDependencies:
       eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
-
-  eslint-plugin-playwright@2.11.0:
-    resolution: {integrity: sha512-zOIEYyv1TSn2izXkyg/yj0LXc4YBQI6pl3xIFWwMCcXt/dgQCz8dBqXiXFMoM3xc/GqZThAtaGYo8aPu/vBd+Q==}
-    engines: {node: '>=16.9.0'}
-    peerDependencies:
-      eslint: '>=8.40.0'
 
   eslint-plugin-pnpm@1.7.0:
     resolution: {integrity: sha512-SZaPARN1+NMqAjQOlQjHu59SnN/o299N5Z4HTyhwWYnfkQkjdiydayHBegwXER3VecRF/Rf7eHw3sGcTF+uLOQ==}
@@ -8504,11 +8492,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  eslint-plugin-playwright@2.11.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2)):
-    dependencies:
-      eslint: 10.8.0(jiti@2.7.0)(supports-color@10.2.2)
-      globals: 17.9.0
 
   eslint-plugin-pnpm@1.7.0(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:

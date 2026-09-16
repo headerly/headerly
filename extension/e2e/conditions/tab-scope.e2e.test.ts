@@ -64,7 +64,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     const firstId = await extension.tabId(first);
     const secondId = await extension.tabId(second);
     const groupId = await extension.worker.evaluate(async (tabId) => {
-      return await chrome.tabs.group({ tabIds: [tabId] });
+      return await browser.tabs.group({ tabIds: [tabId] });
     }, firstId);
     await extension.setProfiles([profile({
       filters: { tabGroups: group([item([{ groupId, tabIds: [firstId] }])]) },
@@ -72,7 +72,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     })], 1);
 
     await extension.worker.evaluate(async ({ groupId: targetGroupId, tabId }) => {
-      await chrome.tabs.group({ groupId: targetGroupId, tabIds: [tabId] });
+      await browser.tabs.group({ groupId: targetGroupId, tabIds: [tabId] });
     }, { groupId, tabId: secondId });
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value[0]?.tabIds.toSorted();
@@ -80,7 +80,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     await expect.poll(async () => (await fetchEcho(second, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
       .toBe("matched");
 
-    await extension.worker.evaluate(async tabId => await chrome.tabs.ungroup(tabId), firstId);
+    await extension.worker.evaluate(async tabId => await browser.tabs.ungroup(tabId), firstId);
     await expect.poll(async () => {
       return (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value[0]?.tabIds;
     }).toEqual([secondId]);
@@ -98,7 +98,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     await ungrouped.goto(`${server.loopbackOrigin}/page?excluded-group=false`);
     const groupedId = await extension.tabId(grouped);
     const groupId = await extension.worker.evaluate(async (tabId) => {
-      return await chrome.tabs.group({ tabIds: [tabId] });
+      return await browser.tabs.group({ tabIds: [tabId] });
     }, groupedId);
     await extension.setProfiles([profile({
       filters: { excludedTabGroups: group([item([{ groupId, tabIds: [groupedId] }])]) },
@@ -118,12 +118,12 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     const page = await extension.context.newPage();
     await page.goto(`${server.loopbackOrigin}/page?remove-group=true`);
     const tabId = await extension.tabId(page);
-    const groupId = await extension.worker.evaluate(async id => await chrome.tabs.group({ tabIds: [id] }), tabId);
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), tabId);
     await extension.setProfiles([profile({
       filters: { tabGroups: group([item([{ groupId, tabIds: [tabId] }])]) },
       requestHeaderModGroups: scopedHeaders(),
     })], 1);
-    await extension.worker.evaluate(async id => await chrome.tabs.ungroup(id), tabId);
+    await extension.worker.evaluate(async id => await browser.tabs.ungroup(id), tabId);
 
     await expect.poll(async () => (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value)
       .toEqual([]);
@@ -136,7 +136,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
     const page = await extension.context.newPage();
     await page.goto(`${server.loopbackOrigin}/page?restart=true`);
     const tabId = await extension.tabId(page);
-    const groupId = await extension.worker.evaluate(async id => await chrome.tabs.group({ tabIds: [id] }), tabId);
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), tabId);
     await extension.setProfiles([profile({
       filters: {
         tabGroups: group([item([{ groupId, tabIds: [tabId] }])]),
@@ -165,7 +165,7 @@ describe("documented tab and tab-group conditions", { concurrent: false }, () =>
       return page;
     }));
     const [firstId, secondId] = await Promise.all(pages.slice(0, 2).map(page => extension.tabId(page)));
-    const groupId = await extension.worker.evaluate(async id => await chrome.tabs.group({ tabIds: [id] }), secondId!);
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), secondId!);
     const target = profile({
       filters: {
         tabIds: group([item([firstId!])]),

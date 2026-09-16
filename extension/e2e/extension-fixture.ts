@@ -194,7 +194,7 @@ export class ExtensionSession {
       ?? await this.context.waitForEvent("serviceworker");
     this.extensionId = new URL(this.worker.url()).host;
     await expect.poll(() => this.worker.evaluate(async () => {
-      const stored = await chrome.storage.session.get("headerlyTabSessionInitialized");
+      const stored = await browser.storage.session.get("headerlyTabSessionInitialized");
       return stored.headerlyTabSessionInitialized;
     })).toBe(true);
   }
@@ -226,7 +226,7 @@ export class ExtensionSession {
     profileGroups: ProfileGroup[] = [],
   ) {
     await this.worker.evaluate(async () => {
-      await chrome.storage.local.set({ powerOn: false });
+      await browser.storage.local.set({ powerOn: false });
     });
     await expect.poll(() => this.ruleCount()).toBe(0);
     await expect.poll(() => this.registrations()).toEqual({});
@@ -238,11 +238,11 @@ export class ExtensionSession {
       selectedProfileId: profiles[0]?.id,
     };
     await this.worker.evaluate(async (nextManager) => {
-      await chrome.storage.local.set({
+      await browser.storage.local.set({
         profileManager: nextManager,
         profileManager$: { v: 4 },
       });
-      await chrome.storage.local.set({ powerOn: true });
+      await browser.storage.local.set({ powerOn: true });
     }, manager);
 
     await expect.poll(() => this.ruleCount(), { timeout: 10_000 }).toBe(expectedRuleCount);
@@ -253,7 +253,7 @@ export class ExtensionSession {
 
   async manager(): Promise<ProfileManagerValue> {
     const manager = await this.worker.evaluate(async () => {
-      const result = await chrome.storage.local.get("profileManager");
+      const result = await browser.storage.local.get("profileManager");
       return result.profileManager;
     });
     return manager as ProfileManagerValue;
@@ -261,19 +261,19 @@ export class ExtensionSession {
 
   async updateManager(manager: ProfileManagerValue) {
     await this.worker.evaluate(async (nextManager) => {
-      await chrome.storage.local.set({ profileManager: nextManager });
+      await browser.storage.local.set({ profileManager: nextManager });
     }, manager);
   }
 
   async setPower(powerOn: boolean) {
     await this.worker.evaluate(async (value) => {
-      await chrome.storage.local.set({ powerOn: value });
+      await browser.storage.local.set({ powerOn: value });
     }, powerOn);
   }
 
   async errors(): Promise<Record<string, string>> {
     const errors = await this.worker.evaluate(async () => {
-      const result = await chrome.storage.local.get("profileId2ErrorMessageRecord");
+      const result = await browser.storage.local.get("profileId2ErrorMessageRecord");
       return result.profileId2ErrorMessageRecord;
     });
     return (errors ?? {}) as Record<string, string>;
@@ -281,7 +281,7 @@ export class ExtensionSession {
 
   async registrations(): Promise<Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>> {
     const registrations = await this.worker.evaluate(async () => {
-      const result = await chrome.storage.local.get("profileId2RelatedRuleIdRecord");
+      const result = await browser.storage.local.get("profileId2RelatedRuleIdRecord");
       return result.profileId2RelatedRuleIdRecord;
     });
     return (registrations ?? {}) as Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>;
@@ -290,8 +290,8 @@ export class ExtensionSession {
   async rules(): Promise<RegisteredRule[]> {
     const rules = await this.worker.evaluate(async () => {
       const [dynamicRules, sessionRules] = await Promise.all([
-        chrome.declarativeNetRequest.getDynamicRules(),
-        chrome.declarativeNetRequest.getSessionRules(),
+        browser.declarativeNetRequest.getDynamicRules(),
+        browser.declarativeNetRequest.getSessionRules(),
       ]);
       return [...dynamicRules, ...sessionRules];
     });
@@ -301,25 +301,25 @@ export class ExtensionSession {
   async removeBrowserRules() {
     await this.worker.evaluate(async () => {
       const [dynamicRules, sessionRules] = await Promise.all([
-        chrome.declarativeNetRequest.getDynamicRules(),
-        chrome.declarativeNetRequest.getSessionRules(),
+        browser.declarativeNetRequest.getDynamicRules(),
+        browser.declarativeNetRequest.getSessionRules(),
       ]);
       await Promise.all([
-        chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: dynamicRules.map(rule => rule.id) }),
-        chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: sessionRules.map(rule => rule.id) }),
+        browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds: dynamicRules.map(rule => rule.id) }),
+        browser.declarativeNetRequest.updateSessionRules({ removeRuleIds: sessionRules.map(rule => rule.id) }),
       ]);
     });
   }
 
   async badgeText() {
-    return await this.worker.evaluate(async () => await chrome.action.getBadgeText({}));
+    return await this.worker.evaluate(async () => await browser.action.getBadgeText({}));
   }
 
   async ruleCount() {
     return await this.worker.evaluate(async () => {
       const [dynamicRules, sessionRules] = await Promise.all([
-        chrome.declarativeNetRequest.getDynamicRules(),
-        chrome.declarativeNetRequest.getSessionRules(),
+        browser.declarativeNetRequest.getDynamicRules(),
+        browser.declarativeNetRequest.getSessionRules(),
       ]);
       return dynamicRules.length + sessionRules.length;
     });
@@ -328,7 +328,7 @@ export class ExtensionSession {
   async tabId(page: Page) {
     const url = page.url();
     return await this.worker.evaluate(async (tabUrl) => {
-      const tab = (await chrome.tabs.query({})).find(candidate => candidate.url === tabUrl);
+      const tab = (await browser.tabs.query({})).find(candidate => candidate.url === tabUrl);
       if (tab?.id === undefined) {
         throw new Error(`Cannot resolve tab ID for ${tabUrl}`);
       }
@@ -392,32 +392,6 @@ export async function setEditorText(page: Page, text: string) {
 }
 
 declare global {
-  const chrome: {
-    action: {
-      getBadgeText: (details: Record<string, never>) => Promise<string>;
-    };
-    declarativeNetRequest: {
-      getDynamicRules: () => Promise<Array<{ id: number } & Record<string, unknown>>>;
-      getSessionRules: () => Promise<Array<{ id: number } & Record<string, unknown>>>;
-      updateDynamicRules: (options: { removeRuleIds: number[] }) => Promise<void>;
-      updateSessionRules: (options: { removeRuleIds: number[] }) => Promise<void>;
-    };
-    storage: {
-      session: {
-        get: (key: string) => Promise<Record<string, unknown>>;
-      };
-      local: {
-        get: (key: string) => Promise<Record<string, unknown>>;
-        set: (values: Record<string, unknown>) => Promise<void>;
-      };
-    };
-    tabs: {
-      group: (options: { groupId?: number; tabIds: number[] }) => Promise<number>;
-      query: (query: Record<string, unknown>) => Promise<Array<{ id?: number; url?: string }>>;
-      ungroup: (tabIds: number | number[]) => Promise<void>;
-    };
-  };
-
   interface Window {
     e2eScriptHeader?: string | null;
   }

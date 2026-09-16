@@ -35,7 +35,6 @@
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-better-tailwindcss": "catalog:",
-    "eslint-plugin-playwright": "catalog:",
     "lefthook": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",

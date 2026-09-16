@@ -50,7 +50,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     const page = await extension.context.newPage();
     await page.goto(`${state.server.loopbackOrigin}/page?export=scope`);
     const tabId = await extension.tabId(page);
-    const tabGroupId = await extension.worker.evaluate(async id => await chrome.tabs.group({ tabIds: [id] }), tabId);
+    const tabGroupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), tabId);
     target.filters.tabGroups = group([item([{ groupId: tabGroupId, tabIds: [tabId] }])]);
     target.filters.tabIds = group([item([tabId])]);
     target.filters.excludedTabIds = group([item([-1])]);
