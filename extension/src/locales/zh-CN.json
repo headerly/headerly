@@ -260,7 +260,6 @@
     "copyToClipboard": "复制到剪贴板",
     "saveAsFile": "保存为文件",
     "selectAll": "全选",
-    "sensitiveWarning": "分享的配置可能包含敏感的身份验证 token 或 Cookie。",
     "title": "分享配置",
     "toast": {
       "jsonCopied": "配置 JSON 已复制到剪贴板",
