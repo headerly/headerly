@@ -8,7 +8,7 @@
     "analyze": "wxt build --analyze",
     "test": "vitest",
     "test:e2e": "pnpm run build && vitest run --config vitest.e2e.config.ts",
-    "test:e2e:ui": "pnpm run build && vitest --ui --watch --config vitest.e2e.config.ts",
+    "test:e2e:dev": "vitest --ui --watch --mode development --config vitest.e2e.config.ts",
     "zip": "wxt zip",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

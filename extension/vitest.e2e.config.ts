@@ -1,10 +1,13 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   test: {
     env: {
-      HEADERLY_EXTENSION_PATH: resolve(import.meta.dirname, ".output/chrome-mv3"),
+      HEADERLY_EXTENSION_PATH: resolve(
+        import.meta.dirname,
+        mode === "development" ? ".output/chrome-mv3-dev" : ".output/chrome-mv3",
+      ),
     },
     expect: {
       poll: { interval: 50, timeout: 5000 },
@@ -15,4 +18,4 @@ export default defineConfig({
     maxWorkers: 1,
     testTimeout: 45_000,
   },
-});
+}));

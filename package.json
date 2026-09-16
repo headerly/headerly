@@ -20,7 +20,7 @@
     "zip": "pnpm --filter=extension run zip",
     "test": "pnpm --recursive --sequential run test",
     "test:e2e": "pnpm --filter=extension run test:e2e",
-    "test:e2e:ui": "pnpm --filter=extension run test:e2e:ui",
+    "test:e2e:dev": "pnpm --filter=extension run test:e2e:dev",
     "lint": "eslint . --max-warnings 0 --cache",
     "lint:fix": "eslint . --fix --max-warnings 0 --cache",
     "typecheck": "pnpm --recursive --sequential run typecheck"
