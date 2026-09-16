@@ -2,7 +2,9 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { BrowserContext, Frame, Page, Worker } from "playwright";
+import type { Browser } from "wxt/browser";
 import type { Profile, ProfileGroup } from "../src/lib/schema";
+import type { ProfileManager } from "../src/lib/types";
 import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
@@ -11,23 +13,10 @@ import process from "node:process";
 import { chromium } from "playwright";
 import { expect } from "vitest";
 
-export interface ProfileManagerValue {
-  profileGroups: ProfileGroup[];
-  profiles: Profile[];
-  selectedProfileId?: string;
-}
-
 export interface GuideServer {
   close: () => Promise<void>;
   localhostOrigin: string;
   loopbackOrigin: string;
-}
-
-export interface RegisteredRule {
-  action: Record<string, unknown>;
-  condition: Record<string, unknown>;
-  id: number;
-  priority: number;
 }
 
 let idSequence = 0;
@@ -232,10 +221,10 @@ export class ExtensionSession {
     await expect.poll(() => this.registrations()).toEqual({});
     await expect.poll(() => this.badgeText()).toBe("❚❚");
 
-    const manager: ProfileManagerValue = {
+    const manager: ProfileManager = {
       profileGroups,
       profiles,
-      selectedProfileId: profiles[0]?.id,
+      selectedProfileId: profiles[0]?.id ?? "",
     };
     await this.worker.evaluate(async (nextManager) => {
       await browser.storage.local.set({
@@ -251,15 +240,15 @@ export class ExtensionSession {
     await expect.poll(() => this.badgeText()).toBe(expectedRuleCount > 0 ? String(expectedRuleCount) : "");
   }
 
-  async manager(): Promise<ProfileManagerValue> {
+  async manager(): Promise<ProfileManager> {
     const manager = await this.worker.evaluate(async () => {
       const result = await browser.storage.local.get("profileManager");
       return result.profileManager;
     });
-    return manager as ProfileManagerValue;
+    return manager as ProfileManager;
   }
 
-  async updateManager(manager: ProfileManagerValue) {
+  async updateManager(manager: ProfileManager) {
     await this.worker.evaluate(async (nextManager) => {
       await browser.storage.local.set({ profileManager: nextManager });
     }, manager);
@@ -287,7 +276,7 @@ export class ExtensionSession {
     return (registrations ?? {}) as Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>;
   }
 
-  async rules(): Promise<RegisteredRule[]> {
+  async rules(): Promise<Browser.declarativeNetRequest.Rule[]> {
     const rules = await this.worker.evaluate(async () => {
       const [dynamicRules, sessionRules] = await Promise.all([
         browser.declarativeNetRequest.getDynamicRules(),
@@ -295,7 +284,7 @@ export class ExtensionSession {
       ]);
       return [...dynamicRules, ...sessionRules];
     });
-    return rules as unknown as RegisteredRule[];
+    return rules;
   }
 
   async removeBrowserRules() {

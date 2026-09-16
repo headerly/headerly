@@ -128,7 +128,7 @@ describe("documented profile and rule lifecycle", { concurrent: false }, () => {
       }),
     ], 2);
 
-    expect((await extension.rules()).map(rule => rule.priority).toSorted((a, b) => a - b))
+    expect((await extension.rules()).map(rule => rule.priority).toSorted())
       .toEqual([1, 2_147_483_647]);
   });
 });
