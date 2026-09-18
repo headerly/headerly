@@ -3,7 +3,7 @@ import type { WxtStorageItemOptions } from "wxt/utils/storage";
 import type { RuleScope } from "##/background/profileRule";
 import type { SupportLocale } from "#/i18n";
 import type { ProfileManager } from "./types";
-import { useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
+import { tryOnScopeDispose, useDebounceFn, useLocalStorage, useStorageAsync } from "@vueuse/core";
 import { isEqual } from "es-toolkit";
 import { toRaw } from "vue";
 import { SUPPORT_LOCALES } from "#/i18n";
@@ -32,55 +32,75 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
     migrations: options?.migrations,
   });
 
-  // Writing to `chrome.storage` is an asynchronous operation;
-  // performing a large number of writes within a short timeframe will lead to conflicts!
-  const setValue = useDebounceFn((value: T) => {
-    // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
-    // We need to store the original array in the proxy.
-    // Note that this will still be broken if only some of the keys on the object are proxies!
-    item.setValue(toRaw(value));
-  }, 200);
+  function createStorageRef() {
+    let ready = false;
+    let applyingStorageValue = false;
+    const setValue = useDebounceFn((value: T) => {
+      return item.setValue(toRaw(value));
+    }, 200);
 
-  const ref = useStorageAsync<T>(
-    key,
-    initialValue,
-    {
-      setItem(_, value) {
-        return setValue(value as T);
+    const ref = useStorageAsync<T>(
+      key,
+      initialValue,
+      {
+        setItem(_, value) {
+          return setValue(value as T);
+        },
+        getItem() {
+          return item.getValue();
+        },
+        removeItem() {
+          return item.removeValue();
+        },
+      } as StorageLikeAsync,
+      {
+        mergeDefaults: true,
+        // Check the source of the change synchronously, before VueUse's async
+        // serialization can outlive the storage notification that caused it.
+        flush: "sync",
+        eventFilter(invoke) {
+          if (ready && !applyingStorageValue) {
+            return invoke();
+          }
+        },
+        // @ts-expect-error VueUse types are wrong
+        serializer: {
+          read: v => v,
+          write: v => v,
+        } as SerializerAsync<T>,
+        onReady(value) {
+          ready = true;
+          options?.onReady?.(value);
+        },
       },
-      getItem() {
-        return item.getValue();
-      },
-      removeItem() {
-        return item.removeValue();
-      },
-    } as StorageLikeAsync,
-    {
-      mergeDefaults: true,
-      // @ts-expect-error VueUse types are wrong
-      serializer: {
-        read: v => v,
-        write: v => v,
-      } as SerializerAsync<T>,
-      onReady: options?.onReady,
-    },
-  );
+    );
 
-  // Ensure data synchronization between multiple tab pages to avoid data inconsistency
-  item.watch((newValue) => {
-    if (!isEqual(toRaw(ref.value), newValue)) {
-      ref.value = newValue;
-    }
-  });
+    const unwatch = item.watch((newValue) => {
+      // A newer persisted snapshot supersedes any pending local snapshot.
+      setValue.cancel();
+      if (!isEqual(toRaw(ref.value), newValue)) {
+        applyingStorageValue = true;
+        try {
+          ref.value = newValue;
+        } finally {
+          applyingStorageValue = false;
+        }
+      }
+    });
+    tryOnScopeDispose(() => {
+      unwatch();
+      setValue.cancel();
+    });
+    return ref;
+  }
 
+  let storageRef: ReturnType<typeof createStorageRef> | undefined;
   return {
-    /**
-     * The reactive object returned by `useStorageAsync`. It can only be used in the webpages, not in the background.
-     */
-    ref,
-    /**
-     * The return value of WXT storage.defineItem can be used anywhere.
-     */
+    // Background callers only use item; they must not create UI watchers or
+    // delayed writes as a side effect of obtaining the storage item.
+    get ref() {
+      return storageRef ??= createStorageRef();
+    },
     item,
     initialValue,
   };
