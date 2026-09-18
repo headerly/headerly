@@ -81,12 +81,14 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
     );
 
     // Ensure data synchronization between multiple tab pages to avoid data inconsistency
+    // Receive Service Worker storage updates and sync them to the popup ref; useStorageAsync does not listen to chrome.storage.onChanged.
     const unwatch = item.watch((newValue) => {
       // A newer persisted snapshot supersedes any pending local snapshot.
       setValue.cancel();
       if (!isEqual(toRaw(ref.value), newValue)) {
         applyingStorageValue = true;
         try {
+          // The ref setter triggers the flush: "sync" watcher before this flag is reset.
           ref.value = newValue;
         } finally {
           applyingStorageValue = false;
