@@ -1,4 +1,4 @@
-import type { AddressInfo, Server } from "node:net";
+import type { Server } from "node:net";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
@@ -6,13 +6,19 @@ import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 import { ExtensionSession } from "./extension-fixture";
 
 export function setupExtensionSuite() {
+  let server: Awaited<ReturnType<typeof startGuideServer>> | undefined;
   const state = {
     extension: new ExtensionSession(),
-    server: undefined as unknown as Awaited<ReturnType<typeof startGuideServer>>,
+    get server() {
+      if (!server) {
+        throw new Error("Guide server has not started");
+      }
+      return server;
+    },
   };
 
   beforeAll(async () => {
-    state.server = await startGuideServer();
+    server = await startGuideServer();
   });
 
   // A new browser profile isolates cookies, storage, routes, permissions and
@@ -36,19 +42,13 @@ export function setupExtensionSuite() {
   });
 
   afterAll(async () => {
-    await state.server?.close();
+    await server?.close();
   });
 
   return state;
 }
 
-interface GuideServer {
-  close: () => Promise<void>;
-  localhostOrigin: string;
-  loopbackOrigin: string;
-}
-
-async function startGuideServer(): Promise<GuideServer> {
+async function startGuideServer() {
   const server = createServer((request, response) => {
     response.setHeader("access-control-allow-origin", "*");
     response.setHeader("access-control-expose-headers", "*");
@@ -112,7 +112,11 @@ async function startGuideServer(): Promise<GuideServer> {
     server.listen(0, "127.0.0.1", resolve);
   });
 
-  const { port } = server.address() as AddressInfo;
+  const address = server.address();
+  if (!address || typeof address === "string") {
+    throw new Error("Guide server did not bind to a TCP port");
+  }
+  const { port } = address;
   return {
     close: () => closeServer(server),
     localhostOrigin: `http://localhost:${port}`,

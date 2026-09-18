@@ -1,6 +1,7 @@
 import type { Frame, Page } from "playwright";
 import type { Profile } from "../src/lib/schema";
 import { uuidv7 } from "uuidv7";
+import { z } from "zod";
 
 export function group<T>(items: T[], type: "checkbox" | "radio" = "checkbox") {
   return { id: uuidv7(), items, type };
@@ -20,7 +21,7 @@ export function header(
     : { enabled: true, id: uuidv7(), name, operation, value };
 }
 
-export function profile(overrides: Partial<Profile>): Profile {
+export function profile(overrides: Partial<Profile>) {
   return {
     emoji: "🧪",
     enabled: true,
@@ -29,7 +30,7 @@ export function profile(overrides: Partial<Profile>): Profile {
     name: "E2E guide profile",
     ruleActionType: "modifyHeaders",
     ...overrides,
-  };
+  } satisfies Profile;
 }
 
 export async function fetchEcho(page: Frame | Page, url: string, options?: {
@@ -37,17 +38,18 @@ export async function fetchEcho(page: Frame | Page, url: string, options?: {
   headers?: Record<string, string>;
   method?: string;
 }) {
-  return await page.evaluate(async ({ options: requestOptions, url: requestUrl }) => {
+  const result = await page.evaluate(async ({ options: requestOptions, url: requestUrl }) => {
     const response = await fetch(requestUrl, { cache: "no-store", ...requestOptions });
     if (!response.ok) {
       throw new Error(`Echo request failed: ${response.status} ${requestUrl}`);
     }
-    return await response.json() as {
-      headers: Record<string, string | undefined>;
-      method: string;
-      path: string;
-    };
+    return await response.json();
   }, { options, url });
+  return z.object({
+    headers: z.record(z.string(), z.string().optional()),
+    method: z.string(),
+    path: z.string(),
+  }).parse(result);
 }
 
 export async function fetchResponseHeaders(page: Page, url: string) {

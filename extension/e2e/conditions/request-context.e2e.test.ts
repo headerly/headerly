@@ -134,7 +134,7 @@ describe("documented request-context conditions", { concurrent: false }, () => {
     await page.goto(`${server.loopbackOrigin}/page`);
     await extension.setProfiles([markerProfile({})], 1);
 
-    const resourceTypes = (await extension.rules())[0]?.condition.resourceTypes as string[];
+    const resourceTypes = (await extension.rules())[0]?.condition.resourceTypes;
     expect(resourceTypes).toContain("main_frame");
     expect(resourceTypes).toContain("script");
     expect(resourceTypes).toContain("xmlhttprequest");

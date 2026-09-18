@@ -1,5 +1,4 @@
 import type { BrowserContext, Page, Worker } from "playwright";
-import type { Browser } from "wxt/browser";
 import type { Profile, ProfileGroup } from "../src/lib/schema";
 import type { ProfileManager } from "../src/lib/types";
 import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -8,6 +7,7 @@ import { join } from "node:path";
 import process from "node:process";
 import { chromium } from "playwright";
 import { expect } from "vitest";
+import { z } from "zod";
 
 export class ExtensionSession {
   context!: BrowserContext;
@@ -28,10 +28,10 @@ export class ExtensionSession {
       this.extensionPath = join(this.userDataDir, "extension-under-test");
       await cp(productionExtensionPath, this.extensionPath, { recursive: true });
       const manifestPath = join(this.extensionPath, "manifest.json");
-      const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as {
-        optional_permissions?: string[];
-        permissions?: string[];
-      };
+      const manifest = z.looseObject({
+        optional_permissions: z.array(z.string()).optional(),
+        permissions: z.array(z.string()).optional(),
+      }).parse(JSON.parse(await readFile(manifestPath, "utf8")));
       manifest.permissions = [...new Set([
         ...(manifest.permissions ?? []),
         ...(manifest.optional_permissions ?? []),
@@ -96,11 +96,11 @@ export class ExtensionSession {
     await expect.poll(() => this.registrations()).toEqual({});
     await expect.poll(() => this.badgeText()).toBe("❚❚");
 
-    const manager: ProfileManager = {
+    const manager = {
       profileGroups,
       profiles,
       selectedProfileId: profiles[0]?.id ?? "",
-    };
+    } as const satisfies ProfileManager;
     await this.worker.evaluate(async (nextManager) => {
       await browser.storage.local.set({
         profileManager: nextManager,
@@ -115,12 +115,12 @@ export class ExtensionSession {
     await expect.poll(() => this.badgeText()).toBe(expectedRuleCount > 0 ? String(expectedRuleCount) : "");
   }
 
-  async manager(): Promise<ProfileManager> {
+  async manager() {
     const manager = await this.worker.evaluate(async () => {
-      const result = await browser.storage.local.get("profileManager");
+      const result = await browser.storage.local.get<{ profileManager: ProfileManager }>("profileManager");
       return result.profileManager;
     });
-    return manager as ProfileManager;
+    return manager;
   }
 
   async updateManager(manager: ProfileManager) {
@@ -135,23 +135,26 @@ export class ExtensionSession {
     }, powerOn);
   }
 
-  async errors(): Promise<Record<string, string>> {
+  async errors() {
     const errors = await this.worker.evaluate(async () => {
       const result = await browser.storage.local.get("profileId2ErrorMessageRecord");
       return result.profileId2ErrorMessageRecord;
     });
-    return (errors ?? {}) as Record<string, string>;
+    return z.record(z.string(), z.string()).parse(errors ?? {});
   }
 
-  async registrations(): Promise<Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>> {
+  async registrations() {
     const registrations = await this.worker.evaluate(async () => {
       const result = await browser.storage.local.get("profileId2RelatedRuleIdRecord");
       return result.profileId2RelatedRuleIdRecord;
     });
-    return (registrations ?? {}) as Record<string, { ruleId: number; ruleScope: "dynamic" | "session" }>;
+    return z.record(z.string(), z.object({
+      ruleId: z.number(),
+      ruleScope: z.enum(["dynamic", "session"]),
+    })).parse(registrations ?? {});
   }
 
-  async rules(): Promise<Browser.declarativeNetRequest.Rule[]> {
+  async rules() {
     const rules = await this.worker.evaluate(async () => {
       const [dynamicRules, sessionRules] = await Promise.all([
         browser.declarativeNetRequest.getDynamicRules(),

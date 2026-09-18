@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import { readFile } from "node:fs/promises";
 import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import { setupExtensionSuite } from "../suite";
 import {
   editorText,
@@ -35,10 +36,10 @@ function portableProfile() {
 
 async function exportedJson(page: Parameters<typeof editorText>[0]) {
   await expect.poll(() => editorText(page)).toContain("Portable profile");
-  return JSON.parse(await editorText(page)) as {
-    profiles: Array<Record<string, unknown>>;
-    version: number;
-  };
+  return z.object({
+    profiles: z.array(z.record(z.string(), z.unknown())),
+    version: z.number(),
+  }).parse(JSON.parse(await editorText(page)));
 }
 
 describe("documented import, export, download, and share behavior", { concurrent: false }, () => {
