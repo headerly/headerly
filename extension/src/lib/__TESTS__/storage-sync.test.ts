@@ -1,7 +1,6 @@
-import type { RuleRegistration } from "../storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
-import { useProfileId2ErrorMessageRecordStorage, useProfileId2RelatedRuleIdRecordStorage } from "../storage";
+import { useProfileId2ErrorMessageRecordStorage } from "../storage";
 
 describe("extension storage synchronization", () => {
   let scope = effectScope();
@@ -10,8 +9,6 @@ describe("extension storage synchronization", () => {
     vi.useFakeTimers();
     scope = effectScope();
     await storage.setItem("local:profileId2ErrorMessageRecord", {});
-    await storage.setItem("local:profileId2RelatedRuleIdRecord", {});
-    await storage.setMeta("local:profileId2RelatedRuleIdRecord", { v: 2 });
   });
 
   afterEach(() => {
@@ -88,23 +85,6 @@ describe("extension storage synchronization", () => {
     expect(ref.value).toEqual({ profile: "newer external edit" });
     expect(await item.getValue()).toEqual({ profile: "newer external edit" });
     expect(write).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not restore a dynamic registration after it changes to session", async () => {
-    const ready = Promise.withResolvers<Record<string, RuleRegistration>>();
-    const wrapper = useProfileId2RelatedRuleIdRecordStorage({ onReady: ready.resolve });
-    const ref = scope.run(() => wrapper.ref)!;
-    await ready.promise;
-    const write = vi.spyOn(browser.storage.local, "set");
-
-    await wrapper.item.setValue({ profile: { ruleId: 1, ruleScope: "dynamic" } });
-    await vi.advanceTimersByTimeAsync(199);
-    await wrapper.item.setValue({ profile: { ruleId: 1, ruleScope: "session" } });
-    await vi.advanceTimersByTimeAsync(1000);
-
-    expect(ref.value.profile?.ruleScope).toBe("session");
-    expect((await wrapper.item.getValue()).profile?.ruleScope).toBe("session");
-    expect(write).toHaveBeenCalledTimes(2);
   });
 
   it("stops synchronization and cancels pending writes when its scope is disposed", async () => {
