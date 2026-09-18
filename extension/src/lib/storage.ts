@@ -35,7 +35,12 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
   function createStorageRef() {
     let ready = false;
     let applyingStorageValue = false;
+    // Writing to `chrome.storage` is an asynchronous operation;
+    // performing a large number of writes within a short timeframe will lead to conflicts!
     const setValue = useDebounceFn((value: T) => {
+      // chrome.storage stores the proxy array and converts it to a object representation. This breaks everything.
+      // We need to store the original array in the proxy.
+      // Note that this will still be broken if only some of the keys on the object are proxies!
       return item.setValue(toRaw(value));
     }, 200);
 
@@ -75,6 +80,7 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
       },
     );
 
+    // Ensure data synchronization between multiple tab pages to avoid data inconsistency
     const unwatch = item.watch((newValue) => {
       // A newer persisted snapshot supersedes any pending local snapshot.
       setValue.cancel();
@@ -89,6 +95,7 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
     });
     tryOnScopeDispose(() => {
       unwatch();
+      // Removing the storage listener does not cancel an already scheduled write.
       setValue.cancel();
     });
     return ref;
@@ -96,11 +103,16 @@ function useExtensionStorageWrapper<T>(key: StorageItemKey, initialValue: T, opt
 
   let storageRef: ReturnType<typeof createStorageRef> | undefined;
   return {
-    // Background callers only use item; they must not create UI watchers or
-    // delayed writes as a side effect of obtaining the storage item.
+    /**
+     * The reactive object returned by `useStorageAsync`. It can only be used in the webpages, not in the background.
+     * Created lazily so background callers using only item do not create UI watchers or delayed writes.
+     */
     get ref() {
       return storageRef ??= createStorageRef();
     },
+    /**
+     * The return value of WXT storage.defineItem can be used anywhere.
+     */
     item,
     initialValue,
   };
