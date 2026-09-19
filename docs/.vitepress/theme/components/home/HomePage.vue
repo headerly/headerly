@@ -243,7 +243,8 @@ import ProductPreview from "./ProductPreview.vue";
         >
           A better workflow<br>is one click away.
         </h2>
-      </div><DownloadButtons />
+      </div>
+      <DownloadButtons />
     </section>
 
     <footer
@@ -255,13 +256,13 @@ import ProductPreview from "./ProductPreview.vue";
       <a
         href="/" class="
           inline-flex items-center gap-2 text-lg font-semibold tracking-tight
-          text-foreground
+          text-foreground transition
           hover:text-brand
         "
       ><img
         src="/images/headerly.svg" alt="" width="24" height="24" class="no-zoom"
-      >Headerly</a><p class="max-sm:hidden">
-        © 2026-present Headerly. All rights reserved.
+      >headerly</a><p class="max-sm:hidden">
+        © 2026-present headerly. All rights reserved.
       </p><nav
         aria-label="Footer" class="flex gap-6"
       >

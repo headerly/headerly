@@ -104,7 +104,10 @@ const undoAndRedoButtonGroup = [
 <template>
   <header
     :class="cn(
-      `flex items-center justify-between gap-1 border-b py-1 pr-1 pl-2`,
+      `
+        @container/profile-header flex items-center justify-between gap-1
+        border-b py-1 pr-1 pl-2
+      `,
       settingsStore.powerOn || 'opacity-60',
       className,
     )"
@@ -126,9 +129,9 @@ const undoAndRedoButtonGroup = [
         <span
           class="
             max-w-32 min-w-5 truncate
-            lg:max-w-45
-            xl:max-w-60
-            2xl:max-w-80
+            @[64rem]/profile-header:max-w-45
+            @[80rem]/profile-header:max-w-60
+            @[96rem]/profile-header:max-w-80
           "
         >
           {{ profilesStore.selectedProfile.name }}</span>
@@ -139,8 +142,8 @@ const undoAndRedoButtonGroup = [
           data-testid="profile-name-input"
           :class="cn(`
             max-w-45 px-1.5 text-base font-semibold
-            xl:max-w-60
-            2xl:max-w-80
+            @[80rem]/profile-header:max-w-60
+            @[96rem]/profile-header:max-w-80
           `, profileNameInput.length === 0 && `border-destructive`)"
           required
           @keyup.enter="handleEditProfileName"
