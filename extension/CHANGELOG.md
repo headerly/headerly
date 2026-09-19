@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.21.0](https://github.com/headerly/headerly/compare/v1.20.0...v1.21.0) (2026-09-19)
+
+
+### Features
+
+* **editor:** add app-aligned light and dark editor themes ([#90](https://github.com/headerly/headerly/issues/90)) ([8155751](https://github.com/headerly/headerly/commit/815575120753795a8ba32a1f864900d9b65276c2))
+
+
+### Bug Fixes
+
+* clear stale tab bindings once per browser session ([#93](https://github.com/headerly/headerly/issues/93)) ([df5dbde](https://github.com/headerly/headerly/commit/df5dbde9973fc174b0d965706f2b966695bb9dbb))
+* **storage:** prevent stale synchronization writes ([#92](https://github.com/headerly/headerly/issues/92)) ([012793a](https://github.com/headerly/headerly/commit/012793af4ca063544477b3cd907fe4fdc4cee53c))
+
 ## [1.20.0](https://github.com/headerly/headerly/compare/v1.19.0...v1.20.0) (2026-08-09)
 
 
