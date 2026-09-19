@@ -64,9 +64,7 @@ const settings = useCreateSettings();
                       @update:model-value="value => field.onChange?.(String(value))"
                     >
                       <SelectTrigger
-                        :data-testid="field.key === 'language' ? 'settings-language' : undefined" class="
-                          min-w-60
-                        "
+                        :data-testid="`settings-${field.key}`" class="min-w-60"
                       >
                         <SelectValue :placeholder="t('common.selectOptions')" />
                       </SelectTrigger>
@@ -90,6 +88,7 @@ const settings = useCreateSettings();
                 >
                   <Checkbox
                     v-model="settingsStore[field.key]"
+                    :data-testid="`settings-${field.key}`"
                   />
                   {{ field.label }}
                   <InfoTooltip
