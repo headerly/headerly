@@ -30,6 +30,10 @@ export function setupTabIdCleanup(options: {
       if (await tabSessionInitializedItem.getValue()) {
         return;
       }
+      // onRemoved batches cleanup behind a 500 ms timer. Browser shutdown can
+      // terminate the worker before cleanup is persisted, leaving old tab IDs
+      // in storage even though the next session uses new IDs. Clear those stale
+      // bindings once per browser session; onRemoved alone cannot guarantee it.
       // Clear the previous session before accepting new bindings. Delaying this
       // like tab-close events also clears selections created during startup.
       const manager = await profileManagerItem.getValue();
