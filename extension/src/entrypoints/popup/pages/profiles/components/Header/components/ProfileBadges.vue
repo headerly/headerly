@@ -43,7 +43,7 @@ const ruleActionTypeMap = useRuleActionType();
             <span
               class="
                 hidden
-                md:inline
+                @[48rem]/profile-header:inline
               "
             >
               {{ t("profile.header.priorityLabel") }}
@@ -51,14 +51,14 @@ const ruleActionTypeMap = useRuleActionType();
             <span
               class="
                 max-w-4 truncate
-                md:max-w-none
+                @[48rem]/profile-header:max-w-none
               "
             >
               {{ profile.priority ?? 1 }}
             </span>
           </Badge>
         </TooltipTrigger>
-        <TooltipContent side="bottom" class="md:hidden">
+        <TooltipContent side="bottom">
           {{ t("profile.header.priorityValue", { priority: profile.priority ?? 1 }) }}
         </TooltipContent>
       </Tooltip>
@@ -82,14 +82,14 @@ const ruleActionTypeMap = useRuleActionType();
             <span
               class="
                 hidden
-                md:inline
+                @[48rem]/profile-header:inline
               "
             >
               {{ ruleActionTypeMap[profile.ruleActionType].label }}
             </span>
           </Badge>
         </TooltipTrigger>
-        <TooltipContent side="bottom" class="md:hidden">
+        <TooltipContent side="bottom">
           {{ t("profile.header.ruleActionType", {
             type: ruleActionTypeMap[profile.ruleActionType].label,
           }) }}

@@ -13,6 +13,7 @@ import RedirectUrlGroup from "./components/ActionGroup/RedirectUrlGroup.vue";
 import AlertGroup from "./components/AlertGroup.vue";
 import FiltersFieldset from "./components/FiltersFieldset.vue";
 import InteractiveGridPattern from "./components/InteractiveGridPattern.vue";
+import ProfileWatermarkLogo from "./components/ProfileWatermarkLogo.vue";
 import SyncCookieGroup from "./components/SyncCookieGroup/index.vue";
 
 const { class: className } = defineProps<{
@@ -79,13 +80,6 @@ const empty = computed(() => {
 
 const settingsStore = useSettingsStore();
 const disabled = computed(() => !profilesStore.selectedProfile.enabled || !settingsStore.powerOn);
-const extensionVersionLabel = `v${browser.runtime.getManifest().version}`;
-const versionBadgeCornerClassNames = [
-  "-top-0.5 -left-0.5",
-  "-top-0.5 -right-0.5",
-  "-bottom-0.5 -left-0.5",
-  "-bottom-0.5 -right-0.5",
-];
 </script>
 
 <template>
@@ -117,31 +111,12 @@ const versionBadgeCornerClassNames = [
       />
     </div>
     <div v-else class="relative min-h-full w-full">
-      <div
-        aria-hidden="true"
+      <ProfileWatermarkLogo
         class="
-          pointer-events-none fixed right-6 bottom-6 px-2 text-sm/6
-          text-primary/35 select-none
-          dark:text-primary/35
+          pointer-events-none fixed right-6 bottom-6 size-8
+          text-muted-foreground/35 select-none
         "
-      >
-        <span
-          class="
-            absolute inset-0 border border-dashed border-primary/20 bg-primary/5
-          "
-        />
-        <span class="relative font-mono">{{ extensionVersionLabel }}</span>
-        <svg
-          v-for="cornerClassName in versionBadgeCornerClassNames"
-          :key="cornerClassName"
-          width="5"
-          height="5"
-          viewBox="0 0 5 5"
-          :class="cn('absolute fill-primary/25', cornerClassName)"
-        >
-          <path d="M2 0h1v2h2v1h-2v2h-1v-2h-2v-1h2z" />
-        </svg>
-      </div>
+      />
 
       <div v-auto-animate class="relative z-10 w-full p-2">
         <AlertGroup :empty :has-any-filters="hasAnyNonEmptyFilters" />

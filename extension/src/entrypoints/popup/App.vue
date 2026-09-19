@@ -46,9 +46,9 @@ onMounted(async () => {
 
 <template>
   <div
-    :class="cn('flex h-screen w-screen items-center justify-center', isPopup && `
-      h-120 w-150
-    `)"
+    :class="cn(`
+      flex h-screen w-screen items-center justify-center border-r border-b
+    `, isPopup && `h-120 w-150`)"
   >
     <RouterView />
     <Toaster
