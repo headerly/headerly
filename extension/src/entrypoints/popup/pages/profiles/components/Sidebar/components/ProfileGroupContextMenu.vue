@@ -93,6 +93,7 @@ defineExpose({ open: openContextMenu });
     <ContextMenuTrigger as-child>
       <Button
         ref="contextMenuTriggerButton"
+        :data-testid="`profile-group-${group.id}`"
         variant="secondary"
         size="icon-sm"
         data-profile-top-level-sort-handle
@@ -131,6 +132,7 @@ defineExpose({ open: openContextMenu });
       <div class="space-y-3 p-2">
         <Input
           ref="groupNameInput"
+          :data-testid="`profile-group-name-${group.id}`"
           :model-value="group.name"
           :placeholder="t('profileGroup.namePlaceholder')"
           class="
@@ -151,6 +153,7 @@ defineExpose({ open: openContextMenu });
           <RadioGroupItem
             v-for="(color, index) in PROFILE_GROUP_COLOR_PRESETS"
             :key="`${color}-${index}`"
+            :data-testid="`profile-group-color-${group.id}-${index}`"
             :value="color"
             :aria-label="color"
             class="
@@ -182,11 +185,19 @@ defineExpose({ open: openContextMenu });
         @keydown.tab="focusFirstMenuItem"
         @update:model-value="setGroupType($event as ProfileGroup['type'])"
       >
-        <ToggleGroupItem value="radio" class="h-8 min-w-0 rounded-sm">
+        <ToggleGroupItem
+          :data-testid="`profile-group-type-radio-${group.id}`" value="radio" class="
+            h-8 min-w-0 rounded-sm
+          "
+        >
           <i class="i-lucide-circle-dot size-4" />
           {{ t("common.radio") }}
         </ToggleGroupItem>
-        <ToggleGroupItem value="checkbox" class="h-8 min-w-0 rounded-sm">
+        <ToggleGroupItem
+          :data-testid="`profile-group-type-checkbox-${group.id}`" value="checkbox" class="
+            h-8 min-w-0 rounded-sm
+          "
+        >
           <i class="i-lucide-square-check-big size-4" />
           {{ t("common.checkbox") }}
         </ToggleGroupItem>
@@ -194,6 +205,7 @@ defineExpose({ open: openContextMenu });
       <ContextMenuSeparator />
       <ContextMenuItem
         ref="firstMenuItem"
+        :data-testid="`profile-group-action-new-profile-${group.id}`"
         @click="profilesStore.addProfile('modifyHeaders', group.id)"
       >
         <i class="i-lucide-plus-square size-4" />
@@ -201,6 +213,7 @@ defineExpose({ open: openContextMenu });
       </ContextMenuItem>
       <ContextMenuSeparator />
       <ContextMenuItem
+        :data-testid="`profile-group-action-toggle-${group.id}`"
         class="justify-between gap-2"
         @click="toggleProfileGroupEnabled"
       >
@@ -221,11 +234,11 @@ defineExpose({ open: openContextMenu });
           />
         </span>
       </ContextMenuItem>
-      <ContextMenuItem @click="profiles.forEach(profile => profilesStore.removeProfileFromGroup(profile.id))">
+      <ContextMenuItem :data-testid="`profile-group-action-ungroup-${group.id}`" @click="profiles.forEach(profile => profilesStore.removeProfileFromGroup(profile.id))">
         <i class="i-lucide-ungroup size-4" />
         {{ t("profileGroup.actions.ungroup") }}
       </ContextMenuItem>
-      <ContextMenuItem variant="destructive" @click="deleteProfileGroup">
+      <ContextMenuItem :data-testid="`profile-group-action-delete-${group.id}`" variant="destructive" @click="deleteProfileGroup">
         <i class="i-lucide-trash size-4" />
         {{ t("profileGroup.actions.delete") }}
       </ContextMenuItem>

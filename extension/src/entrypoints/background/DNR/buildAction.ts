@@ -66,7 +66,12 @@ export function buildRequestHeaders(profile: ProfileCoreData) {
   for (const group of profile.syncCookieGroups ?? []) {
     const enabledCookies = group.items.filter(cookie => cookie.enabled);
     for (const cookie of enabledCookies) {
-      if (cookie.name.trim() && cookie.value.trim()) {
+      if (
+        cookie.domain.trim()
+        && cookie.path.trim()
+        && cookie.name.trim()
+        && cookie.value.trim()
+      ) {
         requestHeaders.push({
           header: "cookie",
           operation: "append",

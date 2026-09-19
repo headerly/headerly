@@ -7,6 +7,9 @@ import { WxtVitest } from "wxt/testing/vitest-plugin";
 
 export default defineConfig({
   plugins: [vue(), vueJsx(), tailwindcss(), WxtVitest()],
+  test: {
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+  },
   resolve: {
     alias: {
       "#": resolve("src/entrypoints/popup"),

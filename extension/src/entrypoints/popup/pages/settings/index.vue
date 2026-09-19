@@ -63,10 +63,12 @@ const settings = useCreateSettings();
                       v-model="settingsStore[field.key]"
                       @update:model-value="value => field.onChange?.(String(value))"
                     >
-                      <SelectTrigger class="min-w-60">
+                      <SelectTrigger
+                        :data-testid="`settings-${field.key}`" class="min-w-60"
+                      >
                         <SelectValue :placeholder="t('common.selectOptions')" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent :data-testid="field.key === 'language' ? 'settings-language-options' : undefined">
                         <SelectGroup>
                           <SelectItem v-for="option in field.options" :key="option.value" :value="option.value">
                             {{ option.label }}
@@ -86,6 +88,7 @@ const settings = useCreateSettings();
                 >
                   <Checkbox
                     v-model="settingsStore[field.key]"
+                    :data-testid="`settings-${field.key}`"
                   />
                   {{ field.label }}
                   <InfoTooltip
@@ -105,6 +108,7 @@ const settings = useCreateSettings();
         <template #main>
           <div class="flex gap-2">
             <Button
+              data-testid="reinitialize-all-rules"
               variant="secondary"
               class="flex items-center"
               @click="async () => {

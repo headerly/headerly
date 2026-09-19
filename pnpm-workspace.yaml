@@ -40,6 +40,7 @@ catalog:
   "@vitejs/plugin-vue": ^6.0.8
   "@vitejs/plugin-vue-jsx": ^5.1.6
   "@vitest/browser-playwright": ^4.1.10
+  "@vitest/ui": 4.1.10
   "@vueuse/core": ^14.4.0
   "@vueuse/integrations": ^14.4.0
   "@webext-core/messaging": ^4.0.0

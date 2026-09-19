@@ -69,6 +69,8 @@ function handleMiddleClick() {
     :profile
   >
     <Button
+      :data-testid="`profile-${profile.id}`"
+      :data-profile-enabled="profile.enabled"
       :size="layout === 'icon' ? 'icon-sm' : 'default'"
       :variant="buttonVariant"
       :class="cn(

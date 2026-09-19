@@ -84,7 +84,9 @@ function isVisible(action: ProfileActionItem) {
           v-if="action.type === 'submenu'"
         >
           <component :is="menuComponents.subTrigger">
-            {{ action.label(profile) }}
+            <span :data-testid="`profile-action-${action.id}`">
+              {{ action.label(profile) }}
+            </span>
           </component>
           <component :is="menuComponents.subContent" class="min-w-44">
             <template
@@ -100,6 +102,7 @@ function isVisible(action: ProfileActionItem) {
                 v-else-if="isVisible(childAction)"
                 :class="{ 'pl-6.5': childAction.inset }"
                 :disabled="childAction.disabled?.(profile)"
+                :data-testid="`profile-action-${childAction.id}`"
                 :variant="childAction.variant"
                 @click="handleAction(childAction)"
               >
@@ -125,6 +128,7 @@ function isVisible(action: ProfileActionItem) {
           :is="menuComponents.item"
           v-else-if="isVisible(action)"
           :disabled="action.disabled?.(profile)"
+          :data-testid="`profile-action-${action.id}`"
           :variant="action.variant"
           @click="handleAction(action)"
         >

@@ -1,0 +1,220 @@
+import { describe, expect, it } from "vitest";
+import { setupExtensionSuite } from "../suite";
+import { fetchEcho, group, header, item, profile } from "../test-util";
+
+describe("documented tab and tab-group conditions", { concurrent: false }, () => {
+  const state = setupExtensionSuite();
+  const scopedHeaders = () => [group([header("x-tab-scope", "set", "matched")])];
+
+  it("includes selected tab IDs and excludes selected tab IDs", async () => {
+    const { extension, server } = state;
+    await extension.setProfiles([], 0);
+    const first = await extension.context.newPage();
+    const second = await extension.context.newPage();
+    await first.goto(`${server.loopbackOrigin}/page?tab=first`);
+    await second.goto(`${server.loopbackOrigin}/page?tab=second`);
+    const firstId = await extension.tabId(first);
+
+    await extension.setProfiles([profile({
+      filters: { tabIds: group([item([firstId])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+    expect((await extension.registrations())[Object.keys(await extension.registrations())[0]!]?.ruleScope)
+      .toBe("session");
+    await expect.poll(async () => (await fetchEcho(first, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBe("matched");
+    await expect.poll(async () => (await fetchEcho(second, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBeUndefined();
+
+    await extension.setProfiles([profile({
+      filters: { excludedTabIds: group([item([firstId])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+    await expect.poll(async () => (await fetchEcho(first, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBeUndefined();
+    await expect.poll(async () => (await fetchEcho(second, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBe("matched");
+    await first.close();
+    await second.close();
+  });
+
+  it("removes closed tab IDs and pauses a profile when its selection becomes empty", async () => {
+    const { extension, server } = state;
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page?tab=close-me`);
+    const tabId = await extension.tabId(page);
+    await extension.setProfiles([profile({
+      filters: { tabIds: group([item([tabId])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+    await page.close();
+
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.filters.tabIds?.items[0]?.value)
+      .toEqual([]);
+    expect((await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await expect.poll(() => extension.ruleCount()).toBe(0);
+  });
+
+  it("keeps an included tab-group condition synchronized with membership", async () => {
+    const { extension, server } = state;
+    const first = await extension.context.newPage();
+    const second = await extension.context.newPage();
+    await first.goto(`${server.loopbackOrigin}/page?group=first`);
+    await second.goto(`${server.loopbackOrigin}/page?group=second`);
+    const firstId = await extension.tabId(first);
+    const secondId = await extension.tabId(second);
+    const groupId = await extension.worker.evaluate(async (tabId) => {
+      return await browser.tabs.group({ tabIds: [tabId] });
+    }, firstId);
+    await extension.setProfiles([profile({
+      filters: { tabGroups: group([item([{ groupId, tabIds: [firstId] }])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+
+    await extension.worker.evaluate(async ({ groupId: targetGroupId, tabId }) => {
+      await browser.tabs.group({ groupId: targetGroupId, tabIds: [tabId] });
+    }, { groupId, tabId: secondId });
+    await expect.poll(async () => {
+      return (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value[0]?.tabIds.toSorted();
+    }).toEqual([firstId, secondId].toSorted());
+    await expect.poll(async () => (await fetchEcho(second, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBe("matched");
+
+    await extension.worker.evaluate(async tabId => await browser.tabs.ungroup(tabId), firstId);
+    await expect.poll(async () => {
+      return (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value[0]?.tabIds;
+    }).toEqual([secondId]);
+    await expect.poll(async () => (await fetchEcho(first, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBeUndefined();
+    await first.close();
+    await second.close();
+  });
+
+  it("excludes every tab currently synchronized from a selected group", async () => {
+    const { extension, server } = state;
+    const grouped = await extension.context.newPage();
+    const ungrouped = await extension.context.newPage();
+    await grouped.goto(`${server.loopbackOrigin}/page?excluded-group=true`);
+    await ungrouped.goto(`${server.loopbackOrigin}/page?excluded-group=false`);
+    const groupedId = await extension.tabId(grouped);
+    const groupId = await extension.worker.evaluate(async (tabId) => {
+      return await browser.tabs.group({ tabIds: [tabId] });
+    }, groupedId);
+    await extension.setProfiles([profile({
+      filters: { excludedTabGroups: group([item([{ groupId, tabIds: [groupedId] }])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+
+    expect((await fetchEcho(grouped, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBeUndefined();
+    expect((await fetchEcho(ungrouped, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBe("matched");
+    await grouped.close();
+    await ungrouped.close();
+  });
+
+  it("removes a deleted group and pauses the now-unscoped profile", async () => {
+    const { extension, server } = state;
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page?remove-group=true`);
+    const tabId = await extension.tabId(page);
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), tabId);
+    await extension.setProfiles([profile({
+      filters: { tabGroups: group([item([{ groupId, tabIds: [tabId] }])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+    await extension.worker.evaluate(async id => await browser.tabs.ungroup(id), tabId);
+
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value)
+      .toEqual([]);
+    expect((await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await page.close();
+  });
+
+  it("clears temporary selections and pauses affected profiles after browser restart", async () => {
+    const { extension, server } = state;
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page?restart=true`);
+    const tabId = await extension.tabId(page);
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), tabId);
+    await extension.setProfiles([profile({
+      filters: {
+        tabGroups: group([item([{ groupId, tabIds: [tabId] }])]),
+        tabIds: group([item([tabId])]),
+      },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+
+    await extension.restart();
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.filters.tabIds?.items[0]?.value)
+      .toEqual([]);
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.filters.tabGroups?.items[0]?.value)
+      .toEqual([]);
+    const restarted = (await extension.manager()).profiles[0]!;
+    expect(restarted.filters.tabIds?.items[0]?.value).toEqual([]);
+    expect(restarted.filters.tabGroups?.items[0]?.value).toEqual([]);
+    expect(await extension.ruleCount()).toBe(0);
+  });
+
+  it("unions explicit tabs with group members and recovers from overlapping tab exclusions", async () => {
+    const { extension, server } = state;
+    const pages = await Promise.all(Array.from({ length: 3 }, async (_, index) => {
+      const page = await extension.context.newPage();
+      await page.goto(`${server.loopbackOrigin}/page?union=${index}`);
+      return page;
+    }));
+    const [firstId, secondId] = await Promise.all(pages.slice(0, 2).map(page => extension.tabId(page)));
+    const groupId = await extension.worker.evaluate(async id => await browser.tabs.group({ tabIds: [id] }), secondId!);
+    const target = profile({
+      filters: {
+        tabIds: group([item([firstId!])]),
+        tabGroups: group([item([{ groupId, tabIds: [secondId!] }])]),
+      },
+      requestHeaderModGroups: scopedHeaders(),
+    });
+    await extension.setProfiles([target], 1);
+    expect((await fetchEcho(pages[0]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBe("matched");
+    expect((await fetchEcho(pages[1]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBe("matched");
+    expect((await fetchEcho(pages[2]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBeUndefined();
+    const manager = await extension.manager();
+    manager.profiles[0]!.filters.excludedTabIds = group([item([secondId!])]);
+    await extension.updateManager(manager);
+    await expect.poll(async () => (await extension.errors())[target.id]).toMatch(/includes and excludes the same tab ID/i);
+    await expect.poll(() => extension.ruleCount()).toBe(0);
+    expect((await extension.registrations())[target.id]).toBeUndefined();
+    expect((await fetchEcho(pages[0]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBeUndefined();
+
+    const thirdId = await extension.tabId(pages[2]!);
+    manager.profiles[0]!.filters.excludedTabIds = group([item([thirdId])]);
+    await extension.updateManager(manager);
+    await expect.poll(() => extension.errors()).toEqual({});
+    await expect.poll(() => extension.ruleCount()).toBe(1);
+    expect((await fetchEcho(pages[0]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBe("matched");
+    expect((await fetchEcho(pages[1]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBe("matched");
+    expect((await fetchEcho(pages[2]!, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"]).toBeUndefined();
+  });
+
+  it.each(["tabIds", "excludedTabIds"] as const)("preserves remaining %s when one selected tab closes", async (filter) => {
+    const { extension, server } = state;
+    const first = await extension.context.newPage();
+    const second = await extension.context.newPage();
+    await first.goto(`${server.loopbackOrigin}/page?partial=first`);
+    await second.goto(`${server.loopbackOrigin}/page?partial=second`);
+    const firstId = await extension.tabId(first);
+    const secondId = await extension.tabId(second);
+    await extension.setProfiles([profile({
+      filters: { [filter]: group([item([firstId, secondId])]) },
+      requestHeaderModGroups: scopedHeaders(),
+    })], 1);
+    await first.close();
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.filters[filter]?.items[0]?.value).toEqual([secondId]);
+    expect((await extension.manager()).profiles[0]?.enabled).toBe(true);
+    await expect.poll(async () => (await extension.rules())[0]?.condition[filter]).toEqual([secondId]);
+    expect((await fetchEcho(second, `${server.loopbackOrigin}/echo`)).headers["x-tab-scope"])
+      .toBe(filter === "tabIds" ? "matched" : undefined);
+    await second.close();
+    await expect.poll(async () => (await extension.manager()).profiles[0]?.enabled).toBe(false);
+    await expect.poll(() => extension.ruleCount()).toBe(0);
+  });
+});

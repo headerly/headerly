@@ -272,6 +272,7 @@ function getRuleActionTypeDocumentationLink(type: RuleActionType) {
             <Label class="size-8">
               <Switch
                 v-model="settingsStore.powerOn"
+                data-testid="extension-power"
                 class="data-[state=checked]:bg-brand!"
               />
             </Label>

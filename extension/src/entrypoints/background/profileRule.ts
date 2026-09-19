@@ -61,6 +61,8 @@ export function hasRegisterableAction(profile: ProfileActionData) {
       const hasSyncCookie = profile.syncCookieGroups?.some(group =>
         group.items.some(item =>
           item.enabled
+          && Boolean(item.domain.trim())
+          && Boolean(item.path.trim())
           && Boolean(item.name.trim())
           && Boolean(item.value.trim()),
         ),

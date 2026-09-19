@@ -115,6 +115,7 @@ const undoAndRedoButtonGroup = [
       <EmojiPicker v-model="profilesStore.selectedProfile.emoji" />
       <Button
         v-if="!profileNameEditing"
+        data-testid="profile-name"
         variant="ghost"
         class="flex items-center gap-1 px-1.5 text-base font-semibold"
         @click="() => {
@@ -135,6 +136,7 @@ const undoAndRedoButtonGroup = [
       <div v-else class="flex gap-1.5">
         <Input
           v-model.trim="profileNameInput"
+          data-testid="profile-name-input"
           :class="cn(`
             max-w-45 px-1.5 text-base font-semibold
             xl:max-w-60
@@ -145,6 +147,7 @@ const undoAndRedoButtonGroup = [
           @keyup.esc="profileNameEditing = false"
         />
         <Button
+          data-testid="profile-name-save"
           variant="secondary"
           size="icon"
           class="flex items-center gap-2 text-base"
