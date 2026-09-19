@@ -63,10 +63,14 @@ const settings = useCreateSettings();
                       v-model="settingsStore[field.key]"
                       @update:model-value="value => field.onChange?.(String(value))"
                     >
-                      <SelectTrigger class="min-w-60">
+                      <SelectTrigger
+                        :data-testid="field.key === 'language' ? 'settings-language' : undefined" class="
+                          min-w-60
+                        "
+                      >
                         <SelectValue :placeholder="t('common.selectOptions')" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent :data-testid="field.key === 'language' ? 'settings-language-options' : undefined">
                         <SelectGroup>
                           <SelectItem v-for="option in field.options" :key="option.value" :value="option.value">
                             {{ option.label }}
