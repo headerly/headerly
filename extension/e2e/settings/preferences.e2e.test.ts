@@ -88,6 +88,38 @@ describe("theme and profile preferences", { concurrent: false }, () => {
     await settings.close();
   });
 
+  it("changes the recent header count from 1 to 20 and persists it across reloads", async () => {
+    const { extension } = state;
+    await extension.setProfiles([profile({
+      requestHeaderModGroups: [group([header("x-original", "set", "value")])],
+      responseHeaderModGroups: [group([header("x-response", "set", "value")])],
+    })], 1);
+    const popup = await extension.openExtensionPage();
+    await popup.evaluate(() => {
+      for (const type of ["request", "response"])
+        localStorage.setItem(`recent-${type}-header-names`, JSON.stringify(Array.from({ length: 20 }, (_, index) => `x-${type}-${index}`)));
+    });
+    await popup.reload();
+    const shortcuts = popup.getByRole("button", { name: /^Add x-(request|response)-\d+ header$/ });
+    await expect.poll(() => shortcuts.count()).toBe(6);
+    const settings = await extension.openExtensionPage("/settings");
+    const count = settings.getByTestId("settings-recentlyAddedCount");
+    await expect.poll(() => count.textContent()).toBe("3");
+    await count.click();
+    expect(await settings.getByRole("option").count()).toBe(20);
+    await settings.getByRole("option", { name: "1", exact: true }).click();
+    await expect.poll(() => shortcuts.count()).toBe(2);
+    await count.click();
+    await settings.getByRole("option", { name: "20", exact: true }).click();
+    await expect.poll(() => shortcuts.count()).toBe(40);
+    await settings.reload();
+    await expect.poll(() => count.textContent()).toBe("20");
+    await popup.reload();
+    await expect.poll(() => shortcuts.count()).toBe(40);
+    await popup.close();
+    await settings.close();
+  });
+
   it("hides and restores recent request and response headers without deleting history or fields", async () => {
     const { extension } = state;
     await extension.setProfiles([profile({

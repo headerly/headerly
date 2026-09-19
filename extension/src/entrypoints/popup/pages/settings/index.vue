@@ -61,7 +61,7 @@ const settings = useCreateSettings();
                   <div class="flex items-center gap-1">
                     <Select
                       v-model="settingsStore[field.key]"
-                      @update:model-value="value => field.onChange?.(String(value))"
+                      @update:model-value="value => 'onChange' in field && field.onChange?.(String(value))"
                     >
                       <SelectTrigger
                         :data-testid="`settings-${field.key}`" class="min-w-60"

@@ -1,8 +1,10 @@
 import type { Ref } from "vue";
 import type { ActionType } from "@/lib/types";
 import { useLocalStorage } from "@vueuse/core";
+import { computed } from "vue";
+import { useSettingsStore } from "@/entrypoints/popup/stores/useSettingsStore";
 
-const RECENT_HEADER_NAMES_LIMIT = 3;
+const RECENT_HEADER_NAMES_LIMIT = 20;
 const RECENT_HEADER_NAMES_STORAGE_KEYS = {
   request: "recent-request-header-names",
   response: "recent-response-header-names",
@@ -48,6 +50,12 @@ function getRecentHeaderNameRef(actionType: ActionType) {
 
 export function useRecentHeaderNames(actionType: ActionType) {
   const recentHeaderNames = getRecentHeaderNameRef(actionType);
+  const settingsStore = useSettingsStore();
+  const visibleHeaderNames = computed(() => {
+    const count = settingsStore.recentlyAddedCount;
+    const limit = Number.isFinite(count) ? Math.min(20, Math.max(1, Math.trunc(count))) : 3;
+    return recentHeaderNames.value.slice(0, limit);
+  });
 
   function addRecentHeaderName(name: string) {
     recentHeaderNames.value = addNameToRecentHeaderNames(recentHeaderNames.value, name);
@@ -58,7 +66,7 @@ export function useRecentHeaderNames(actionType: ActionType) {
   }
 
   return {
-    recentHeaderNames,
+    recentHeaderNames: visibleHeaderNames,
     addRecentHeaderName,
     removeRecentHeaderName,
   };

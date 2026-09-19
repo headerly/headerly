@@ -186,7 +186,7 @@ export function usePowerOnStorage() {
 
 export function useLanguageStorage() {
   const browserLanguage = browser.i18n.getUILanguage().replace("_", "-");
-  const initialLanguage = SUPPORT_LOCALES.includes(browserLanguage) ? browserLanguage as SupportLocale : "en";
+  const initialLanguage = SUPPORT_LOCALES.find(locale => locale === browserLanguage) ?? "en";
   return useLocalStorageWrapper<SupportLocale>("language", initialLanguage);
 }
 
@@ -196,4 +196,8 @@ export function useShowCommentsInlineStorage() {
 
 export function useHideRecentlyAddedStorage() {
   return useLocalStorageWrapper<boolean>("hide-recently-added", false);
+}
+
+export function useRecentlyAddedCountStorage() {
+  return useLocalStorageWrapper<number>("recently-added-count", 3);
 }

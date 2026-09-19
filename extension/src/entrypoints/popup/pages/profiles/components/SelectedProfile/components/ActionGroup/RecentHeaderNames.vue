@@ -22,7 +22,7 @@ const { t } = useI18n();
   >
     <div class="flex w-full items-center gap-1">
       <span class="sr-only">{{ t("headerMod.recent.title") }}</span>
-      <div v-auto-animate class="w-full gap-1 space-x-1">
+      <div v-auto-animate class="flex w-full flex-wrap gap-1">
         <span
           v-for="name in names"
           :key="name"

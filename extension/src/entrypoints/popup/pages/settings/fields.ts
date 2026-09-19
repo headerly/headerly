@@ -12,7 +12,7 @@ interface BaseSettingField {
 }
 
 interface SelectField extends BaseSettingField {
-  options: readonly { label: string; value: string }[];
+  options: readonly { label: string; value: string | number }[];
   type: "select";
   onChange?: (v: string) => void;
 }
@@ -81,6 +81,15 @@ export function useCreateSettings() {
           label: t("settings.fields.hideRecentlyAdded"),
           key: "hideRecentlyAdded",
           description: t("settings.descriptions.hideRecentlyAdded"),
+        },
+        {
+          type: "select",
+          label: t("settings.fields.recentlyAddedCount"),
+          key: "recentlyAddedCount",
+          options: Array.from({ length: 20 }, (_, index) => ({
+            label: String(index + 1),
+            value: index + 1,
+          })),
         },
       ],
     },

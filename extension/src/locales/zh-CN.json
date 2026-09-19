@@ -420,6 +420,7 @@
     },
     "fieldLabel": "{label}：",
     "fields": {
+      "recentlyAddedCount": "最近添加的标头数量",
       "hideRecentlyAdded": "隐藏最近添加的标头",
       "language": "语言",
       "showCommentsInline": "在字段外侧显示备注",

@@ -5,6 +5,7 @@ import {
   useHideRecentlyAddedStorage,
   useLanguageStorage,
   usePowerOnStorage,
+  useRecentlyAddedCountStorage,
   useShowCommentsInlineStorage,
 } from "@/lib/storage";
 
@@ -17,6 +18,7 @@ export const useSettingsStore = defineStore("settings", () => {
     language: useLanguageStorage(),
     showCommentsInline: useShowCommentsInlineStorage(),
     hideRecentlyAdded: useHideRecentlyAddedStorage(),
+    recentlyAddedCount: useRecentlyAddedCountStorage(),
   } as const;
 
   const isModified = computed(() => {

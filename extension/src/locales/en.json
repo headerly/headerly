@@ -420,6 +420,7 @@
     },
     "fieldLabel": "{label}:",
     "fields": {
+      "recentlyAddedCount": "Number of recently added headers",
       "hideRecentlyAdded": "Hide recently added headers",
       "language": "Language",
       "showCommentsInline": "Show field comments inline",
