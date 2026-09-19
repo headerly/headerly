@@ -46,4 +46,4 @@ Detailed changes for each release are documented in the [CHANGELOG](./extension/
 
 ## License
 
-MIT | © 2026 aiktb made with ❤️.
+MIT | © 2026 Brian Zhou made with ❤️.
