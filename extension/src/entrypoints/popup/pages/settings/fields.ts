@@ -12,7 +12,7 @@ interface BaseSettingField {
 }
 
 interface SelectField extends BaseSettingField {
-  options: readonly { label: string; value: string | number }[];
+  options: readonly { label: string; value: string }[];
   type: "select";
   onChange?: (v: string) => void;
 }
@@ -22,7 +22,14 @@ interface CheckboxField extends BaseSettingField {
   onChange?: (e: Event) => void;
 }
 
-type SettingField = SelectField | CheckboxField;
+interface NumberField extends BaseSettingField {
+  type: "number";
+  min: number;
+  max: number;
+  step: number;
+}
+
+type SettingField = SelectField | CheckboxField | NumberField;
 
 interface SettingGroup {
   fieldsetTitle: string;
@@ -83,13 +90,12 @@ export function useCreateSettings() {
           description: t("settings.descriptions.hideRecentlyAdded"),
         },
         {
-          type: "select",
+          type: "number",
           label: t("settings.fields.recentlyAddedCount"),
           key: "recentlyAddedCount",
-          options: Array.from({ length: 20 }, (_, index) => ({
-            label: String(index + 1),
-            value: index + 1,
-          })),
+          min: 1,
+          max: 20,
+          step: 1,
         },
       ],
     },

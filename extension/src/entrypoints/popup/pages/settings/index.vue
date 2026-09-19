@@ -3,6 +3,13 @@ import { Button } from "@headerly/ui/components/button";
 import { Checkbox } from "@headerly/ui/components/checkbox";
 import { Label } from "@headerly/ui/components/label";
 import {
+  NumberField,
+  NumberFieldContent,
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from "@headerly/ui/components/number-field";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -79,6 +86,25 @@ const settings = useCreateSettings();
                   </div>
                 </Label>
               </div>
+              <NumberField
+                v-else-if="field.type === 'number'"
+                :id="`settings-${field.key}`"
+                :model-value="settingsStore[field.key]"
+                :min="field.min"
+                :max="field.max"
+                :step="field.step"
+                class="w-60"
+                @update:model-value="value => settingsStore[field.key] = Number.isFinite(value) ? value : 3"
+              >
+                <Label :for="`settings-${field.key}`">
+                  {{ t("settings.fieldLabel", { label: field.label }) }}
+                </Label>
+                <NumberFieldContent>
+                  <NumberFieldDecrement :data-testid="`settings-${field.key}-decrement`" />
+                  <NumberFieldInput :data-testid="`settings-${field.key}`" />
+                  <NumberFieldIncrement :data-testid="`settings-${field.key}-increment`" />
+                </NumberFieldContent>
+              </NumberField>
               <div
                 v-else-if="field.type === 'checkbox'"
                 class="flex items-center"
