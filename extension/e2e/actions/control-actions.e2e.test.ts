@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { setupExtensionSuite } from "../suite";
-import { group, item, profile } from "../test-util";
+import { fetchEcho, group, header, item, profile } from "../test-util";
 
 describe("documented redirect, block, allow, upgrade, and frame actions", { concurrent: false }, () => {
   const state = setupExtensionSuite();
@@ -41,6 +41,42 @@ describe("documented redirect, block, allow, upgrade, and frame actions", { conc
     await expect(page.goto(`${server.loopbackOrigin}/still-blocked`))
       .rejects
       .toThrow(/ERR_BLOCKED_BY_CLIENT/);
+    await page.close();
+  });
+
+  it("uses a higher-priority narrow regex allow to exclude broader header changes", async () => {
+    const { extension, server } = state;
+    const escapedOrigin = server.loopbackOrigin.replaceAll(".", "\\.");
+    const broad = profile({
+      filters: { regexFilter: [item(`^${escapedOrigin}/path/api/`)] },
+      priority: 2,
+      requestHeaderModGroups: [group([header("x-priority", "set", "modified")])],
+    });
+    const exception = profile({
+      filters: { regexFilter: [item(`^${escapedOrigin}/path/api/private/`)] },
+      priority: 3,
+      ruleActionType: "allow",
+    });
+    const page = await extension.context.newPage();
+    await page.goto(`${server.loopbackOrigin}/page`);
+    const includedUrl = `${server.loopbackOrigin}/path/api/public/data`;
+    const excludedUrl = `${server.loopbackOrigin}/path/api/private/data`;
+
+    // Prove the broad regex also matches the URL that will be excluded.
+    await extension.setProfiles([broad], 1);
+    expect((await fetchEcho(page, excludedUrl)).headers["x-priority"]).toBe("modified");
+
+    await extension.setProfiles([broad, exception], 2);
+    expect((await fetchEcho(page, includedUrl)).headers["x-priority"]).toBe("modified");
+    expect((await fetchEcho(page, excludedUrl)).headers["x-priority"]).toBeUndefined();
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/api/private-other/data`)).headers["x-priority"])
+      .toBe("modified");
+    expect((await fetchEcho(page, `${server.loopbackOrigin}/path/outside/data`)).headers["x-priority"])
+      .toBeUndefined();
+
+    // A lower-priority allow must not suppress the broader header modification.
+    await extension.setProfiles([broad, { ...exception, priority: 1 }], 2);
+    expect((await fetchEcho(page, excludedUrl)).headers["x-priority"]).toBe("modified");
     await page.close();
   });
 
