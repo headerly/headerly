@@ -5,7 +5,9 @@ import { hasEmptyTemporaryTabFilter } from "./profileRule";
 
 const TAB_ID_CLEANUP_DELAY_MS = 500;
 const TAB_ID_FILTER_KEYS = ["tabIds", "excludedTabIds"] as const;
-const TAB_SESSION_INITIALIZED_KEY = "headerlyTabSessionInitialized";
+const tabSessionInitializedItem = storage.defineItem<boolean>("session:headerlyTabSessionInitialized", {
+  fallback: false,
+});
 
 /** Removes closed tab IDs from persisted profile filters. */
 export function setupTabIdCleanup(options: {
@@ -25,8 +27,7 @@ export function setupTabIdCleanup(options: {
 
   function initializeTabSession() {
     return profileManagerMutex.runExclusive(async () => {
-      const stored = await browser.storage.session.get(TAB_SESSION_INITIALIZED_KEY);
-      if (stored[TAB_SESSION_INITIALIZED_KEY] === true) {
+      if (await tabSessionInitializedItem.getValue()) {
         return;
       }
       // Clear the previous session before accepting new bindings. Delaying this
@@ -37,7 +38,7 @@ export function setupTabIdCleanup(options: {
         await profileManagerItem.setValue(nextManager);
       }
       // A worker interrupted during cleanup must retry on its next start.
-      await browser.storage.session.set({ [TAB_SESSION_INITIALIZED_KEY]: true });
+      await tabSessionInitializedItem.setValue(true);
     });
   }
 
@@ -67,26 +68,7 @@ export function setupTabIdCleanup(options: {
 }
 
 function clearTabIds(manager: ProfileManager) {
-  const nextManager = structuredClone(manager);
-  let changed = false;
-
-  for (const profile of nextManager.profiles) {
-    let profileChanged = false;
-    for (const key of TAB_ID_FILTER_KEYS) {
-      for (const item of profile.filters[key]?.items ?? []) {
-        if (item.value.length > 0) {
-          item.value = [];
-          changed = true;
-          profileChanged = true;
-        }
-      }
-    }
-    if (profileChanged && profile.enabled && hasEmptyTemporaryTabFilter(profile)) {
-      profile.enabled = false;
-    }
-  }
-
-  return changed ? nextManager : manager;
+  return filterTabIds(manager, () => false);
 }
 
 function removeClosedTabIds(
@@ -97,6 +79,10 @@ function removeClosedTabIds(
     return manager;
   }
 
+  return filterTabIds(manager, tabId => !removedTabIds.has(tabId));
+}
+
+function filterTabIds(manager: ProfileManager, keepTabId: (tabId: number) => boolean) {
   const nextManager = structuredClone(manager);
   let changed = false;
 
@@ -104,7 +90,7 @@ function removeClosedTabIds(
     let profileChanged = false;
     for (const key of TAB_ID_FILTER_KEYS) {
       for (const item of profile.filters[key]?.items ?? []) {
-        const nextValue = item.value.filter(tabId => !removedTabIds.has(tabId));
+        const nextValue = item.value.filter(keepTabId);
         if (nextValue.length !== item.value.length) {
           item.value = nextValue;
           changed = true;

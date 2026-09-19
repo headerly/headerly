@@ -21,7 +21,7 @@ describe("tab session initialization", () => {
     const mutex = new Mutex();
     const startup = vi.spyOn(browser.runtime.onStartup, "addListener").mockImplementation(() => {});
     vi.spyOn(browser.tabs.onRemoved, "addListener").mockImplementation(() => {});
-    vi.spyOn(browser.storage.session, "get").mockImplementation(async () => ({ headerlyTabSessionInitialized: initialized }));
+    vi.spyOn(browser.storage.session, "get").mockImplementation(async () => initialized ? { headerlyTabSessionInitialized: true } : {});
     const markInitialized = vi.spyOn(browser.storage.session, "set").mockImplementation(async () => {
       expect(manager.profiles[0]?.filters.tabIds?.items[0]?.value).toEqual([]);
       initialized = true;
