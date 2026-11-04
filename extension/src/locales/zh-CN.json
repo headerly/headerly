@@ -256,6 +256,7 @@
     }
   },
   "share": {
+    "selectGroup": "选择分组",
     "copyLink": "复制分享链接",
     "copyToClipboard": "复制到剪贴板",
     "saveAsFile": "保存为文件",

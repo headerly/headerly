@@ -23,7 +23,8 @@ import type {
   tabIdsFilterSchema,
   urlOrRegexFilterSchema,
 } from "./filters";
-import type { profileExchangeZodSchema, profileSchema, profileWithoutIdsZodSchema } from "./profile";
+import type { profileSchema } from "./profile";
+import type { profileExchangeZodSchema, profileWithoutIdsZodSchema } from "./share";
 
 export type GroupItem = z.infer<typeof groupItemSchema>;
 export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;

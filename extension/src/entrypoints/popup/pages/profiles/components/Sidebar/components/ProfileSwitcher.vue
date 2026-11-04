@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
+import type { RuleActionType } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, useTemplateRef, watch } from "vue";
 import {
@@ -9,6 +9,7 @@ import {
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { buildProfileBlocks } from "@/lib/profileBlocks";
 import ProfileGroupBlock from "./ProfileGroupBlock.vue";
 import { findProfileIdAfterGroupCollapse } from "./profileGroupSelection";
 import ProfileListItem from "./ProfileListItem.vue";
@@ -16,21 +17,6 @@ import ProfileListItem from "./ProfileListItem.vue";
 const { defaultRuleActionType } = defineProps<{
   defaultRuleActionType: RuleActionType;
 }>();
-
-interface ProfileBlock {
-  id: string;
-  profile: Profile;
-  type: "profile";
-}
-
-interface GroupBlock {
-  group: ProfileGroup;
-  id: string;
-  profiles: Profile[];
-  type: "group";
-}
-
-type ProfileSidebarBlock = ProfileBlock | GroupBlock;
 
 const profilesStore = useProfilesStore();
 const profileGroupOpenStates = useLocalStorageOpenStateRecord(PROFILE_GROUP_OPEN_STATES_STORAGE_KEY);
@@ -64,35 +50,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
 const groupBlockRefs = new Map<string, InstanceType<typeof ProfileGroupBlock>>();
-const profileGroupsById = computed(() => new Map(profilesStore.profileGroups.map(group => [group.id, group])));
-const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
-  const addedGroupIds = new Set<string>();
-  return profilesStore.manager.profiles.flatMap((profile): ProfileSidebarBlock[] => {
-    let group: ProfileGroup | undefined;
-    if (profile.groupId) {
-      group = profileGroupsById.value.get(profile.groupId);
-    }
-    if (!group) {
-      return [{
-        id: profile.id,
-        profile,
-        type: "profile",
-      }];
-    }
-
-    if (addedGroupIds.has(group.id)) {
-      return [];
-    }
-
-    addedGroupIds.add(group.id);
-    return [{
-      group,
-      id: group.id,
-      profiles: profilesStore.manager.profiles.filter(candidate => candidate.groupId === group.id),
-      type: "group",
-    }];
-  });
-});
+const sidebarBlocks = computed(() => buildProfileBlocks(profilesStore.manager.profiles, profilesStore.profileGroups));
 
 watch(
   () => profilesStore.newProfileGroupIdToEdit,
@@ -143,7 +101,7 @@ function flattenProfileIds(
   blocks = sidebarBlocks.value,
 ) {
   return blocks.flatMap((block) => {
-    if (block.type === "profile") {
+    if (block.kind === "profile") {
       return [block.profile.id];
     }
 
@@ -177,7 +135,7 @@ function handleSidebarBlocksSort(event: { newIndex: number; oldIndex: number }) 
 
 function handleGroupProfilesSort(groupId: string, event: { newIndex: number; oldIndex: number }) {
   const blocks = sidebarBlocks.value.map((block) => {
-    if (block.type !== "group" || block.group.id !== groupId) {
+    if (block.kind !== "group" || block.group.id !== groupId) {
       return block;
     }
 
@@ -190,14 +148,14 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
 }
 
 async function handleGroupCollapsed(groupId: string) {
-  const selectionBlocks = sidebarBlocks.value.map(block => block.type === "group"
+  const selectionBlocks = sidebarBlocks.value.map(block => block.kind === "group"
     ? {
-        type: block.type,
+        type: block.kind,
         groupId: block.group.id,
         profileIds: block.profiles.map(profile => profile.id),
       }
     : {
-        type: block.type,
+        type: block.kind,
         profileId: block.profile.id,
       });
   const openGroupIds = new Set(
@@ -234,7 +192,7 @@ async function handleGroupCollapsed(groupId: string) {
       :key="block.id"
     >
       <ProfileGroupBlock
-        v-if="block.type === 'group'"
+        v-if="block.kind === 'group'"
         :ref="(instance) => setGroupBlockRef(
           block.group.id,
           instance as InstanceType<typeof ProfileGroupBlock> | null,

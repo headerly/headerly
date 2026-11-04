@@ -256,6 +256,7 @@
     }
   },
   "share": {
+    "selectGroup": "Select group",
     "copyLink": "Copy Share Link",
     "copyToClipboard": "Copy to Clipboard",
     "saveAsFile": "Save as File",

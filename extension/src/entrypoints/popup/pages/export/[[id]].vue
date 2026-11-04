@@ -27,39 +27,27 @@ const selectedProfiles = ref<Profile[]>([]);
 
 const jsonPreview = ref("");
 
-// Auto-select profile from route param
-watch(() => [profilesStore.ready, route.params.id] as const, ([ready, id]) => {
+// Route entry points select either one profile or every member of a group.
+watch(() => [profilesStore.ready, route.params.id, route.query.groupId] as const, ([ready, id, groupId]) => {
   if (!ready)
     return;
-  const profile = profilesStore.manager.profiles.find(p => p.id === id);
-  if (profile) {
-    selectedProfiles.value = [profile];
-    handleSelectionChange([profile]);
-  }
+  selectedProfiles.value = profilesStore.manager.profiles.filter(profile =>
+    typeof groupId === "string" ? profile.groupId === groupId : profile.id === id,
+  );
 }, { immediate: true });
 
-function handleSelectionChange(profiles: Profile[]) {
-  selectedProfiles.value = profiles;
-  updateJsonPreview();
-}
-
-function updateJsonPreview() {
-  const profiles = selectedProfiles.value;
-  if (profiles.length === 0) {
+watch(() => [selectedProfiles.value, profilesStore.manager.profiles, profilesStore.profileGroups], () => {
+  const selectedIds = new Set(selectedProfiles.value.map(profile => profile.id));
+  if (!profilesStore.manager.profiles.some(profile => selectedIds.has(profile.id))) {
     jsonPreview.value = "";
     return;
   }
-  const profileExchange = createProfileExchange(profiles);
-  for (const profile of profileExchange.profiles) {
-    for (const group of profile.syncCookieGroups ?? []) {
-      for (const item of group.items) {
-        item.value = "";
-      }
-    }
-  }
-
-  jsonPreview.value = JSON.stringify(profileExchange, null, 2);
-}
+  jsonPreview.value = JSON.stringify(createProfileExchange(
+    profilesStore.manager.profiles,
+    profilesStore.profileGroups,
+    selectedIds,
+  ), null, 2);
+}, { deep: true, immediate: true });
 
 const { validJson, validJsonSchema, formatJson } = useJsonValidation(jsonPreview);
 
@@ -117,7 +105,7 @@ async function handleDownloadJson() {
           before:content-['']
         "
       />
-      <ProfileCheckboxes v-model="selectedProfiles" :scroll-target-id-on-mounted="route.params.id" @change="handleSelectionChange" />
+      <ProfileCheckboxes v-model="selectedProfiles" :scroll-target-id-on-mounted="selectedProfiles[0]?.id" />
     </aside>
     <header
       class="

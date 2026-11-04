@@ -67,7 +67,7 @@ Profiles are the core data model (`extension/src/lib/schema.ts`):
 
 - `radio` groups permit one enabled profile; `checkbox` groups permit multiple. Pause/resume state is stored in `lastEnabledProfileIds`
 - Group and profile state share the same undo/redo snapshot; storage migration version 2 initializes `profileGroups`
-- Profile import/export omits groups and membership, and group-only metadata changes must not trigger DNR updates
+- Profile exchange v2 preserves groups, membership, sidebar order, and profile enabled states, but omits local pause/resume history; v1 imports remain supported as ungrouped profiles. Group-only metadata changes must not trigger DNR updates
 
 ### Message Protocol
 

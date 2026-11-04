@@ -12,7 +12,7 @@ import { jsonSchema } from "codemirror-json-schema";
 import { computed, createApp, h } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { i18n } from "#/i18n";
-import { profileExchangeJsonSchema } from "@/lib/schema";
+import { profileExchangeEditorJsonSchema } from "@/lib/schema";
 import JsonSearchPanel from "./JsonSearchPanel.vue";
 import { darkTheme, lightTheme } from "./theme";
 
@@ -66,7 +66,7 @@ const extensions = computed(() => {
       scrollToMatch: range => EditorView.scrollIntoView(range, { y: "center" }),
     }),
     // @ts-expect-error https://github.com/colinhacks/zod/discussions/5936
-    jsonSchema(profileExchangeJsonSchema),
+    jsonSchema(profileExchangeEditorJsonSchema),
     indentationMarkers({
       colors: {
         light: "var(--border)",

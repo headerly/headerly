@@ -234,6 +234,12 @@ defineExpose({ open: openContextMenu });
           />
         </span>
       </ContextMenuItem>
+      <ContextMenuItem as-child>
+        <RouterLink :to="{ path: '/export', query: { groupId: group.id } }" :data-testid="`profile-group-action-share-${group.id}`">
+          <i class="i-lucide-share-2 size-4" />
+          {{ t("common.share") }}
+        </RouterLink>
+      </ContextMenuItem>
       <ContextMenuItem :data-testid="`profile-group-action-ungroup-${group.id}`" @click="profiles.forEach(profile => profilesStore.removeProfileFromGroup(profile.id))">
         <i class="i-lucide-ungroup size-4" />
         {{ t("profileGroup.actions.ungroup") }}
