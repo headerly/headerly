@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@headerly/ui/components/tooltip";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import ProfileGroupFrame from "#/components/ProfileGroupFrame.vue";
 import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
@@ -41,7 +41,8 @@ function toggleGroup(profiles: Profile[]) {
   model.value = groupChecked(profiles) === true ? selected : [...selected, ...profiles];
 }
 const { t } = useI18n();
-const { setRef } = useScrollToProfile({
+const listContainer = useTemplateRef<HTMLElement>("listContainer");
+useScrollToProfile(listContainer, {
   scrollTargetIdOnMounted,
 });
 
@@ -84,6 +85,7 @@ const selectAllLabel = computed(() =>
 
 <template>
   <div
+    ref="listContainer"
     class="
       flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-1.25
       [scrollbar-width:none]
@@ -148,13 +150,13 @@ const selectAllLabel = computed(() =>
         <div class="flex flex-col gap-1">
           <div
             v-for="(profile, memberIndex) in block.profiles" :key="profile.id"
-            :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
+            :data-profile-id="profile.id"
           >
             <ExportProfileOption :profile :index="memberIndex" :checked="isSelected(profile)" @toggle="toggleProfile(profile, !isSelected(profile))" />
           </div>
         </div>
       </ProfileGroupFrame>
-      <div v-else :ref="(el) => setRef(el as HTMLDivElement | null, block.profile.id)">
+      <div v-else :data-profile-id="block.profile.id">
         <ExportProfileOption :profile="block.profile" :index :checked="isSelected(block.profile)" @toggle="toggleProfile(block.profile, !isSelected(block.profile))" />
       </div>
     </div>

@@ -18,7 +18,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "collapsed"): void;
   (e: "sortProfiles", event: { newIndex: number; oldIndex: number }): void;
-  (e: "setRef", el: HTMLDivElement | null, profileId: string): void;
 }>();
 
 const open = useLocalStorageOpenState(
@@ -57,7 +56,7 @@ defineExpose({ openContextMenu });
       <div
         v-for="(profile, index) in profiles"
         :key="profile.id"
-        :ref="(el) => emit('setRef', el as HTMLDivElement | null, profile.id)"
+        :data-profile-id="profile.id"
       >
         <ProfileListItem :index :profile layout="icon" />
       </div>

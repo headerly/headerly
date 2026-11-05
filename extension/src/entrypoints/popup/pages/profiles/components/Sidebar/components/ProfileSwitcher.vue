@@ -21,10 +21,8 @@ const { defaultRuleActionType } = defineProps<{
 const profilesStore = useProfilesStore();
 const profileGroupOpenStates = useLocalStorageOpenStateRecord(PROFILE_GROUP_OPEN_STATES_STORAGE_KEY);
 
-const {
-  setRef,
-  scrollToProfile,
-} = useScrollToProfile({
+const listContainer = useTemplateRef<HTMLElement>("listContainer");
+const { scrollToProfile } = useScrollToProfile(listContainer, {
   scrollTargetIdOnMounted: profilesStore.manager.selectedProfileId,
 });
 
@@ -48,8 +46,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 }
 
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
-const listContainer = useTemplateRef<HTMLElement>("listContainer");
-const groupBlockRefs = new Map<string, InstanceType<typeof ProfileGroupBlock>>();
+const groupBlockRefs = useTemplateRef<InstanceType<typeof ProfileGroupBlock>[]>("groupBlocks");
 const sidebarBlocks = computed(() => buildProfileBlocks(profilesStore.manager.profiles, profilesStore.profileGroups));
 
 watch(
@@ -60,7 +57,7 @@ watch(
 
     await nextTick();
     requestAnimationFrame(() => {
-      const groupBlock = groupBlockRefs.get(groupId);
+      const groupBlock = groupBlockRefs.value?.find(block => block.$props.group.id === groupId);
       if (!groupBlock)
         return;
 
@@ -77,14 +74,6 @@ useSortableAndAutoAnimate({
   list: sidebarBlocks.value,
   onUpdate: handleSidebarBlocksSort,
 });
-
-function setGroupBlockRef(groupId: string, instance: InstanceType<typeof ProfileGroupBlock> | null) {
-  if (instance) {
-    groupBlockRefs.set(groupId, instance);
-  } else {
-    groupBlockRefs.delete(groupId);
-  }
-}
 
 function moveItem<T>(items: T[], oldIndex: number, newIndex: number) {
   if (oldIndex < 0 || oldIndex >= items.length || newIndex < 0 || newIndex >= items.length) {
@@ -193,19 +182,15 @@ async function handleGroupCollapsed(groupId: string) {
     >
       <ProfileGroupBlock
         v-if="block.kind === 'group'"
-        :ref="(instance) => setGroupBlockRef(
-          block.group.id,
-          instance as InstanceType<typeof ProfileGroupBlock> | null,
-        )"
+        ref="groupBlocks"
         :group="block.group"
         :profiles="block.profiles"
         @collapsed="handleGroupCollapsed(block.group.id)"
-        @set-ref="setRef"
         @sort-profiles="handleGroupProfilesSort(block.group.id, $event)"
       />
       <div
         v-else
-        :ref="(el) => setRef(el as HTMLDivElement | null, block.profile.id)"
+        :data-profile-id="block.profile.id"
         data-profile-top-level-sort-handle
       >
         <ProfileListItem

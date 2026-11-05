@@ -1,27 +1,16 @@
-import { onMounted, ref } from "vue";
+import type { ShallowRef } from "vue";
+import { onMounted } from "vue";
 
 interface UseScrollToProfileOptions {
   scrollTargetIdOnMounted?: string;
 }
-export function useScrollToProfile(options: UseScrollToProfileOptions = {}) {
+export function useScrollToProfile(listContainer: Readonly<ShallowRef<HTMLElement | null>>, options: UseScrollToProfileOptions = {}) {
   const { scrollTargetIdOnMounted } = options;
 
-  // Vue cannot guarantee the order of refs,
-  // and must use id map management to ensure access to the correct element.
-  const profileRefs = ref<Map<string, HTMLElement>>(new Map());
-
   function scrollToProfile(profileId: string, behavior: ScrollBehavior) {
-    const target = profileRefs.value.get(profileId);
+    const target = listContainer.value?.querySelector<HTMLElement>(`[data-profile-id="${CSS.escape(profileId)}"]`);
     if (target) {
       target.scrollIntoView({ behavior, block: "center" });
-    }
-  }
-
-  function setRef(el: HTMLElement | null, profileId: string) {
-    if (el === null) {
-      profileRefs.value.delete(profileId);
-    } else {
-      profileRefs.value.set(profileId, el);
     }
   }
 
@@ -32,7 +21,6 @@ export function useScrollToProfile(options: UseScrollToProfileOptions = {}) {
   });
 
   return {
-    setRef,
     scrollToProfile,
   };
 }
