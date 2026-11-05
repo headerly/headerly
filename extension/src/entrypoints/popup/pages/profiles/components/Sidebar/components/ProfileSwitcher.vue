@@ -21,8 +21,7 @@ const { defaultRuleActionType } = defineProps<{
 const profilesStore = useProfilesStore();
 const profileGroupOpenStates = useLocalStorageOpenStateRecord(PROFILE_GROUP_OPEN_STATES_STORAGE_KEY);
 
-const listContainer = useTemplateRef<HTMLElement>("listContainer");
-const { scrollToProfile } = useScrollToProfile(listContainer, {
+const { setRef, scrollToProfile } = useScrollToProfile({
   scrollTargetIdOnMounted: profilesStore.manager.selectedProfileId,
 });
 
@@ -46,6 +45,7 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 }
 
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
+const listContainer = useTemplateRef<HTMLElement>("listContainer");
 const groupBlockRefs = useTemplateRef<InstanceType<typeof ProfileGroupBlock>[]>("groupBlocks");
 const sidebarBlocks = computed(() => buildProfileBlocks(profilesStore.manager.profiles, profilesStore.profileGroups));
 
@@ -186,11 +186,12 @@ async function handleGroupCollapsed(groupId: string) {
         :group="block.group"
         :profiles="block.profiles"
         @collapsed="handleGroupCollapsed(block.group.id)"
+        @set-ref="setRef"
         @sort-profiles="handleGroupProfilesSort(block.group.id, $event)"
       />
       <div
         v-else
-        :data-profile-id="block.profile.id"
+        :ref="(el) => setRef(el as HTMLDivElement | null, block.profile.id)"
         data-profile-top-level-sort-handle
       >
         <ProfileListItem
