@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
+import type { RuleActionType } from "@/lib/schema";
 import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, useTemplateRef, watch } from "vue";
 import {
@@ -9,6 +9,7 @@ import {
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
+import { buildProfileBlocks } from "@/lib/profileBlocks";
 import ProfileGroupBlock from "./ProfileGroupBlock.vue";
 import { findProfileIdAfterGroupCollapse } from "./profileGroupSelection";
 import ProfileListItem from "./ProfileListItem.vue";
@@ -17,28 +18,10 @@ const { defaultRuleActionType } = defineProps<{
   defaultRuleActionType: RuleActionType;
 }>();
 
-interface ProfileBlock {
-  id: string;
-  profile: Profile;
-  type: "profile";
-}
-
-interface GroupBlock {
-  group: ProfileGroup;
-  id: string;
-  profiles: Profile[];
-  type: "group";
-}
-
-type ProfileSidebarBlock = ProfileBlock | GroupBlock;
-
 const profilesStore = useProfilesStore();
 const profileGroupOpenStates = useLocalStorageOpenStateRecord(PROFILE_GROUP_OPEN_STATES_STORAGE_KEY);
 
-const {
-  setRef,
-  scrollToProfile,
-} = useScrollToProfile({
+const { setRef, scrollToProfile } = useScrollToProfile({
   scrollTargetIdOnMounted: profilesStore.manager.selectedProfileId,
 });
 
@@ -63,36 +46,8 @@ function handleSwitchProfileShortcut(event: KeyboardEvent) {
 
 useEventListener(window, "keydown", handleSwitchProfileShortcut);
 const listContainer = useTemplateRef<HTMLElement>("listContainer");
-const groupBlockRefs = new Map<string, InstanceType<typeof ProfileGroupBlock>>();
-const profileGroupsById = computed(() => new Map(profilesStore.profileGroups.map(group => [group.id, group])));
-const sidebarBlocks = computed<ProfileSidebarBlock[]>(() => {
-  const addedGroupIds = new Set<string>();
-  return profilesStore.manager.profiles.flatMap((profile): ProfileSidebarBlock[] => {
-    let group: ProfileGroup | undefined;
-    if (profile.groupId) {
-      group = profileGroupsById.value.get(profile.groupId);
-    }
-    if (!group) {
-      return [{
-        id: profile.id,
-        profile,
-        type: "profile",
-      }];
-    }
-
-    if (addedGroupIds.has(group.id)) {
-      return [];
-    }
-
-    addedGroupIds.add(group.id);
-    return [{
-      group,
-      id: group.id,
-      profiles: profilesStore.manager.profiles.filter(candidate => candidate.groupId === group.id),
-      type: "group",
-    }];
-  });
-});
+const groupBlockRefs = useTemplateRef<InstanceType<typeof ProfileGroupBlock>[]>("groupBlocks");
+const sidebarBlocks = computed(() => buildProfileBlocks(profilesStore.manager.profiles, profilesStore.profileGroups));
 
 watch(
   () => profilesStore.newProfileGroupIdToEdit,
@@ -102,7 +57,7 @@ watch(
 
     await nextTick();
     requestAnimationFrame(() => {
-      const groupBlock = groupBlockRefs.get(groupId);
+      const groupBlock = groupBlockRefs.value?.find(block => block.$props.group.id === groupId);
       if (!groupBlock)
         return;
 
@@ -120,14 +75,6 @@ useSortableAndAutoAnimate({
   onUpdate: handleSidebarBlocksSort,
 });
 
-function setGroupBlockRef(groupId: string, instance: InstanceType<typeof ProfileGroupBlock> | null) {
-  if (instance) {
-    groupBlockRefs.set(groupId, instance);
-  } else {
-    groupBlockRefs.delete(groupId);
-  }
-}
-
 function moveItem<T>(items: T[], oldIndex: number, newIndex: number) {
   if (oldIndex < 0 || oldIndex >= items.length || newIndex < 0 || newIndex >= items.length) {
     return items;
@@ -143,7 +90,7 @@ function flattenProfileIds(
   blocks = sidebarBlocks.value,
 ) {
   return blocks.flatMap((block) => {
-    if (block.type === "profile") {
+    if (block.kind === "profile") {
       return [block.profile.id];
     }
 
@@ -177,7 +124,7 @@ function handleSidebarBlocksSort(event: { newIndex: number; oldIndex: number }) 
 
 function handleGroupProfilesSort(groupId: string, event: { newIndex: number; oldIndex: number }) {
   const blocks = sidebarBlocks.value.map((block) => {
-    if (block.type !== "group" || block.group.id !== groupId) {
+    if (block.kind !== "group" || block.group.id !== groupId) {
       return block;
     }
 
@@ -190,14 +137,14 @@ function handleGroupProfilesSort(groupId: string, event: { newIndex: number; old
 }
 
 async function handleGroupCollapsed(groupId: string) {
-  const selectionBlocks = sidebarBlocks.value.map(block => block.type === "group"
+  const selectionBlocks = sidebarBlocks.value.map(block => block.kind === "group"
     ? {
-        type: block.type,
+        type: block.kind,
         groupId: block.group.id,
         profileIds: block.profiles.map(profile => profile.id),
       }
     : {
-        type: block.type,
+        type: block.kind,
         profileId: block.profile.id,
       });
   const openGroupIds = new Set(
@@ -234,11 +181,8 @@ async function handleGroupCollapsed(groupId: string) {
       :key="block.id"
     >
       <ProfileGroupBlock
-        v-if="block.type === 'group'"
-        :ref="(instance) => setGroupBlockRef(
-          block.group.id,
-          instance as InstanceType<typeof ProfileGroupBlock> | null,
-        )"
+        v-if="block.kind === 'group'"
+        ref="groupBlocks"
         :group="block.group"
         :profiles="block.profiles"
         @collapsed="handleGroupCollapsed(block.group.id)"

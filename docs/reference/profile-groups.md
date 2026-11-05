@@ -33,12 +33,10 @@ Changing a member profile's enabled state separately clears the remembered state
 
 Right-click a profile emoji in the Sidebar to open its context menu. From there, you can pause or resume the profile, duplicate it, change its group membership, edit comments or priority, change its action type, export it, or delete or reset it.
 
-Right-click a profile group header to open the group context menu. From there, you can edit the group's name and color, switch between radio and checkbox mode, create a profile in the group, pause or resume remembered profiles, remove all profiles from the group, or delete the group.
+Right-click a profile group header to open the group context menu. From there, you can edit the group's name and color, switch between radio and checkbox mode, create a profile in the group, pause or resume remembered profiles, share the group, remove all profiles from the group, or delete the group.
 
 ## Storage and export
 
 Groups and memberships are stored locally as organizational data. They do not affect DNR rule contents. Removing the final member causes an empty group to be cleaned up.
 
-::: warning Export support is not yet implemented
-Profile group definitions and profile-to-group memberships are not currently included in profile exports. Support for exporting and restoring this data remains to be implemented.
-:::
+Exports preserve group definitions, membership, and each profile’s current enabled state. Remembered pause/resume selections stay local and are not exported. Imported groups resume using the normal defaults: the first member for radio groups, or all members for checkbox groups. Even a single selected member is exported inside its group. Imports create new groups with fresh IDs and do not merge same-name groups.

@@ -2,7 +2,6 @@ import { Buffer } from "node:buffer";
 import { readFile } from "node:fs/promises";
 import { uuidv7 } from "uuidv7";
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 import { setupExtensionSuite } from "../suite";
 import {
   editorText,
@@ -13,6 +12,7 @@ import {
   profile,
   setEditorText,
 } from "../test-util";
+import { exportedJson } from "./exchange-util";
 
 function portableProfile() {
   return profile({
@@ -34,18 +34,10 @@ function portableProfile() {
   });
 }
 
-async function exportedJson(page: Parameters<typeof editorText>[0]) {
-  await expect.poll(() => editorText(page)).toContain("Portable profile");
-  return z.object({
-    profiles: z.array(z.record(z.string(), z.unknown())),
-    version: z.number(),
-  }).parse(JSON.parse(await editorText(page)));
-}
-
 describe("documented import, export, download, and share behavior", { concurrent: false }, () => {
   const state = setupExtensionSuite();
 
-  it("removes local IDs, group membership, and temporary tab conditions from exports", async () => {
+  it("preserves group structure while removing local IDs and temporary tab conditions", async () => {
     const { extension } = state;
     const target = portableProfile();
     const page = await extension.context.newPage();
@@ -67,7 +59,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     const exported = await exportedJson(exportPage);
     const serialized = JSON.stringify(exported);
 
-    expect(exported.version).toBe(1);
+    expect(exported.version).toBe(2);
     expect(serialized).not.toContain("\"id\"");
     expect(serialized).not.toContain("groupId");
     expect(serialized).not.toContain("tabIds");
@@ -75,7 +67,7 @@ describe("documented import, export, download, and share behavior", { concurrent
     expect(serialized).not.toContain("excludedTabIds");
     expect(serialized).not.toContain("excludedTabGroups");
     expect((await extension.manager()).profiles[0]?.filters.tabIds?.items[0]?.value).toEqual([tabId]);
-    expect(serialized).not.toContain("Local-only group");
+    expect(exported.items[0]).toMatchObject({ kind: "group", name: "Local-only group", profiles: [{ name: target.name }] });
     await exportPage.close();
   });
 
@@ -207,7 +199,10 @@ describe("documented import, export, download, and share behavior", { concurrent
     const exportPage = await extension.openExtensionPage(`/export/${target.id}`);
     const exported = await exportedJson(exportPage);
     await exportPage.close();
-    exported.profiles[0]!.name = "Imported from file";
+    const entry = exported.items[0]!;
+    if (entry.kind !== "profile")
+      throw new Error("Expected standalone profile");
+    entry.profile.name = "Imported from file";
 
     const importPage = await extension.openExtensionPage("/import");
     await importPage.getByTestId("import-file-input").setInputFiles({

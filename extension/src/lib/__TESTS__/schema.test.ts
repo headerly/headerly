@@ -103,19 +103,19 @@ describe("profile import/export", () => {
     const result = createProfileExchange([mockProfile]);
 
     expect(result.version).toBe(PROFILE_IMPORT_SCHEMA_VERSION);
-    expect(result.profiles).toHaveLength(1);
-    expect(result.profiles[0]).not.toHaveProperty("id");
-    expect(result.profiles[0]).not.toHaveProperty("version");
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile).not.toHaveProperty("id");
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile).not.toHaveProperty("version");
     expect(() => profileExchangeZodSchema.parse(result)).not.toThrow();
   });
 
   it("should omit session-only tab filters from exported profiles", () => {
     const result = createProfileExchange([mockProfile]);
 
-    expect(result.profiles[0]!.filters).not.toHaveProperty("tabIds");
-    expect(result.profiles[0]!.filters).not.toHaveProperty("excludedTabIds");
-    expect(result.profiles[0]!.filters).not.toHaveProperty("tabGroups");
-    expect(result.profiles[0]!.filters).not.toHaveProperty("excludedTabGroups");
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile.filters).not.toHaveProperty("tabIds");
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile.filters).not.toHaveProperty("excludedTabIds");
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile.filters).not.toHaveProperty("tabGroups");
+    expect(result.items[0]!.kind === "profile" && result.items[0]!.profile.filters).not.toHaveProperty("excludedTabGroups");
     expect(mockProfile.filters.tabIds).toBeDefined();
     expect(mockProfile.filters.excludedTabIds).toBeDefined();
     expect(mockProfile.filters.tabGroups).toBeDefined();
@@ -135,7 +135,7 @@ describe("profile import/export", () => {
     const exported = createProfileExchange([mockProfile]);
 
     expect(profileExchangeZodSchema.safeParse(exported).success).toBe(true);
-    expect(profileExchangeZodSchema.safeParse(exported.profiles).success).toBe(false);
+    expect(profileExchangeZodSchema.safeParse(exported.items).success).toBe(false);
   });
 });
 

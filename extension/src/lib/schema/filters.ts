@@ -71,30 +71,3 @@ export const filterSchema = z.object({
   domainType: domainTypeFilterSchema.optional(),
   isUrlFilterCaseSensitive: urlFilterCaseSensitiveSchema.optional(),
 });
-
-const urlOrRegexFilterWithoutIdSchema = urlOrRegexFilterSchema.omit({ id: true });
-
-const domainsFilterWithoutIdSchema = domainsFilterSchema.extend({
-  items: z.array(groupItemWithValueSchema.omit({ id: true })),
-});
-
-const resourceTypesFilterWithoutIdSchema = resourceTypesFilterSchema.omit({ id: true });
-const requestMethodsFilterWithoutIdSchema = requestMethodsFilterSchema.omit({ id: true });
-
-const resourceTypesFilterGroupWithoutIdSchema = createFilterGroupSchema(resourceTypesFilterWithoutIdSchema);
-const requestMethodsFilterGroupWithoutIdSchema = createFilterGroupSchema(requestMethodsFilterWithoutIdSchema);
-
-export const filterWithoutIdSchema = filterSchema.extend({
-  urlFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
-  regexFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
-  initiatorDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedInitiatorDomains: domainsFilterWithoutIdSchema.optional(),
-  requestDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedRequestDomains: domainsFilterWithoutIdSchema.optional(),
-  topDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedTopDomains: domainsFilterWithoutIdSchema.optional(),
-  resourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
-  excludedResourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
-  requestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
-  excludedRequestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
-}).omit({ tabIds: true, excludedTabIds: true, tabGroups: true, excludedTabGroups: true });

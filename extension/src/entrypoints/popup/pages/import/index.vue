@@ -10,7 +10,7 @@ import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { ensureBrowserPermission } from "@/lib/permissions";
 import { decodeProfileSharePayload } from "@/lib/profileShare";
-import { addProfileIds, profileExchangeZodSchema } from "@/lib/schema";
+import { profileExchangeZodSchema, restoreProfileExchange } from "@/lib/schema";
 
 const profilesStore = useProfilesStore();
 const route = useRoute();
@@ -54,14 +54,17 @@ async function confirmImport() {
       return;
     }
 
-    const { profiles } = result.data;
+    const { profiles, profileGroups } = restoreProfileExchange(result.data);
     const hasSyncCookieGroups = profiles.some(profile => Boolean(profile.syncCookieGroups?.length));
     if (hasSyncCookieGroups && !await ensureBrowserPermission("cookies")) {
       toast.error(t("import.toast.cookiesPermissionRequired"));
       return;
     }
 
-    profilesStore.manager.profiles.push(...profiles.map(addProfileIds));
+    // Mutate both arrays in the same tick for one history snapshot and debounced write.
+    // Spreading reactive arrays into a new manager would embed proxies in its raw value.
+    profilesStore.manager.profileGroups.push(...profileGroups);
+    profilesStore.manager.profiles.push(...profiles);
 
     const profileCountLabel = profiles.length === 1 ? t("import.profile") : t("import.profiles");
     toast.success(t("import.toast.success", { count: profiles.length, label: profileCountLabel }));

@@ -12,9 +12,11 @@ import { jsonSchema } from "codemirror-json-schema";
 import { computed, createApp, h } from "vue";
 import CodeMirror from "vue-codemirror6";
 import { i18n } from "#/i18n";
-import { profileExchangeJsonSchema } from "@/lib/schema";
+import { useJsonValidation } from "@/composables/useJsonValidation";
+import { profileExchangeEditorJsonSchema } from "@/lib/schema";
 import JsonSearchPanel from "./JsonSearchPanel.vue";
 import { darkTheme, lightTheme } from "./theme";
+import ValidationErrors from "./ValidationErrors.vue";
 
 const model = defineModel<string>({ required: true });
 
@@ -31,6 +33,8 @@ const {
   searchPanelStickyTop?: string;
   class?: HTMLAttributes["class"];
 }>();
+
+const { validationErrors } = useJsonValidation(model);
 
 const lang = json();
 const linter = jsonParseLinter();
@@ -66,7 +70,7 @@ const extensions = computed(() => {
       scrollToMatch: range => EditorView.scrollIntoView(range, { y: "center" }),
     }),
     // @ts-expect-error https://github.com/colinhacks/zod/discussions/5936
-    jsonSchema(profileExchangeJsonSchema),
+    jsonSchema(profileExchangeEditorJsonSchema),
     indentationMarkers({
       colors: {
         light: "var(--border)",
@@ -81,24 +85,27 @@ const extensions = computed(() => {
 </script>
 
 <template>
-  <CodeMirror
-    v-model="model"
-    :class="cn('text-base shadow-xs outline-none', className)"
-    :lang
-    :dark
-    :linter
-    basic
-    wrap
-    :extensions
-    :readonly
-  />
+  <div :class="cn('relative min-h-0 min-w-0', className)" :style="{ height, width }">
+    <CodeMirror
+      v-model="model"
+      class="size-full text-base shadow-xs outline-none"
+      :lang
+      :dark
+      :linter
+      basic
+      wrap
+      :extensions
+      :readonly
+    />
+    <ValidationErrors v-if="model.trim() && validationErrors.length" :errors="validationErrors" />
+  </div>
 </template>
 
 <style>
 @reference "tailwindcss";
 .cm-editor {
-  width: v-bind(width);
-  height: v-bind(height);
+  width: 100%;
+  height: 100%;
 }
 
 .cm-scroller {

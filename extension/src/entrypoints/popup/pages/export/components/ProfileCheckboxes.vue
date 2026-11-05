@@ -10,9 +10,12 @@ import {
 } from "@headerly/ui/components/tooltip";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import ProfileOption from "#/components/ProfileOption.vue";
+import ProfileGroupFrame from "#/components/ProfileGroupFrame.vue";
+import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
+import { buildProfileBlocks } from "@/lib/profileBlocks";
+import ExportProfileOption from "./ExportProfileOption.vue";
 
 const model = defineModel<Profile[]>({
   required: true,
@@ -22,11 +25,21 @@ const { scrollTargetIdOnMounted } = defineProps<{
   scrollTargetIdOnMounted?: string | undefined;
 }>();
 
-const emit = defineEmits<{
-  (e: "change", profiles: Profile[]): void;
-}>();
-
 const profilesStore = useProfilesStore();
+const blocks = computed(() => buildProfileBlocks(profilesStore.manager.profiles, profilesStore.profileGroups));
+
+function groupChecked(profiles: Profile[]) {
+  const count = profiles.filter(isSelected).length;
+  if (count === 0)
+    return false;
+  return count === profiles.length ? true : "indeterminate";
+}
+
+function toggleGroup(profiles: Profile[]) {
+  const ids = new Set(profiles.map(profile => profile.id));
+  const selected = model.value.filter(profile => !ids.has(profile.id));
+  model.value = groupChecked(profiles) === true ? selected : [...selected, ...profiles];
+}
 const { t } = useI18n();
 const { setRef } = useScrollToProfile({
   scrollTargetIdOnMounted,
@@ -35,7 +48,7 @@ const { setRef } = useScrollToProfile({
 const allChecked = computed({
   get() {
     const total = profilesStore.manager.profiles.length;
-    const selected = model.value.length;
+    const selected = profilesStore.manager.profiles.filter(isSelected).length;
     if (selected === 0)
       return false;
     if (selected === total)
@@ -45,7 +58,6 @@ const allChecked = computed({
   set(value) {
     const newProfiles = value === true ? profilesStore.manager.profiles : [];
     model.value = newProfiles;
-    emit("change", newProfiles);
   },
 });
 
@@ -61,7 +73,6 @@ function toggleProfile(profile: Profile, checked: unknown) {
     newProfiles = model.value.filter(p => p.id !== profile.id);
   }
   model.value = newProfiles;
-  emit("change", newProfiles);
 }
 
 const selectAllLabel = computed(() =>
@@ -74,7 +85,8 @@ const selectAllLabel = computed(() =>
 <template>
   <div
     class="
-      flex flex-1 flex-col gap-1 overflow-y-auto px-2 [scrollbar-width:none]
+      flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-1.25
+      [scrollbar-width:none]
     "
   >
     <TooltipProvider>
@@ -88,6 +100,8 @@ const selectAllLabel = computed(() =>
           >
             <Checkbox
               :model-value="allChecked"
+              :aria-label="selectAllLabel"
+              data-testid="export-select-all"
               class="border-2 border-accent-foreground"
               @update:model-value="allChecked = $event"
             />
@@ -98,25 +112,51 @@ const selectAllLabel = computed(() =>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-    <div
-      v-for="(profile, index) in profilesStore.manager.profiles"
-      :key="profile.id"
-      :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
-      class="relative cursor-pointer"
-      @click="toggleProfile(profile, !isSelected(profile))"
-    >
-      <ProfileOption
-        :index
-        :profile
-        as="div"
-      />
-      <Checkbox
-        :model-value="isSelected(profile)"
-        class="
-          pointer-events-none absolute top-1/2 left-1/2 z-20 -translate-1/2
-          border-2 border-accent-foreground bg-secondary/50 shadow-sm
-        "
-      />
+    <div v-for="(block, index) in blocks" :key="block.id">
+      <ProfileGroupFrame v-if="block.kind === 'group'" :group="block.group" :open="true">
+        <template #header>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button
+                  :data-testid="`export-group-${block.id}`"
+                  variant="secondary" size="icon-sm"
+                  class="h-6! shrink-0 text-background"
+                  :style="{ backgroundColor: block.group.color }"
+                  :aria-label="t('share.selectGroup')"
+                  :aria-pressed="groupChecked(block.profiles) === 'indeterminate' ? 'mixed' : groupChecked(block.profiles)"
+                  @click="toggleGroup(block.profiles)"
+                >
+                  <Checkbox
+                    as="span"
+                    :model-value="groupChecked(block.profiles)"
+                    tabindex="-1"
+                    aria-hidden="true"
+                    class="
+                      pointer-events-none border-2 border-accent-foreground
+                      bg-secondary/50 shadow-sm
+                    "
+                  />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <ProfileGroupDisplayName :group="block.group" :profiles="block.profiles" />
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </template>
+        <div class="flex flex-col gap-1">
+          <div
+            v-for="(profile, memberIndex) in block.profiles" :key="profile.id"
+            :ref="(el) => setRef(el as HTMLDivElement | null, profile.id)"
+          >
+            <ExportProfileOption :profile :index="memberIndex" :checked="isSelected(profile)" @toggle="toggleProfile(profile, !isSelected(profile))" />
+          </div>
+        </div>
+      </ProfileGroupFrame>
+      <div v-else :ref="(el) => setRef(el as HTMLDivElement | null, block.profile.id)">
+        <ExportProfileOption :profile="block.profile" :index :checked="isSelected(block.profile)" @toggle="toggleProfile(block.profile, !isSelected(block.profile))" />
+      </div>
     </div>
   </div>
 </template>

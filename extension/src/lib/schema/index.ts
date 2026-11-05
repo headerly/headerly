@@ -9,9 +9,12 @@ export {
 export {
   addProfileIds,
   createProfileExchange,
-  profileExchangeJsonSchema,
+  profileExchangeEditorJsonSchema,
+  profileExchangeLatestSchema,
+  profileExchangeLegacyV1Schema,
   profileExchangeZodSchema,
   profileWithoutIdsZodSchema,
+  restoreProfileExchange,
   stripProfileIds,
-} from "./profile";
+} from "./share";
 export type * from "./type";

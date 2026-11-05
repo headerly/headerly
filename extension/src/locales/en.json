@@ -256,6 +256,7 @@
     }
   },
   "share": {
+    "selectGroup": "Select group",
     "copyLink": "Copy Share Link",
     "copyToClipboard": "Copy to Clipboard",
     "saveAsFile": "Save as File",
@@ -310,6 +311,10 @@
     }
   },
   "jsonEditor": {
+    "validation": {
+      "cannotImport": "Cannot import this JSON",
+      "showErrors": "Show import errors ({count})"
+    },
     "search": {
       "closeSearch": "Close search",
       "findPlaceholder": "Find",
