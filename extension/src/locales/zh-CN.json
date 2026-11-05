@@ -311,6 +311,10 @@
     }
   },
   "jsonEditor": {
+    "validation": {
+      "cannotImport": "无法导入此 JSON",
+      "showErrors": "查看导入错误（{count}）"
+    },
     "search": {
       "closeSearch": "关闭搜索",
       "findPlaceholder": "查找",

@@ -4,7 +4,6 @@ export type ProfileBlock
   = | { kind: "profile"; id: string; profile: Profile }
     | { kind: "group"; id: string; group: ProfileGroup; profiles: Profile[] };
 
-/** Groups occupy the position of their first member in the canonical profile array. */
 export function buildProfileBlocks(profiles: Profile[], groups: ProfileGroup[]): ProfileBlock[] {
   const groupsById = new Map(groups.map(group => [group.id, group]));
   const members = new Map<string, Profile[]>();

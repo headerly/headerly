@@ -36,4 +36,4 @@ The document contains a `version` field identifying the exchange format and a no
 - `{ kind: "profile", profile: { ... } }` for an ungrouped profile.
 - `{ kind: "group", name, color, type, profiles: [{ ... }] }` for a group. `type` is `radio` or `checkbox`; `profiles` must contain at least one member.
 
-Radio groups may have at most one enabled member. The import validator rejects invalid group states before changing storage.
+Every radio or checkbox group must contain at least one member. This applies to profile groups, header and Cookie action groups, and condition groups. Radio groups may have zero or one enabled member; checkbox groups may have any number enabled. The import validator rejects invalid group states before changing storage.
