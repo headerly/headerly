@@ -39,29 +39,6 @@ describe("jSON editor validation feedback", { concurrent: false }, () => {
     await page.close();
   });
 
-  it("shows empty and radio-count errors for nested groups, including unfinished local exports", async () => {
-    const target = profile({ enabled: false, requestHeaderModGroups: [{ id: "550e8400-e29b-41d4-a716-446655440001", type: "checkbox", items: [] }] });
-    await state.extension.setProfiles([target], 0);
-    const page = await state.extension.openExtensionPage(`/export/${target.id}`);
-    const indicator = page.getByTestId("json-validation-errors");
-    const tooltip = page.getByTestId("json-validation-errors-tooltip");
-    await indicator.hover();
-    await expect.poll(() => tooltip.textContent()).toContain("$.items[0].profile.requestHeaderModGroups[0].items");
-    expect(await tooltip.textContent()).toContain("A group must contain at least one item");
-    expect(await page.getByTestId("export-menu-trigger").isDisabled()).toBe(true);
-
-    await page.goto(`chrome-extension://${state.extension.extensionId}/popup.html#/import`);
-    const data = { ...member, requestHeaderModGroups: [{ type: "checkbox", items: [] }], syncCookieGroups: [{ type: "radio", items: [] }], filters: { requestDomains: { type: "radio", items: [{ enabled: true, value: "a.com" }, { enabled: true, value: "b.com" }] } } };
-    await setEditorText(page, JSON.stringify({ version: 2, items: [{ kind: "profile", profile: data }] }));
-    await indicator.hover();
-    await expect.poll(() => tooltip.locator("li").count()).toBe(3);
-    expect(await tooltip.textContent()).toContain("$.items[0].profile.syncCookieGroups[0].items");
-    expect(await tooltip.textContent()).toContain("$.items[0].profile.filters.requestDomains.items");
-    expect(await tooltip.textContent()).toContain("A radio group can have at most one enabled item");
-    expect(await page.getByTestId("import-confirm").isDisabled()).toBe(true);
-    await page.close();
-  });
-
   it("reports syntax and version errors and also validates edited exports", async () => {
     const target = profile({ enabled: false });
     await state.extension.setProfiles([target], 0);

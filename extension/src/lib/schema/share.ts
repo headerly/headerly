@@ -77,48 +77,16 @@ export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id
   filters: filterWithoutIdSchema,
 });
 
-/** Check every typed group, including groups nested inside profiles and filters. */
-function validateExchangeGroups(value: unknown, ctx: z.RefinementCtx, path: PropertyKey[] = []) {
-  if (Array.isArray(value)) {
-    value.forEach((member, index) => validateExchangeGroups(member, ctx, [...path, index]));
-    return;
-  }
-  if (typeof value !== "object" || value === null)
-    return;
-
-  const record = value as Record<string, unknown>;
-  if (record.type === "radio" || record.type === "checkbox") {
-    const memberKey = Array.isArray(record.profiles) ? "profiles" : "items";
-    const members = record[memberKey];
-    if (Array.isArray(members)) {
-      if (members.length === 0) {
-        ctx.addIssue({ code: "custom", path: [...path, memberKey], message: "A group must contain at least one item" });
-      }
-      const enabledCount = members.filter(member => typeof member === "object" && member !== null && "enabled" in member && member.enabled === true).length;
-      if (record.type === "radio" && enabledCount > 1) {
-        ctx.addIssue({
-          code: "custom",
-          path: [...path, memberKey],
-          message: memberKey === "profiles"
-            ? "A radio group can have at most one enabled profile"
-            : "A radio group can have at most one enabled item",
-        });
-      }
-    }
-  }
-  Object.entries(record).forEach(([key, member]) => validateExchangeGroups(member, ctx, [...path, key]));
-}
-
 /** Version 1 import format, retained for backward compatibility. */
 export const profileExchangeLegacyV1Schema = z.object({
   version: z.literal(1),
   profiles: z.array(profileWithoutIdsZodSchema).min(1),
-}).superRefine((exchange, ctx) => validateExchangeGroups(exchange, ctx));
+});
 
 const exchangeGroupSchema = z.object({
   kind: z.literal("group"),
   ...profileGroupSchema.pick({ name: true, color: true, type: true }).shape,
-  profiles: z.array(profileWithoutIdsZodSchema),
+  profiles: z.array(profileWithoutIdsZodSchema).min(1),
 });
 
 const exchangeItemSchema = z.discriminatedUnion("kind", [
@@ -126,46 +94,23 @@ const exchangeItemSchema = z.discriminatedUnion("kind", [
   exchangeGroupSchema,
 ]);
 
-const profileExchangeLatestStructureSchema = z.object({
+/** Always defines the latest export format; update this schema when the format evolves. */
+export const profileExchangeLatestSchema = z.object({
   version: z.literal(PROFILE_IMPORT_SCHEMA_VERSION),
   items: z.array(exchangeItemSchema).min(1),
+}).superRefine((exchange, ctx) => {
+  exchange.items.forEach((item, index) => {
+    if (item.kind !== "group")
+      return;
+    if (item.type === "radio" && item.profiles.filter(profile => profile.enabled).length > 1) {
+      ctx.addIssue({ code: "custom", path: ["items", index, "profiles"], message: "A radio group can have at most one enabled profile" });
+    }
+  });
 });
-
-/** Always defines the latest export format; update this schema when the format evolves. */
-export const profileExchangeLatestSchema = profileExchangeLatestStructureSchema
-  .superRefine((exchange, ctx) => validateExchangeGroups(exchange, ctx));
 
 export const profileExchangeZodSchema = z.discriminatedUnion("version", [profileExchangeLegacyV1Schema, profileExchangeLatestSchema]);
 /** JSON Schema for editor validation of every supported import format. */
-export const profileExchangeEditorJsonSchema = z.toJSONSchema(profileExchangeZodSchema, {
-  // Refinements are not converted automatically. Describe the same group rules for
-  // JSON Schema validators; the editor's Draft 4 linter only supports minItems,
-  // so Zod remains authoritative for radio counts and the error indicator.
-  override({ jsonSchema }) {
-    const typeSchema = jsonSchema.properties?.type;
-    if (!typeSchema || typeof typeSchema === "boolean"
-      || !typeSchema.enum?.includes("radio") || !typeSchema.enum.includes("checkbox")) {
-      return;
-    }
-    const memberKey = jsonSchema.properties?.profiles ? "profiles" : "items";
-    const members = jsonSchema.properties?.[memberKey];
-    if (!members || typeof members === "boolean")
-      return;
-    members.minItems = 1;
-    jsonSchema.allOf = [{
-      if: { properties: { type: { const: "radio" } }, required: ["type"] },
-      then: {
-        properties: {
-          [memberKey]: {
-            contains: { type: "object", properties: { enabled: { const: true } }, required: ["enabled"] },
-            minContains: 0,
-            maxContains: 1,
-          },
-        },
-      },
-    }];
-  },
-});
+export const profileExchangeEditorJsonSchema = z.toJSONSchema(profileExchangeZodSchema);
 
 /**
  * Strip all id fields from profile.
@@ -204,9 +149,7 @@ export function createProfileExchange(
       }
     }
   }
-  // Local editing can leave unfinished groups. Keep their JSON visible so the editor
-  // can explain validation failures instead of throwing before showing the preview.
-  return profileExchangeLatestStructureSchema.parse({ version: PROFILE_IMPORT_SCHEMA_VERSION, items });
+  return profileExchangeLatestSchema.parse({ version: PROFILE_IMPORT_SCHEMA_VERSION, items });
 }
 
 /** Validate the complete document before generating fresh IDs and restoring membership. */
