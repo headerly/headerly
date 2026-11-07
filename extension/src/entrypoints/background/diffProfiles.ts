@@ -1,4 +1,4 @@
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { isEqual, pick } from "es-toolkit";
 import { match, P } from "ts-pattern";
 import { hasRegisterableAction } from "./profileRule";

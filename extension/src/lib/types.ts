@@ -1,4 +1,4 @@
-import type { Profile, ProfileGroup } from "./schema";
+import type { Profile, ProfileGroup } from "@headerly/schema";
 
 export type ActionType = "request" | "response";
 export type HeaderModOperation = Browser.declarativeNetRequest.ModifyHeaderInfo["operation"];

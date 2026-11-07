@@ -1,13 +1,13 @@
-import type { DOMAIN_TYPES, REQUEST_METHODS, RESOURCE_TYPES, RULE_ACTION_TYPES } from "../schema";
-import { describe, expect, expectTypeOf, it } from "vitest";
-import { PROFILE_IMPORT_SCHEMA_VERSION } from "../const";
+import type { DOMAIN_TYPES, REQUEST_METHODS, RESOURCE_TYPES, RULE_ACTION_TYPES } from "@headerly/schema";
 import {
   addProfileIds,
   createProfileExchange,
+  PROFILE_IMPORT_SCHEMA_VERSION,
   profileExchangeZodSchema,
   profileWithoutIdsZodSchema,
   stripProfileIds,
-} from "../schema";
+} from "@headerly/schema";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import { mockProfile } from "./schema.fixtures";
 
 describe("schema enum constants", () => {

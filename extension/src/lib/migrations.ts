@@ -1,4 +1,4 @@
-import type { Filter, GroupItem, Profile } from "./schema";
+import type { Filter, GroupItem, Profile } from "@headerly/schema";
 import type { ProfileManager } from "./types";
 
 type LegacyArrayFilterKey

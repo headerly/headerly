@@ -1,0 +1,16 @@
+{
+  "name": "@headerly/schema",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "es-toolkit": "catalog:",
+    "uuidv7": "catalog:",
+    "zod": "catalog:"
+  }
+}

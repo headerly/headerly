@@ -1,5 +1,5 @@
+import type { Profile, ProfileGroup } from "@headerly/schema";
 import type { BrowserContext, Page, Worker } from "playwright";
-import type { Profile, ProfileGroup } from "../src/lib/schema";
 import type { ProfileManager } from "../src/lib/types";
 import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";

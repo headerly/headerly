@@ -1,4 +1,4 @@
-import type { TabGroupBinding } from "./schema";
+import type { TabGroupBinding } from "@headerly/schema";
 import { TAB_GROUP_ID_NONE } from "./const";
 
 const CONTROLLABLE_TAB_PROTOCOLS = ["http:", "https:"];

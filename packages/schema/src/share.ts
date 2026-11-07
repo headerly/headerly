@@ -1,31 +1,30 @@
 import { pick } from "es-toolkit";
 import { z } from "zod";
-import { PROFILE_IMPORT_SCHEMA_VERSION } from "../const";
-import { buildProfileBlocks } from "../profileBlocks";
 import {
   appendOrSetOperationSchema,
   createFilterGroupSchema,
-  groupItemWithValueSchema,
   headerModGroupSchema,
   profileGroupSchema,
   redirectUrlGroupItemSchema,
   removeOperationSchema,
   syncCookieGroupSchema,
   syncCookieSchema,
-} from "./base";
+} from "./base.ts";
+import { PROFILE_IMPORT_SCHEMA_VERSION } from "./const.ts";
 import {
   domainsFilterSchema,
   filterSchema,
   requestMethodsFilterSchema,
   resourceTypesFilterSchema,
   urlOrRegexFilterSchema,
-} from "./filters";
-import { profileSchema } from "./profile";
+} from "./filters.ts";
+import { profileSchema } from "./profile.ts";
+import { buildProfileBlocks } from "./profileBlocks.ts";
 
 const urlOrRegexFilterWithoutIdSchema = urlOrRegexFilterSchema.omit({ id: true });
 
 const domainsFilterWithoutIdSchema = domainsFilterSchema.extend({
-  items: z.array(groupItemWithValueSchema.omit({ id: true })),
+  items: z.array(domainsFilterSchema.shape.items.element.omit({ id: true })).meta(domainsFilterSchema.shape.items.meta() ?? {}),
 });
 
 const resourceTypesFilterWithoutIdSchema = resourceTypesFilterSchema.omit({ id: true });
@@ -35,19 +34,19 @@ const resourceTypesFilterGroupWithoutIdSchema = createFilterGroupSchema(resource
 const requestMethodsFilterGroupWithoutIdSchema = createFilterGroupSchema(requestMethodsFilterWithoutIdSchema);
 
 export const filterWithoutIdSchema = filterSchema.extend({
-  urlFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
-  regexFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional(),
-  initiatorDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedInitiatorDomains: domainsFilterWithoutIdSchema.optional(),
-  requestDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedRequestDomains: domainsFilterWithoutIdSchema.optional(),
-  topDomains: domainsFilterWithoutIdSchema.optional(),
-  excludedTopDomains: domainsFilterWithoutIdSchema.optional(),
-  resourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
-  excludedResourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional(),
-  requestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
-  excludedRequestMethods: requestMethodsFilterGroupWithoutIdSchema.optional(),
-}).omit({ tabIds: true, excludedTabIds: true, tabGroups: true, excludedTabGroups: true });
+  urlFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional().meta(filterSchema.shape.urlFilter.meta() ?? {}),
+  regexFilter: z.array(urlOrRegexFilterWithoutIdSchema).optional().meta(filterSchema.shape.regexFilter.meta() ?? {}),
+  initiatorDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.initiatorDomains.meta() ?? {}),
+  excludedInitiatorDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.excludedInitiatorDomains.meta() ?? {}),
+  requestDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.requestDomains.meta() ?? {}),
+  excludedRequestDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.excludedRequestDomains.meta() ?? {}),
+  topDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.topDomains.meta() ?? {}),
+  excludedTopDomains: domainsFilterWithoutIdSchema.optional().meta(filterSchema.shape.excludedTopDomains.meta() ?? {}),
+  resourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional().meta(filterSchema.shape.resourceTypes.meta() ?? {}),
+  excludedResourceTypes: resourceTypesFilterGroupWithoutIdSchema.optional().meta(filterSchema.shape.excludedResourceTypes.meta() ?? {}),
+  requestMethods: requestMethodsFilterGroupWithoutIdSchema.optional().meta(filterSchema.shape.requestMethods.meta() ?? {}),
+  excludedRequestMethods: requestMethodsFilterGroupWithoutIdSchema.optional().meta(filterSchema.shape.excludedRequestMethods.meta() ?? {}),
+}).omit({ tabIds: true, excludedTabIds: true, tabGroups: true, excludedTabGroups: true }).meta(filterSchema.meta() ?? {});
 
 const removeOperationWithoutIdSchema = removeOperationSchema.omit({ id: true });
 const appendOrSetOperationWithoutIdSchema = appendOrSetOperationSchema.omit({ id: true });
@@ -64,18 +63,18 @@ const headerModGroupWithoutIdSchema = headerModGroupSchema.omit({ id: true }).ex
 const syncCookieWithoutIdSchema = syncCookieSchema.omit({ id: true });
 
 const syncCookieGroupWithoutIdSchema = syncCookieGroupSchema.omit({ id: true }).extend({
-  items: z.array(syncCookieWithoutIdSchema),
+  items: z.array(syncCookieWithoutIdSchema).meta(syncCookieGroupSchema.shape.items.meta() ?? {}),
 });
 
-const redirectUrlGroupItemWithoutIdSchema = redirectUrlGroupItemSchema.omit({ id: true });
+const redirectUrlGroupItemWithoutIdSchema = redirectUrlGroupItemSchema.omit({ id: true }).meta(redirectUrlGroupItemSchema.meta() ?? {});
 
 export const profileWithoutIdsZodSchema = profileSchema.omit({ groupId: true, id: true }).extend({
-  requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
+  requestHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional().meta(profileSchema.shape.requestHeaderModGroups.meta() ?? {}),
   responseHeaderModGroups: z.array(headerModGroupWithoutIdSchema).optional(),
-  syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional(),
-  redirectUrlGroup: z.array(redirectUrlGroupItemWithoutIdSchema).optional(),
+  syncCookieGroups: z.array(syncCookieGroupWithoutIdSchema).optional().meta(profileSchema.shape.syncCookieGroups.meta() ?? {}),
+  redirectUrlGroup: z.array(redirectUrlGroupItemWithoutIdSchema).optional().meta(profileSchema.shape.redirectUrlGroup.meta() ?? {}),
   filters: filterWithoutIdSchema,
-});
+}).meta({ description: "Portable profile. Internal IDs, group membership IDs and browser tab bindings are omitted. Imports generate fresh IDs; header values and comments are not redacted." });
 
 /** Version 1 import format, retained for backward compatibility. */
 export const profileExchangeLegacyV1Schema = z.object({
@@ -86,8 +85,8 @@ export const profileExchangeLegacyV1Schema = z.object({
 const exchangeGroupSchema = z.object({
   kind: z.literal("group"),
   ...profileGroupSchema.pick({ name: true, color: true, type: true }).shape,
-  profiles: z.array(profileWithoutIdsZodSchema).min(1),
-});
+  profiles: z.array(profileWithoutIdsZodSchema).min(1).meta({ description: "Nonempty ordered group members. Radio groups must have at most one enabled profile; Headerly checks this on import." }),
+}).meta({ description: "Portable profile group. Import creates a new group and restores membership; local pause history is not included." });
 
 const exchangeItemSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("profile"), profile: profileWithoutIdsZodSchema }),
@@ -97,7 +96,7 @@ const exchangeItemSchema = z.discriminatedUnion("kind", [
 /** Always defines the latest export format; update this schema when the format evolves. */
 export const profileExchangeLatestSchema = z.object({
   version: z.literal(PROFILE_IMPORT_SCHEMA_VERSION),
-  items: z.array(exchangeItemSchema).min(1),
+  items: z.array(exchangeItemSchema).min(1).meta({ description: "Nonempty list of standalone profiles and groups in sidebar order. Group members retain their order." }),
 }).superRefine((exchange, ctx) => {
   exchange.items.forEach((item, index) => {
     if (item.kind !== "group")
@@ -106,7 +105,13 @@ export const profileExchangeLatestSchema = z.object({
       ctx.addIssue({ code: "custom", path: ["items", index, "profiles"], message: "A radio group can have at most one enabled profile" });
     }
   });
+}).meta({
+  description: "Latest Headerly profile exchange document for import, export and sharing. Imports create new profiles and groups without replacing same-named items. Chrome validates browser-specific rule constraints when registering rules.",
+
 });
+
+/** Published JSON Schema describes only the latest exchange format. */
+export const profileExchangeJsonSchema = z.toJSONSchema(profileExchangeLatestSchema);
 
 export const profileExchangeZodSchema = z.discriminatedUnion("version", [profileExchangeLegacyV1Schema, profileExchangeLatestSchema]);
 /** JSON Schema for editor validation of every supported import format. */

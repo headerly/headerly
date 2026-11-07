@@ -51,3 +51,6 @@ dist
 CLAUDE.md
 .codex
 .eslintcache
+
+# Generated from @headerly/schema by the docs configuration
+docs/public/schema@latest.json

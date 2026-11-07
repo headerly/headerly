@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TabGroupBinding, TabGroupsFilterGroup, TabGroupsFilterItem } from "@/lib/schema";
+import type { TabGroupBinding, TabGroupsFilterGroup, TabGroupsFilterItem } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,

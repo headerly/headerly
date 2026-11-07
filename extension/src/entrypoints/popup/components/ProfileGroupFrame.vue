@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProfileGroup } from "@/lib/schema";
+import type { ProfileGroup } from "@headerly/schema";
 import { AnimatePresence, motion } from "motion-v";
 
 defineProps<{ group: ProfileGroup; open: boolean }>();

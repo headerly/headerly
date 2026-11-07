@@ -1,4 +1,4 @@
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { match } from "ts-pattern";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";

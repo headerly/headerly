@@ -1,5 +1,5 @@
+import type { GroupType, HeaderModGroup } from "@headerly/schema";
 import type { AddRuleOptionDialogTab } from "./shared";
-import type { GroupType, HeaderModGroup } from "@/lib/schema";
 import type { ActionType } from "@/lib/types";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";

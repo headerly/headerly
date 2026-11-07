@@ -442,6 +442,9 @@ importers:
       '@fontsource-variable/roboto-mono':
         specifier: 'catalog:'
         version: 5.3.0
+      '@headerly/schema':
+        specifier: workspace:*
+        version: link:../packages/schema
       '@headerly/ui':
         specifier: workspace:*
         version: link:../packages/ui
@@ -500,6 +503,9 @@ importers:
       '@formkit/auto-animate':
         specifier: 'catalog:'
         version: 0.10.0
+      '@headerly/schema':
+        specifier: workspace:*
+        version: link:../packages/schema
       '@headerly/ui':
         specifier: workspace:*
         version: link:../packages/ui
@@ -642,6 +648,18 @@ importers:
       wxt:
         specifier: 'catalog:'
         version: 0.21.3(esbuild@0.28.1)(eslint@10.8.0(jiti@2.7.0)(supports-color@10.2.2))(oxc-parser@0.129.0)(rolldown@1.2.3)(typescript-native-bridge@6.0.3-bridge.12.tsgo.7.0.2)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.0))
+
+  packages/schema:
+    dependencies:
+      es-toolkit:
+        specifier: 'catalog:'
+        version: 1.50.0
+      uuidv7:
+        specifier: 'catalog:'
+        version: 1.2.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
 
   packages/ui:
     dependencies:

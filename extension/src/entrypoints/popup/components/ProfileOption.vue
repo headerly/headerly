@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,

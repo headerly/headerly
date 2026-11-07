@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
+    "@headerly/schema": "workspace:*",
     "@headerly/ui": "workspace:*",
     "medium-zoom": "catalog:",
     "vitepress": "catalog:",

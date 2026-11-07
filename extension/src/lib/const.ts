@@ -1,5 +1,3 @@
-export const PROFILE_IMPORT_SCHEMA_VERSION = 2;
-
 export const PROFILE_GROUP_COLOR_PRESETS = [
   "#dadce0",
   "#8ab4f8",

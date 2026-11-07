@@ -1,4 +1,4 @@
-import type { Filter, Profile } from "./schema";
+import type { Filter, Profile } from "@headerly/schema";
 import { match } from "ts-pattern";
 import { getObjectKeysWithTypeAssert } from "./object";
 

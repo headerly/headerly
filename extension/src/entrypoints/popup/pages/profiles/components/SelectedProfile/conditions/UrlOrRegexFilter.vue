@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { UrlOrRegexFilterItem } from "@/lib/schema";
+import type { UrlOrRegexFilterItem } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Input } from "@headerly/ui/components/input";
 import {

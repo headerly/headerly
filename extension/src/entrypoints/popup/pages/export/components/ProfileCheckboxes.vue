@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
+import { buildProfileBlocks } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Checkbox } from "@headerly/ui/components/checkbox";
 import {
@@ -14,7 +15,6 @@ import ProfileGroupFrame from "#/components/ProfileGroupFrame.vue";
 import ProfileGroupDisplayName from "#/pages/profiles/components/ProfileGroupDisplayName.vue";
 import { useProfilesStore } from "#/stores/useProfilesStore";
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
-import { buildProfileBlocks } from "@/lib/profileBlocks";
 import ExportProfileOption from "./ExportProfileOption.vue";
 
 const model = defineModel<Profile[]>({

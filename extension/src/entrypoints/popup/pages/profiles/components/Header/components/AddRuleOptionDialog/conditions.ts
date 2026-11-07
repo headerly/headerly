@@ -1,5 +1,5 @@
+import type { TabIdsFilterGroup } from "@headerly/schema";
 import type { AddRuleOptionDialogTab } from "./shared";
-import type { TabIdsFilterGroup } from "@/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";

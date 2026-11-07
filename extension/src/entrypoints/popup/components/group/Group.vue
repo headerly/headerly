@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends GroupItem">
-import type { GroupItem, GroupType } from "@/lib/schema";
+import type { GroupItem, GroupType } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Checkbox } from "@headerly/ui/components/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@headerly/ui/components/collapsible";

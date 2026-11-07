@@ -1,4 +1,4 @@
-import type { RuleActionType } from "@/lib/schema";
+import type { RuleActionType } from "@headerly/schema";
 import { useI18n } from "vue-i18n";
 
 export function useRuleActionType() {

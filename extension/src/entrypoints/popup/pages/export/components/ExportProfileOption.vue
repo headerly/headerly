@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { Checkbox } from "@headerly/ui/components/checkbox";
 import ProfileOption from "#/components/ProfileOption.vue";
 

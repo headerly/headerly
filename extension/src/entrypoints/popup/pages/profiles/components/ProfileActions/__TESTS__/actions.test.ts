@@ -1,4 +1,4 @@
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { describe, expect, it } from "vitest";
 import { createProfile } from "@/lib/profileFactory";
 import { handleProfileRuleActionTypeChanged } from "../actions";

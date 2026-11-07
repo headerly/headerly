@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { TabGroupBinding } from "@headerly/schema";
 import type { Option } from "@headerly/ui/components/multi-select";
-import type { TabGroupBinding } from "@/lib/schema";
 import { MultiSelect } from "@headerly/ui/components/multi-select";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";

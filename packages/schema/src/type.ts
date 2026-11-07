@@ -10,7 +10,7 @@ import type {
   ruleActionTypeSchema,
   syncCookieGroupSchema,
   syncCookieSchema,
-} from "./base";
+} from "./base.ts";
 import type {
   domainsFilterSchema,
   filterSchema,
@@ -22,9 +22,9 @@ import type {
   tabIdsFilterGroupSchema,
   tabIdsFilterSchema,
   urlOrRegexFilterSchema,
-} from "./filters";
-import type { profileSchema } from "./profile";
-import type { profileExchangeZodSchema, profileWithoutIdsZodSchema } from "./share";
+} from "./filters.ts";
+import type { profileSchema } from "./profile.ts";
+import type { profileExchangeZodSchema, profileWithoutIdsZodSchema } from "./share.ts";
 
 export type GroupItem = z.infer<typeof groupItemSchema>;
 export type RedirectUrlGroupItem = z.infer<typeof redirectUrlGroupItemSchema>;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RedirectUrlGroupItem } from "@/lib/schema";
+import type { RedirectUrlGroupItem } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Input } from "@headerly/ui/components/input";
 import {

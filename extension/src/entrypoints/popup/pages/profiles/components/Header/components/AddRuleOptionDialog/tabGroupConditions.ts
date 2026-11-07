@@ -1,4 +1,4 @@
-import type { TabGroupsFilterGroup } from "@/lib/schema";
+import type { TabGroupsFilterGroup } from "@headerly/schema";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";

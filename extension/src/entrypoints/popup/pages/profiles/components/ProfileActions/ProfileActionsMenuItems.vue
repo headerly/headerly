@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { Profile } from "@headerly/schema";
 import type {
   ProfileActionGroup,
   ProfileActionItem,
 } from "./actions";
-import type { Profile } from "@/lib/schema";
 import {
   ContextMenuGroup,
   ContextMenuItem,

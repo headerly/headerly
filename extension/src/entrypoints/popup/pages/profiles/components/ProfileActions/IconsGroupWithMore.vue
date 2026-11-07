@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Profile } from "@headerly/schema";
 import type { ActionKey } from "./actions";
-import type { Profile } from "@/lib/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,

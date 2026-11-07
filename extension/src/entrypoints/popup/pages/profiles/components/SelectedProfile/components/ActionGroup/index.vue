@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeaderModGroup } from "@/lib/schema";
+import type { HeaderModGroup } from "@headerly/schema";
 import type { ActionType } from "@/lib/types";
 import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";

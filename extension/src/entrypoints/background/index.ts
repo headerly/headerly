@@ -1,6 +1,6 @@
+import type { Profile } from "@headerly/schema";
 import type { ProfileChanges } from "./diffProfiles";
 import type { ExtensionCommandId } from "@/lib/commands";
-import type { Profile } from "@/lib/schema";
 import { Mutex } from "async-mutex";
 import { match } from "ts-pattern";
 import { usePowerOnStorage, useProfileManagerStorage } from "@/lib/storage";

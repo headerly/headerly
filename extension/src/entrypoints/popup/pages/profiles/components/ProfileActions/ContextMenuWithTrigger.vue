@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import {
   ContextMenu,
   ContextMenuContent,

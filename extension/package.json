@@ -23,6 +23,7 @@
     "@codemirror/view": "catalog:",
     "@fontsource-variable/roboto-mono": "catalog:",
     "@formkit/auto-animate": "catalog:",
+    "@headerly/schema": "workspace:*",
     "@headerly/ui": "workspace:*",
     "@lezer/highlight": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",

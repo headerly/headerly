@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TabIdsFilterGroup, TabIdsFilterItem } from "@/lib/schema";
+import type { TabIdsFilterGroup, TabIdsFilterItem } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { uuidv7 } from "uuidv7";
 import { computed } from "vue";

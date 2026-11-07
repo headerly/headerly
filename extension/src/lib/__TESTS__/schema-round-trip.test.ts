@@ -1,6 +1,6 @@
-import type { Profile } from "../schema";
+import type { Profile } from "@headerly/schema";
+import { addProfileIds, stripProfileIds } from "@headerly/schema";
 import { describe, expect, it } from "vitest";
-import { addProfileIds, stripProfileIds } from "../schema";
 import { mockProfile } from "./schema.fixtures";
 
 describe("filters field comprehensive tests", () => {

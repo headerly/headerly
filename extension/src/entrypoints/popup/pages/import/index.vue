@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { profileExchangeZodSchema, restoreProfileExchange } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { cn } from "@headerly/ui/lib/utils";
 import { ref, useTemplateRef, watch } from "vue";
@@ -10,7 +11,6 @@ import { useJsonValidation } from "@/composables/useJsonValidation";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { ensureBrowserPermission } from "@/lib/permissions";
 import { decodeProfileSharePayload } from "@/lib/profileShare";
-import { profileExchangeZodSchema, restoreProfileExchange } from "@/lib/schema";
 
 const profilesStore = useProfilesStore();
 const route = useRoute();
