@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.0](https://github.com/headerly/headerly/compare/v1.21.0...v1.22.0) (2026-11-07)
+
+
+### Features
+
+* add schema descriptions and publish shared JSON schema ([#101](https://github.com/headerly/headerly/issues/101)) ([9329718](https://github.com/headerly/headerly/commit/93297182652df18cda543324fea2d66cdf356a1b))
+* preserve profile groups in imports and exports ([#99](https://github.com/headerly/headerly/issues/99)) ([ecd2f6e](https://github.com/headerly/headerly/commit/ecd2f6e46b24cd51dd58b9d2403a0b1e35d3db1b))
+
 ## [1.21.0](https://github.com/headerly/headerly/compare/v1.20.0...v1.21.0) (2026-09-19)
 
 
