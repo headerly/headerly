@@ -27,7 +27,7 @@ export function createFilterGroupSchema<T extends z.ZodType>(itemSchema: T) {
 export const profileGroupSchema = z.object({
   id: uuidSchemaWithDefault,
   name: z.string(),
-  color: z.string().meta({ examples: ["#8ab4f8"] }),
+  color: z.string().meta({ description: "Supports common CSS color formats, including HEX and RGB." }),
   type: groupTypeSchema,
   lastEnabledProfileIds: z.array(z.uuid()).optional(),
 });
