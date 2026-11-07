@@ -48,7 +48,7 @@ export const RESOURCE_TYPES = [
   "webtransport",
   "webbundle",
   "other",
-] as const satisfies `${Browser.declarativeNetRequest.ResourceType}`[];
+] as const;
 export const resourceTypeSchema = z.enum(RESOURCE_TYPES);
 
 export const ALLOW_ALL_REQUESTS_RESOURCE_TYPES = [
@@ -66,7 +66,7 @@ export const REQUEST_METHODS = [
   "post",
   "put",
   "other",
-] as const satisfies `${Browser.declarativeNetRequest.RequestMethod}`[];
+] as const;
 export const requestMethodSchema = z.enum(REQUEST_METHODS);
 
 export const RULE_ACTION_TYPES = [
@@ -76,14 +76,14 @@ export const RULE_ACTION_TYPES = [
   "upgradeScheme",
   "modifyHeaders",
   "allowAllRequests",
-] as const satisfies `${Browser.declarativeNetRequest.RuleActionType}`[];
+] as const;
 
 export const ruleActionTypeSchema = z.enum(RULE_ACTION_TYPES);
 
 export const DOMAIN_TYPES = [
   "firstParty",
   "thirdParty",
-] as const satisfies `${Browser.declarativeNetRequest.DomainType}`[];
+] as const;
 export const domainTypeValueSchema = z.enum(DOMAIN_TYPES);
 
 export const removeOperationSchema = groupItemSchema.extend({

@@ -1,6 +1,6 @@
-import type { ProfileGroup } from "../schema";
+import type { ProfileGroup } from "@headerly/schema";
+import { createProfileExchange, profileExchangeEditorJsonSchema, profileExchangeZodSchema, restoreProfileExchange, stripProfileIds } from "@headerly/schema";
 import { describe, expect, it } from "vitest";
-import { createProfileExchange, profileExchangeEditorJsonSchema, profileExchangeZodSchema, restoreProfileExchange, stripProfileIds } from "../schema";
 import { mockProfile } from "./schema.fixtures";
 
 const group: ProfileGroup = { id: mockProfile.groupId!, name: "Environment", color: "#8ab4f8", type: "checkbox", lastEnabledProfileIds: [mockProfile.id] };

@@ -1,4 +1,4 @@
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
 import { match } from "ts-pattern";
 
 export const RULE_SCOPES = ["dynamic", "session"] as const;

@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends GroupItem">
+import type { GroupItem, GroupType } from "@headerly/schema";
 import type { VNode } from "vue";
-import type { GroupItem, GroupType } from "@/lib/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   Tooltip,

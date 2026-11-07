@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends ConditionType">
-import type { GroupItem, GroupType } from "@/lib/schema";
+import type { GroupItem, GroupType } from "@headerly/schema";
+import { ALLOW_ALL_REQUESTS_RESOURCE_TYPES } from "@headerly/schema";
 import Button from "@headerly/ui/components/button/Button.vue";
 import MultiSelect from "@headerly/ui/components/multi-select/MultiSelect.vue";
 import { uuidv7 } from "uuidv7";
@@ -11,7 +12,6 @@ import GroupActions from "#/components/group/GroupActions.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { addItemToGroup } from "@/lib/group";
 import { getProfileFilterGroupOpenStateId } from "@/lib/openState";
-import { ALLOW_ALL_REQUESTS_RESOURCE_TYPES } from "@/lib/schema";
 
 type FilterItem<V extends FilterValue> = GroupItem & {
   value: V[];

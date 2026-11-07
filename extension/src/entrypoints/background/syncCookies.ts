@@ -1,5 +1,5 @@
+import type { SyncCookie } from "@headerly/schema";
 import type { Mutex } from "async-mutex";
-import type { SyncCookie } from "@/lib/schema";
 import type { useProfileManagerStorage } from "@/lib/storage";
 import type { ProfileManager } from "@/lib/types";
 import { isEqual } from "es-toolkit";

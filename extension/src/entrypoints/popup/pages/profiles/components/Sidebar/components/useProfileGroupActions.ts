@@ -1,4 +1,4 @@
-import type { Profile, ProfileGroup } from "@/lib/schema";
+import type { Profile, ProfileGroup } from "@headerly/schema";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";

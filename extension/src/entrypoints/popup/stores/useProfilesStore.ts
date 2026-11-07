@@ -1,4 +1,4 @@
-import type { Profile, ProfileGroup, RuleActionType } from "@/lib/schema";
+import type { Profile, ProfileGroup, RuleActionType } from "@headerly/schema";
 import { useDebouncedRefHistory } from "@vueuse/core";
 import { countBy, minBy } from "es-toolkit";
 import { defineStore } from "pinia";

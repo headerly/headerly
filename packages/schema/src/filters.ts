@@ -6,7 +6,7 @@ import {
   groupItemWithValueSchema,
   requestMethodSchema,
   resourceTypeSchema,
-} from "./base";
+} from "./base.ts";
 
 export const urlOrRegexFilterSchema = groupItemWithValueSchema;
 

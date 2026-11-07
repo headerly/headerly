@@ -1,7 +1,7 @@
 import type { Ref } from "vue";
 import type { z } from "zod";
+import { profileExchangeZodSchema } from "@headerly/schema";
 import { computed } from "vue";
-import { profileExchangeZodSchema } from "@/lib/schema";
 
 export interface JsonValidationError {
   path: string;

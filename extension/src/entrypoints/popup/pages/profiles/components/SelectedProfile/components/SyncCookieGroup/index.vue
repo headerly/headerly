@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SyncCookieGroup } from "@/lib/schema";
+import type { SyncCookieGroup } from "@headerly/schema";
 import { useI18n } from "vue-i18n";
 import Group from "#/components/group/Group.vue";
 import GroupActions from "#/components/group/GroupActions.vue";

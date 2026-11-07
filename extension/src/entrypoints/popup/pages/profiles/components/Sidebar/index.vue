@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { RuleActionType } from "@headerly/schema";
 import type { HTMLAttributes } from "vue";
-import type { RuleActionType } from "@/lib/schema";
 import Badge from "@headerly/ui/components/badge/Badge.vue";
 import { Button } from "@headerly/ui/components/button";
 import {

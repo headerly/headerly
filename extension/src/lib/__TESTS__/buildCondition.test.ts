@@ -1,4 +1,4 @@
-import type { GroupItem, ResourceType } from "../schema";
+import type { GroupItem, ResourceType } from "@headerly/schema";
 import { describe, expect, it } from "vitest";
 import { buildCondition } from "@/entrypoints/background/DNR/buildCondition";
 import { createProfile } from "../profileFactory";

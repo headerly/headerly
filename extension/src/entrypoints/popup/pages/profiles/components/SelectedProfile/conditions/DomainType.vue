@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Filter } from "@/lib/schema";
+import type { Filter } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Label } from "@headerly/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@headerly/ui/components/radio-group";

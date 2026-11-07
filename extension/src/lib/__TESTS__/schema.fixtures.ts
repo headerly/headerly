@@ -1,4 +1,4 @@
-import type { Profile } from "../schema";
+import type { Profile } from "@headerly/schema";
 
 export const mockProfile: Profile = {
   ruleActionType: "modifyHeaders",

@@ -1,4 +1,4 @@
-import type { GroupItem, GroupType } from "./schema";
+import type { GroupItem, GroupType } from "@headerly/schema";
 
 /**
  * Add a new item to a group list and set the correct enabled state.

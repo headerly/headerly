@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Profile } from "@/lib/schema";
+import type { Profile } from "@headerly/schema";
+import { createProfileExchange } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,
@@ -16,7 +17,6 @@ import { useJsonValidation } from "@/composables/useJsonValidation";
 import JsonEditor from "@/entrypoints/popup/components/JsonEditor/index.vue";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { encodeProfileSharePayload } from "@/lib/profileShare";
-import { createProfileExchange } from "@/lib/schema";
 import ProfileCheckboxes from "./components/ProfileCheckboxes.vue";
 
 const profilesStore = useProfilesStore();

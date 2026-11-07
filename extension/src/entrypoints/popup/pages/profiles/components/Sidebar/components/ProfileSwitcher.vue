@@ -1,5 +1,6 @@
 <script setup lang="tsx">
-import type { RuleActionType } from "@/lib/schema";
+import type { RuleActionType } from "@headerly/schema";
+import { buildProfileBlocks } from "@headerly/schema";
 import { useEventListener } from "@vueuse/core";
 import { computed, nextTick, useTemplateRef, watch } from "vue";
 import {
@@ -9,7 +10,6 @@ import {
 import { useScrollToProfile } from "@/composables/useScrollToProfile";
 import { useSortableAndAutoAnimate } from "@/composables/useSortableAndAutoAnimate";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
-import { buildProfileBlocks } from "@/lib/profileBlocks";
 import ProfileGroupBlock from "./ProfileGroupBlock.vue";
 import { findProfileIdAfterGroupCollapse } from "./profileGroupSelection";
 import ProfileListItem from "./ProfileListItem.vue";

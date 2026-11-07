@@ -1,4 +1,4 @@
-import type { Profile, ProfileGroup } from "./schema";
+import type { Profile, ProfileGroup } from "./type.ts";
 
 export type ProfileBlock
   = | { kind: "profile"; id: string; profile: Profile }

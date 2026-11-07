@@ -1,4 +1,4 @@
-import type { Profile, RuleActionType } from "@/lib/schema";
+import type { Profile, RuleActionType } from "@headerly/schema";
 import type { ActionType } from "@/lib/types";
 
 const IMPLICIT_ACTION_TYPES = new Set<RuleActionType>([

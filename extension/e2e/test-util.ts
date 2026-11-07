@@ -1,5 +1,5 @@
+import type { Profile } from "@headerly/schema";
 import type { Frame, Page } from "playwright";
-import type { Profile } from "../src/lib/schema";
 import { uuidv7 } from "uuidv7";
 import { z } from "zod";
 

@@ -54,7 +54,7 @@ Headerly is a Chrome extension built with WXT framework that manages HTTP reques
 
 ### Profile Schema
 
-Profiles are the core data model (`extension/src/lib/schema.ts`):
+Profiles are the core data model (`packages/schema/src/`):
 - UUIDv7-based IDs for profiles, profile groups, and nested items
 - Zod schemas for runtime validation
 - Support for request/response header modifications
@@ -133,7 +133,7 @@ Registration errors and profile-to-rule ID mappings are synchronized through sto
 
 ### File Structure Notes
 
-- `extension/src/lib/schema.ts` - All Zod schemas and type definitions
+- `packages/schema/src/` - Shared Zod schemas, type definitions, and import/export helpers used by extension and docs
 - `extension/src/lib/storage.ts` - Storage abstractions and initialization
 - `extension/src/entrypoints/background/DNR/` - DNR rule management
 - `extension/src/entrypoints/popup/stores/` - Pinia stores

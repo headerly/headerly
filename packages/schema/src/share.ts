@@ -1,7 +1,5 @@
 import { pick } from "es-toolkit";
 import { z } from "zod";
-import { PROFILE_IMPORT_SCHEMA_VERSION } from "../const";
-import { buildProfileBlocks } from "../profileBlocks";
 import {
   appendOrSetOperationSchema,
   createFilterGroupSchema,
@@ -12,15 +10,17 @@ import {
   removeOperationSchema,
   syncCookieGroupSchema,
   syncCookieSchema,
-} from "./base";
+} from "./base.ts";
+import { PROFILE_IMPORT_SCHEMA_VERSION } from "./const.ts";
 import {
   domainsFilterSchema,
   filterSchema,
   requestMethodsFilterSchema,
   resourceTypesFilterSchema,
   urlOrRegexFilterSchema,
-} from "./filters";
-import { profileSchema } from "./profile";
+} from "./filters.ts";
+import { profileSchema } from "./profile.ts";
+import { buildProfileBlocks } from "./profileBlocks.ts";
 
 const urlOrRegexFilterWithoutIdSchema = urlOrRegexFilterSchema.omit({ id: true });
 
@@ -107,6 +107,9 @@ export const profileExchangeLatestSchema = z.object({
     }
   });
 });
+
+/** Published JSON Schema describes only the latest exchange format. */
+export const profileExchangeJsonSchema = z.toJSONSchema(profileExchangeLatestSchema);
 
 export const profileExchangeZodSchema = z.discriminatedUnion("version", [profileExchangeLegacyV1Schema, profileExchangeLatestSchema]);
 /** JSON Schema for editor validation of every supported import format. */

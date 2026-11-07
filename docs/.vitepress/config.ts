@@ -1,4 +1,7 @@
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { profileExchangeJsonSchema } from "@headerly/schema";
 import tailwindcss from "@tailwindcss/vite";
 import vueDevTools from "vite-plugin-vue-devtools";
 import { defineConfig } from "vitepress";
@@ -6,12 +9,18 @@ import llmstxt from "vitepress-plugin-llms";
 import extensionPackage from "../../extension/package.json" with { type: "json" };
 import { generateDocsSidebar } from "./sidebar.ts";
 
+// Generated from the same schema used by the extension; Vite serves/copies public assets.
+const schemaPath = "/schema@latest.json";
+const publicDir = fileURLToPath(new URL("../public/", import.meta.url));
+writeFileSync(join(publicDir, "schema@latest.json"), `${JSON.stringify(profileExchangeJsonSchema, null, 2)}`);
+
 export default defineConfig({
   cleanUrls: true,
   title: "headerly",
   description: "Configure browser network rules with reusable profiles.",
   sitemap: {
     hostname: "https://headerly.dev",
+    transformItems: items => [...items, { url: schemaPath }],
   },
   vite: {
     resolve: {

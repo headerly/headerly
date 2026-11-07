@@ -1,4 +1,5 @@
-import type { Profile, ProfileGroup } from "@/lib/schema";
+import type { Profile, ProfileGroup } from "@headerly/schema";
+import { addProfileIds, ALLOW_ALL_REQUESTS_RESOURCE_TYPES, stripProfileIds } from "@headerly/schema";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 import { useI18n } from "vue-i18n";
@@ -6,7 +7,6 @@ import { useRouter } from "vue-router";
 import { useProfilesStore } from "@/entrypoints/popup/stores/useProfilesStore";
 import { getCurrentTabHostname } from "@/lib/currentTab";
 import { createHeaderMod, createRedirectUrl } from "@/lib/profileFactory";
-import { addProfileIds, ALLOW_ALL_REQUESTS_RESOURCE_TYPES, stripProfileIds } from "@/lib/schema";
 
 export type ActionKey
   = | "toggle"

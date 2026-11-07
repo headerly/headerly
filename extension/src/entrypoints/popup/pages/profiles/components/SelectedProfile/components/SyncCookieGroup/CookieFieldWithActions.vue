@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { SyncCookie } from "@headerly/schema";
 import type { MaybeRefOrGetter } from "vue";
-import type { SyncCookie } from "@/lib/schema";
 import { Alert, AlertDescription } from "@headerly/ui/components/alert";
 import { Button } from "@headerly/ui/components/button";
 import {

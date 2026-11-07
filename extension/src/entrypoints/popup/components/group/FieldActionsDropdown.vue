@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends GroupItem">
-import type { GroupItem } from "@/lib/schema";
+import type { GroupItem } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   DropdownMenu,

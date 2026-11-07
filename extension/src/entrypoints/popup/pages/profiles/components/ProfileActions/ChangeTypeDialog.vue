@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RuleActionType } from "@/lib/schema";
+import type { RuleActionType } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   Dialog,

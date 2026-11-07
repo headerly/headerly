@@ -1,4 +1,4 @@
-import type { HeaderMod, Profile, RedirectUrlGroupItem, SyncCookie } from "./schema";
+import type { HeaderMod, Profile, RedirectUrlGroupItem, SyncCookie } from "@headerly/schema";
 import { match } from "ts-pattern";
 import { uuidv7 } from "uuidv7";
 

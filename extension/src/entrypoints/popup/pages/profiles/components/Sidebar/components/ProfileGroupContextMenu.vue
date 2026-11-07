@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Profile, ProfileGroup } from "@/lib/schema";
+import type { Profile, ProfileGroup } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import {
   ContextMenu,

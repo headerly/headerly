@@ -29,11 +29,6 @@ Synchronized Cookie values are cleared automatically. Header values, comments, a
 
 Imported profiles and groups receive new internal IDs and do not overwrite or merge with existing items, even when their names match. Imports containing synchronized cookies can request the optional Cookies permission.
 
-## Export format
+### JSON Schema
 
-The document contains a `version` field identifying the exchange format and a nonempty `items` array, ordered like the Sidebar. Each item is one of:
-
-- `{ kind: "profile", profile: { ... } }` for an ungrouped profile.
-- `{ kind: "group", name, color, type, profiles: [{ ... }] }` for a group. `type` is `radio` or `checkbox`; `profiles` must contain at least one member.
-
-Radio groups may have at most one enabled member. The import validator rejects invalid group states before changing storage.
+Use the [latest JSON Schema](/schema@latest.json) to validate profile files in JSON editors or other tools.

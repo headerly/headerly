@@ -5,8 +5,8 @@ import {
   ruleActionTypeSchema,
   syncCookieGroupSchema,
   uuidSchemaWithDefault,
-} from "./base";
-import { filterSchema } from "./filters";
+} from "./base.ts";
+import { filterSchema } from "./filters.ts";
 
 export const profileSchema = z.object({
   id: uuidSchemaWithDefault,

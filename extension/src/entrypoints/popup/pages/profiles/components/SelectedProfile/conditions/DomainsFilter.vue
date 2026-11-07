@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { DomainsFilter } from "@/lib/schema";
+import type { DomainsFilter } from "@headerly/schema";
 import { Button } from "@headerly/ui/components/button";
 import { Input } from "@headerly/ui/components/input";
 import {

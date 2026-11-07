@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeaderMod } from "@/lib/schema";
+import type { HeaderMod } from "@headerly/schema";
 
 import type { ActionType, HeaderModOperation } from "@/lib/types";
 import { Button } from "@headerly/ui/components/button";
