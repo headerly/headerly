@@ -33,7 +33,6 @@ export default defineConfig({
       ],
     },
     plugins: [llmstxt(), tailwindcss(), vueDevTools()],
-    ssr: { noExternal: ["@headerly/ui"] },
   },
   head: [
     ["link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }],
